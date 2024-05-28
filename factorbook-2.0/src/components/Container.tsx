@@ -2,6 +2,11 @@
 
 import * as React from "react";
 import { useState } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import Collapse from "@mui/material/Collapse";
+import Link from "@mui/material/Link";
 
 type ReferenceProps = {
   title: string;
@@ -16,19 +21,31 @@ const ReferenceSection: React.FC<ReferenceProps> = ({ title, sources }) => {
   };
 
   return (
-    <section className="flex flex-col self-stretch text-white shadow w-full">
-      <header className="flex gap-5 justify-between px-4 py-1 w-full text-xl font-medium tracking-normal leading-8 whitespace-nowrap max-md:flex-wrap max-md:pr-5 max-md:max-w-full">
-        <h1 className="cursor-default">{title}</h1>
-        <div
-          className="flex items-center justify-center p-2 cursor-pointer"
-          onClick={handleToggleVisibility}
-          style={{
-            padding: "8px",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        color: "white",
+        boxShadow: 3,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          p: 1,
+          width: "100%",
+          fontSize: "1.25rem",
+          fontWeight: "medium",
+          gap: 2,
+        }}
+      >
+        <Typography variant="h5" sx={{ cursor: "default" }}>
+          {title}
+        </Typography>
+        <IconButton onClick={handleToggleVisibility} sx={{ p: 1 }}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -42,26 +59,53 @@ const ReferenceSection: React.FC<ReferenceProps> = ({ title, sources }) => {
               fillOpacity="0.54"
             />
           </svg>
-        </div>
-      </header>
-      {isVisible && (
-        <div className="flex flex-col justify-center px-4 py-3 w-full text-sm tracking-normal leading-5 rounded-3xl bg-neutral-600 max-md:max-w-full">
-          <div className="flex flex-wrap gap-5 justify-center px-6 max-md:flex-wrap max-md:px-5">
-            {sources.map((source, index) => (
-              <a
-                href={source.url}
-                className="mt-5 text-white hover:bg-white hover:text-black transition duration-200 px-3 py-2 rounded cursor-pointer"
-                key={index}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {source.name}
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-    </section>
+        </IconButton>
+      </Box>
+      <Collapse in={isVisible}>
+        <Box
+          sx={{
+            display: "flex",
+            padding: "var(--2, 16px)",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 2,
+            borderRadius: "var(--borderRadius3, 24px)",
+            background: "var(--grey-500, #494A50)",
+            width: "100%",
+          }}
+        >
+          {sources.map((source, index) => (
+            <Link
+              href={source.url}
+              key={index}
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{
+                display: "flex",
+                padding: "var(--2, 16px)",
+                justifyContent: "center",
+                alignItems: "center",
+                flex: "1 0 auto",
+                mt: 1,
+                color: "white",
+                backgroundColor: "transparent",
+                borderRadius: "var(--borderRadius3, 24px)",
+                textDecoration: "none",
+                "&:hover": {
+                  backgroundColor: "white",
+                  color: "black",
+                },
+                transition: "background-color 0.2s, color 0.2s",
+              }}
+            >
+              {source.name}
+            </Link>
+          ))}
+        </Box>
+      </Collapse>
+    </Box>
   );
 };
 
@@ -78,7 +122,20 @@ const Container: React.FC = () => {
     { name: "Wikipedia", url: "https://www.wikipedia.org/" },
   ];
 
-  return <ReferenceSection title="References" sources={referenceSources} />;
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        width: "100%",
+        padding: "var(--5, 40px) var(--3, 24px)",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: "var(--3, 24px)",
+      }}
+    >
+      <ReferenceSection title="References" sources={referenceSources} />
+    </Box>
+  );
 };
 
 export default Container;
