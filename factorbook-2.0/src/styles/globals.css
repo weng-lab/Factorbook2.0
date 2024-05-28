@@ -1,7 +1,6 @@
-/* @tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 
 :root {
@@ -19,7 +18,7 @@
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Helvetica Neue";
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(
       to bottom,
@@ -33,4 +32,4 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-} */
+}

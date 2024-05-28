@@ -4,7 +4,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import dynamic from "next/dynamic";
 import { ReactNode } from "react";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 
 const inter = Inter({ subsets: ["latin"] });

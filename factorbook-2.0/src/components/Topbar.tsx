@@ -1,15 +1,18 @@
+// src/components/Topbar.tsx
 import * as React from "react";
-
-type NavItemProps = {
-  title: string;
-  href: string;
-};
-
-const NavItem: React.FC<NavItemProps> = ({ title, href }) => (
-  <li className="px-3 py-2 my-auto text-base font-medium tracking-wide leading-7 text-slate-500 whitespace-nowrap hover:text-slate-700">
-    <a href={href}>{title}</a>
-  </li>
-);
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
+import styles from "./Topbar.module.css";
 
 const navItems = [
   { title: "Home", href: "#" },
@@ -18,29 +21,121 @@ const navItems = [
   { title: "Download", href: "#" },
 ];
 
-const Topbar: React.FC = () => (
-  <div className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm">
-    <header className="flex justify-between items-center p-2.5 max-w-screen-xl mx-auto">
-      <a href="#" className="flex flex-col">
-        <span className="text-2xl font text-neutral-800 leading-none">
-          factor
-        </span>
-        <span
-          className="text-2xl font text-neutral-800 leading-none"
-          style={{ marginLeft: "2.5rem" }} // Reduced margin
+const Topbar: React.FC = () => {
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen((prevState) => !prevState);
+  };
+
+  const drawer = (
+    <Box onClick={handleDrawerToggle} sx={{ textAlign: "center" }}>
+      <Typography variant="h6" sx={{ my: 2 }}>
+        factor book
+      </Typography>
+      <Divider />
+      <List>
+        {navItems.map((item) => (
+          <ListItem key={item.title} disablePadding>
+            <ListItem button component="a" href={item.href}>
+              <ListItemText primary={item.title} />
+            </ListItem>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
+  );
+
+  return (
+    <AppBar
+      position="static"
+      className={styles.topbar}
+      sx={{ backgroundColor: "transparent", boxShadow: "none" }}
+    >
+      <Toolbar disableGutters className={styles.toolbar}>
+        <Box
+          component="a"
+          href="#"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            textDecoration: "none",
+            color: "var(--grey-700, #1F2021)",
+            fontFamily: "Helvetica Neue",
+            fontSize: "32px",
+            fontStyle: "normal",
+            fontWeight: 500,
+            lineHeight: "0.745" /* 74.5% */,
+            letterSpacing: "-1.28px",
+          }}
         >
-          book
-        </span>
-      </a>
-      <nav>
-        <ul className="flex gap-5">
+          <Typography
+            variant="h6"
+            component="div"
+            className={styles.logo}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              // fontFamily: "Helvetica Neue",
+              fontSize: "32px",
+              fontStyle: "normal",
+              fontWeight: 500,
+              lineHeight: "0.745" /* 74.5% */,
+              letterSpacing: "-1.28px",
+              color: "var(--grey-700, #1F2021)",
+            }}
+          >
+            factor
+            <span className={styles.book}>book</span>
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: "20px",
+          }}
+        >
           {navItems.map((item) => (
-            <NavItem key={item.title} title={item.title} href={item.href} />
+            <Button
+              key={item.title}
+              href={item.href}
+              className={styles.navItem}
+              sx={{
+                // fontFamily: "Helvetica Neue",
+                fontSize: "15px",
+                fontStyle: "normal",
+                fontWeight: 500,
+                lineHeight: "26px" /* 173.333% */,
+                letterSpacing: "0.46px",
+                color: "var(--primary-mainText, #6750A4)",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+              }}
+            >
+              {item.title}
+            </Button>
           ))}
-        </ul>
+        </Box>
+        <Box sx={{ display: { xs: "none", md: "flex" } }}></Box>
+      </Toolbar>
+      <nav>
+        <Drawer
+          anchor="left"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true, // Better open performance on mobile.
+          }}
+        >
+          {drawer}
+        </Drawer>
       </nav>
-    </header>
-  </div>
-);
+    </AppBar>
+  );
+};
 
 export default Topbar;
