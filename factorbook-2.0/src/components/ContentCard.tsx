@@ -1,4 +1,10 @@
+"use client";
+
 import * as React from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 
 interface ExperimentProps {
   title: string;
@@ -11,13 +17,47 @@ const ContentCard: React.FC<ExperimentProps> = ({
   count,
   description,
 }) => (
-  <div className="flex flex-col items-start gap-4 p-6 w-[1121px] rounded-[24px] bg-[#EDE7F6]">
-    <div className="flex flex-col items-start self-stretch">
-      <h2 className="text-lg font-semibold text-[#558B2F]">{title}</h2>
-      <p className="text-sm font-medium text-[#333]">{count} performed</p>
-    </div>
-    <p className="text-base text-[#333] leading-relaxed">{description}</p>
-  </div>
+  <Card
+    sx={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "flex-start",
+      gap: 4,
+      padding: 3,
+      width: "100%", // Set width to 100% to fit the screen
+      borderRadius: "24px",
+      backgroundColor: "#EDE7F6",
+      boxShadow: "none", // Remove the default box shadow
+    }}
+  >
+    <CardContent sx={{ width: "100%" }}>
+      <Box
+        component="div"
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          width: "100%",
+        }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: "bold", color: "#558B2F" }}>
+          {title}
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{ fontWeight: "medium", color: "#333" }}
+        >
+          {count} performed
+        </Typography>
+      </Box>
+      <Typography
+        variant="body1"
+        sx={{ color: "#333", marginTop: 2, width: "100%" }}
+      >
+        {description}
+      </Typography>
+    </CardContent>
+  </Card>
 );
 
 export default ContentCard;
