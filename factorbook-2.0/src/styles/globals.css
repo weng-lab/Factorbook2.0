@@ -17,6 +17,16 @@
   }
 }
 
+
+/* Ensure no horizontal scroll bar appears */
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+
 body {
   font-family: "Helvetica Neue";
   color: rgb(var(--foreground-rgb));

@@ -4,7 +4,6 @@ import Topbar from "@/components/Topbar";
 import Footer from "@/components/Footer";
 import Select from "@/components/Select";
 import Container from "@/components/Container";
-import Header from "@/components/Header";
 import Searchbar from "@/components/Searchbar";
 import ContentCard from "@/components/ContentCard";
 import Table from "@/components/Table";

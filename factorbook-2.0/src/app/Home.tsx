@@ -5,16 +5,122 @@ import Image from "next/image";
 import {
   Box,
   Typography,
-  useMediaQuery,
-  useTheme,
   Button,
+  Card,
+  CardMedia,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Divider,
   FormControl,
   InputLabel,
   MenuItem,
   Select,
+  useMediaQuery,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
+
+const CustomCard: React.FC = () => {
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
+        alignItems: "center",
+        padding: "20px",
+        gap: "20px",
+        width: "100%", // Ensure it does not exceed the container
+        overflow: "hidden",
+      }}
+    >
+      <Card
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", sm: "row" },
+          width: "100%",
+          boxShadow: "none",
+          borderRadius: "24px",
+          backgroundColor: "#FFFFFF",
+          overflow: "hidden",
+          paddingLeft: { xs: "10px", sm: "40px" }, // Added padding for left
+          paddingRight: { xs: "10px", sm: "40px" }, // Added padding for right
+        }}
+      >
+        <CardContent sx={{ flex: "1 0 auto", padding: "16px" }}>
+          <Typography
+            variant="h4"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              alignSelf: "stretch",
+              color: "rgba(0, 0, 0, 0.87)",
+              fontFeatureSettings: "'clig' off, 'liga' off",
+              fontFamily: "Helvetica Neue",
+              fontSize: "34px",
+              fontStyle: "normal",
+              fontWeight: 400,
+              lineHeight: "123.5%",
+              letterSpacing: "0.25px",
+              padding: "16px",
+            }}
+          >
+            Motif Site Catalog
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              alignSelf: "stretch",
+              padding: "8px 16px",
+              maxWidth: "539px",
+              color: "#333",
+            }}
+          >
+            Transcription factors (TFs) are pivotal proteins regulating cellular
+            functions by binding to specific DNA sequences. With around 1800
+            unique TFs in the human genome, they control gene transcription,
+            crucial for processes like development and cell cycle.
+          </Typography>
+          <CardActions sx={{ paddingLeft: "16px" }}>
+            <Button
+              variant="contained"
+              sx={{
+                display: "flex",
+                padding: "8px 16px",
+                alignItems: "center",
+                gap: "2px",
+                alignSelf: "stretch",
+                backgroundColor: "#8169BF",
+                borderRadius: "24px",
+                textTransform: "none",
+                fontWeight: "medium",
+                color: "#FFFFFF",
+              }}
+            >
+              Explore Motifs
+            </Button>
+          </CardActions>
+        </CardContent>
+        <CardMedia
+          component="img"
+          sx={{
+            display: "flex",
+            width: "544px",
+            height: "396px",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          image="/IllustrationsNew.png"
+          alt="Motif Site Catalog"
+        />
+      </Card>
+    </Box>
+  );
+};
 
 const HomePage: React.FC = () => {
   const theme = useTheme();
@@ -37,6 +143,7 @@ const HomePage: React.FC = () => {
           padding: isSmallScreen ? "20px 0" : "71px 144px",
           color: "white",
           fontFamily: "'Helvetica Neue'",
+          overflow: "hidden", // Ensure no overflow
         }}
       >
         <Box
@@ -174,6 +281,7 @@ const HomePage: React.FC = () => {
         )}
       </Box>
       <Header />
+
       <Box
         sx={{
           display: "flex",
@@ -187,6 +295,7 @@ const HomePage: React.FC = () => {
           padding: "71px 144px",
           color: "black",
           fontFamily: "'Helvetica Neue', sans-serif",
+          overflow: "hidden", // Ensure no overflow
         }}
       >
         <Box
@@ -269,6 +378,7 @@ const HomePage: React.FC = () => {
                 <MenuItem value={30}>Option 3</MenuItem>
               </Select>
             </FormControl>
+
             <Button
               variant="contained"
               sx={{
@@ -309,6 +419,23 @@ const HomePage: React.FC = () => {
             </Typography>
           </Box>
         </Box>
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isSmallScreen ? "column" : "row",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#FFFFFF",
+          width: "100vw",
+          height: "auto",
+          margin: "0 auto",
+          padding: "0 10%",
+          overflow: "hidden", // Ensure no overflow
+        }}
+      >
+        <CustomCard />
       </Box>
     </>
   );
