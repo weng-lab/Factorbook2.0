@@ -62,7 +62,7 @@ function Home() {
           description={"Hi I am Akshay"}
         />
 
-        <Select />
+        <Select onChange={() => {}} />
         <Searchbar
           placeholder="Enter search query"
           helperText="Type your search query"

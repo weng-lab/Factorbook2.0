@@ -11,11 +11,13 @@ import {
   CardContent,
   CardActions,
   useMediaQuery,
+  SelectChangeEvent,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
+import Footer from "@/components/Footer";
 
 const CustomCard: React.FC<{
   title: string;
@@ -26,6 +28,7 @@ const CustomCard: React.FC<{
   imageAlt: string;
   imagePosition: "left" | "right";
   selectComponent?: React.ReactNode;
+  gap?: string; // Added gap prop
 }> = ({
   title,
   description,
@@ -35,6 +38,7 @@ const CustomCard: React.FC<{
   imageAlt,
   imagePosition,
   selectComponent,
+  gap = "40px", // Default gap
 }) => {
   return (
     <Box
@@ -46,7 +50,7 @@ const CustomCard: React.FC<{
         },
         alignItems: "center",
         padding: "20px",
-        gap: "40px", // Increased gap for more padding
+        gap, // Using gap prop
         width: "100%",
         overflow: "hidden",
       }}
@@ -69,11 +73,12 @@ const CustomCard: React.FC<{
             component="img"
             sx={{
               display: "flex",
-              width: "544px",
-              height: "396px",
+              width: { xs: "100%", sm: "auto" },
+              height: { xs: "auto", sm: "396px" },
+              maxWidth: "544px",
               justifyContent: "center",
               alignItems: "center",
-              paddingRight: "40px", // Increased padding to the right
+              marginRight: gap, // Adjust margin to create space
             }}
             image={imageSrc}
             alt={imageAlt}
@@ -146,7 +151,7 @@ const CustomCard: React.FC<{
               height: "396px",
               justifyContent: "center",
               alignItems: "center",
-              paddingLeft: "40px", // Increased padding to the left
+              paddingLeft: gap, // Increased padding to the left
             }}
             image={imageSrc}
             alt={imageAlt}
@@ -161,6 +166,17 @@ const HomePage: React.FC = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+  const [imageSrc, setImageSrc] = React.useState<string>("/Face.png");
+
+  const handleSelectChange = (event: SelectChangeEvent<unknown>) => {
+    const selectedValue = event.target.value as string;
+    if (selectedValue === "mouse") {
+      setImageSrc("/Mouse.png");
+    } else {
+      setImageSrc("/Face.png");
+    }
+  };
 
   return (
     <>
@@ -334,10 +350,11 @@ const HomePage: React.FC = () => {
         <CustomCard
           title="Transcription Factors"
           description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
-          imageSrc="/Face.png"
+          imageSrc={imageSrc}
           imageAlt="Transcription Factors"
           imagePosition="left"
-          selectComponent={<SelectComponent />}
+          selectComponent={<SelectComponent onChange={handleSelectChange} />}
+          gap="60px" // Increased gap
         />
       </Box>
 
@@ -365,6 +382,34 @@ const HomePage: React.FC = () => {
           imagePosition="right"
         />
       </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isSmallScreen ? "column" : "row",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#FFFFFF",
+          width: "100vw",
+          height: "auto",
+          margin: "0 auto",
+          padding: "5% 25%",
+          overflow: "hidden", // Ensure no overflow
+        }}
+      >
+        <CustomCard
+          title="Annotate Variants"
+          description="Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants."
+          imageSrc="/Human.png"
+          imageAlt="Human Annotate Variants"
+          imagePosition="left"
+          buttonText="Explore Annotations"
+          buttonColor="#8169BF"
+          gap="10%" // Increased gap
+        />
+      </Box>
+
+      <Footer />
     </>
   );
 };

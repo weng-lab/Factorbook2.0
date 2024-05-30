@@ -1,71 +1,22 @@
+"use client";
+
 import React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import SelectHost from "@/components/SelectHost"; // Adjust the path as needed
+import { SelectChangeEvent } from "@mui/material";
 
-interface SelectHostProps {
-  text: string;
+interface SelectComponentProps {
+  onChange: (event: SelectChangeEvent<unknown>) => void;
 }
 
-const SelectHost: React.FC<SelectHostProps> = ({ text }) => (
-  <FormControl
-    variant="outlined"
-    sx={{
-      width: "220px",
-      backgroundColor: "rgba(138, 43, 226, 0.1)",
-      borderRadius: "24px",
-      height: "41px",
-      display: "flex",
-      justifyContent: "center",
-      "& .MuiOutlinedInput-root": {
-        borderRadius: "24px",
-      },
-      "& .MuiInputLabel-outlined": {
-        transform: "translate(14px, 10px) scale(1)",
-      },
-      "& .MuiInputLabel-shrink": {
-        transform: "translate(14px, -6px) scale(0.75)",
-      },
-      "& .MuiOutlinedInput-notchedOutline": {
-        borderColor: "rgba(0, 0, 0, 0.23)",
-      },
-      "&:hover .MuiOutlinedInput-notchedOutline": {
-        borderColor: "rgba(0, 0, 0, 0.87)",
-      },
-      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor: "rgba(0, 0, 0, 0.87)",
-      },
-    }}
-  >
-    <InputLabel>{text}</InputLabel>
-    <Select
-      label={text}
-      IconComponent={ArrowDropDownIcon}
-      sx={{
-        borderRadius: "24px",
-        height: "41px",
-        display: "flex",
-        alignItems: "center",
-        "& .MuiOutlinedInput-notchedOutline": {
-          borderRadius: "24px",
-        },
-        "& .MuiSelect-icon": {
-          right: "14px",
-        },
-      }}
-    >
-      <MenuItem value="human">Human</MenuItem>
-      <MenuItem value="mouse">Mouse</MenuItem>
-    </Select>
-  </FormControl>
-);
+const SelectComponent: React.FC<SelectComponentProps> = ({ onChange }) => {
+  const options = [
+    { value: "human", label: "Human" },
+    { value: "mouse", label: "Mouse" },
+  ];
 
-const SelectComponent: React.FC = () => {
   return (
     <Box
       component="section"
@@ -94,7 +45,11 @@ const SelectComponent: React.FC = () => {
         Explore TFs in
       </Typography>
       <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-        <SelectHost text="Select your host" />
+        <SelectHost
+          text="Select your host"
+          options={options}
+          onChange={onChange}
+        />
         <Button
           variant="contained"
           sx={{

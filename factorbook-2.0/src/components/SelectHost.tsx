@@ -1,15 +1,22 @@
 "use client";
 
 import * as React from "react";
-import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+} from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 interface SelectHostProps {
   text: string;
-  options: { value: number; label: string }[];
+  options: { value: string; label: string }[];
+  onChange: (event: SelectChangeEvent<unknown>) => void;
 }
 
-const SelectHost: React.FC<SelectHostProps> = ({ text, options }) => (
+const SelectHost: React.FC<SelectHostProps> = ({ text, options, onChange }) => (
   <FormControl
     variant="outlined"
     sx={{
@@ -43,6 +50,7 @@ const SelectHost: React.FC<SelectHostProps> = ({ text, options }) => (
     <Select
       label={text}
       IconComponent={ArrowDropDownIcon}
+      onChange={onChange}
       sx={{
         borderRadius: "24px",
         height: "41px",
