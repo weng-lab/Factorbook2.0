@@ -9,12 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@builder.io/dev-tools": "^1.0.12",
-    "@builder.io/sdk": "^2.2.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.18",
     "next": "14.2.3",
+    "next-transpile-modules": "^10.0.1",
     "react": "^18",
     "react-dom": "^18"
   },

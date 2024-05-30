@@ -9,7 +9,7 @@ import ContentCard from "@/components/ContentCard";
 import Table from "@/components/Table";
 import HomePage from "./Home";
 
-export function Home() {
+function Home() {
   const data = [
     {
       name: "MEL",

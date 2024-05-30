@@ -1,6 +1,4 @@
-"use client";
-
-import * as React from "react";
+import React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
@@ -12,10 +10,9 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 interface SelectHostProps {
   text: string;
-  options: { value: string; label: string }[];
 }
 
-const SelectHost: React.FC<SelectHostProps> = ({ text, options }) => (
+const SelectHost: React.FC<SelectHostProps> = ({ text }) => (
   <FormControl
     variant="outlined"
     sx={{
@@ -36,16 +33,12 @@ const SelectHost: React.FC<SelectHostProps> = ({ text, options }) => (
       },
       "& .MuiOutlinedInput-notchedOutline": {
         borderColor: "rgba(0, 0, 0, 0.23)",
-        borderRadius: "24px", // Curved borders for the outline
       },
       "&:hover .MuiOutlinedInput-notchedOutline": {
         borderColor: "rgba(0, 0, 0, 0.87)",
       },
       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
         borderColor: "rgba(0, 0, 0, 0.87)",
-      },
-      "& .MuiSelect-select": {
-        borderRadius: "24px", // Curved borders for the select input
       },
     }}
   >
@@ -66,23 +59,23 @@ const SelectHost: React.FC<SelectHostProps> = ({ text, options }) => (
         },
       }}
     >
-      {options.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
-          {option.label}
-        </MenuItem>
-      ))}
+      <MenuItem value="human">Human</MenuItem>
+      <MenuItem value="mouse">Mouse</MenuItem>
     </Select>
   </FormControl>
 );
 
 const SelectComponent: React.FC = () => {
-  const options = [
-    { value: "human", label: "Human" },
-    { value: "mouse", label: "Mouse" },
-  ];
-
   return (
-    <Box component="section">
+    <Box
+      component="section"
+      sx={{
+        display: "inline-flex",
+        height: "169px",
+        flexDirection: "column",
+        alignItems: "flex-start",
+      }}
+    >
       <Typography
         variant="body1"
         sx={{
@@ -95,13 +88,13 @@ const SelectComponent: React.FC = () => {
           lineHeight: "24px",
           letterSpacing: "0.15px",
           fontFeatureSettings: "'clig' off, 'liga' off",
-          mb: 1,
+          mb: 2,
         }}
       >
         Explore TFs in
       </Typography>
       <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-        <SelectHost text="Select your host" options={options} />
+        <SelectHost text="Select your host" />
         <Button
           variant="contained"
           sx={{
