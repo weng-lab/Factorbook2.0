@@ -12,9 +12,10 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 interface SelectHostProps {
   text: string;
+  options: { value: string; label: string }[];
 }
 
-const SelectHost: React.FC<SelectHostProps> = ({ text }) => (
+const SelectHost: React.FC<SelectHostProps> = ({ text, options }) => (
   <FormControl
     variant="outlined"
     sx={{
@@ -35,12 +36,16 @@ const SelectHost: React.FC<SelectHostProps> = ({ text }) => (
       },
       "& .MuiOutlinedInput-notchedOutline": {
         borderColor: "rgba(0, 0, 0, 0.23)",
+        borderRadius: "24px", // Curved borders for the outline
       },
       "&:hover .MuiOutlinedInput-notchedOutline": {
         borderColor: "rgba(0, 0, 0, 0.87)",
       },
       "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
         borderColor: "rgba(0, 0, 0, 0.87)",
+      },
+      "& .MuiSelect-select": {
+        borderRadius: "24px", // Curved borders for the select input
       },
     }}
   >
@@ -61,24 +66,23 @@ const SelectHost: React.FC<SelectHostProps> = ({ text }) => (
         },
       }}
     >
-      <MenuItem value={10}>Option 1</MenuItem>
-      <MenuItem value={20}>Option 2</MenuItem>
-      <MenuItem value={30}>Option 3</MenuItem>
+      {options.map((option) => (
+        <MenuItem key={option.value} value={option.value}>
+          {option.label}
+        </MenuItem>
+      ))}
     </Select>
   </FormControl>
 );
 
 const SelectComponent: React.FC = () => {
+  const options = [
+    { value: "human", label: "Human" },
+    { value: "mouse", label: "Mouse" },
+  ];
+
   return (
-    <Box
-      component="section"
-      sx={{
-        display: "inline-flex",
-        height: "169px",
-        flexDirection: "column",
-        alignItems: "flex-start",
-      }}
-    >
+    <Box component="section">
       <Typography
         variant="body1"
         sx={{
@@ -91,13 +95,13 @@ const SelectComponent: React.FC = () => {
           lineHeight: "24px",
           letterSpacing: "0.15px",
           fontFeatureSettings: "'clig' off, 'liga' off",
-          mb: 2,
+          mb: 1,
         }}
       >
         Explore TFs in
       </Typography>
       <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-        <SelectHost text="Select your host" />
+        <SelectHost text="Select your host" options={options} />
         <Button
           variant="contained"
           sx={{

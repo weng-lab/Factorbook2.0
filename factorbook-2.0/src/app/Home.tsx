@@ -8,30 +8,46 @@ import {
   Button,
   Card,
   CardMedia,
-  CardHeader,
   CardContent,
   CardActions,
-  Divider,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
+import SelectComponent from "@/components/Select";
 
-const CustomCard: React.FC = () => {
+const CustomCard: React.FC<{
+  title: string;
+  description: string;
+  buttonText?: string;
+  buttonColor?: string;
+  imageSrc: string;
+  imageAlt: string;
+  imagePosition: "left" | "right";
+  selectComponent?: React.ReactNode;
+}> = ({
+  title,
+  description,
+  buttonText,
+  buttonColor,
+  imageSrc,
+  imageAlt,
+  imagePosition,
+  selectComponent,
+}) => {
   return (
     <Box
       sx={{
         display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
+        flexDirection: {
+          xs: "column",
+          sm: imagePosition === "left" ? "row-reverse" : "row",
+        },
         alignItems: "center",
         padding: "20px",
-        gap: "20px",
-        width: "100%", // Ensure it does not exceed the container
+        gap: "40px", // Increased gap for more padding
+        width: "100%",
         overflow: "hidden",
       }}
     >
@@ -44,10 +60,25 @@ const CustomCard: React.FC = () => {
           borderRadius: "24px",
           backgroundColor: "#FFFFFF",
           overflow: "hidden",
-          paddingLeft: { xs: "10px", sm: "40px" }, // Added padding for left
-          paddingRight: { xs: "10px", sm: "40px" }, // Added padding for right
+          paddingLeft: { xs: "10px", sm: "60px" }, // Increased padding
+          paddingRight: { xs: "10px", sm: "60px" }, // Increased padding
         }}
       >
+        {imagePosition === "left" && (
+          <CardMedia
+            component="img"
+            sx={{
+              display: "flex",
+              width: "544px",
+              height: "396px",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingRight: "40px", // Increased padding to the right
+            }}
+            image={imageSrc}
+            alt={imageAlt}
+          />
+        )}
         <CardContent sx={{ flex: "1 0 auto", padding: "16px" }}>
           <Typography
             variant="h4"
@@ -66,7 +97,7 @@ const CustomCard: React.FC = () => {
               padding: "16px",
             }}
           >
-            Motif Site Catalog
+            {title}
           </Typography>
           <Typography
             variant="body1"
@@ -80,43 +111,47 @@ const CustomCard: React.FC = () => {
               color: "#333",
             }}
           >
-            Transcription factors (TFs) are pivotal proteins regulating cellular
-            functions by binding to specific DNA sequences. With around 1800
-            unique TFs in the human genome, they control gene transcription,
-            crucial for processes like development and cell cycle.
+            {description}
           </Typography>
           <CardActions sx={{ paddingLeft: "16px" }}>
-            <Button
-              variant="contained"
-              sx={{
-                display: "flex",
-                padding: "8px 16px",
-                alignItems: "center",
-                gap: "2px",
-                alignSelf: "stretch",
-                backgroundColor: "#8169BF",
-                borderRadius: "24px",
-                textTransform: "none",
-                fontWeight: "medium",
-                color: "#FFFFFF",
-              }}
-            >
-              Explore Motifs
-            </Button>
+            {buttonText ? (
+              <Button
+                variant="contained"
+                sx={{
+                  display: "flex",
+                  padding: "8px 16px",
+                  alignItems: "center",
+                  gap: "2px",
+                  alignSelf: "stretch",
+                  backgroundColor: buttonColor,
+                  borderRadius: "24px",
+                  textTransform: "none",
+                  fontWeight: "medium",
+                  color: "#FFFFFF",
+                }}
+              >
+                {buttonText}
+              </Button>
+            ) : (
+              selectComponent
+            )}
           </CardActions>
         </CardContent>
-        <CardMedia
-          component="img"
-          sx={{
-            display: "flex",
-            width: "544px",
-            height: "396px",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-          image="/IllustrationsNew.png"
-          alt="Motif Site Catalog"
-        />
+        {imagePosition === "right" && (
+          <CardMedia
+            component="img"
+            sx={{
+              display: "flex",
+              width: "544px",
+              height: "396px",
+              justifyContent: "center",
+              alignItems: "center",
+              paddingLeft: "40px", // Increased padding to the left
+            }}
+            image={imageSrc}
+            alt={imageAlt}
+          />
+        )}
       </Card>
     </Box>
   );
@@ -290,135 +325,20 @@ const HomePage: React.FC = () => {
           alignItems: "center",
           backgroundColor: "#FFFFFF",
           width: "100vw",
-          height: "750px",
+          height: "auto",
           margin: "0 auto",
-          padding: "71px 144px",
-          color: "black",
-          fontFamily: "'Helvetica Neue', sans-serif",
+          padding: "5% 20%",
           overflow: "hidden", // Ensure no overflow
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            width: "554.382px",
-            height: "372.055px",
-            flexShrink: 0,
-            justifyContent: "center",
-            alignItems: "center",
-            marginBottom: "32px",
-          }}
-        >
-          <Image
-            src="/Face.png"
-            alt="Illustration"
-            width={554.382}
-            height={372.055}
-            style={{
-              width: "100%",
-              height: "auto",
-            }}
-          />
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            justifyContent: "center",
-            padding: "16px",
-            width: "50%",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              padding: "16px",
-              alignItems: "center",
-              alignSelf: "stretch",
-              fill: "rgba(135, 150, 199, 0.30)",
-            }}
-          >
-            <FormControl
-              variant="outlined"
-              sx={{
-                width: "220px",
-                backgroundColor: "rgba(138, 43, 226, 0.1)",
-                borderRadius: "24px",
-                height: "41px",
-                display: "flex",
-                justifyContent: "center",
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "24px",
-                },
-                "& .MuiInputLabel-outlined": {
-                  transform: "translate(14px, 12px) scale(1)",
-                },
-              }}
-            >
-              <InputLabel>Select your host</InputLabel>
-              <Select
-                label="Select your host"
-                sx={{
-                  borderRadius: "24px",
-                  height: "41px",
-                  display: "flex",
-                  alignItems: "center",
-                  ".MuiOutlinedInput-notchedOutline": {
-                    border: "1px solid rgba(0, 0, 0, 0.23)",
-                    borderRadius: "24px",
-                  },
-                  "& .MuiSelect-icon": {
-                    right: "14px",
-                  },
-                }}
-              >
-                <MenuItem value={10}>Option 1</MenuItem>
-                <MenuItem value={20}>Option 2</MenuItem>
-                <MenuItem value={30}>Option 3</MenuItem>
-              </Select>
-            </FormControl>
-
-            <Button
-              variant="contained"
-              sx={{
-                marginLeft: "10px",
-                padding: "8px 16px",
-                backgroundColor: "#6A0DAD",
-                color: "#FFF",
-                borderRadius: "24px",
-                textTransform: "none",
-                fontWeight: "medium",
-              }}
-            >
-              Go
-            </Button>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              alignSelf: "stretch",
-              marginTop: "16px",
-              padding: "8px 16px",
-            }}
-          >
-            <Typography variant="h6" sx={{ color: "#000", fontWeight: 500 }}>
-              Explore Transcription Factors
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ color: "#000", marginTop: "16px" }}
-            >
-              Transcription factors (TFs) are pivotal proteins regulating
-              cellular functions by binding to specific DNA sequences. With
-              around 1800 unique TFs in the human genome, they control gene
-              transcription, crucial for processes like development and cell
-              cycle.
-            </Typography>
-          </Box>
-        </Box>
+        <CustomCard
+          title="Transcription Factors"
+          description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
+          imageSrc="/Face.png"
+          imageAlt="Transcription Factors"
+          imagePosition="left"
+          selectComponent={<SelectComponent />}
+        />
       </Box>
 
       <Box
@@ -431,11 +351,19 @@ const HomePage: React.FC = () => {
           width: "100vw",
           height: "auto",
           margin: "0 auto",
-          padding: "0 10%",
+          padding: "5% 10%",
           overflow: "hidden", // Ensure no overflow
         }}
       >
-        <CustomCard />
+        <CustomCard
+          title="Motif Site Catalog"
+          description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
+          buttonText="Explore Motifs"
+          buttonColor="#8169BF"
+          imageSrc="/IllustrationsNew.png"
+          imageAlt="Motif Site Catalog"
+          imagePosition="right"
+        />
       </Box>
     </>
   );
