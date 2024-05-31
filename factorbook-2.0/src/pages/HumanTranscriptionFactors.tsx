@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery, Tabs, Tab } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Grid2 from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Searchbar from "@/components/Searchbar";
@@ -11,6 +11,11 @@ import Footer from "@/components/Footer";
 const HumanTranscriptionFactors: React.FC = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const [tabValue, setTabValue] = React.useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
 
   return (
     <>
@@ -137,6 +142,67 @@ const HumanTranscriptionFactors: React.FC = () => {
           </Grid2>
         </Box>
       </Box>
+
+      <Box
+        sx={{
+          width: "100%",
+          maxWidth: "1440px",
+          margin: "0 auto",
+          padding: "0 24px",
+        }}
+      >
+        <Tabs
+          value={tabValue}
+          onChange={handleChange}
+          textColor="primary"
+          indicatorColor="primary"
+          aria-label="primary tabs example"
+          sx={{ marginBottom: "20px" }}
+        >
+          <Tab
+            label="Browse all Transcription Factors"
+            sx={{ textTransform: "none" }}
+          />
+          <Tab label="Browse all Cell Types" sx={{ textTransform: "none" }} />
+        </Tabs>
+        <Box>
+          {tabValue === 0 && (
+            <Typography
+              sx={{
+                color: "var(--common-white-main, #FFF)",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontFamily: "Helvetica Neue",
+                fontSize: "16px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "150%", // 24px
+                letterSpacing: "0.15px",
+                textAlign: isSmallScreen ? "center" : "left",
+              }}
+            >
+              Content for Browse all Transcription Factors
+            </Typography>
+          )}
+          {tabValue === 1 && (
+            <Typography
+              sx={{
+                color: "var(--common-white-main, #FFF)",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontFamily: "Helvetica Neue",
+                fontSize: "16px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "150%", // 24px
+                letterSpacing: "0.15px",
+                textAlign: isSmallScreen ? "center" : "left",
+              }}
+            >
+              Content for Browse all Cell Types
+            </Typography>
+          )}
+        </Box>
+      </Box>
+
       <Footer />
     </>
   );
