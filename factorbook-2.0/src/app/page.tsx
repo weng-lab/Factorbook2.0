@@ -8,6 +8,7 @@ import Searchbar from "@/components/Searchbar";
 import ContentCard from "@/components/ContentCard";
 import Table from "@/components/Table";
 import HomePage from "./Home";
+import HumanTranscriptionFactors from "@/pages/HumanTranscriptionFactors";
 
 function Home() {
   const data = [
@@ -69,6 +70,7 @@ function Home() {
         />
         <Container />
       </main>
+      <HumanTranscriptionFactors />
       <Footer />
     </div>
   );
