@@ -1,30 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { Box, Typography, useMediaQuery, styled } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Grid2 from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Searchbar from "@/components/Searchbar";
 import Topbar from "@/components/Topbar";
 import Footer from "@/components/Footer";
-
-const StyledSearchbarContainer = styled(Box)(({ theme }) => ({
-  width: "100%",
-  maxWidth: "900px",
-  height: "48px", // Adjusted height to match usual search bar height
-  display: "flex",
-  alignItems: "center",
-  color: "var(--text-disabled, rgba(255, 255, 255, 0.38))",
-  fontFeatureSettings: "'clig' off, 'liga' off",
-  fontFamily: "Helvetica Neue",
-  fontSize: "16px",
-  fontStyle: "normal",
-  fontWeight: 400,
-  lineHeight: "24px",
-  letterSpacing: "0.15px",
-  fill: "rgba(135, 150, 199, 0.30)",
-  marginLeft: theme.breakpoints.up("md") ? "145px" : "0",
-}));
 
 const HumanTranscriptionFactors: React.FC = () => {
   const theme = useTheme();
@@ -42,7 +24,7 @@ const HumanTranscriptionFactors: React.FC = () => {
           justifyContent: "center",
           alignItems: "center",
           overflow: "hidden",
-          margin: "50px 0 0 0",
+          paddingTop: "40px",
         }}
       >
         <Box
@@ -124,20 +106,10 @@ const HumanTranscriptionFactors: React.FC = () => {
                 activity can lead to a variety of diseases, including cancer,
                 making them significant targets in biomedical research.
               </Typography>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: isSmallScreen ? "center" : "flex-start",
-                }}
-              >
-                <StyledSearchbarContainer>
-                  <Searchbar
-                    placeholder="What are you searching for today?"
-                    helperText=""
-                  />
-                </StyledSearchbarContainer>
-              </Box>
+              <Searchbar
+                placeholder="What are you searching for today?"
+                helperText=""
+              />
             </Grid2>
             <Grid2
               xs={12}
