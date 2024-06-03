@@ -33,6 +33,7 @@
   font-weight: 500;
   line-height: 0.745; /* 74.5% */
   letter-spacing: -1.28px;
+  margin-top: 1px;
 }
 
 .navList {
