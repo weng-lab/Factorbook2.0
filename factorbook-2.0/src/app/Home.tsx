@@ -6,10 +6,7 @@ import {
   Box,
   Typography,
   Button,
-  Card,
-  CardMedia,
-  CardContent,
-  CardActions,
+  Grid,
   useMediaQuery,
   SelectChangeEvent,
 } from "@mui/material";
@@ -19,149 +16,6 @@ import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
 import Footer from "@/components/Footer";
-
-const CustomCard: React.FC<{
-  title: string;
-  description: string;
-  buttonText?: string;
-  buttonColor?: string;
-  imageSrc: string;
-  imageAlt: string;
-  imagePosition: "left" | "right";
-  selectComponent?: React.ReactNode;
-  gap?: string; // Added gap prop
-}> = ({
-  title,
-  description,
-  buttonText,
-  buttonColor,
-  imageSrc,
-  imageAlt,
-  imagePosition,
-  selectComponent,
-  gap = "40px", // Default gap
-}) => {
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: {
-          xs: "column",
-          sm: imagePosition === "left" ? "row-reverse" : "row",
-        },
-        alignItems: "center",
-        padding: "20px",
-        gap, // Using gap prop
-        width: "100%",
-        overflow: "hidden",
-      }}
-    >
-      <Card
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", sm: "row" },
-          width: "100%",
-          boxShadow: "none",
-          borderRadius: "24px",
-          backgroundColor: "#FFFFFF",
-          overflow: "hidden",
-          paddingLeft: { xs: "10px", sm: "60px" }, // Increased padding
-          paddingRight: { xs: "10px", sm: "60px" }, // Increased padding
-        }}
-      >
-        {imagePosition === "left" && (
-          <CardMedia
-            component="img"
-            sx={{
-              display: "flex",
-              width: { xs: "100%", sm: "auto" },
-              height: { xs: "auto", sm: "396px" },
-              maxWidth: "544px",
-              justifyContent: "center",
-              alignItems: "center",
-              marginRight: gap, // Adjust margin to create space
-            }}
-            image={imageSrc}
-            alt={imageAlt}
-          />
-        )}
-        <CardContent sx={{ flex: "1 0 auto", padding: "16px" }}>
-          <Typography
-            variant="h4"
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              alignSelf: "stretch",
-              color: "rgba(0, 0, 0, 0.87)",
-              fontFeatureSettings: "'clig' off, 'liga' off",
-              fontFamily: "Helvetica Neue",
-              fontSize: "34px",
-              fontStyle: "normal",
-              fontWeight: 400,
-              lineHeight: "123.5%",
-              letterSpacing: "0.25px",
-              padding: "16px",
-            }}
-          >
-            {title}
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              alignSelf: "stretch",
-              padding: "8px 16px",
-              maxWidth: "539px",
-              color: "#333",
-            }}
-          >
-            {description}
-          </Typography>
-          <CardActions sx={{ paddingLeft: "16px" }}>
-            {buttonText ? (
-              <Button
-                variant="contained"
-                sx={{
-                  display: "flex",
-                  padding: "8px 16px",
-                  alignItems: "center",
-                  gap: "2px",
-                  alignSelf: "stretch",
-                  backgroundColor: buttonColor,
-                  borderRadius: "24px",
-                  textTransform: "none",
-                  fontWeight: "medium",
-                  color: "#FFFFFF",
-                }}
-              >
-                {buttonText}
-              </Button>
-            ) : (
-              selectComponent
-            )}
-          </CardActions>
-        </CardContent>
-        {imagePosition === "right" && (
-          <CardMedia
-            component="img"
-            sx={{
-              display: "flex",
-              width: "544px",
-              height: "396px",
-              justifyContent: "center",
-              alignItems: "center",
-              paddingLeft: gap, // Increased padding to the left
-            }}
-            image={imageSrc}
-            alt={imageAlt}
-          />
-        )}
-      </Card>
-    </Box>
-  );
-};
 
 const HomePage: React.FC = () => {
   const theme = useTheme();
@@ -345,39 +199,7 @@ const HomePage: React.FC = () => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: isSmallScreen ? "column" : "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          backgroundColor: "#FFFFFF",
-          width: "100vw",
-          height: "auto",
-          margin: "0 auto",
-          padding: "5% 20%",
-          overflow: "hidden", // Ensure no overflow
-        }}
-      >
-        <CustomCard
-          title="Transcription Factors"
-          description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
-          imageSrc={imageSrc}
-          imageAlt="Transcription Factors"
-          imagePosition="left"
-          selectComponent={
-            <SelectComponent
-              onChange={handleSelectChange}
-              onClick={handleGoClick}
-            />
-          }
-          gap="60px" // Increased gap
-        />
-      </Box>
-
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: isSmallScreen ? "column" : "row",
-          justifyContent: "center",
-          alignItems: "center",
+          flexDirection: "column",
           backgroundColor: "#FFFFFF",
           width: "100vw",
           height: "auto",
@@ -386,41 +208,314 @@ const HomePage: React.FC = () => {
           overflow: "hidden", // Ensure no overflow
         }}
       >
-        <CustomCard
-          title="Motif Site Catalog"
-          description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
-          buttonText="Explore Motifs"
-          buttonColor="#8169BF"
-          imageSrc="/IllustrationsNew.png"
-          imageAlt="Motif Site Catalog"
-          imagePosition="right"
-        />
+        <Grid container spacing={2} alignItems="center">
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              order: isSmallScreen ? 0 : 1, // Image on top for small screens
+            }}
+          >
+            <Image
+              src={imageSrc}
+              alt="Transcription Factors"
+              width={544}
+              height={396}
+              style={{
+                maxWidth: "100%",
+                height: "auto",
+              }}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            sx={{
+              textAlign: isSmallScreen ? "center" : "left",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: isSmallScreen ? "center" : "flex-start",
+              gap: "16px",
+              order: isSmallScreen ? 1 : 0, // Content below image for small screens
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                color: "rgba(0, 0, 0, 0.87)",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontFamily: "Helvetica Neue",
+                fontSize: "34px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "123.5%",
+                letterSpacing: "0.25px",
+                padding: "16px",
+              }}
+            >
+              Transcription Factors
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#333",
+                maxWidth: "539px",
+                padding: "8px 16px",
+              }}
+            >
+              Transcription factors (TFs) are pivotal proteins regulating
+              cellular functions by binding to specific DNA sequences. With
+              around 1800 unique TFs in the human genome, they control gene
+              transcription, crucial for processes like development and cell
+              cycle.
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+              <SelectComponent
+                onChange={handleSelectChange}
+                onClick={handleGoClick}
+              />
+            </Box>
+          </Grid>
+        </Grid>
       </Box>
 
       <Box
         sx={{
           display: "flex",
-          flexDirection: isSmallScreen ? "column" : "row",
-          justifyContent: "center",
-          alignItems: "center",
+          flexDirection: "column",
           backgroundColor: "#FFFFFF",
           width: "100vw",
           height: "auto",
           margin: "0 auto",
-          padding: "5% 25%",
+          padding: "5% 10%",
           overflow: "hidden", // Ensure no overflow
         }}
       >
-        <CustomCard
-          title="Annotate Variants"
-          description="Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants."
-          imageSrc="/Human.png"
-          imageAlt="Human Annotate Variants"
-          imagePosition="left"
-          buttonText="Explore Annotations"
-          buttonColor="#8169BF"
-          gap="10%" // Increased gap
-        />
+        <Grid container spacing={2} alignItems="center">
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              order: 0, // Image on right for small screens
+            }}
+          >
+            <Image
+              src="/IllustrationsNew.png"
+              alt="Motif Site Catalog"
+              width={544}
+              height={396}
+              style={{
+                maxWidth: "100%",
+                height: "auto",
+              }}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            sx={{
+              textAlign: isSmallScreen ? "center" : "left",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: isSmallScreen ? "center" : "flex-start",
+              gap: "16px",
+              order: isSmallScreen ? 1 : 0, // Content below image for small screens
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                color: "rgba(0, 0, 0, 0.87)",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontFamily: "Helvetica Neue",
+                fontSize: "34px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "123.5%",
+                letterSpacing: "0.25px",
+                padding: "16px",
+              }}
+            >
+              Motif Site Catalog
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#333",
+                maxWidth: "539px",
+                padding: "8px 16px",
+              }}
+            >
+              Transcription factors (TFs) are pivotal proteins regulating
+              cellular functions by binding to specific DNA sequences. With
+              around 1800 unique TFs in the human genome, they control gene
+              transcription, crucial for processes like development and cell
+              cycle.
+            </Typography>
+            <Button
+              variant="contained"
+              sx={{
+                display: isSmallScreen ? "block" : "none",
+                padding: "8px 16px",
+                backgroundColor: "#8169BF",
+                borderRadius: "24px",
+                textTransform: "none",
+                fontWeight: "medium",
+                color: "#FFFFFF",
+                "&:focus, &:hover, &:active": {
+                  backgroundColor: "#8169BF",
+                },
+              }}
+            >
+              Label
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                display: isSmallScreen ? "none" : "block",
+                padding: "8px 16px",
+                backgroundColor: "#8169BF",
+                borderRadius: "24px",
+                textTransform: "none",
+                fontWeight: "medium",
+                color: "#FFFFFF",
+                "&:focus, &:hover, &:active": {
+                  backgroundColor: "#8169BF",
+                },
+              }}
+            >
+              Explore Motifs
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "#FFFFFF",
+          width: "100vw",
+          height: "auto",
+          margin: "0 auto",
+          padding: "5% 10%",
+          overflow: "hidden", // Ensure no overflow
+        }}
+      >
+        <Grid container spacing={2} alignItems="center">
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              order: isSmallScreen ? 0 : 1, // Image on top for small screens
+            }}
+          >
+            <Image
+              src="/Human.png"
+              alt="Annotate Variants"
+              width={544}
+              height={396}
+              style={{
+                maxWidth: "100%",
+                height: "auto",
+              }}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            sx={{
+              textAlign: isSmallScreen ? "center" : "left",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: isSmallScreen ? "center" : "flex-start",
+              gap: "16px",
+              order: isSmallScreen ? 1 : 0, // Content below image for small screens
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{
+                color: "rgba(0, 0, 0, 0.87)",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontFamily: "Helvetica Neue",
+                fontSize: "34px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "123.5%",
+                letterSpacing: "0.25px",
+                padding: "16px",
+              }}
+            >
+              Annotate Variants
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#333",
+                maxWidth: "539px",
+                padding: "8px 16px",
+              }}
+            >
+              Genetic variants in regulatory elements of the human genome play a
+              critical role in influencing traits and disease susceptibility by
+              modifying transcription factor (TF) binding and gene expression.
+              Factorbook offers a comprehensive resource of TF binding motifs
+              and sites, enabling researchers to predict the impact of genetic
+              variants on TF binding and gene regulation, providing valuable
+              insights into the functional consequences of these variants.
+            </Typography>
+            <Button
+              variant="contained"
+              sx={{
+                display: isSmallScreen ? "block" : "none",
+                padding: "8px 16px",
+                backgroundColor: "#8169BF",
+                borderRadius: "24px",
+                textTransform: "none",
+                fontWeight: "medium",
+                color: "#FFFFFF",
+                "&:focus, &:hover, &:active": {
+                  backgroundColor: "#8169BF",
+                },
+              }}
+            >
+              Label
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                display: isSmallScreen ? "none" : "block",
+                padding: "8px 16px",
+                backgroundColor: "#8169BF",
+                borderRadius: "24px",
+                textTransform: "none",
+                fontWeight: "medium",
+                color: "#FFFFFF",
+                "&:focus, &:hover, &:active": {
+                  backgroundColor: "#8169BF",
+                },
+              }}
+            >
+              Explore Annotations
+            </Button>
+          </Grid>
+        </Grid>
       </Box>
 
       <Footer />
