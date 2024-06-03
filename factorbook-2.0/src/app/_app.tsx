@@ -1,9 +1,21 @@
-// src/app/_app.tsx (or src/pages/_app.tsx if that's your setup)
-import "../styles/globals.css";
-import type { AppProps } from "next/app";
+// _app.tsx
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import theme from "@/theme/theme"; // Import your custom theme
+import "../styles/globals.css"; // Import your global styles
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+interface MyAppProps {
+  Component: React.ElementType;
+  pageProps: any;
+}
+
+function MyApp({ Component, pageProps }: MyAppProps) {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Component {...pageProps} />
+    </ThemeProvider>
+  );
 }
 
 export default MyApp;

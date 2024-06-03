@@ -164,7 +164,7 @@ const Topbar: React.FC = () => {
     <AppBar
       position="static"
       className={styles.topbar}
-      sx={{ backgroundColor: "transparent", boxShadow: "none" }}
+      sx={{ backgroundColor: "transparent", boxShadow: "none", width: "100%" }}
     >
       <Toolbar disableGutters className={styles.toolbar}>
         <Grid container alignItems="center">

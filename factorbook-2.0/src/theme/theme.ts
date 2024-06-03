@@ -1,16 +1,10 @@
 'use client';
-import { Roboto } from 'next/font/google';
 import { createTheme } from '@mui/material/styles';
 
-const roboto = Roboto({
-  weight: ['300', '400', '500', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-});
-
+// Define your custom theme with "Helvetica Neue" as the font family
 const theme = createTheme({
   typography: {
-    fontFamily: roboto.style.fontFamily,
+    fontFamily: 'Helvetica Neue, Arial, sans-serif', // Ensure fallback fonts
   },
 });
 

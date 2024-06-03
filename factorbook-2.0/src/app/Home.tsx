@@ -14,6 +14,7 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { useRouter } from "next/navigation";
 import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
@@ -166,15 +167,24 @@ const HomePage: React.FC = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const isMediumScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const router = useRouter();
 
   const [imageSrc, setImageSrc] = React.useState<string>("/Face.png");
+  const [selectedValue, setSelectedValue] = React.useState<string>("");
 
   const handleSelectChange = (event: SelectChangeEvent<unknown>) => {
-    const selectedValue = event.target.value as string;
-    if (selectedValue === "mouse") {
+    const value = event.target.value as string;
+    setSelectedValue(value);
+    if (value === "mouse") {
       setImageSrc("/Mouse.png");
     } else {
       setImageSrc("/Face.png");
+    }
+  };
+
+  const handleGoClick = () => {
+    if (selectedValue === "human") {
+      router.push("/HumanTranscriptionFactors");
     }
   };
 
@@ -253,7 +263,6 @@ const HomePage: React.FC = () => {
               >
                 book
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
                   width="311"
                   height="60"
                   viewBox="0 0 400 61"
@@ -353,7 +362,12 @@ const HomePage: React.FC = () => {
           imageSrc={imageSrc}
           imageAlt="Transcription Factors"
           imagePosition="left"
-          selectComponent={<SelectComponent onChange={handleSelectChange} />}
+          selectComponent={
+            <SelectComponent
+              onChange={handleSelectChange}
+              onClick={handleGoClick}
+            />
+          }
           gap="60px" // Increased gap
         />
       </Box>

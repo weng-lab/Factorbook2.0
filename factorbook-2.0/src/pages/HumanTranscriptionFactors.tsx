@@ -30,6 +30,7 @@ const HumanTranscriptionFactors: React.FC = () => {
           alignItems: "center",
           overflow: "hidden",
           paddingTop: "40px",
+          boxSizing: "border-box",
         }}
       >
         <Box
@@ -44,6 +45,7 @@ const HumanTranscriptionFactors: React.FC = () => {
             flexShrink: 0,
             padding: "0 24px",
             gap: "24px",
+            boxSizing: "border-box",
           }}
         >
           <Grid2
@@ -53,6 +55,8 @@ const HumanTranscriptionFactors: React.FC = () => {
               width: "100%",
               alignItems: "center",
               flexShrink: 0,
+              boxSizing: "border-box",
+              margin: 0,
             }}
           >
             <Grid2
@@ -61,6 +65,7 @@ const HumanTranscriptionFactors: React.FC = () => {
               sx={{
                 textAlign: isSmallScreen ? "center" : "left",
                 padding: isSmallScreen ? "0 10px" : "0",
+                boxSizing: "border-box",
               }}
             >
               <Typography
@@ -125,6 +130,7 @@ const HumanTranscriptionFactors: React.FC = () => {
                 alignItems: "center",
                 flexShrink: 0,
                 padding: isSmallScreen ? "20px 0" : "0",
+                boxSizing: "border-box",
               }}
             >
               <img
@@ -149,6 +155,7 @@ const HumanTranscriptionFactors: React.FC = () => {
           maxWidth: "1440px",
           margin: "0 auto",
           padding: "0 24px",
+          boxSizing: "border-box",
         }}
       >
         <Tabs
