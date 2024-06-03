@@ -10,16 +10,11 @@ module.exports = {
     plugins: [
       'react',
       '@typescript-eslint',
-      'babel'
     ],
     rules: {
-      // our custom rules
     },
     parserOptions: {
       requireConfigFile: false,
-      babelOptions: {
-        presets: ['next/babel'],
-      },
     },
   };
   
