@@ -59,8 +59,29 @@ const HomePage: React.FC = () => {
           color: "white",
           fontFamily: "'Helvetica Neue'",
           overflow: "hidden", // Ensure no overflow
+          position: "relative",
         }}
       >
+        {isSmallScreen && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              zIndex: 0,
+              opacity: 0.5,
+            }}
+          >
+            <Image
+              src="/Factorbook.png"
+              alt="Background Illustration"
+              layout="fill"
+              objectFit="cover"
+            />
+          </Box>
+        )}
         <Box
           sx={{
             flex: 1,
@@ -70,6 +91,8 @@ const HomePage: React.FC = () => {
             width: isSmallScreen ? "100%" : isMediumScreen ? "60%" : "509px",
             alignItems: "flex-start",
             padding: isSmallScreen ? "0 10px" : "0",
+            zIndex: isSmallScreen ? 1 : "auto",
+            marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
           }}
         >
           <Typography
@@ -82,6 +105,7 @@ const HomePage: React.FC = () => {
               fontFeatureSettings: "'clig' off, 'liga' off",
               lineHeight: "24px",
               letterSpacing: "0.15px",
+              marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
             }}
           >
             Welcome to
@@ -90,6 +114,7 @@ const HomePage: React.FC = () => {
             sx={{
               position: "relative",
               lineHeight: isSmallScreen ? "30px" : "42.465px",
+              marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
             }}
           >
             <Typography
@@ -113,6 +138,7 @@ const HomePage: React.FC = () => {
                   display: "block",
                   paddingLeft: isSmallScreen ? "2rem" : "5rem",
                   position: "relative",
+                  marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
                 }}
               >
                 book
@@ -123,8 +149,8 @@ const HomePage: React.FC = () => {
                   fill="none"
                   style={{
                     position: "absolute",
-                    left: "-40px",
-                    top: "45px",
+                    left: isSmallScreen ? "-30px" : "-15px", // Adjust position for mobile view
+                    top: isSmallScreen ? "25px" : "40px", // Decrease the gap between factorbook and curve line
                     bottom: "-20px",
                   }}
                 >
@@ -149,6 +175,7 @@ const HomePage: React.FC = () => {
               letterSpacing: "0.15px",
               maxWidth: "600px",
               marginTop: "40px",
+              marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
             }}
           >
             Factorbook is a resource for human and mouse transcription factors,
@@ -166,6 +193,7 @@ const HomePage: React.FC = () => {
               alignSelf: "stretch",
               marginTop: "32px",
               width: isSmallScreen ? "100%" : "670px",
+              marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
             }}
           >
             <Searchbar
@@ -216,7 +244,7 @@ const HomePage: React.FC = () => {
             sx={{
               display: "flex",
               justifyContent: "center",
-              order: isSmallScreen ? 0 : 1, // Image on top for small screens
+              order: isSmallScreen ? 0 : 1,
             }}
           >
             <Image
@@ -241,7 +269,7 @@ const HomePage: React.FC = () => {
               justifyContent: "center",
               alignItems: isSmallScreen ? "center" : "flex-start",
               gap: "16px",
-              order: isSmallScreen ? 1 : 0, // Content below image for small screens
+              order: isSmallScreen ? 1 : 0,
             }}
           >
             <Typography
@@ -304,7 +332,7 @@ const HomePage: React.FC = () => {
             sx={{
               display: "flex",
               justifyContent: "center",
-              order: 0, // Image on right for small screens
+              order: isSmallScreen ? 1 : 0,
             }}
           >
             <Image
@@ -329,7 +357,7 @@ const HomePage: React.FC = () => {
               justifyContent: "center",
               alignItems: isSmallScreen ? "center" : "flex-start",
               gap: "16px",
-              order: isSmallScreen ? 1 : 0, // Content below image for small screens
+              order: isSmallScreen ? 0 : 1,
             }}
           >
             <Typography
@@ -420,7 +448,7 @@ const HomePage: React.FC = () => {
             sx={{
               display: "flex",
               justifyContent: "center",
-              order: isSmallScreen ? 0 : 1, // Image on top for small screens
+              order: isSmallScreen ? 1 : 0,
             }}
           >
             <Image
@@ -445,7 +473,7 @@ const HomePage: React.FC = () => {
               justifyContent: "center",
               alignItems: isSmallScreen ? "center" : "flex-start",
               gap: "16px",
-              order: isSmallScreen ? 1 : 0, // Content below image for small screens
+              order: isSmallScreen ? 0 : 1,
             }}
           >
             <Typography
