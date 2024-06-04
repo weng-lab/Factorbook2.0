@@ -17,7 +17,7 @@ import Collapse from "@mui/material/Collapse";
 import Divider from "@mui/material/Divider";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import Grid from "@mui/material/Grid"; // Grid version 2
+import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import styles from "./Topbar.module.css";
@@ -28,8 +28,14 @@ const navItems = [
     title: "Portals",
     icon: <ExpandMore sx={{ color: "#8169BF" }} />,
     subItems: [
-      { title: "Human Transcription Factors", href: "#" },
-      { title: "Mouse Transcription Factors", href: "#" },
+      {
+        title: "Human Transcription Factors",
+        href: "HumanTranscriptionFactors",
+      },
+      {
+        title: "Mouse Transcription Factors",
+        href: "MouseTranscriptionFactors",
+      },
       { title: "Motif Site Catalog", href: "#" },
       { title: "Annotate Variants & Trait Heritability", href: "#" },
     ],
