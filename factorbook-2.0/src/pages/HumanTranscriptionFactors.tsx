@@ -2,11 +2,12 @@
 
 import * as React from "react";
 import { Box, Typography, useMediaQuery, Tabs, Tab } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { useTheme, ThemeProvider } from "@mui/material/styles";
 import Grid2 from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Searchbar from "@/components/Searchbar";
 import Topbar from "@/components/Topbar";
 import Footer from "@/components/Footer";
+import theme from "@/theme/theme";
 
 const HumanTranscriptionFactors: React.FC = () => {
   const theme = useTheme();
@@ -18,18 +19,19 @@ const HumanTranscriptionFactors: React.FC = () => {
   };
 
   return (
-    <>
+    <ThemeProvider theme={theme}>
       <Topbar />
       <Box
         sx={{
           backgroundColor: "#2A2A2D",
-          width: "100vw",
+          width: "100%",
           minHeight: "700px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           overflow: "hidden",
           paddingTop: "40px",
+          margin: "0", // Remove any default margin
           boxSizing: "border-box",
         }}
       >
@@ -46,6 +48,7 @@ const HumanTranscriptionFactors: React.FC = () => {
             padding: "0 24px",
             gap: "24px",
             boxSizing: "border-box",
+            margin: "0", // Ensure no extra margins
           }}
         >
           <Grid2
@@ -56,7 +59,7 @@ const HumanTranscriptionFactors: React.FC = () => {
               alignItems: "center",
               flexShrink: 0,
               boxSizing: "border-box",
-              margin: 0,
+              margin: 0, // Ensure no extra margins
             }}
           >
             <Grid2
@@ -73,7 +76,7 @@ const HumanTranscriptionFactors: React.FC = () => {
                 sx={{
                   color: "var(--common-white-main, #FFF)",
                   fontFeatureSettings: "'clig' off, 'liga' off",
-                  fontFamily: "Helvetica Neue",
+                  fontFamily: "Helvetica Neue, Arial, sans-serif",
                   fontSize: "48px",
                   fontStyle: "normal",
                   fontWeight: 400,
@@ -89,7 +92,7 @@ const HumanTranscriptionFactors: React.FC = () => {
                 sx={{
                   color: "var(--common-white-main, #FFF)",
                   fontFeatureSettings: "'clig' off, 'liga' off",
-                  fontFamily: "Helvetica Neue",
+                  fontFamily: "Helvetica Neue, Arial, sans-serif",
                   fontSize: "16px",
                   fontStyle: "normal",
                   fontWeight: 400,
@@ -178,7 +181,7 @@ const HumanTranscriptionFactors: React.FC = () => {
               sx={{
                 color: "var(--common-white-main, #FFF)",
                 fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Helvetica Neue",
+                fontFamily: "Helvetica Neue, Arial, sans-serif",
                 fontSize: "16px",
                 fontStyle: "normal",
                 fontWeight: 400,
@@ -195,7 +198,7 @@ const HumanTranscriptionFactors: React.FC = () => {
               sx={{
                 color: "var(--common-white-main, #FFF)",
                 fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Helvetica Neue",
+                fontFamily: "Helvetica Neue, Arial, sans-serif",
                 fontSize: "16px",
                 fontStyle: "normal",
                 fontWeight: 400,
@@ -211,7 +214,7 @@ const HumanTranscriptionFactors: React.FC = () => {
       </Box>
 
       <Footer />
-    </>
+    </ThemeProvider>
   );
 };
 

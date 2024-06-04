@@ -15,7 +15,10 @@ const LinkSection: React.FC<LinkSectionProps> = ({ title, links }) => (
       variant="h6"
       color="white"
       gutterBottom
-      sx={{ pointerEvents: "none" }}
+      sx={{
+        pointerEvents: "none",
+        fontFamily: "Helvetica Neue, Arial, sans-serif",
+      }}
     >
       {title}
     </Typography>
@@ -28,6 +31,7 @@ const LinkSection: React.FC<LinkSectionProps> = ({ title, links }) => (
           display="block"
           mt={1}
           key={link.text}
+          sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif" }}
         >
           {link.text}
         </Link>
@@ -57,7 +61,7 @@ const Footer: React.FC = () => (
           gutterBottom
           sx={{
             color: "#FFF",
-            fontFamily: "Helvetica Neue",
+            fontFamily: "Helvetica Neue, Arial, sans-serif",
             fontSize: "45px",
             fontStyle: "normal",
             fontWeight: 500,
@@ -65,7 +69,7 @@ const Footer: React.FC = () => (
             letterSpacing: "-1.8px",
             display: "flex",
             flexDirection: "column",
-            pointerEvents: "none", // Ensure the mouse pointer does not change on hover
+            pointerEvents: "none",
           }}
         >
           factor
@@ -84,7 +88,7 @@ const Footer: React.FC = () => (
             lineHeight: "150%", // 24px
             letterSpacing: "0.15px",
             fontFeatureSettings: "'clig' off, 'liga' off",
-            pointerEvents: "none", // Ensure the mouse pointer does not change on hover
+            pointerEvents: "none",
           }}
         >
           A comprehensive online resource dedicated to the study of
@@ -129,12 +133,29 @@ const Footer: React.FC = () => (
       flexWrap="wrap"
       sx={{ color: "white", fontSize: 12, width: "100%", px: 3 }}
     >
-      <Typography sx={{ pointerEvents: "none" }}>©Lorem Ipsum</Typography>
+      <Typography
+        sx={{
+          pointerEvents: "none",
+          fontFamily: "Helvetica Neue, Arial, sans-serif",
+        }}
+      >
+        ©Lorem Ipsum
+      </Typography>
       <Box component="nav" display="flex" gap={2}>
-        <Link href="#" color="white" underline="none">
+        <Link
+          href="#"
+          color="white"
+          underline="none"
+          sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif" }}
+        >
           Privacy & Policy
         </Link>
-        <Link href="#" color="white" underline="none">
+        <Link
+          href="#"
+          color="white"
+          underline="none"
+          sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif" }}
+        >
           Terms & Conditions
         </Link>
       </Box>
