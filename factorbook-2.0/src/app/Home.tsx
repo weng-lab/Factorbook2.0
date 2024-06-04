@@ -40,6 +40,9 @@ const HomePage: React.FC = () => {
     if (selectedValue === "human") {
       router.push("/HumanTranscriptionFactors");
     }
+    if (selectedValue === "mouse") {
+      router.push("/MouseTranscriptionFactors");
+    }
   };
 
   return (
