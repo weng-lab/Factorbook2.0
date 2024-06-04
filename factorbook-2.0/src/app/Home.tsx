@@ -406,7 +406,7 @@ const HomePage: React.FC = () => {
                 },
               }}
             >
-              Label
+              Explore Motifs
             </Button>
             <Button
               variant="contained"
@@ -525,7 +525,7 @@ const HomePage: React.FC = () => {
                 },
               }}
             >
-              Label
+              Explore Annotations
             </Button>
             <Button
               variant="contained"
