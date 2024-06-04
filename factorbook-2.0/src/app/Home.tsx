@@ -40,9 +40,6 @@ const HomePage: React.FC = () => {
     if (selectedValue === "human") {
       router.push("/HumanTranscriptionFactors");
     }
-    if (selectedValue === "mouse") {
-      router.push("/MouseTranscriptionFactors");
-    }
   };
 
   return (
@@ -247,7 +244,7 @@ const HomePage: React.FC = () => {
             sx={{
               display: "flex",
               justifyContent: "center",
-              order: isSmallScreen ? 0 : 1,
+              order: isSmallScreen ? 1 : 0,
             }}
           >
             <Image
@@ -452,7 +449,7 @@ const HomePage: React.FC = () => {
             sx={{
               display: "flex",
               justifyContent: "center",
-              order: isSmallScreen ? 0 : 1,
+              order: isSmallScreen ? 1 : 0,
             }}
           >
             <Image
@@ -477,7 +474,7 @@ const HomePage: React.FC = () => {
               justifyContent: "center",
               alignItems: isSmallScreen ? "center" : "flex-start",
               gap: "16px",
-              order: isSmallScreen ? 1 : 0,
+              order: isSmallScreen ? 0 : 1,
             }}
           >
             <Typography
