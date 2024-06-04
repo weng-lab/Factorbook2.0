@@ -332,7 +332,7 @@ const HomePage: React.FC = () => {
             sx={{
               display: "flex",
               justifyContent: "center",
-              order: isSmallScreen ? 1 : 0,
+              order: isSmallScreen ? 0 : 1,
             }}
           >
             <Image
@@ -357,7 +357,7 @@ const HomePage: React.FC = () => {
               justifyContent: "center",
               alignItems: isSmallScreen ? "center" : "flex-start",
               gap: "16px",
-              order: isSmallScreen ? 0 : 1,
+              order: isSmallScreen ? 1 : 0,
             }}
           >
             <Typography
@@ -395,6 +395,7 @@ const HomePage: React.FC = () => {
               sx={{
                 display: isSmallScreen ? "block" : "none",
                 padding: "8px 16px",
+                width: isSmallScreen ? "95%" : "auto", // Adjust width for mobile view
                 backgroundColor: "#8169BF",
                 borderRadius: "24px",
                 textTransform: "none",
@@ -448,7 +449,7 @@ const HomePage: React.FC = () => {
             sx={{
               display: "flex",
               justifyContent: "center",
-              order: isSmallScreen ? 1 : 0,
+              order: isSmallScreen ? 0 : 1,
             }}
           >
             <Image
@@ -473,7 +474,7 @@ const HomePage: React.FC = () => {
               justifyContent: "center",
               alignItems: isSmallScreen ? "center" : "flex-start",
               gap: "16px",
-              order: isSmallScreen ? 0 : 1,
+              order: isSmallScreen ? 1 : 0,
             }}
           >
             <Typography
@@ -513,6 +514,7 @@ const HomePage: React.FC = () => {
               sx={{
                 display: isSmallScreen ? "block" : "none",
                 padding: "8px 16px",
+                width: isSmallScreen ? "95%" : "auto", // Adjust width for mobile view
                 backgroundColor: "#8169BF",
                 borderRadius: "24px",
                 textTransform: "none",
