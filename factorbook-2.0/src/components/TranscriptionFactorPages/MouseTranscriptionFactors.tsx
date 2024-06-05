@@ -178,7 +178,6 @@ const MouseTranscriptionFactors = () => {
               sx={{
                 color: "var(--common-white-main, #FFF)",
                 fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Helvetica Neue",
                 fontSize: "16px",
                 fontStyle: "normal",
                 fontWeight: 400,
@@ -195,7 +194,6 @@ const MouseTranscriptionFactors = () => {
               sx={{
                 color: "var(--common-white-main, #FFF)",
                 fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Helvetica Neue",
                 fontSize: "16px",
                 fontStyle: "normal",
                 fontWeight: 400,

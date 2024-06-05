@@ -1,8 +1,7 @@
-// _app.tsx
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import theme from "@/theme/theme"; // Import your custom theme
-import "../styles/globals.css"; // Import your global styles
+import theme from "@/theme/theme";
+import "../styles/globals.css";
 
 interface MyAppProps {
   Component: React.ElementType;

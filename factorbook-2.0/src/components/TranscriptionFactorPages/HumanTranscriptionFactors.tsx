@@ -137,7 +137,7 @@ const HumanTranscriptionFactors: React.FC = () => {
               }}
             >
               <img
-                src="/Face.png"
+                src="../../public/Face.png"
                 alt="Illustration"
                 style={{
                   width: "100%",
