@@ -1,23 +1,23 @@
-"use client";
-
 import { ReactNode } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import theme from "../theme/theme";
-import ClientOnly from "./ClientOnly";
+import theme from "@/theme/theme";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 
-type Props = {
+interface ClientThemeProviderProps {
   children: ReactNode;
-};
+}
 
-const ClientThemeProvider = ({ children }: Props) => {
+const ClientThemeProvider: React.FC<ClientThemeProviderProps> = ({
+  children,
+}) => {
   return (
-    <ClientOnly>
+    <AppRouterCacheProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         {children}
       </ThemeProvider>
-    </ClientOnly>
+    </AppRouterCacheProvider>
   );
 };
 

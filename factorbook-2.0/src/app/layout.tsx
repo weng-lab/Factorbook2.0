@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import dynamic from "next/dynamic";
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ReactNode } from "react";
+import Topbar from "@/components/Topbar";
+import Footer from "@/components/Footer";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Factorbook 2.0",
@@ -21,10 +25,12 @@ type LayoutProps = {
 export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en">
-      <body>
-        <AppRouterCacheProvider>
-          <ClientThemeProvider>{children}</ClientThemeProvider>
-        </AppRouterCacheProvider>
+      <body className={inter.className}>
+        <ClientThemeProvider>
+          <Topbar />
+          {children}
+          <Footer />
+        </ClientThemeProvider>
       </body>
     </html>
   );

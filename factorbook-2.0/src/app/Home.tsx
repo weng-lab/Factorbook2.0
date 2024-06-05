@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation";
 import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
-import Footer from "@/components/Footer";
 
 const HomePage: React.FC = () => {
   const theme = useTheme();
@@ -38,10 +37,10 @@ const HomePage: React.FC = () => {
 
   const handleGoClick = () => {
     if (selectedValue === "human") {
-      router.push("/HumanTranscriptionFactors");
+      router.push("./HumanTranscriptionFactor");
     }
     if (selectedValue === "mouse") {
-      router.push("/MouseTranscriptionFactors");
+      router.push("/MouseTranscriptionFactor");
     }
   };
 
@@ -60,7 +59,6 @@ const HomePage: React.FC = () => {
           margin: "0 auto",
           padding: isSmallScreen ? "20px 0" : "71px 144px",
           color: "white",
-          fontFamily: "'Helvetica Neue'",
           overflow: "hidden", // Ensure no overflow
           position: "relative",
         }}
@@ -129,7 +127,6 @@ const HomePage: React.FC = () => {
                 marginBottom: "0px",
                 position: "relative",
                 color: "#FFF",
-                fontFamily: "Helvetica Neue",
                 fontStyle: "normal",
                 lineHeight: "74.5%", // 42.465px
               }}
@@ -280,7 +277,6 @@ const HomePage: React.FC = () => {
               sx={{
                 color: "rgba(0, 0, 0, 0.87)",
                 fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Helvetica Neue",
                 fontSize: "34px",
                 fontStyle: "normal",
                 fontWeight: 400,
@@ -368,7 +364,6 @@ const HomePage: React.FC = () => {
               sx={{
                 color: "rgba(0, 0, 0, 0.87)",
                 fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Helvetica Neue",
                 fontSize: "34px",
                 fontStyle: "normal",
                 fontWeight: 400,
@@ -485,7 +480,6 @@ const HomePage: React.FC = () => {
               sx={{
                 color: "rgba(0, 0, 0, 0.87)",
                 fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Helvetica Neue",
                 fontSize: "34px",
                 fontStyle: "normal",
                 fontWeight: 400,
@@ -550,8 +544,6 @@ const HomePage: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-
-      <Footer />
     </>
   );
 };
