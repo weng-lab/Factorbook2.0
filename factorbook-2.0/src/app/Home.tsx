@@ -5,8 +5,6 @@ import Image from "next/image";
 import {
   Box,
   Typography,
-  Button,
-  Grid,
   useMediaQuery,
   SelectChangeEvent,
 } from "@mui/material";
@@ -15,6 +13,7 @@ import { useRouter } from "next/navigation";
 import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
+import PortalPanel from "@/components/PortalPanel";
 
 const HomePage: React.FC = () => {
   const theme = useTheme();
@@ -57,7 +56,7 @@ const HomePage: React.FC = () => {
           width: "100vw",
           height: "auto",
           margin: "0 auto",
-          padding: isSmallScreen ? "20px 0" : "71px 144px",
+          p: isSmallScreen ? "20px 0" : "71px 144px",
           color: "white",
           overflow: "hidden", // Ensure no overflow
           position: "relative",
@@ -91,9 +90,9 @@ const HomePage: React.FC = () => {
             flexDirection: "column",
             width: isSmallScreen ? "100%" : isMediumScreen ? "60%" : "509px",
             alignItems: "flex-start",
-            padding: isSmallScreen ? "0 10px" : "0",
+            p: isSmallScreen ? "0 10px" : "0",
             zIndex: isSmallScreen ? 1 : "auto",
-            marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
+            ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
           }}
         >
           <Typography
@@ -101,12 +100,12 @@ const HomePage: React.FC = () => {
             sx={{
               fontSize: isSmallScreen ? "14px" : "16px",
               fontWeight: "normal",
-              marginBottom: "4px",
+              mb: 1,
               color: "#FFF",
               fontFeatureSettings: "'clig' off, 'liga' off",
               lineHeight: "24px",
               letterSpacing: "0.15px",
-              marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
+              ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
             }}
           >
             Welcome to
@@ -115,7 +114,7 @@ const HomePage: React.FC = () => {
             sx={{
               position: "relative",
               lineHeight: isSmallScreen ? "30px" : "42.465px",
-              marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
+              ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
             }}
           >
             <Typography
@@ -124,7 +123,7 @@ const HomePage: React.FC = () => {
                 fontSize: isSmallScreen ? "40px" : "57px",
                 fontWeight: 500,
                 letterSpacing: "-2.28px",
-                marginBottom: "0px",
+                mb: 0,
                 position: "relative",
                 color: "#FFF",
                 fontStyle: "normal",
@@ -136,9 +135,9 @@ const HomePage: React.FC = () => {
                 component="span"
                 sx={{
                   display: "block",
-                  paddingLeft: isSmallScreen ? "2rem" : "5rem",
+                  pl: isSmallScreen ? 2 : 5,
                   position: "relative",
-                  marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
+                  ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
                 }}
               >
                 book
@@ -174,8 +173,8 @@ const HomePage: React.FC = () => {
               lineHeight: "24px",
               letterSpacing: "0.15px",
               maxWidth: "600px",
-              marginTop: "40px",
-              marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
+              mt: 5,
+              ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
             }}
           >
             Factorbook is a resource for human and mouse transcription factors,
@@ -188,12 +187,12 @@ const HomePage: React.FC = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "flex-start",
-              padding: "9px 12px 8px 0",
-              gap: "3px",
+              p: 0,
+              gap: 1,
               alignSelf: "stretch",
-              marginTop: "32px",
+              mt: 4,
               width: isSmallScreen ? "100%" : "670px",
-              marginLeft: isSmallScreen ? "20px" : "0", // Add margin for mobile view
+              ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
             }}
           >
             <Searchbar
@@ -208,7 +207,7 @@ const HomePage: React.FC = () => {
               display: "flex",
               width: "550px",
               height: "507.537px",
-              padding: "7px 24px 6.537px 23px",
+              p: 3,
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -224,326 +223,37 @@ const HomePage: React.FC = () => {
       </Box>
       <Header />
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: "#FFFFFF",
-          width: "100vw",
-          height: "auto",
-          margin: "0 auto",
-          padding: "5% 10%",
-          overflow: "hidden", // Ensure no overflow
-        }}
-      >
-        <Grid container spacing={2} alignItems="center">
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              order: isSmallScreen ? 1 : 0,
-            }}
-          >
-            <Image
-              src={imageSrc}
-              alt="Transcription Factors"
-              width={544}
-              height={396}
-              style={{
-                maxWidth: "100%",
-                height: "auto",
-              }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            sx={{
-              textAlign: isSmallScreen ? "center" : "left",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: isSmallScreen ? "center" : "flex-start",
-              gap: "16px",
-              order: isSmallScreen ? 1 : 0,
-            }}
-          >
-            <Typography
-              variant="h4"
-              sx={{
-                color: "rgba(0, 0, 0, 0.87)",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontSize: "34px",
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "123.5%",
-                letterSpacing: "0.25px",
-                padding: "16px",
-              }}
-            >
-              Transcription Factors
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: "#333",
-                maxWidth: "539px",
-                padding: "8px 16px",
-              }}
-            >
-              Transcription factors (TFs) are pivotal proteins regulating
-              cellular functions by binding to specific DNA sequences. With
-              around 1800 unique TFs in the human genome, they control gene
-              transcription, crucial for processes like development and cell
-              cycle.
-            </Typography>
-            <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-              <SelectComponent
-                onChange={handleSelectChange}
-                onClick={handleGoClick}
-              />
-            </Box>
-          </Grid>
-        </Grid>
-      </Box>
+      <PortalPanel
+        title="Transcription Factors"
+        description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
+        imageSrc={imageSrc}
+        imageAlt="Transcription Factors"
+        selectComponent={
+          <SelectComponent
+            onChange={handleSelectChange}
+            onClick={handleGoClick}
+          />
+        }
+        reverse={false}
+      />
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: "#FFFFFF",
-          width: "100vw",
-          height: "auto",
-          margin: "0 auto",
-          padding: "5% 10%",
-          overflow: "hidden", // Ensure no overflow
-        }}
-      >
-        <Grid container spacing={2} alignItems="center">
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              order: isSmallScreen ? 0 : 1,
-            }}
-          >
-            <Image
-              src="/IllustrationsNew.png"
-              alt="Motif Site Catalog"
-              width={544}
-              height={396}
-              style={{
-                maxWidth: "100%",
-                height: "auto",
-              }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            sx={{
-              textAlign: isSmallScreen ? "center" : "left",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: isSmallScreen ? "center" : "flex-start",
-              gap: "16px",
-              order: isSmallScreen ? 1 : 0,
-            }}
-          >
-            <Typography
-              variant="h4"
-              sx={{
-                color: "rgba(0, 0, 0, 0.87)",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontSize: "34px",
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "123.5%",
-                letterSpacing: "0.25px",
-                padding: "16px",
-              }}
-            >
-              Motif Site Catalog
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: "#333",
-                maxWidth: "539px",
-                padding: "8px 16px",
-              }}
-            >
-              Transcription factors (TFs) are pivotal proteins regulating
-              cellular functions by binding to specific DNA sequences. With
-              around 1800 unique TFs in the human genome, they control gene
-              transcription, crucial for processes like development and cell
-              cycle.
-            </Typography>
-            <Button
-              variant="contained"
-              sx={{
-                display: isSmallScreen ? "block" : "none",
-                padding: "8px 16px",
-                width: isSmallScreen ? "95%" : "auto", // Adjust width for mobile view
-                backgroundColor: "#8169BF",
-                borderRadius: "24px",
-                textTransform: "none",
-                fontWeight: "medium",
-                color: "#FFFFFF",
-                "&:focus, &:hover, &:active": {
-                  backgroundColor: "#8169BF",
-                },
-              }}
-            >
-              Explore Motifs
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                display: isSmallScreen ? "none" : "block",
-                padding: "8px 16px",
-                backgroundColor: "#8169BF",
-                borderRadius: "24px",
-                textTransform: "none",
-                fontWeight: "medium",
-                color: "#FFFFFF",
-                "&:focus, &:hover, &:active": {
-                  backgroundColor: "#8169BF",
-                },
-              }}
-            >
-              Explore Motifs
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
+      <PortalPanel
+        title="Motif Site Catalog"
+        description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
+        imageSrc="/IllustrationsNew.png"
+        imageAlt="Motif Site Catalog"
+        buttonText="Explore Motifs"
+        reverse={true}
+      />
 
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          backgroundColor: "#FFFFFF",
-          width: "100vw",
-          height: "auto",
-          margin: "0 auto",
-          padding: "5% 10%",
-          overflow: "hidden", // Ensure no overflow
-        }}
-      >
-        <Grid container spacing={2} alignItems="center">
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              order: isSmallScreen ? 1 : 0,
-            }}
-          >
-            <Image
-              src="/Human.png"
-              alt="Annotate Variants"
-              width={544}
-              height={396}
-              style={{
-                maxWidth: "100%",
-                height: "auto",
-              }}
-            />
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            sm={6}
-            sx={{
-              textAlign: isSmallScreen ? "center" : "left",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: isSmallScreen ? "center" : "flex-start",
-              gap: "16px",
-              order: isSmallScreen ? 1 : 0,
-            }}
-          >
-            <Typography
-              variant="h4"
-              sx={{
-                color: "rgba(0, 0, 0, 0.87)",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontSize: "34px",
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "123.5%",
-                letterSpacing: "0.25px",
-                padding: "16px",
-              }}
-            >
-              Annotate Variants
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                color: "#333",
-                maxWidth: "539px",
-                padding: "8px 16px",
-              }}
-            >
-              Genetic variants in regulatory elements of the human genome play a
-              critical role in influencing traits and disease susceptibility by
-              modifying transcription factor (TF) binding and gene expression.
-              Factorbook offers a comprehensive resource of TF binding motifs
-              and sites, enabling researchers to predict the impact of genetic
-              variants on TF binding and gene regulation, providing valuable
-              insights into the functional consequences of these variants.
-            </Typography>
-            <Button
-              variant="contained"
-              sx={{
-                display: isSmallScreen ? "block" : "none",
-                padding: "8px 16px",
-                width: isSmallScreen ? "95%" : "auto", // Adjust width for mobile view
-                backgroundColor: "#8169BF",
-                borderRadius: "24px",
-                textTransform: "none",
-                fontWeight: "medium",
-                color: "#FFFFFF",
-                "&:focus, &:hover, &:active": {
-                  backgroundColor: "#8169BF",
-                },
-              }}
-            >
-              Explore Annotations
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                display: isSmallScreen ? "none" : "block",
-                padding: "8px 16px",
-                backgroundColor: "#8169BF",
-                borderRadius: "24px",
-                textTransform: "none",
-                fontWeight: "medium",
-                color: "#FFFFFF",
-                "&:focus, &:hover, &:active": {
-                  backgroundColor: "#8169BF",
-                },
-              }}
-            >
-              Explore Annotations
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
+      <PortalPanel
+        title="Annotate Variants"
+        description="Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants."
+        imageSrc="/Human.png"
+        imageAlt="Annotate Variants"
+        buttonText="Explore Annotations"
+        reverse={false}
+      />
     </>
   );
 };

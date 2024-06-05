@@ -17,7 +17,6 @@ const LinkSection: React.FC<LinkSectionProps> = ({ title, links }) => (
       gutterBottom
       sx={{
         pointerEvents: "none",
-        fontFamily: "Helvetica Neue, Arial, sans-serif",
       }}
     >
       {title}
@@ -31,7 +30,6 @@ const LinkSection: React.FC<LinkSectionProps> = ({ title, links }) => (
           display="block"
           mt={1}
           key={link.text}
-          sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif" }}
         >
           {link.text}
         </Link>
@@ -61,7 +59,6 @@ const Footer: React.FC = () => (
           gutterBottom
           sx={{
             color: "#FFF",
-            fontFamily: "Helvetica Neue, Arial, sans-serif",
             fontSize: "45px",
             fontStyle: "normal",
             fontWeight: 500,
@@ -81,9 +78,7 @@ const Footer: React.FC = () => (
           sx={{
             alignSelf: "stretch",
             color: "var(--primary-contrast, #FFF)",
-            fontFamily: "Helvetica Neue",
             fontSize: "16px",
-            fontStyle: "normal",
             fontWeight: 400,
             lineHeight: "150%", // 24px
             letterSpacing: "0.15px",
@@ -136,26 +131,13 @@ const Footer: React.FC = () => (
       <Typography
         sx={{
           pointerEvents: "none",
-          fontFamily: "Helvetica Neue, Arial, sans-serif",
         }}
-      >
-        ©Lorem Ipsum
-      </Typography>
+      ></Typography>
       <Box component="nav" display="flex" gap={2}>
-        <Link
-          href="#"
-          color="white"
-          underline="none"
-          sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif" }}
-        >
+        <Link href="#" color="white" underline="none">
           Privacy & Policy
         </Link>
-        <Link
-          href="#"
-          color="white"
-          underline="none"
-          sx={{ fontFamily: "Helvetica Neue, Arial, sans-serif" }}
-        >
+        <Link href="#" color="white" underline="none">
           Terms & Conditions
         </Link>
       </Box>
