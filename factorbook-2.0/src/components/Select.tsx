@@ -35,7 +35,6 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
         sx={{
           width: "100%",
           color: "rgba(0, 0, 0, 0.87)",
-          fontFamily: "Helvetica Neue",
           fontSize: "16px",
           fontStyle: "normal",
           fontWeight: 400,

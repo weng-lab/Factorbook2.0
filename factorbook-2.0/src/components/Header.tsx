@@ -24,7 +24,6 @@ const Header: React.FC = () => {
       <Typography
         variant="h4"
         sx={{
-          fontFamily: "Helvetica Neue",
           fontSize: "34px",
           fontStyle: "normal",
           fontWeight: 400,

@@ -82,7 +82,6 @@ const Topbar: React.FC = () => {
             alignItems: "flex-start",
             textDecoration: "none",
             color: "var(--grey-700, #1F2021)",
-            fontFamily: "Helvetica Neue",
             fontSize: "32px",
             fontStyle: "normal",
             fontWeight: 500,
