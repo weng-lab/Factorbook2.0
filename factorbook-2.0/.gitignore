@@ -15,3 +15,7 @@ yarn.lock
 # Next.js build output
 .next/
 out/
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
