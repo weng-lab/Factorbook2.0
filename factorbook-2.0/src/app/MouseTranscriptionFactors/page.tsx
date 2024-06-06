@@ -169,36 +169,12 @@ const MouseTranscriptionFactors = () => {
         </Tabs>
         <Box>
           {tabValue === 0 && (
-            <Typography
-              sx={{
-                color: "var(--common-white-main, #FFF)",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontSize: "16px",
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "150%", // 24px
-                letterSpacing: "0.15px",
-                textAlign: isSmallScreen ? "center" : "left",
-              }}
-            >
+            <Typography>
               Content for Browse all Transcription Factors
             </Typography>
           )}
           {tabValue === 1 && (
-            <Typography
-              sx={{
-                color: "var(--common-white-main, #FFF)",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontSize: "16px",
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "150%", // 24px
-                letterSpacing: "0.15px",
-                textAlign: isSmallScreen ? "center" : "left",
-              }}
-            >
-              Content for Browse all Cell Types
-            </Typography>
+            <Typography>Content for Browse all Cell Types</Typography>
           )}
         </Box>
       </Box>

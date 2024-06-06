@@ -32,11 +32,11 @@ const navItems = [
     subItems: [
       {
         title: "Human Transcription Factors",
-        href: "HumanTranscriptionFactors",
+        href: "./HumanTranscriptionFactors",
       },
       {
         title: "Mouse Transcription Factors",
-        href: "MouseTranscriptionFactors",
+        href: "./MouseTranscriptionFactors",
       },
       { title: "Motif Site Catalog", href: "#" },
       { title: "Annotate Variants & Trait Heritability", href: "#" },

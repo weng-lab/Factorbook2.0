@@ -36,10 +36,10 @@ const HomePage: React.FC = () => {
 
   const handleGoClick = () => {
     if (selectedValue === "human") {
-      router.push("./HumanTranscriptionFactor");
+      router.push("./HumanTranscriptionFactors");
     }
     if (selectedValue === "mouse") {
-      router.push("/MouseTranscriptionFactor");
+      router.push("/MouseTranscriptionFactors");
     }
   };
 
