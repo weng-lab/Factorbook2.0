@@ -5,11 +5,11 @@ import { Box, Typography, useMediaQuery, Tabs, Tab } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Grid2 from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Searchbar from "@/components/Searchbar";
-import theme from "@/theme/theme";
 
-const HumanTranscriptionFactors: React.FC = () => {
+const HumanTranscriptionFactors = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const [tabValue, setTabValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -28,7 +28,8 @@ const HumanTranscriptionFactors: React.FC = () => {
           alignItems: "center",
           overflow: "hidden",
           paddingTop: "40px",
-          margin: "0", // Remove any default margin
+          position: "relative",
+          margin: "0",
           boxSizing: "border-box",
         }}
       >
@@ -45,7 +46,9 @@ const HumanTranscriptionFactors: React.FC = () => {
             padding: "0 24px",
             gap: "24px",
             boxSizing: "border-box",
-            margin: "0", // Ensure no extra margins
+            margin: "0",
+            position: "relative",
+            zIndex: 1,
           }}
         >
           <Grid2
@@ -56,7 +59,7 @@ const HumanTranscriptionFactors: React.FC = () => {
               alignItems: "center",
               flexShrink: 0,
               boxSizing: "border-box",
-              margin: 0, // Ensure no extra margins
+              margin: 0,
             }}
           >
             <Grid2
@@ -66,6 +69,7 @@ const HumanTranscriptionFactors: React.FC = () => {
                 textAlign: isSmallScreen ? "center" : "left",
                 padding: isSmallScreen ? "0 10px" : "0",
                 boxSizing: "border-box",
+                order: isSmallScreen ? 2 : 1,
               }}
             >
               <Typography
@@ -76,7 +80,7 @@ const HumanTranscriptionFactors: React.FC = () => {
                   fontSize: "48px",
                   fontStyle: "normal",
                   fontWeight: 400,
-                  lineHeight: "116.7%", // 56.016px
+                  lineHeight: "116.7%",
                   marginBottom: "20px",
                   textAlign: isSmallScreen ? "center" : "left",
                 }}
@@ -91,7 +95,7 @@ const HumanTranscriptionFactors: React.FC = () => {
                   fontSize: "16px",
                   fontStyle: "normal",
                   fontWeight: 400,
-                  lineHeight: "150%", // 24px
+                  lineHeight: "150%",
                   letterSpacing: "0.15px",
                   maxWidth: "900px",
                   marginBottom: "20px",
@@ -123,12 +127,15 @@ const HumanTranscriptionFactors: React.FC = () => {
               xs={12}
               md={6}
               sx={{
-                display: "flex",
+                display: isSmallScreen ? "none" : "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 flexShrink: 0,
-                padding: isSmallScreen ? "20px 0" : "0",
+                padding: "0",
                 boxSizing: "border-box",
+                order: 2,
+                position: "relative",
+                zIndex: 1,
               }}
             >
               <img
@@ -136,7 +143,7 @@ const HumanTranscriptionFactors: React.FC = () => {
                 alt="Illustration"
                 style={{
                   width: "100%",
-                  maxWidth: "974.034px",
+                  maxWidth: isMediumScreen ? "80%" : "80%",
                   height: "auto",
                   flexShrink: 0,
                   objectFit: "contain",
@@ -145,6 +152,30 @@ const HumanTranscriptionFactors: React.FC = () => {
             </Grid2>
           </Grid2>
         </Box>
+        {isSmallScreen && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              zIndex: 0,
+              overflow: "hidden",
+            }}
+          >
+            <img
+              src="/Face.png"
+              alt="Illustration"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                opacity: 0.5,
+              }}
+            />
+          </Box>
+        )}
       </Box>
 
       <Box

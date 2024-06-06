@@ -9,6 +9,7 @@ import Searchbar from "@/components/Searchbar";
 const MouseTranscriptionFactors = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const [tabValue, setTabValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -20,13 +21,15 @@ const MouseTranscriptionFactors = () => {
       <Box
         sx={{
           backgroundColor: "#2A2A2D",
-          width: "100vw",
+          width: "100%",
           minHeight: "700px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           overflow: "hidden",
           paddingTop: "40px",
+          position: "relative",
+          margin: "0",
           boxSizing: "border-box",
         }}
       >
@@ -43,6 +46,9 @@ const MouseTranscriptionFactors = () => {
             padding: "0 24px",
             gap: "24px",
             boxSizing: "border-box",
+            margin: "0",
+            position: "relative",
+            zIndex: 1,
           }}
         >
           <Grid2
@@ -63,6 +69,7 @@ const MouseTranscriptionFactors = () => {
                 textAlign: isSmallScreen ? "center" : "left",
                 padding: isSmallScreen ? "0 10px" : "0",
                 boxSizing: "border-box",
+                order: isSmallScreen ? 2 : 1,
               }}
             >
               <Typography
@@ -73,7 +80,7 @@ const MouseTranscriptionFactors = () => {
                   fontSize: "48px",
                   fontStyle: "normal",
                   fontWeight: 400,
-                  lineHeight: "116.7%", // 56.016px
+                  lineHeight: "116.7%",
                   marginBottom: "20px",
                   textAlign: isSmallScreen ? "center" : "left",
                 }}
@@ -88,7 +95,7 @@ const MouseTranscriptionFactors = () => {
                   fontSize: "16px",
                   fontStyle: "normal",
                   fontWeight: 400,
-                  lineHeight: "150%", // 24px
+                  lineHeight: "150%",
                   letterSpacing: "0.15px",
                   maxWidth: "900px",
                   marginBottom: "20px",
@@ -120,12 +127,15 @@ const MouseTranscriptionFactors = () => {
               xs={12}
               md={6}
               sx={{
-                display: "flex",
+                display: isSmallScreen ? "none" : "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 flexShrink: 0,
-                padding: isSmallScreen ? "20px 0" : "0",
+                padding: "0",
                 boxSizing: "border-box",
+                order: 2,
+                position: "relative",
+                zIndex: 1,
               }}
             >
               <img
@@ -133,7 +143,7 @@ const MouseTranscriptionFactors = () => {
                 alt="Illustration"
                 style={{
                   width: "100%",
-                  maxWidth: "974.034px",
+                  maxWidth: isMediumScreen ? "80%" : "100%",
                   height: "auto",
                   flexShrink: 0,
                   objectFit: "contain",
@@ -142,6 +152,30 @@ const MouseTranscriptionFactors = () => {
             </Grid2>
           </Grid2>
         </Box>
+        {isSmallScreen && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              zIndex: 0,
+              overflow: "hidden",
+            }}
+          >
+            <img
+              src="/Mouse.png"
+              alt="Illustration"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                opacity: 0.5,
+              }}
+            />
+          </Box>
+        )}
       </Box>
 
       <Box
