@@ -13,7 +13,6 @@ import HomeIcon from "@mui/icons-material/Home";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import Divider from "@mui/material/Divider";
@@ -23,6 +22,7 @@ import Grid from "@mui/material/Grid";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 import styles from "./Topbar.module.css";
+import { ListItemButton } from "@mui/material";
 
 const navItems = [
   { title: "Home", href: "#", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
@@ -125,20 +125,20 @@ const Topbar: React.FC = () => {
           <React.Fragment key={item.title}>
             {item.subItems ? (
               <>
-                <ListItem button onClick={handlePortalsClick}>
+                <ListItemButton onClick={handlePortalsClick}>
                   <ListItemText primary={item.title} />
                   {portalsOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
+                </ListItemButton>
                 <Collapse in={portalsOpen} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
                     {item.subItems.map((subItem) => (
                       <React.Fragment key={subItem.title}>
-                        <ListItem button component="a" href={subItem.href}>
+                        <ListItemButton component="a" href={subItem.href}>
                           <ListItemText
                             primary={subItem.title}
                             sx={{ paddingLeft: "16px" }}
                           />
-                        </ListItem>
+                        </ListItemButton>
                         <Divider sx={{ margin: "0 16px" }} />
                       </React.Fragment>
                     ))}
@@ -146,7 +146,7 @@ const Topbar: React.FC = () => {
                 </Collapse>
               </>
             ) : (
-              <ListItem button component="a" href={item.href}>
+              <ListItemButton component="a" href={item.href}>
                 <ListItemText primary={item.title} />
                 {item.icon && (
                   <Box
@@ -159,7 +159,7 @@ const Topbar: React.FC = () => {
                     {item.icon}
                   </Box>
                 )}
-              </ListItem>
+              </ListItemButton>
             )}
             {index < navItems.length - 1 && <Divider />}
           </React.Fragment>
@@ -202,7 +202,6 @@ const Topbar: React.FC = () => {
                     alignItems: "flex-start",
                     textDecoration: "none",
                     color: "var(--grey-700, #1F2021)",
-                    fontFamily: "Helvetica Neue",
                     fontSize: "32px",
                     fontStyle: "normal",
                     fontWeight: 500,
@@ -244,11 +243,9 @@ const Topbar: React.FC = () => {
                     alignItems: "flex-start",
                     textDecoration: "none",
                     color: "var(--grey-700, #1F2021)",
-                    fontFamily: "Helvetica Neue",
                     fontSize: "32px",
                     fontStyle: "normal",
                     fontWeight: 500,
-                    lineHeight: "0.745", // 74.5%
                     letterSpacing: "-1.28px",
                   }}
                 >
