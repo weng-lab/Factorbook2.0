@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Box, Typography, useMediaQuery, Tabs, Tab } from "@mui/material";
-import { useTheme, ThemeProvider } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import Grid2 from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Searchbar from "@/components/Searchbar";
 import theme from "@/theme/theme";
@@ -17,7 +17,7 @@ const HumanTranscriptionFactors: React.FC = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Box
         sx={{
           backgroundColor: "#2A2A2D",
@@ -172,40 +172,16 @@ const HumanTranscriptionFactors: React.FC = () => {
         </Tabs>
         <Box>
           {tabValue === 0 && (
-            <Typography
-              sx={{
-                color: "var(--common-white-main, #FFF)",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontSize: "16px",
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "150%", // 24px
-                letterSpacing: "0.15px",
-                textAlign: isSmallScreen ? "center" : "left",
-              }}
-            >
+            <Typography>
               Content for Browse all Transcription Factors
             </Typography>
           )}
           {tabValue === 1 && (
-            <Typography
-              sx={{
-                color: "var(--common-white-main, #FFF)",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontSize: "16px",
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "150%", // 24px
-                letterSpacing: "0.15px",
-                textAlign: isSmallScreen ? "center" : "left",
-              }}
-            >
-              Content for Browse all Cell Types
-            </Typography>
+            <Typography>Content for Browse all Cell Types</Typography>
           )}
         </Box>
       </Box>
-    </ThemeProvider>
+    </>
   );
 };
 
