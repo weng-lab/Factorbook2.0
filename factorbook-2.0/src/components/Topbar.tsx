@@ -25,7 +25,7 @@ import styles from "./Topbar.module.css";
 import { ListItemButton } from "@mui/material";
 
 const navItems = [
-  { title: "Home", href: "#", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
+  { title: "Home", href: "/", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
   {
     title: "Portals",
     icon: <ExpandMore sx={{ color: "#8169BF" }} />,
@@ -194,7 +194,7 @@ const Topbar: React.FC = () => {
               >
                 <Box
                   component="a"
-                  href="#"
+                  href="/"
                   sx={{
                     display: "flex",
                     flexDirection: "column",
@@ -235,7 +235,7 @@ const Topbar: React.FC = () => {
               <Grid item xs="auto">
                 <Box
                   component="a"
-                  href="#"
+                  href="/"
                   sx={{
                     display: "flex",
                     flexDirection: "column",
