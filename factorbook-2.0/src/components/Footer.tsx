@@ -15,7 +15,9 @@ const LinkSection: React.FC<LinkSectionProps> = ({ title, links }) => (
       variant="h6"
       color="white"
       gutterBottom
-      sx={{ pointerEvents: "none" }}
+      sx={{
+        pointerEvents: "none",
+      }}
     >
       {title}
     </Typography>
@@ -57,7 +59,6 @@ const Footer: React.FC = () => (
           gutterBottom
           sx={{
             color: "#FFF",
-            fontFamily: "Helvetica Neue",
             fontSize: "45px",
             fontStyle: "normal",
             fontWeight: 500,
@@ -65,7 +66,7 @@ const Footer: React.FC = () => (
             letterSpacing: "-1.8px",
             display: "flex",
             flexDirection: "column",
-            pointerEvents: "none", // Ensure the mouse pointer does not change on hover
+            pointerEvents: "none",
           }}
         >
           factor
@@ -77,14 +78,12 @@ const Footer: React.FC = () => (
           sx={{
             alignSelf: "stretch",
             color: "var(--primary-contrast, #FFF)",
-            fontFamily: "Helvetica Neue",
             fontSize: "16px",
-            fontStyle: "normal",
             fontWeight: 400,
             lineHeight: "150%", // 24px
             letterSpacing: "0.15px",
             fontFeatureSettings: "'clig' off, 'liga' off",
-            pointerEvents: "none", // Ensure the mouse pointer does not change on hover
+            pointerEvents: "none",
           }}
         >
           A comprehensive online resource dedicated to the study of
@@ -109,8 +108,8 @@ const Footer: React.FC = () => (
         <LinkSection
           title="Portals"
           links={[
-            { text: "TFs in Humans", href: "#" },
-            { text: "TFs in Mouse", href: "#" },
+            { text: "TFs in Humans", href: "./HumanTranscriptionFactors" },
+            { text: "TFs in Mouse", href: "./MouseTranscriptionFactors" },
             { text: "Motif Catalog", href: "#" },
             { text: "Annotations", href: "#" },
           ]}
@@ -129,7 +128,11 @@ const Footer: React.FC = () => (
       flexWrap="wrap"
       sx={{ color: "white", fontSize: 12, width: "100%", px: 3 }}
     >
-      <Typography sx={{ pointerEvents: "none" }}>©Lorem Ipsum</Typography>
+      <Typography
+        sx={{
+          pointerEvents: "none",
+        }}
+      ></Typography>
       <Box component="nav" display="flex" gap={2}>
         <Link href="#" color="white" underline="none">
           Privacy & Policy

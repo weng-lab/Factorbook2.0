@@ -1,22 +1,25 @@
-"use client";
-
-import React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import SelectHost from "@/components/SelectHost"; // Adjust the path as needed
-import { SelectChangeEvent } from "@mui/material";
+import * as React from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  SelectChangeEvent,
+} from "@mui/material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 interface SelectComponentProps {
   onChange: (event: SelectChangeEvent<unknown>) => void;
+  onClick: () => void;
 }
 
-const SelectComponent: React.FC<SelectComponentProps> = ({ onChange }) => {
-  const options = [
-    { value: "human", label: "Human" },
-    { value: "mouse", label: "Mouse" },
-  ];
-
+const SelectComponent: React.FC<SelectComponentProps> = ({
+  onChange,
+  onClick,
+}) => {
   return (
     <Box
       component="section"
@@ -32,7 +35,6 @@ const SelectComponent: React.FC<SelectComponentProps> = ({ onChange }) => {
         sx={{
           width: "100%",
           color: "rgba(0, 0, 0, 0.87)",
-          fontFamily: "Helvetica Neue",
           fontSize: "16px",
           fontStyle: "normal",
           fontWeight: 400,
@@ -45,13 +47,60 @@ const SelectComponent: React.FC<SelectComponentProps> = ({ onChange }) => {
         Explore TFs in
       </Typography>
       <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-        <SelectHost
-          text="Select your host"
-          options={options}
-          onChange={onChange}
-        />
+        <FormControl
+          variant="outlined"
+          sx={{
+            width: "220px",
+            backgroundColor: "rgba(138, 43, 226, 0.1)",
+            borderRadius: "24px",
+            height: "41px",
+            display: "flex",
+            justifyContent: "center",
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "24px",
+            },
+            "& .MuiInputLabel-outlined": {
+              transform: "translate(14px, 10px) scale(1)",
+            },
+            "& .MuiInputLabel-shrink": {
+              transform: "translate(14px, -6px) scale(0.75)",
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(0, 0, 0, 0.23)",
+            },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(0, 0, 0, 0.87)",
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(0, 0, 0, 0.87)",
+            },
+          }}
+        >
+          <InputLabel>Select your host</InputLabel>
+          <Select
+            label="Select your host"
+            IconComponent={ArrowDropDownIcon}
+            onChange={onChange}
+            sx={{
+              borderRadius: "24px",
+              height: "41px",
+              display: "flex",
+              alignItems: "center",
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderRadius: "24px",
+              },
+              "& .MuiSelect-icon": {
+                right: "14px",
+              },
+            }}
+          >
+            <MenuItem value="human">Human</MenuItem>
+            <MenuItem value="mouse">Mouse</MenuItem>
+          </Select>
+        </FormControl>
         <Button
           variant="contained"
+          onClick={onClick}
           sx={{
             width: "80px",
             height: "41px",

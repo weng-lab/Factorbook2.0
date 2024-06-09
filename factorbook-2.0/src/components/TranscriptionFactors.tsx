@@ -5,12 +5,19 @@ import { Box, Typography, useMediaQuery, Tabs, Tab } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import Grid2 from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Searchbar from "@/components/Searchbar";
-import Topbar from "@/components/Topbar";
-import Footer from "@/components/Footer";
 
-const HumanTranscriptionFactors: React.FC = () => {
+const TranscriptionFactors = ({
+  header,
+  content,
+  image,
+}: {
+  header: string;
+  content: string;
+  image: string;
+}) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const [tabValue, setTabValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -19,17 +26,19 @@ const HumanTranscriptionFactors: React.FC = () => {
 
   return (
     <>
-      <Topbar />
       <Box
         sx={{
           backgroundColor: "#2A2A2D",
-          width: "100vw",
+          width: "100%",
           minHeight: "700px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           overflow: "hidden",
           paddingTop: "40px",
+          position: "relative",
+          margin: "0",
+          boxSizing: "border-box",
         }}
       >
         <Box
@@ -44,6 +53,10 @@ const HumanTranscriptionFactors: React.FC = () => {
             flexShrink: 0,
             padding: "0 24px",
             gap: "24px",
+            boxSizing: "border-box",
+            margin: "0",
+            position: "relative",
+            zIndex: 1,
           }}
         >
           <Grid2
@@ -53,6 +66,8 @@ const HumanTranscriptionFactors: React.FC = () => {
               width: "100%",
               alignItems: "center",
               flexShrink: 0,
+              boxSizing: "border-box",
+              margin: 0,
             }}
           >
             <Grid2
@@ -61,6 +76,8 @@ const HumanTranscriptionFactors: React.FC = () => {
               sx={{
                 textAlign: isSmallScreen ? "center" : "left",
                 padding: isSmallScreen ? "0 10px" : "0",
+                boxSizing: "border-box",
+                order: isSmallScreen ? 2 : 1,
               }}
             >
               <Typography
@@ -68,48 +85,32 @@ const HumanTranscriptionFactors: React.FC = () => {
                 sx={{
                   color: "var(--common-white-main, #FFF)",
                   fontFeatureSettings: "'clig' off, 'liga' off",
-                  fontFamily: "Helvetica Neue",
                   fontSize: "48px",
                   fontStyle: "normal",
                   fontWeight: 400,
-                  lineHeight: "116.7%", // 56.016px
+                  lineHeight: "116.7%",
                   marginBottom: "20px",
                   textAlign: isSmallScreen ? "center" : "left",
                 }}
               >
-                Human Transcription Factors
+                {header}
               </Typography>
               <Typography
                 variant="body1"
                 sx={{
                   color: "var(--common-white-main, #FFF)",
                   fontFeatureSettings: "'clig' off, 'liga' off",
-                  fontFamily: "Helvetica Neue",
                   fontSize: "16px",
                   fontStyle: "normal",
                   fontWeight: 400,
-                  lineHeight: "150%", // 24px
+                  lineHeight: "150%",
                   letterSpacing: "0.15px",
                   maxWidth: "900px",
                   marginBottom: "20px",
                   textAlign: isSmallScreen ? "center" : "left",
                 }}
               >
-                Transcription factors (TFs) are regulatory proteins in the
-                complex networks that underpin cellular function. They bind to
-                specific DNA sequences, typically in the regulatory regions of
-                the genome. They activate or repress the transcription of genes,
-                thereby controlling the flow of genetic information from DNA to
-                mRNA. The human genome encodes for approximately 1800 TFs, each
-                with unique binding sites and mechanisms of action. TFs are
-                often categorized based on their DNA binding domains and the
-                sequences they recognize. Their activity is regulated by various
-                mechanisms, including post-translational modifications,
-                interaction with other proteins, and environmental signals. TFs
-                are central to many biological processes, such as development,
-                cell cycle, and response to stimuli. Dysregulation of TF
-                activity can lead to a variety of diseases, including cancer,
-                making them significant targets in biomedical research.
+                {content}
               </Typography>
               <Searchbar
                 placeholder="What are you searching for today?"
@@ -120,19 +121,23 @@ const HumanTranscriptionFactors: React.FC = () => {
               xs={12}
               md={6}
               sx={{
-                display: "flex",
+                display: isSmallScreen ? "none" : "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 flexShrink: 0,
-                padding: isSmallScreen ? "20px 0" : "0",
+                padding: "0",
+                boxSizing: "border-box",
+                order: 2,
+                position: "relative",
+                zIndex: 1,
               }}
             >
               <img
-                src="/Face.png"
+                src={image}
                 alt="Illustration"
                 style={{
                   width: "100%",
-                  maxWidth: "974.034px",
+                  maxWidth: isMediumScreen ? "80%" : "100%",
                   height: "auto",
                   flexShrink: 0,
                   objectFit: "contain",
@@ -141,6 +146,30 @@ const HumanTranscriptionFactors: React.FC = () => {
             </Grid2>
           </Grid2>
         </Box>
+        {isSmallScreen && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              zIndex: 0,
+              overflow: "hidden",
+            }}
+          >
+            <img
+              src={image}
+              alt="Illustration"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                opacity: 0.5,
+              }}
+            />
+          </Box>
+        )}
       </Box>
 
       <Box
@@ -149,6 +178,7 @@ const HumanTranscriptionFactors: React.FC = () => {
           maxWidth: "1440px",
           margin: "0 auto",
           padding: "0 24px",
+          boxSizing: "border-box",
         }}
       >
         <Tabs
@@ -167,45 +197,17 @@ const HumanTranscriptionFactors: React.FC = () => {
         </Tabs>
         <Box>
           {tabValue === 0 && (
-            <Typography
-              sx={{
-                color: "var(--common-white-main, #FFF)",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Helvetica Neue",
-                fontSize: "16px",
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "150%", // 24px
-                letterSpacing: "0.15px",
-                textAlign: isSmallScreen ? "center" : "left",
-              }}
-            >
+            <Typography>
               Content for Browse all Transcription Factors
             </Typography>
           )}
           {tabValue === 1 && (
-            <Typography
-              sx={{
-                color: "var(--common-white-main, #FFF)",
-                fontFeatureSettings: "'clig' off, 'liga' off",
-                fontFamily: "Helvetica Neue",
-                fontSize: "16px",
-                fontStyle: "normal",
-                fontWeight: 400,
-                lineHeight: "150%", // 24px
-                letterSpacing: "0.15px",
-                textAlign: isSmallScreen ? "center" : "left",
-              }}
-            >
-              Content for Browse all Cell Types
-            </Typography>
+            <Typography>Content for Browse all Cell Types</Typography>
           )}
         </Box>
       </Box>
-
-      <Footer />
     </>
   );
 };
 
-export default HumanTranscriptionFactors;
+export default TranscriptionFactors;
