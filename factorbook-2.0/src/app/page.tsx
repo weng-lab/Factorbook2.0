@@ -243,6 +243,7 @@ const Homepage = () => {
         imageSrc="/IllustrationsNew.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
+        buttonHref="/MotifsCatalog"
         reverse={true}
       />
 
@@ -252,6 +253,7 @@ const Homepage = () => {
         imageSrc="/Human.png"
         imageAlt="Annotate Variants"
         buttonText="Explore Annotations"
+        buttonHref="/AnnotationsVariants"
         reverse={false}
       />
     </>

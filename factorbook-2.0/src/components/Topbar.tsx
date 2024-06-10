@@ -47,7 +47,7 @@ const navItems = [
     href: "#",
     icon: <MenuBookIcon sx={{ color: "#8169BF" }} />,
   },
-  { title: "Download", href: "#" },
+  { title: "Download", href: "./Downloads" },
 ];
 
 const Topbar: React.FC = () => {

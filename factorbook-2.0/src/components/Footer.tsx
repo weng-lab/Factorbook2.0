@@ -116,7 +116,7 @@ const Footer: React.FC = () => (
         />
         <LinkSection
           title="Resources"
-          links={[{ text: "Downloads", href: "#" }]}
+          links={[{ text: "Downloads", href: "./Downloads" }]}
         />
       </Box>
     </Box>

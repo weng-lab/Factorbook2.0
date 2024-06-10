@@ -1,5 +1,6 @@
 import * as React from "react";
 import TranscriptionFactors from "@/components/TranscriptionFactors";
+import TranscriptionTabs from "@/components/TranscriptionTabs";
 
 const HumanTranscriptionFactors = () => {
   const humanContent = `
@@ -21,11 +22,14 @@ const HumanTranscriptionFactors = () => {
   `;
 
   return (
-    <TranscriptionFactors
-      header="Human Transcription Factors"
-      content={humanContent}
-      image="/Face.png"
-    />
+    <>
+      <TranscriptionFactors
+        header="Human Transcription Factors"
+        content={humanContent}
+        image="/Face.png"
+      />
+      <TranscriptionTabs />
+    </>
   );
 };
 

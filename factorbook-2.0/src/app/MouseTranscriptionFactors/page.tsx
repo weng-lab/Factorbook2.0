@@ -1,5 +1,6 @@
 import * as React from "react";
 import TranscriptionFactors from "@/components/TranscriptionFactors";
+import TranscriptionTabs from "@/components/TranscriptionTabs";
 
 const MouseTranscriptionFactors = () => {
   const mouseContent = `
@@ -21,11 +22,14 @@ const MouseTranscriptionFactors = () => {
   `;
 
   return (
-    <TranscriptionFactors
-      header="Mouse Transcription Factors"
-      content={mouseContent}
-      image="/Mouse.png"
-    />
+    <>
+      <TranscriptionFactors
+        header="Mouse Transcription Factors"
+        content={mouseContent}
+        image="/Mouse.png"
+      />
+      <TranscriptionTabs />
+    </>
   );
 };
 

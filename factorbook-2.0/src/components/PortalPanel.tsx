@@ -1,15 +1,10 @@
 "use client";
 
 import React from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Image from "next/image";
+import StyledButton from "@/components/StyledButton"; // Import StyledButton
 
 interface PortalPanelProps {
   title: string;
@@ -17,6 +12,7 @@ interface PortalPanelProps {
   imageSrc: string;
   imageAlt: string;
   buttonText?: string;
+  buttonHref?: string;
   selectComponent?: React.ReactNode;
   reverse?: boolean;
 }
@@ -27,32 +23,12 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
   imageSrc,
   imageAlt,
   buttonText,
+  buttonHref = "#",
   selectComponent,
   reverse = false,
 }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const StyledButton: React.FC<{ text: string }> = ({ text }) => (
-    <Button
-      variant="contained"
-      sx={{
-        display: isSmallScreen ? "block" : "none",
-        padding: "8px 16px",
-        width: isSmallScreen ? "95%" : "auto",
-        backgroundColor: "#8169BF",
-        borderRadius: "24px",
-        textTransform: "none",
-        fontWeight: "medium",
-        color: "#FFFFFF",
-        "&:focus, &:hover, &:active": {
-          backgroundColor: "#8169BF",
-        },
-      }}
-    >
-      {text}
-    </Button>
-  );
 
   return (
     <Box
@@ -126,24 +102,16 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
           </Typography>
           {buttonText && (
             <>
-              <StyledButton text={buttonText} />
-              <Button
-                variant="contained"
-                sx={{
-                  display: isSmallScreen ? "none" : "block",
-                  padding: "8px 16px",
-                  backgroundColor: "#8169BF",
-                  borderRadius: "24px",
-                  textTransform: "none",
-                  fontWeight: "medium",
-                  color: "#FFFFFF",
-                  "&:focus, &:hover, &:active": {
-                    backgroundColor: "#8169BF",
-                  },
-                }}
-              >
-                {buttonText}
-              </Button>
+              <StyledButton
+                text={buttonText}
+                href={buttonHref}
+                display={isSmallScreen ? "block" : "none"}
+              />
+              <StyledButton
+                text={buttonText}
+                href={buttonHref}
+                display={isSmallScreen ? "none" : "block"}
+              />
             </>
           )}
           {selectComponent}
