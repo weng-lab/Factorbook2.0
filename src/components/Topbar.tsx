@@ -38,8 +38,11 @@ const navItems = [
         title: "Mouse Transcription Factors",
         href: "./MouseTranscriptionFactors",
       },
-      { title: "Motif Site Catalog", href: "#" },
-      { title: "Annotate Variants & Trait Heritability", href: "#" },
+      { title: "Motif Site Catalog", href: "./MotifsCatalog" },
+      {
+        title: "Annotate Variants & Trait Heritability",
+        href: "./AnnotationsVariants",
+      },
     ],
   },
   {
