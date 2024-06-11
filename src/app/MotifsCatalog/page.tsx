@@ -60,7 +60,6 @@ const MotifsSiteCatlog = () => {
 
   const handleFileUpload = () => {
     if (selectedFile) {
-      // AKKI TODO Handle file upload logic here
       console.log("Uploading file:", selectedFile.name);
     }
   };
@@ -207,10 +206,18 @@ const MotifsSiteCatlog = () => {
                 <br />
                 733 TFs
               </Typography>
-              <CustomButton variant="contained" startIcon={<SaveAltIcon />}>
+              <CustomButton
+                variant="contained"
+                startIcon={<SaveAltIcon />}
+                href="/MotifsCatalog/factorbook_chipseq_meme_motifs.tsv"
+              >
                 Download motifs in MEME Format
               </CustomButton>
-              <CustomButton variant="contained" startIcon={<SaveAltIcon />}>
+              <CustomButton
+                variant="contained"
+                startIcon={<SaveAltIcon />}
+                href="/MotifsCatalog/complete-factorbook-catalog.meme.gz"
+              >
                 Download metadata in TSV Format
               </CustomButton>
             </Grid2>
@@ -223,7 +230,11 @@ const MotifsSiteCatlog = () => {
                 <br />
                 631 TFs
               </Typography>
-              <CustomButton variant="contained" startIcon={<SaveAltIcon />}>
+              <CustomButton
+                variant="contained"
+                startIcon={<SaveAltIcon />}
+                href="/MotifsCatalog/all-selex-motifs.meme.gz"
+              >
                 Download motifs in MEME Format
               </CustomButton>
             </Grid2>
