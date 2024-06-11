@@ -136,10 +136,7 @@ const AnnotationsVariants = () => {
               />
             </FlexBox>
             <Typography variant="body2" sx={{ mt: 2 }}>
-              LD data is derived from the{" "}
-              <a href="https://www.internationalgenome.org/">
-                1,000 Genomes Project
-              </a>
+              LD data is derived from the <a href="#">1,000 Genomes Project</a>
             </Typography>
           </Box>
         </Box>
@@ -150,7 +147,6 @@ const AnnotationsVariants = () => {
             Quantify Trait Heritability
           </Typography>
           <StyledBox>
-            {/* Add content for Quantify Trait Heritability tab here */}
             <Typography variant="body1">
               Content for Quantify Trait Heritability tab goes here.
             </Typography>
