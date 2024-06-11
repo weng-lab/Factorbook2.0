@@ -4,7 +4,7 @@ import React from "react";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Image from "next/image";
-import StyledButton from "@/components/StyledButton"; // Import StyledButton
+import StyledButton from "@/components/StyledButton";
 
 interface PortalPanelProps {
   title: string;
@@ -111,6 +111,7 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
                 text={buttonText}
                 href={buttonHref}
                 display={isSmallScreen ? "none" : "block"}
+                sx={{ ml: "1rem" }}
               />
             </>
           )}

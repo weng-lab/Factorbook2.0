@@ -8,12 +8,14 @@ interface StyledButtonProps {
   text: string;
   href: string;
   display?: string;
+  sx?: object;
 }
 
 const StyledButton: React.FC<StyledButtonProps> = ({
   text,
   href,
   display = "block",
+  sx = {},
 }) => {
   return (
     <Link href={href} passHref>
@@ -30,6 +32,7 @@ const StyledButton: React.FC<StyledButtonProps> = ({
           "&:focus, &:hover, &:active": {
             backgroundColor: "#8169BF",
           },
+          ...sx,
         }}
       >
         {text}
