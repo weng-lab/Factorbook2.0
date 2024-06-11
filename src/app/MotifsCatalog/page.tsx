@@ -8,8 +8,10 @@ import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 
 // Custom styled box for file upload
 const UploadBox = styled(Box)({
@@ -27,8 +29,17 @@ const StyledBox = styled(Box)({
   "& .MuiOutlinedInput-root": {
     backgroundColor: "#EDE7F6",
   },
-  "& .MuiFormHelperText-root": {
-    color: "black",
+});
+
+const CustomButton = styled(Button)({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  marginBottom: "8px",
+  backgroundColor: "#8169BF",
+  textTransform: "none",
+  "&:focus, &:hover, &:active": {
+    backgroundColor: "#8169BF",
   },
 });
 
@@ -182,6 +193,41 @@ const MotifsSiteCatlog = () => {
               Upload File
             </Button>
           </Box>
+        </Box>
+      )}
+      {value === 3 && (
+        <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+          <Grid2 container spacing={4}>
+            <Grid2 xs={6}>
+              <Typography variant="h6" gutterBottom>
+                MEME ChIP-seq Catalog
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                6,069 Motifs
+                <br />
+                733 TFs
+              </Typography>
+              <CustomButton variant="contained" startIcon={<SaveAltIcon />}>
+                Download motifs in MEME Format
+              </CustomButton>
+              <CustomButton variant="contained" startIcon={<SaveAltIcon />}>
+                Download metadata in TSV Format
+              </CustomButton>
+            </Grid2>
+            <Grid2 xs={6}>
+              <Typography variant="h6" gutterBottom>
+                HT-SELEX Catalog
+              </Typography>
+              <Typography variant="body2" gutterBottom>
+                6,700 Motifs
+                <br />
+                631 TFs
+              </Typography>
+              <CustomButton variant="contained" startIcon={<SaveAltIcon />}>
+                Download motifs in MEME Format
+              </CustomButton>
+            </Grid2>
+          </Grid2>
         </Box>
       )}
     </>
