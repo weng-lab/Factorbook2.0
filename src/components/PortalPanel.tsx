@@ -91,7 +91,6 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
               fontSize: "34px",
               fontStyle: "normal",
               fontWeight: 400,
-              lineHeight: "123.5%",
               p: 2,
             }}
           >

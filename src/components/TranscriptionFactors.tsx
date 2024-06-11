@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Box, Typography, useMediaQuery, Tabs, Tab } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import Grid2 from "@mui/material/Unstable_Grid2"; // Grid version 2
+import Grid2 from "@mui/material/Unstable_Grid2";
 import Searchbar from "@/components/Searchbar";
 
 const TranscriptionFactors = ({
@@ -88,7 +88,6 @@ const TranscriptionFactors = ({
                   fontSize: "48px",
                   fontStyle: "normal",
                   fontWeight: 400,
-                  lineHeight: "116.7%",
                   marginBottom: "20px",
                   textAlign: isSmallScreen ? "center" : "left",
                 }}

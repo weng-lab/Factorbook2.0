@@ -11,7 +11,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Searchbar from "@/components/Searchbar"; // Assuming Searchbar component is correctly imported
+import Searchbar from "@/components/Searchbar";
 import { styled } from "@mui/material/styles";
 
 const StyledBox = styled(Box)({
