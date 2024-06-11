@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { isValidElement, cloneElement, ReactElement } from "react";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Image from "next/image";
 import StyledButton from "@/components/StyledButton";
+import SelectComponent, { SelectComponentProps } from "@/components/Select";
 
 interface PortalPanelProps {
   title: string;
@@ -13,7 +14,7 @@ interface PortalPanelProps {
   imageAlt: string;
   buttonText?: string;
   buttonHref?: string;
-  selectComponent?: React.ReactNode;
+  selectComponent?: ReactElement<SelectComponentProps>;
   reverse?: boolean;
 }
 
@@ -29,6 +30,12 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
 }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const clonedSelectComponent = isValidElement<SelectComponentProps>(
+    selectComponent
+  )
+    ? cloneElement(selectComponent, { sx: { ml: 2 } })
+    : selectComponent;
 
   return (
     <Box
@@ -111,11 +118,11 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
                 text={buttonText}
                 href={buttonHref}
                 display={isSmallScreen ? "none" : "block"}
-                sx={{ ml: "1rem" }}
+                sx={{ ml: 2 }}
               />
             </>
           )}
-          {selectComponent}
+          {clonedSelectComponent}
         </Grid2>
       </Grid2>
     </Box>
