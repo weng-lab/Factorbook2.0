@@ -1,8 +1,9 @@
 import * as React from "react";
 import TranscriptionFactors from "@/components/TranscriptionFactors";
+import TranscriptionTabs from "@/components/TranscriptionTabs";
 
-const MouseTranscriptionFactors = () => {
-  const mouseContent = `
+const HumanTranscriptionFactors = () => {
+  const humanContent = `
     Transcription factors (TFs) are regulatory proteins in the
     complex networks that underpin cellular function. They bind to
     specific DNA sequences, typically in the regulatory regions of
@@ -21,12 +22,15 @@ const MouseTranscriptionFactors = () => {
   `;
 
   return (
-    <TranscriptionFactors
-      header="Mouse Transcription Factors"
-      content={mouseContent}
-      image="/Mouse.png"
-    />
+    <>
+      <TranscriptionFactors
+        header="Human Transcription Factors"
+        content={humanContent}
+        image="/Face.png"
+      />
+      <TranscriptionTabs />
+    </>
   );
 };
 
-export default MouseTranscriptionFactors;
+export default HumanTranscriptionFactors;

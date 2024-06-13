@@ -58,7 +58,7 @@ const Homepage = () => {
           margin: "0 auto",
           p: isSmallScreen ? "20px 0" : "71px 144px",
           color: "white",
-          overflow: "hidden", // Ensure no overflow
+          overflow: "hidden",
           position: "relative",
         }}
       >
@@ -92,7 +92,7 @@ const Homepage = () => {
             alignItems: "flex-start",
             p: isSmallScreen ? "0 10px" : "0",
             zIndex: isSmallScreen ? 1 : "auto",
-            ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
+            ml: isSmallScreen ? 2 : 0,
           }}
         >
           <Typography
@@ -105,7 +105,7 @@ const Homepage = () => {
               fontFeatureSettings: "'clig' off, 'liga' off",
               lineHeight: "24px",
               letterSpacing: "0.15px",
-              ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
+              ml: isSmallScreen ? 2 : 0,
             }}
           >
             Welcome to
@@ -114,7 +114,7 @@ const Homepage = () => {
             sx={{
               position: "relative",
               lineHeight: isSmallScreen ? "30px" : "42.465px",
-              ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
+              ml: isSmallScreen ? 2 : 0,
             }}
           >
             <Typography
@@ -127,7 +127,7 @@ const Homepage = () => {
                 position: "relative",
                 color: "#FFF",
                 fontStyle: "normal",
-                lineHeight: "74.5%", // 42.465px
+                lineHeight: "74.5%",
               }}
             >
               factor
@@ -137,7 +137,7 @@ const Homepage = () => {
                   display: "block",
                   pl: isSmallScreen ? 2 : 5,
                   position: "relative",
-                  ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
+                  ml: isSmallScreen ? 2 : 0,
                 }}
               >
                 book
@@ -148,8 +148,8 @@ const Homepage = () => {
                   fill="none"
                   style={{
                     position: "absolute",
-                    left: isSmallScreen ? "-30px" : "-15px", // Adjust position for mobile view
-                    top: isSmallScreen ? "25px" : "40px", // Decrease the gap between factorbook and curve line
+                    left: isSmallScreen ? "-30px" : "-15px",
+                    top: isSmallScreen ? "25px" : "40px",
                     bottom: "-20px",
                   }}
                 >
@@ -174,7 +174,7 @@ const Homepage = () => {
               letterSpacing: "0.15px",
               maxWidth: "600px",
               mt: 5,
-              ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
+              ml: isSmallScreen ? 2 : 0,
             }}
           >
             Factorbook is a resource for human and mouse transcription factors,
@@ -192,7 +192,7 @@ const Homepage = () => {
               alignSelf: "stretch",
               mt: 4,
               width: isSmallScreen ? "100%" : "670px",
-              ml: isSmallScreen ? 2 : 0, // Add margin for mobile view
+              ml: isSmallScreen ? 2 : 0,
             }}
           >
             <Searchbar
@@ -243,6 +243,7 @@ const Homepage = () => {
         imageSrc="/IllustrationsNew.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
+        buttonHref="/MotifsCatalog"
         reverse={true}
       />
 
@@ -252,6 +253,7 @@ const Homepage = () => {
         imageSrc="/Human.png"
         imageAlt="Annotate Variants"
         buttonText="Explore Annotations"
+        buttonHref="/AnnotationsVariants"
         reverse={false}
       />
     </>

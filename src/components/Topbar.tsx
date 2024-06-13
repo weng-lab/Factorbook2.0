@@ -38,8 +38,11 @@ const navItems = [
         title: "Mouse Transcription Factors",
         href: "./MouseTranscriptionFactors",
       },
-      { title: "Motif Site Catalog", href: "#" },
-      { title: "Annotate Variants & Trait Heritability", href: "#" },
+      { title: "Motif Site Catalog", href: "./MotifsCatalog" },
+      {
+        title: "Annotate Variants & Trait Heritability",
+        href: "./AnnotationsVariants",
+      },
     ],
   },
   {
@@ -47,7 +50,7 @@ const navItems = [
     href: "#",
     icon: <MenuBookIcon sx={{ color: "#8169BF" }} />,
   },
-  { title: "Download", href: "#" },
+  { title: "Download", href: "./Downloads" },
 ];
 
 const Topbar: React.FC = () => {

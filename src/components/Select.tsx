@@ -11,14 +11,16 @@ import {
 } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
-interface SelectComponentProps {
+export interface SelectComponentProps {
   onChange: (event: SelectChangeEvent<unknown>) => void;
   onClick: () => void;
+  sx?: object;
 }
 
 const SelectComponent: React.FC<SelectComponentProps> = ({
   onChange,
   onClick,
+  sx = {},
 }) => {
   return (
     <Box
@@ -28,6 +30,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
         height: "169px",
         flexDirection: "column",
         alignItems: "flex-start",
+        ...sx,
       }}
     >
       <Typography

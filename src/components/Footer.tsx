@@ -100,9 +100,12 @@ const Footer: React.FC = () => (
           title="About Us"
           links={[
             { text: "Factorbook Overview", href: "#" },
-            { text: "Weng Lab", href: "#" },
+            { text: "Weng Lab", href: "https://www.umassmed.edu/wenglab/" },
             { text: "ENCODE Consortium", href: "#" },
-            { text: "UMass Chan Medical School", href: "#" },
+            {
+              text: "UMass Chan Medical School",
+              href: "https://www.umassmed.edu/",
+            },
           ]}
         />
         <LinkSection
@@ -110,13 +113,13 @@ const Footer: React.FC = () => (
           links={[
             { text: "TFs in Humans", href: "./HumanTranscriptionFactors" },
             { text: "TFs in Mouse", href: "./MouseTranscriptionFactors" },
-            { text: "Motif Catalog", href: "#" },
-            { text: "Annotations", href: "#" },
+            { text: "Motif Catalog", href: "./MotifsCatalog" },
+            { text: "Annotations", href: "./AnnotationsVariants" },
           ]}
         />
         <LinkSection
           title="Resources"
-          links={[{ text: "Downloads", href: "#" }]}
+          links={[{ text: "Downloads", href: "./Downloads" }]}
         />
       </Box>
     </Box>

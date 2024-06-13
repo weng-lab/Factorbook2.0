@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Box, Typography, useMediaQuery, Tabs, Tab } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import Grid2 from "@mui/material/Unstable_Grid2"; // Grid version 2
+import Grid2 from "@mui/material/Unstable_Grid2";
 import Searchbar from "@/components/Searchbar";
 
 const TranscriptionFactors = ({
@@ -88,7 +88,6 @@ const TranscriptionFactors = ({
                   fontSize: "48px",
                   fontStyle: "normal",
                   fontWeight: 400,
-                  lineHeight: "116.7%",
                   marginBottom: "20px",
                   textAlign: isSmallScreen ? "center" : "left",
                 }}
@@ -170,41 +169,6 @@ const TranscriptionFactors = ({
             />
           </Box>
         )}
-      </Box>
-
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: "1440px",
-          margin: "0 auto",
-          padding: "0 24px",
-          boxSizing: "border-box",
-        }}
-      >
-        <Tabs
-          value={tabValue}
-          onChange={handleChange}
-          textColor="primary"
-          indicatorColor="primary"
-          aria-label="primary tabs example"
-          sx={{ marginBottom: "20px" }}
-        >
-          <Tab
-            label="Browse all Transcription Factors"
-            sx={{ textTransform: "none" }}
-          />
-          <Tab label="Browse all Cell Types" sx={{ textTransform: "none" }} />
-        </Tabs>
-        <Box>
-          {tabValue === 0 && (
-            <Typography>
-              Content for Browse all Transcription Factors
-            </Typography>
-          )}
-          {tabValue === 1 && (
-            <Typography>Content for Browse all Cell Types</Typography>
-          )}
-        </Box>
       </Box>
     </>
   );
