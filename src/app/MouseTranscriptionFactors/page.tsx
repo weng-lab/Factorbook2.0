@@ -9,7 +9,7 @@ const MouseTranscriptionFactors = () => {
     specific DNA sequences, typically in the regulatory regions of
     the genome. They activate or repress the transcription of genes,
     thereby controlling the flow of genetic information from DNA to
-    mRNA. The human genome encodes for approximately 1800 TFs, each
+    mRNA. The mouse genome encodes for approximately 1800 TFs, each
     with unique binding sites and mechanisms of action. TFs are
     often categorized based on their DNA binding domains and the
     sequences they recognize. Their activity is regulated by various
@@ -28,7 +28,7 @@ const MouseTranscriptionFactors = () => {
         content={mouseContent}
         image="/Mouse.png"
       />
-      <TranscriptionTabs />
+      <TranscriptionTabs species="mouse" />
     </>
   );
 };

@@ -2,8 +2,10 @@
 
 import * as React from "react";
 import { Box, Tabs, Tab, Typography } from "@mui/material";
+import TfDetails from "@/components/tf/TfDetails";
+import CtPage from "@/components/CellType/CtPage";
 
-const TranscriptionTabs: React.FC = () => {
+const TranscriptionTabs: React.FC<{ species: string }> = ({ species }) => {
   const [tabValue, setTabValue] = React.useState<number>(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -35,12 +37,8 @@ const TranscriptionTabs: React.FC = () => {
         <Tab label="Browse all Cell Types" sx={{ textTransform: "none" }} />
       </Tabs>
       <Box>
-        {tabValue === 0 && (
-          <Typography>Content for Browse all Transcription Factors</Typography>
-        )}
-        {tabValue === 1 && (
-          <Typography>Content for Browse all Cell Types</Typography>
-        )}
+        {tabValue === 0 && <TfDetails species={species} />}
+        {tabValue === 1 && <CtPage species={species} />}
       </Box>
     </Box>
   );

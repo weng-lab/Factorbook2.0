@@ -28,7 +28,7 @@ const HumanTranscriptionFactors = () => {
         content={humanContent}
         image="/Face.png"
       />
-      <TranscriptionTabs />
+      <TranscriptionTabs species="human" />
     </>
   );
 };
