@@ -7,7 +7,7 @@ import {
   InMemoryCache,
   ApolloClient as ApolloClientNext,
 } from "@apollo/experimental-nextjs-app-support";
-import Config from "../src/config.json";
+import Config from "../config.json";
 
 function makeClient(): ApolloClientNext<NormalizedCacheObject> {
   const httpLink = new HttpLink({
