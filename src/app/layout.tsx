@@ -19,6 +19,9 @@ type LayoutProps = {
 export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en">
+      <head>
+        <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue" />
+      </head>
       <body>
         <ApolloWrapper>
           <ClientThemeProvider>
