@@ -14,6 +14,7 @@ import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
 import PortalPanel from "@/components/PortalPanel";
+import { gql } from "../types/gql"
 
 const Homepage = () => {
   const theme = useTheme();
@@ -42,6 +43,17 @@ const Homepage = () => {
       router.push("/MouseTranscriptionFactors");
     }
   };
+
+  /**
+   * @todo Remove this once any other query is typed. This is a useless query needed to prevent build errors with graphql-code-generator
+   */
+  const QUERY = gql(`
+    query LDSC($study: [String]){
+      iCRELdrQuery(study: $study) {
+        snps
+      }
+    }`
+  )
 
   return (
     <>
@@ -135,7 +147,7 @@ const Homepage = () => {
                 component="span"
                 sx={{
                   display: "block",
-                  pl: isSmallScreen ? 2 : 5,
+                  pl: isSmallScreen ? 4.5 : 9.5,
                   position: "relative",
                   ml: isSmallScreen ? 2 : 0,
                 }}
@@ -232,6 +244,7 @@ const Homepage = () => {
           <SelectComponent
             onChange={handleSelectChange}
             onClick={handleGoClick}
+            selectedValue={selectedValue}
           />
         }
         reverse={false}
