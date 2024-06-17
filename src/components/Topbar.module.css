@@ -19,7 +19,9 @@
   color: var(--grey-700, #1F2021);
   font-size: 32px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 700;
+  line-height: 0.745; /* 74.5% */
+  letter-spacing: -1.28px;
 }
 
 .book {
@@ -27,7 +29,7 @@
   color: var(--grey-700, #1F2021);
   font-size: 32px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 700;
   margin-top: 1px;
 }
 
