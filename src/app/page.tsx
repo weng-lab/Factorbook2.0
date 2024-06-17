@@ -232,6 +232,7 @@ const Homepage = () => {
           <SelectComponent
             onChange={handleSelectChange}
             onClick={handleGoClick}
+            selectedValue={selectedValue}
           />
         }
         reverse={false}
