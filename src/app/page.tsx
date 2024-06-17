@@ -15,7 +15,6 @@ import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
 import PortalPanel from "@/components/PortalPanel";
 import { gql } from "../types/gql"
-import { useQuery } from "@apollo/client";
 
 const Homepage = () => {
   const theme = useTheme();
