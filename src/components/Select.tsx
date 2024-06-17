@@ -1,4 +1,5 @@
-import * as React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 import {
   Box,
   Typography,
@@ -14,12 +15,14 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 export interface SelectComponentProps {
   onChange: (event: SelectChangeEvent<unknown>) => void;
   onClick: () => void;
+  selectedValue: string;
   sx?: object;
 }
 
 const SelectComponent: React.FC<SelectComponentProps> = ({
   onChange,
   onClick,
+  selectedValue,
   sx = {},
 }) => {
   return (
@@ -82,6 +85,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
           <InputLabel>Select your host</InputLabel>
           <Select
             label="Select your host"
+            value={selectedValue}
             IconComponent={ArrowDropDownIcon}
             onChange={onChange}
             sx={{

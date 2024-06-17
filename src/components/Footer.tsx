@@ -70,7 +70,7 @@ const Footer: React.FC = () => (
           }}
         >
           factor
-          <Box component="span" sx={{ ml: 8 }}>
+          <Box component="span" sx={{ ml: 7.5 }}>
             book
           </Box>
         </Typography>

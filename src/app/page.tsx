@@ -148,7 +148,7 @@ const Homepage = () => {
                 component="span"
                 sx={{
                   display: "block",
-                  pl: isSmallScreen ? 2 : 5,
+                  pl: isSmallScreen ? 4.5 : 9.5,
                   position: "relative",
                   ml: isSmallScreen ? 2 : 0,
                 }}
@@ -245,6 +245,7 @@ const Homepage = () => {
           <SelectComponent
             onChange={handleSelectChange}
             onClick={handleGoClick}
+            selectedValue={selectedValue}
           />
         }
         reverse={false}

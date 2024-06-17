@@ -87,7 +87,7 @@ const Topbar: React.FC = () => {
             color: "var(--grey-700, #1F2021)",
             fontSize: "32px",
             fontStyle: "normal",
-            fontWeight: 500,
+            fontWeight: 700 /* Set to 700 */,
             lineHeight: "0.745", // 74.5%
             letterSpacing: "-1.28px",
           }}
@@ -102,7 +102,7 @@ const Topbar: React.FC = () => {
               alignItems: "flex-start",
               fontSize: "32px",
               fontStyle: "normal",
-              fontWeight: 500,
+              fontWeight: 700 /* Set to 700 */,
               lineHeight: "0.745", // 74.5%
               letterSpacing: "-1.28px",
               color: "var(--grey-700, #1F2021)",
@@ -206,7 +206,7 @@ const Topbar: React.FC = () => {
                     color: "var(--grey-700, #1F2021)",
                     fontSize: "32px",
                     fontStyle: "normal",
-                    fontWeight: 500,
+                    fontWeight: 700 /* Set to 700 */,
                     lineHeight: "0.745", // 74.5%
                     letterSpacing: "-1.28px",
                   }}
@@ -221,7 +221,7 @@ const Topbar: React.FC = () => {
                       alignItems: "flex-start",
                       fontSize: "32px",
                       fontStyle: "normal",
-                      fontWeight: 500,
+                      fontWeight: 700 /* Set to 700 */,
                       lineHeight: "0.745", // 74.5%
                       letterSpacing: "-1.28px",
                       color: "var(--grey-700, #1F2021)",
@@ -247,7 +247,7 @@ const Topbar: React.FC = () => {
                     color: "var(--grey-700, #1F2021)",
                     fontSize: "32px",
                     fontStyle: "normal",
-                    fontWeight: 500,
+                    fontWeight: 700 /* Set to 700 */,
                     letterSpacing: "-1.28px",
                   }}
                 >
@@ -261,7 +261,7 @@ const Topbar: React.FC = () => {
                       alignItems: "flex-start",
                       fontSize: "32px",
                       fontStyle: "normal",
-                      fontWeight: 500,
+                      fontWeight: 700 /* Set to 700 */,
                       lineHeight: "0.745", // 74.5%
                       letterSpacing: "-1.28px",
                       color: "var(--grey-700, #1F2021)",
@@ -288,7 +288,7 @@ const Topbar: React.FC = () => {
                       sx={{
                         fontSize: "15px",
                         fontStyle: "normal",
-                        fontWeight: 500,
+                        fontWeight: 700 /* Set to 700 */,
                         lineHeight: "26px", // 173.333%
                         letterSpacing: "0.46px",
                         color: "var(--primary-mainText, #6750A4)",
