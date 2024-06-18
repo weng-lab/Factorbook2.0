@@ -1,6 +1,22 @@
-import gql from "graphql-tag";
+import { gql } from "../../types/gql";
+import { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import {
+  ExperimentQuery,
+  ExperimentQueryVariables,
+  DatasetsQuery,
+  DatasetsQueryVariables,
+  FactorQuery,
+  FactorQueryVariables,
+  TfInfoQuery,
+  TfInfoQueryVariables,
+  DlMotifsCountsQuery,
+  DlMotifsCountsQueryVariables,
+} from "../../types/graphql";
 
-export const EXPERIMENT_QUERY = gql`
+export const EXPERIMENT_QUERY: TypedDocumentNode<
+  ExperimentQuery,
+  ExperimentQueryVariables
+> = gql(`
   query Experiment($accession: [String]) {
     peakDataset(accession: $accession) {
       datasets {
@@ -22,10 +38,13 @@ export const EXPERIMENT_QUERY = gql`
       }
     }
   }
-`;
+`);
 
-export const DATASETS_QUERY = gql`
-  query Datasets(
+export const DATASETS_QUERY: TypedDocumentNode<
+  DatasetsQuery,
+  DatasetsQueryVariables
+> = gql(`
+  query Datasets1(
     $target: String
     $processed_assembly: String
     $replicated_peaks: Boolean
@@ -82,9 +101,12 @@ export const DATASETS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
-export const FACTOR_DESCRIPTION_QUERY = gql`
+export const FACTOR_DESCRIPTION_QUERY: TypedDocumentNode<
+  FactorQuery,
+  FactorQueryVariables
+> = gql(`
   query Factor($id: [String], $name: [String], $assembly: String!) {
     factor(id: $id, name: $name, assembly: $assembly) {
       name
@@ -133,10 +155,13 @@ export const FACTOR_DESCRIPTION_QUERY = gql`
       factor_wiki
     }
   }
-`;
+`);
 
-export const TF_INFO_QUERY = gql`
-  query Datasets(
+export const TF_INFO_QUERY: TypedDocumentNode<
+  TfInfoQuery,
+  TfInfoQueryVariables
+> = gql(`
+  query Datasets2(
     $processed_assembly: String
     $replicated_peaks: Boolean
     $include_investigatedas: [String]
@@ -173,8 +198,12 @@ export const TF_INFO_QUERY = gql`
       }
     }
   }
-`;
-export const DEEP_LEARNED_MOTIFS_COUNTS_QUERY = gql`
+`);
+
+export const DEEP_LEARNED_MOTIFS_COUNTS_QUERY: TypedDocumentNode<
+  DlMotifsCountsQuery,
+  DlMotifsCountsQueryVariables
+> = gql(`
   query DLMotifsCounts(
     $tf: String
     $assay: String
@@ -195,4 +224,4 @@ export const DEEP_LEARNED_MOTIFS_COUNTS_QUERY = gql`
       selexdlmotifs
     }
   }
-`;
+`);
