@@ -58,7 +58,8 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species, celltype }) => {
   if (error || ctError)
     return <p>Error: {error?.message || ctError?.message}</p>;
 
-  const rows = data?.peakDataset?.partitionByBiosample ?? [];
+  // Adjusted to work with the correct structure
+  const rows = data?.peakDataset?.datasets ?? [];
   console.log("rows:", rows);
 
   if (!Array.isArray(rows)) {
