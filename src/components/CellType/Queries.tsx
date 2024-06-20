@@ -1,16 +1,16 @@
-import gql from 'graphql-tag';
+import { gql } from "../../types/gql";
 
-export const CELLTYPE_DESCRIPTION_QUERY = gql`
-    query CellType($name: [String], $assembly: String!) {
-        celltype(name: $name, assembly: $assembly) {
-            ct_image_url
-            wiki_desc
-        }
+export const CELLTYPE_DESCRIPTION_QUERY = gql(`
+  query CellType($name: [String], $assembly: String!) {
+    celltype(name: $name, assembly: $assembly) {
+      ct_image_url
+      wiki_desc
     }
-`;
+  }
+`);
 
-export const DATASET_QUERY = gql`
-    query Datasets(
+export const DATASET_QUERY = gql(`
+    query Dataset_Query(
         $biosample: String
         $processed_assembly: String
         $replicated_peaks: Boolean
@@ -53,10 +53,10 @@ export const DATASET_QUERY = gql`
             }
         }
     }
-`;
+`);
 
-export const TF_INFO_QUERY = gql`
-    query Datasets(
+export const TF_INFO_QUERY = gql(`
+    query TF_INFO_Query(
         $processed_assembly: String
         $replicated_peaks: Boolean
         $include_investigatedas: [String]
@@ -93,4 +93,4 @@ export const TF_INFO_QUERY = gql`
             }
         }
     }
-`;
+`);

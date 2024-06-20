@@ -56,3 +56,54 @@ export type TFInfoQueryResponse = {
         partitionByBiosample: BiosamplePartitionedDatasetCollection[];
     };
 };
+
+export type FactorData = {
+    name: string;
+    gene_id?: string;
+    coordinates?: {
+        start: number;
+        end: number;
+        chromosome: string;
+    };
+    pdbids?: string;
+    modifications?: {
+        symbol: string;
+        modification: {
+            position: number;
+            modification: string;
+            amino_acid_code: string;
+        };
+    };
+    ensemble_data?: {
+        id: string;
+        biotype: string;
+        description: string;
+        display_name: string;
+        hgnc_synonyms: string[];
+        hgnc_primary_id: string;
+        uniprot_synonyms: string[];
+        uniprot_primary_id: string;
+        version: string;
+        ccds_id: string[];
+    };
+    hgnc_data?: {
+        hgnc_id: string;
+        symbol: string;
+        name: string;
+        uniprot_ids: string[];
+        locus_type: string;
+        locus_group: string;
+        location: string;
+        prev_name: string;
+        gene_group: string;
+        gene_group_id: string;
+        ccds_id: string;
+    };
+    uniprot_data?: string;
+    ncbi_data?: string;
+    factor_wiki?: string;
+};
+
+export type FactorQueryResponse = {
+    factor: FactorData[];
+};

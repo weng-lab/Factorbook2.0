@@ -12,14 +12,18 @@ import {
 } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import { TF_INFO_QUERY, FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
-import { TFInfoQueryResponse } from "@/components/CellType/types";
+import {
+  TFInfoQueryResponse,
+  FactorQueryResponse,
+} from "@/components/CellType/types";
 import {
   DataTable,
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
+import { getRCSBImageUrl } from "@/components/tf/Functions";
 
 interface FactorRow {
-  image: string;
+  image?: string;
   name: string;
   experiments: number;
   cellTypes: number;
@@ -33,8 +37,8 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
 
   const {
     data: tfData,
-    loading,
-    error,
+    loading: tfLoading,
+    error: tfError,
   } = useQuery<TFInfoQueryResponse>(TF_INFO_QUERY, {
     variables: {
       processed_assembly: assembly,
@@ -50,46 +54,52 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
       ],
       exclude_investigatedas: ["recombinant protein"],
     },
-    fetchPolicy: "cache-first", // Use cache-first to reduce network requests
+    fetchPolicy: "cache-first",
   });
 
-  const { data: factorData } = useQuery<FactorQueryResponse>(
-    FACTOR_DESCRIPTION_QUERY,
-    {
-      variables: {
-        names: tfData?.peakDataset.partitionByTarget.map(
-          (target) => target.target.name
-        ),
-        assembly: assembly,
-      },
-      skip: !tfData,
-      fetchPolicy: "cache-first",
-    }
-  );
+  const {
+    data: factorData,
+    loading: factorLoading,
+    error: factorError,
+  } = useQuery<FactorQueryResponse>(FACTOR_DESCRIPTION_QUERY, {
+    variables: {
+      names: tfData?.peakDataset.partitionByTarget.map(
+        (target) => target.target.name
+      ),
+      assembly: assembly,
+    },
+    skip: !tfData,
+    fetchPolicy: "cache-first",
+  });
 
   useEffect(() => {
     if (tfData && factorData) {
       const factorDescriptions: FactorRow[] =
         tfData.peakDataset.partitionByTarget.map((target) => {
-          const description =
-            factorData.factor.find(
-              (factor) => factor.name === target.target.name
-            )?.factor_wiki || "Description not available.";
+          const factor = factorData.factor.find(
+            (factor) => factor.name === target.target.name
+          );
+
+          const image = getRCSBImageUrl(factor?.pdbids);
 
           return {
-            image: `/path/to/${target.target.name}.png`,
+            image: image,
             name: target.target.name,
             experiments: target.counts.total,
             cellTypes: target.counts.biosamples,
-            description: description,
+            description: factor?.factor_wiki || "Description not available.",
           };
         });
+
+      // Sort rows by the number of cell types in descending order
+      factorDescriptions.sort((a, b) => b.cellTypes - a.cellTypes);
       setRows(factorDescriptions);
     }
   }, [tfData, factorData]);
 
-  if (loading) return <CircularProgress />;
-  if (error) return <p>Error: {error.message}</p>;
+  if (tfLoading || factorLoading) return <CircularProgress />;
+  if (tfError || factorError)
+    return <p>Error: {tfError?.message || factorError?.message}</p>;
 
   const filteredRows = rows.filter((row) =>
     row.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -98,20 +108,33 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
   const columns: DataTableColumn<FactorRow>[] = [
     {
       header: "",
-      render: (row: FactorRow) => (
-        <img
-          src={row.image}
-          alt={row.name}
-          style={{ width: "100px", height: "auto" }}
-        />
-      ),
+      render: (row: FactorRow) =>
+        row.image ? (
+          <img
+            src={row.image}
+            alt={row.name}
+            style={{
+              display: "flex",
+              width: "250px",
+              padding: "25px",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              gap: "10px",
+              flexShrink: 0,
+            }}
+          />
+        ) : (
+          ""
+        ),
       value: (row: FactorRow) => "", // Dummy value to satisfy TypeScript
     },
     {
       header: "",
       render: (row: FactorRow) => (
         <Box>
-          <Typography variant="h6">{row.name}</Typography>
+          <Typography variant="h6" style={{ fontWeight: "bold" }}>
+            {row.name}
+          </Typography>
           <Typography>Sequence specific TF</Typography>
           <Typography>{row.experiments} Experiments</Typography>
           <Typography>{row.cellTypes} Cell Types</Typography>
@@ -159,7 +182,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
         rows={filteredRows}
         itemsPerPage={5}
         dense
-        showMoreColumns={false} // Disable the "show more columns" feature
+        showMoreColumns={false}
       />
     </Container>
   );

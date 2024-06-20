@@ -6,7 +6,7 @@ import Summary from "./Summary";
 
 const CtPage: React.FC<{ species: string }> = ({ species }) => {
   const assembly = species === "human" ? "GRCh38" : "mm10";
-  const celltype === "human" ? "GRCh38" : "mm10";
+  const celltype = species === "human" ? "GRCh38" : "mm10";
   const details = "summary";
 
   return (
