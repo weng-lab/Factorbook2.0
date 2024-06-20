@@ -3,12 +3,8 @@ import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 import {
   ExperimentQuery,
   ExperimentQueryVariables,
-  DatasetsQuery,
-  DatasetsQueryVariables,
   FactorQuery,
   FactorQueryVariables,
-  TfInfoQuery,
-  TfInfoQueryVariables,
   DlMotifsCountsQuery,
   DlMotifsCountsQueryVariables,
 } from "../../types/graphql";
@@ -40,10 +36,7 @@ export const EXPERIMENT_QUERY: TypedDocumentNode<
   }
 `);
 
-export const DATASETS_QUERY: TypedDocumentNode<
-  DatasetsQuery,
-  DatasetsQueryVariables
-> = gql(`
+export const DATASETS_QUERY = gql(`
   query Datasets1(
     $target: String
     $processed_assembly: String
@@ -157,10 +150,7 @@ export const FACTOR_DESCRIPTION_QUERY: TypedDocumentNode<
   }
 `);
 
-export const TF_INFO_QUERY: TypedDocumentNode<
-  TfInfoQuery,
-  TfInfoQueryVariables
-> = gql(`
+export const TF_INFO_QUERY = gql(`
   query Datasets2(
     $processed_assembly: String
     $replicated_peaks: Boolean
