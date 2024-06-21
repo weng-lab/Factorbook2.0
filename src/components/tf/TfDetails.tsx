@@ -91,8 +91,8 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
           };
         });
 
-      // Sort rows by the number of cell types in descending order
-      factorDescriptions.sort((a, b) => b.cellTypes - a.cellTypes);
+      // Sort rows by the number of cell types in ascending order
+      factorDescriptions.sort((a, b) => a.cellTypes - b.cellTypes);
       setRows(factorDescriptions);
     }
   }, [tfData, factorData]);
@@ -107,31 +107,29 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
 
   const columns: DataTableColumn<FactorRow>[] = [
     {
-      header: "",
+      header: "Image",
       render: (row: FactorRow) =>
         row.image ? (
           <img
             src={row.image}
             alt={row.name}
             style={{
-              display: "flex",
+              display: "block",
               width: "250px",
-              padding: "25px",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              gap: "10px",
-              flexShrink: 0,
+              height: "250px",
+              padding: "10px",
             }}
           />
         ) : (
           ""
         ),
-      value: (row: FactorRow) => "", // Dummy value to satisfy TypeScript
+      value: (row: FactorRow) => "",
     },
     {
-      header: "",
+      header: "Details",
       render: (row: FactorRow) => (
-        <Box>
+        <Box style={{ minWidth: "150px" }}>
+          {" "}
           <Typography variant="h6" style={{ fontWeight: "bold" }}>
             {row.name}
           </Typography>
@@ -140,12 +138,17 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
           <Typography>{row.cellTypes} Cell Types</Typography>
         </Box>
       ),
-      value: (row: FactorRow) => "", // Dummy value to satisfy TypeScript
+      value: (row: FactorRow) => row.cellTypes, // Set the value to the number of cell types
     },
     {
-      header: "",
+      header: "Description",
       render: (row: FactorRow) => (
-        <Box display="flex" alignItems="center" justifyContent="space-between">
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          style={{ gap: "10px", flex: 1 }} // Increased width
+        >
           <Typography variant="body2">{row.description}</Typography>
           <IconButton onClick={() => downloadData(row)} aria-label="download">
             <SaveAltIcon />
@@ -169,7 +172,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
   };
 
   return (
-    <Container>
+    <Container style={{ width: "90%", maxWidth: "100%", padding: "20px" }}>
       <TextField
         placeholder="Search"
         variant="outlined"
@@ -177,13 +180,17 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
         onChange={(e) => setSearchQuery(e.target.value)}
         style={{ marginBottom: "20px" }}
       />
-      <DataTable
-        columns={columns}
-        rows={filteredRows}
-        itemsPerPage={5}
-        dense
-        showMoreColumns={false}
-      />
+      <Box style={{ overflowX: "auto" }}>
+        <DataTable
+          columns={columns}
+          rows={filteredRows}
+          itemsPerPage={5}
+          dense
+          showMoreColumns={false}
+          sortColumn={1} // Set the index for the cell types column
+          sortDescending={false} // Sort in descending order by default
+        />
+      </Box>
     </Container>
   );
 };
