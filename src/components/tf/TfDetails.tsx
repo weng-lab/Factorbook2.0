@@ -21,20 +21,41 @@ import {
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
 import { getRCSBImageUrl } from "@/components/tf/Functions";
+import { inflate } from 'pako';
+import { associateBy } from 'queryz';
+
 
 interface FactorRow {
   image?: string;
+  label?: string;
   name: string;
   experiments: number;
   cellTypes: number;
   description: string;
 }
 
+const SEQUENCE_SPECIFIC = new Set([ "Known motif", "Inferred motif" ]);
+
 const TfDetails: React.FC<{ species: string }> = ({ species }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<FactorRow[]>([]);
   const assembly = species === "human" ? "GRCh38" : "mm10";
 
+  const [ lloading, setLoading ] = useState(false);
+    const [ tfA, setTFA ] = useState<any | null>(null);
+
+    useEffect( () => {
+        if (!lloading) {
+            fetch("/tf-assignments.json.gz")
+                .then(x => x.blob())
+                .then(x => x.arrayBuffer())
+                .then(x => inflate(x, { to: 'string' }))
+                .then(x => setTFA(associateBy(JSON.parse(x), (x: any) => (x as any)["HGNC symbol"], (x: any) => x)));
+            setLoading(true);
+        }
+    }, [ lloading ]);
+
+  
   const {
     data: tfData,
     loading: tfLoading,
@@ -66,7 +87,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
       names: tfData?.peakDataset.partitionByTarget.map(
         (target) => target.target.name
       ),
-      assembly: assembly,
+      assembly,
     },
     skip: !tfData,
     fetchPolicy: "cache-first",
@@ -84,6 +105,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
 
           return {
             image: image,
+            label: (tfA === undefined || tfA.get(target.target.name.split("phospho")[0]) === undefined ? "" : (tfA.get(target.target.name.split("phospho")[0])["TF assessment"] as unknown as string).includes("Likely") ? "Likely sequence-specific TF - " : (SEQUENCE_SPECIFIC.has(tfA.get(target.target.name.split("phospho")[0])["TF assessment"]) ? "Sequence-specific TF - " : "Non-sequence-specific factor - ")),
             name: target.target.name,
             experiments: target.counts.total,
             cellTypes: target.counts.biosamples,
@@ -135,7 +157,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
           <Typography variant="h6" style={{ fontWeight: "bold" }}>
             {row.name}
           </Typography>
-          <Typography>Sequence specific TF</Typography>
+          <Typography>{row.label ? <>{row.label.replace(/ -/g, "")}<br /></> : ""}</Typography>
           <Typography>{row.experiments} Experiments</Typography>
           <Typography>{row.cellTypes} Cell Types</Typography>
         </Box>
