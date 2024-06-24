@@ -21,10 +21,10 @@
     "@mui/material-nextjs": "^5.15.11",
     "@weng-lab/psychscreen-ui-components": "^0.8.6",
     "next": "14.2.3",
+    "pako": "^1.0.11",
+    "queryz": "^0.0.3",
     "react": "^18",
-    "react-dom": "^18",
-    "pako": "^1.0.10",
-    "queryz": "^0.0.3"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
