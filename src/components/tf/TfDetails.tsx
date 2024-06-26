@@ -198,7 +198,9 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
         `${row.name}, ${row.label || ""}, ${row.experiments} Experiments, ${
           row.cellTypes
         } Cell Types`,
+      sort: (a: FactorRow, b: FactorRow) => a.cellTypes - b.cellTypes,
     },
+
     {
       header: "Description",
       render: (row: FactorRow) => (
@@ -230,12 +232,6 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
     downloadAnchorNode.remove();
   };
 
-  const handleSort = (column: string) => {
-    const isAsc = sortBy === column && sortOrder === "asc";
-    setSortOrder(isAsc ? "desc" : "asc");
-    setSortBy(column);
-  };
-
   return (
     <Container style={{ width: "90%", maxWidth: "100%", padding: "20px" }}>
       <TextField
@@ -249,12 +245,10 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
       <Box style={{ overflowX: "auto" }}>
         <DataTable
           columns={columns}
-          rows={filteredRows}
+          rows={rows}
           itemsPerPage={5}
           dense
           showMoreColumns={false}
-          //@ts-ignore
-          onSort={(column) => handleSort(column)}
         />
       </Box>
     </Container>
