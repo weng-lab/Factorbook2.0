@@ -15,15 +15,15 @@ import { TF_INFO_QUERY, FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
 import {
   TFInfoQueryResponse,
   FactorQueryResponse,
+  FactorData,
 } from "@/components/CellType/types";
 import {
   DataTable,
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
 import { getRCSBImageUrl } from "@/components/tf/Functions";
-import { inflate } from 'pako';
-import { associateBy } from 'queryz';
-
+import { inflate } from "pako";
+import { associateBy } from "queryz";
 
 interface FactorRow {
   image?: string;
@@ -34,28 +34,38 @@ interface FactorRow {
   description: string;
 }
 
-const SEQUENCE_SPECIFIC = new Set([ "Known motif", "Inferred motif" ]);
+const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
 const TfDetails: React.FC<{ species: string }> = ({ species }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<FactorRow[]>([]);
+  const [sortBy, setSortBy] = useState<string>("cellTypes");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+
   const assembly = species === "human" ? "GRCh38" : "mm10";
 
-  const [ lloading, setLoading ] = useState(false);
-    const [ tfA, setTFA ] = useState<any | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [tfA, setTFA] = useState<Map<string, any> | null>(null);
 
-    useEffect( () => {
-        if (!lloading) {
-            fetch("/tf-assignments.json.gz")
-                .then(x => x.blob())
-                .then(x => x.arrayBuffer())
-                .then(x => inflate(x, { to: 'string' }))
-                .then(x => setTFA(associateBy(JSON.parse(x), (x: any) => (x as any)["HGNC symbol"], (x: any) => x)));
-            setLoading(true);
-        }
-    }, [ lloading ]);
+  useEffect(() => {
+    if (!loading) {
+      fetch("/tf-assignments.json.gz")
+        .then((x) => x.blob())
+        .then((x) => x.arrayBuffer())
+        .then((x) => inflate(x, { to: "string" }))
+        .then((x) =>
+          setTFA(
+            associateBy(
+              JSON.parse(x),
+              (x: any) => x["HGNC symbol"],
+              (x: any) => x
+            )
+          )
+        );
+      setLoading(true);
+    }
+  }, [loading]);
 
-  
   const {
     data: tfData,
     loading: tfLoading,
@@ -82,11 +92,13 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
     data: factorData,
     loading: factorLoading,
     error: factorError,
-  } = useQuery<FactorQueryResponse>(FACTOR_DESCRIPTION_QUERY, {
+  } = useQuery<{ factor: FactorData[] }>(FACTOR_DESCRIPTION_QUERY, {
     variables: {
-      names: tfData?.peakDataset.partitionByTarget.map(
-        (target) => target.target.name
-      ),
+      names: tfData
+        ? tfData.peakDataset.partitionByTarget.map(
+            (target) => target.target.name
+          )
+        : [],
       assembly,
     },
     skip: !tfData,
@@ -103,9 +115,18 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
 
           const image = getRCSBImageUrl(factor?.pdbids);
 
+          const tfAssignment = tfA?.get(target.target.name.split("phospho")[0]);
+
           return {
             image: image,
-            label: (tfA === undefined || tfA.get(target.target.name.split("phospho")[0]) === undefined ? "" : (tfA.get(target.target.name.split("phospho")[0])["TF assessment"] as unknown as string).includes("Likely") ? "Likely sequence-specific TF - " : (SEQUENCE_SPECIFIC.has(tfA.get(target.target.name.split("phospho")[0])["TF assessment"]) ? "Sequence-specific TF - " : "Non-sequence-specific factor - ")),
+            label:
+              tfAssignment === undefined
+                ? ""
+                : (tfAssignment["TF assessment"] as string).includes("Likely")
+                ? "Likely sequence-specific TF - "
+                : SEQUENCE_SPECIFIC.has(tfAssignment["TF assessment"])
+                ? "Sequence-specific TF - "
+                : "Non-sequence-specific factor - ",
             name: target.target.name,
             experiments: target.counts.total,
             cellTypes: target.counts.biosamples,
@@ -113,19 +134,24 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
           };
         });
 
-      // Sort rows by the number of cell types in ascending order
-      factorDescriptions.sort((a, b) => a.cellTypes - b.cellTypes);
       setRows(factorDescriptions);
     }
-  }, [tfData, factorData]);
+  }, [tfData, factorData, tfA]);
 
   if (tfLoading || factorLoading) return <CircularProgress />;
   if (tfError || factorError)
     return <p>Error: {tfError?.message || factorError?.message}</p>;
 
-  const filteredRows = rows.filter((row) =>
-    row.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredRows = rows
+    .filter((row) => row.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => {
+      if (sortBy === "cellTypes") {
+        return sortOrder === "asc"
+          ? a.cellTypes - b.cellTypes
+          : b.cellTypes - a.cellTypes;
+      }
+      return 0;
+    });
 
   const columns: DataTableColumn<FactorRow>[] = [
     {
@@ -137,7 +163,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
             alt={row.name}
             style={{
               display: "block",
-              width: "250px",
+              minWidth: "250px",
               height: "250px",
               padding: "10px",
             }}
@@ -145,22 +171,33 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
         ) : (
           ""
         ),
-      value: (row: FactorRow) => "",
+      value: (row: FactorRow) => row.image || "",
     },
     {
       header: "Details",
       render: (row: FactorRow) => (
         <Box style={{ minWidth: "150px" }}>
-          {" "}
           <Typography variant="h6" style={{ fontWeight: "bold" }}>
             {row.name}
           </Typography>
-          <Typography>{row.label ? <>{row.label.replace(/ -/g, "")}<br /></> : ""}</Typography>
+          <Typography>
+            {row.label ? (
+              <>
+                {row.label.replace(/ -/g, "")}
+                <br />
+              </>
+            ) : (
+              ""
+            )}
+          </Typography>
           <Typography>{row.experiments} Experiments</Typography>
           <Typography>{row.cellTypes} Cell Types</Typography>
         </Box>
       ),
-      value: (row: FactorRow) => row.cellTypes, // Set the value to the number of cell types
+      value: (row: FactorRow) =>
+        `${row.name}, ${row.label || ""}, ${row.experiments} Experiments, ${
+          row.cellTypes
+        } Cell Types`,
     },
     {
       header: "Description",
@@ -169,7 +206,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
           display="flex"
           alignItems="center"
           justifyContent="space-between"
-          style={{ gap: "10px", flex: 1 }} // Increased width
+          style={{ flex: 1 }}
         >
           <Typography variant="body2">{row.description}</Typography>
           <IconButton onClick={() => downloadData(row)} aria-label="download">
@@ -177,7 +214,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
           </IconButton>
         </Box>
       ),
-      value: (row: FactorRow) => "", // Dummy value to satisfy TypeScript
+      value: (row: FactorRow) => row.description,
     },
   ];
 
@@ -193,6 +230,12 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
     downloadAnchorNode.remove();
   };
 
+  const handleSort = (column: string) => {
+    const isAsc = sortBy === column && sortOrder === "asc";
+    setSortOrder(isAsc ? "desc" : "asc");
+    setSortBy(column);
+  };
+
   return (
     <Container style={{ width: "90%", maxWidth: "100%", padding: "20px" }}>
       <TextField
@@ -202,6 +245,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
         onChange={(e) => setSearchQuery(e.target.value)}
         style={{ marginBottom: "20px" }}
       />
+      <Box display="flex" justifyContent="flex-end" mb={2}></Box>
       <Box style={{ overflowX: "auto" }}>
         <DataTable
           columns={columns}
@@ -209,8 +253,8 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
           itemsPerPage={5}
           dense
           showMoreColumns={false}
-          sortColumn={1} // Set the index for the cell types column
-          sortDescending={false} // Sort in descending order by default
+          //@ts-ignore
+          onSort={(column) => handleSort(column)}
         />
       </Box>
     </Container>
