@@ -37,10 +37,7 @@ interface FactorRow {
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
 const TfDetails: React.FC<{ species: string }> = ({ species }) => {
-  const [searchQuery, setSearchQuery] = useState<string>("");
   const [rows, setRows] = useState<FactorRow[]>([]);
-  const [sortBy, setSortBy] = useState<string>("cellTypes");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const assembly = species === "Human" ? "GRCh38" : "mm10";
 
@@ -227,22 +224,15 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
   };
 
   return (
-    <Container style={{ width: "90%", maxWidth: "100%", padding: "20px" }}>
-      <TextField
-        placeholder="Search"
-        variant="outlined"
-        fullWidth
-        onChange={(e) => setSearchQuery(e.target.value)}
-        style={{ marginBottom: "20px" }}
-      />
+    <Container>
       <Box display="flex" justifyContent="flex-end" mb={2}></Box>
       <Box style={{ overflowX: "auto" }}>
         <DataTable
           columns={columns}
           rows={rows}
           itemsPerPage={5}
-          dense
-          showMoreColumns={false}
+          sortColumn={1}
+          searchable={true}
         />
       </Box>
     </Container>
