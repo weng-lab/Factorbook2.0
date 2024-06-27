@@ -106,7 +106,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
   });
 
   useEffect(() => {
-    if (tfData && factorData) {
+    if (tfData && factorData && tfA) {
       const factorDescriptions: FactorRow[] =
         tfData.peakDataset.partitionByTarget.map((target) => {
           const factor = factorData.factor.find(
@@ -115,7 +115,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
 
           const image = getRCSBImageUrl(factor?.pdbids);
 
-          const tfAssignment = tfA?.get(target.target.name.split("phospho")[0]);
+          const tfAssignment = tfA.get(target.target.name.split("phospho")[0]);
 
           return {
             image: image,
@@ -141,17 +141,6 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
   if (tfLoading || factorLoading) return <CircularProgress />;
   if (tfError || factorError)
     return <p>Error: {tfError?.message || factorError?.message}</p>;
-
-  const filteredRows = rows
-    .filter((row) => row.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    .sort((a, b) => {
-      if (sortBy === "cellTypes") {
-        return sortOrder === "asc"
-          ? a.cellTypes - b.cellTypes
-          : b.cellTypes - a.cellTypes;
-      }
-      return 0;
-    });
 
   const columns: DataTableColumn<FactorRow>[] = [
     {
@@ -220,12 +209,18 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
   ];
 
   const downloadData = (row: FactorRow) => {
-    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(row)
+    const tsvData = [
+      "image\tlabel\tname\texperiments\tcellTypes\tdescription",
+      `${row.image || ""}\t${row.label || ""}\t${row.name}\t${
+        row.experiments
+      }\t${row.cellTypes}\t${row.description}`,
+    ].join("\n");
+    const dataStr = `data:text/tab-separated-values;charset=utf-8,${encodeURIComponent(
+      tsvData
     )}`;
     const downloadAnchorNode = document.createElement("a");
     downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", `${row.name}.json`);
+    downloadAnchorNode.setAttribute("download", `${row.name}.tsv`);
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
