@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Box, Typography, useMediaQuery, Tabs, Tab } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Searchbar from "@/components/Searchbar";
 

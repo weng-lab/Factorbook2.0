@@ -42,7 +42,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
   const [sortBy, setSortBy] = useState<string>("cellTypes");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-  const assembly = species === "human" ? "GRCh38" : "mm10";
+  const assembly = species === "Human" ? "GRCh38" : "mm10";
 
   const [loading, setLoading] = useState(false);
   const [tfA, setTFA] = useState<Map<string, any> | null>(null);
@@ -92,14 +92,14 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
     data: factorData,
     loading: factorLoading,
     error: factorError,
-  } = useQuery<{ factor: FactorData[] }>(FACTOR_DESCRIPTION_QUERY, {
+  } = useQuery<FactorQueryResponse>(FACTOR_DESCRIPTION_QUERY, {
     variables: {
-      names: tfData
+      assembly,
+      name: tfData
         ? tfData.peakDataset.partitionByTarget.map(
             (target) => target.target.name
           )
         : [],
-      assembly,
     },
     skip: !tfData,
     fetchPolicy: "cache-first",
@@ -200,7 +200,6 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
         } Cell Types`,
       sort: (a: FactorRow, b: FactorRow) => a.cellTypes - b.cellTypes,
     },
-
     {
       header: "Description",
       render: (row: FactorRow) => (

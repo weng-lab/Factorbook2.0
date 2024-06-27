@@ -1,15 +1,19 @@
 "use client";
 import * as React from "react";
-import { usePathname, useSearchParams } from "next/navigation";
-import TranscriptionFactors from "@/components/TranscriptionFactors";
-import TranscriptionTabs from "@/components/TranscriptionTabs";
+import { usePathname } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const TranscriptionFactors = dynamic(
+  () => import("@/components/TranscriptionFactors")
+);
+const TranscriptionTabs = dynamic(
+  () => import("@/components/TranscriptionTabs")
+);
 
 type ContentType = "Human" | "Mouse";
 
 const TranscriptionFactorsPage: React.FC = () => {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-
   const type = pathname.split("/").pop() as ContentType;
 
   const contentMap: Record<

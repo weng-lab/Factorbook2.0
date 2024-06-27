@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Box, Tabs, Tab, Typography } from "@mui/material";
-import TfDetails from "@/components/tf/TfDetails";
-import CtPage from "@/components/CellType/CtPage";
+import { Box, Tabs, Tab } from "@mui/material";
+import dynamic from "next/dynamic";
+
+const TfDetails = dynamic(() => import("@/components/tf/TfDetails"));
+const CtPage = dynamic(() => import("@/components/CellType/CtPage"));
 
 const TranscriptionTabs: React.FC<{ species: string }> = ({ species }) => {
   const [tabValue, setTabValue] = React.useState<number>(0);
