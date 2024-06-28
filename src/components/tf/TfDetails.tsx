@@ -7,7 +7,6 @@ import {
   CircularProgress,
   Container,
   Typography,
-  TextField,
   IconButton,
 } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
@@ -15,7 +14,6 @@ import { TF_INFO_QUERY, FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
 import {
   TFInfoQueryResponse,
   FactorQueryResponse,
-  FactorData,
 } from "@/components/CellType/types";
 import {
   DataTable,
@@ -82,7 +80,6 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
       ],
       exclude_investigatedas: ["recombinant protein"],
     },
-    fetchPolicy: "cache-first",
   });
 
   const {
@@ -99,7 +96,6 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
         : [],
     },
     skip: !tfData,
-    fetchPolicy: "cache-first",
   });
 
   useEffect(() => {
@@ -114,6 +110,9 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
 
           const tfAssignment = tfA.get(target.target.name.split("phospho")[0]);
 
+          const description =
+            factor?.factor_wiki?.split(".")[0] || "Description not available.";
+
           return {
             image: image,
             label:
@@ -127,7 +126,7 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
             name: target.target.name,
             experiments: target.counts.total,
             cellTypes: target.counts.biosamples,
-            description: factor?.factor_wiki || "Description not available.",
+            description: description + ".",
           };
         });
 
