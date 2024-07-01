@@ -121,3 +121,10 @@ export type TargetPartitionedDatasetCollection = {
     };
     datasets?: Dataset[];
 };
+
+export type FactorRow = {
+    name: string;
+    experiments: number;
+    cellTypes: number;
+    description: string;
+};
