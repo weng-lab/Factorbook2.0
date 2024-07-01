@@ -1,16 +1,26 @@
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { Redirect } from "next";
 import Summary from "./Summary";
 
 const CellTypePage: React.FC = () => {
   const router = useRouter();
-  const { species, celltype, details } = router.query;
+  const { species, celltype, details } = router.query as {
+    species: string;
+    celltype: string;
+    details: string;
+  };
 
-  if (!details) {
-    return <Redirect to={`/${species}/${celltype}/summary`} />;
-  }
+  useEffect(() => {
+    if (!details) {
+      router.replace(`/${species}/${celltype}/summary`);
+    }
+  }, [details, router, species, celltype]);
 
   const assembly = species === "human" ? "GRCh38" : "mm10";
+
+  if (!details) {
+    return null;
+  }
 
   return (
     <div
@@ -18,13 +28,9 @@ const CellTypePage: React.FC = () => {
     >
       <div style={{ marginTop: "1rem" }}>
         {details.toLowerCase() === "summary" ? (
-          <Summary
-            assembly={assembly}
-            celltype={celltype as string}
-            species={species as string}
-          />
+          <Summary assembly={assembly} celltype={celltype} species={species} />
         ) : (
-          <Redirect to={`/${species}/${celltype}/summary`} />
+          <Summary assembly={assembly} celltype={celltype} species={species} />
         )}
       </div>
     </div>
