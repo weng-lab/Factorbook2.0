@@ -66,20 +66,6 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species, celltype }) => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
-  const ctRows = [
-    {
-      title: "ENCODE",
-      url: `https://www.encodeproject.org/search/?searchTerm=${celltype.replace(
-        /\s+/g,
-        "+"
-      )}&type=Experiment&assay_title=TF+ChIP-seq&status=released&files.output_type=optimal+IDR+thresholded+peaks&files.output_type=pseudoreplicated+IDR+thresholded+peaks&assembly=${assembly}`,
-    },
-    {
-      title: "Wikipedia",
-      url: `https://en.wikipedia.org/wiki/${celltype}`,
-    },
-  ];
-
   const datasetColumns: DataTableColumn<Dataset>[] = [
     {
       header: "Lab Name",
@@ -123,29 +109,7 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species, celltype }) => {
   return (
     <Container>
       <Grid container spacing={2}>
-        <Grid item xs={3}>
-          <Card>
-            <Typography variant="h5">{celltype}</Typography>
-            <Table>
-              <TableBody>
-                {ctRows.map((row, i) => (
-                  <TableRow key={i}>
-                    <TableCell>
-                      <a
-                        href={row.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {row.title}
-                      </a>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Card>
-        </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={12}>
           {celltypeDesc && (
             <Card>
               <Typography variant="h6">Wikipedia</Typography>
