@@ -1,4 +1,4 @@
-import { TargetPartitionedDatasetCollection, BiosamplePartitionedDatasetCollection } from '../../components/Types';
+import { BiosamplePartitionedDatasetCollection } from '../../components/Types';
 
 export type CtDetailProps = {
     celltype: string;
@@ -42,6 +42,9 @@ export type DatasetQueryResponse = {
                 biosamples: number;
             };
         }[];
+        counts: {
+            total: number;
+        };
     };
 };
 
@@ -106,4 +109,15 @@ export type FactorData = {
 
 export type FactorQueryResponse = {
     factor: FactorData[];
+};
+
+export type TargetPartitionedDatasetCollection = {
+    target: {
+        name: string;
+    };
+    counts: {
+        total: number;
+        biosamples: number;
+    };
+    datasets?: Dataset[];
 };

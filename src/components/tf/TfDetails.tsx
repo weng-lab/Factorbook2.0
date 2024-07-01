@@ -14,6 +14,7 @@ import { TF_INFO_QUERY, FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
 import {
   TFInfoQueryResponse,
   FactorQueryResponse,
+  TargetPartitionedDatasetCollection,
 } from "@/components/CellType/types";
 import {
   DataTable,
@@ -34,7 +35,19 @@ interface FactorRow {
 
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
-const TfDetails: React.FC<{ species: string }> = ({ species }) => {
+type TfDetailsProps = {
+  species: string;
+  hideCellTypeCounts?: boolean;
+  row: TargetPartitionedDatasetCollection;
+  factor: string;
+};
+
+const TfDetails: React.FC<TfDetailsProps> = ({
+  species,
+  hideCellTypeCounts,
+  row,
+  factor,
+}) => {
   const [rows, setRows] = useState<FactorRow[]>([]);
 
   const assembly = species === "Human" ? "GRCh38" : "mm10";
@@ -163,7 +176,9 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
       render: (row: FactorRow) => (
         <Box style={{ minWidth: "150px" }}>
           <Typography variant="h6" style={{ fontWeight: "bold" }}>
-            {row.name}
+            {species === "Mouse"
+              ? row.name.charAt(0) + row.name.slice(1).toLowerCase()
+              : row.name}
           </Typography>
           <Typography>
             {row.label ? (
@@ -176,7 +191,9 @@ const TfDetails: React.FC<{ species: string }> = ({ species }) => {
             )}
           </Typography>
           <Typography>{row.experiments} Experiments</Typography>
-          <Typography>{row.cellTypes} Cell Types</Typography>
+          {!hideCellTypeCounts && (
+            <Typography>{row.cellTypes} Cell Types</Typography>
+          )}
         </Box>
       ),
       value: (row: FactorRow) =>

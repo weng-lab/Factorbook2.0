@@ -1,86 +1,187 @@
-"use client";
-
-import React from "react";
+import React, { useContext } from "react";
 import { useQuery } from "@apollo/client";
-import { Box, CircularProgress, Container, Typography } from "@mui/material";
+import { ApiContext } from "@/ApiContext";
+import {
+  Grid,
+  Card,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  Typography,
+  Container,
+  Box,
+} from "@mui/material";
 import {
   DataTable,
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
+import { includeTargetTypes, excludeTargetTypes } from "@/consts";
+import TfDetails from "../tf/TfDetails";
+import {
+  SummaryProps,
+  CellTypeDescription,
+  DatasetQueryResponse,
+  Dataset,
+  TargetPartitionedDatasetCollection,
+} from "./types";
 import { CELLTYPE_DESCRIPTION_QUERY, DATASET_QUERY } from "./Queries";
-import { SummaryProps, CellTypeDescription } from "./types";
-import CtDetails from "./CtDetails";
-
-const includeTargetTypes = [
-  "cofactor",
-  "chromatin remodeler",
-  "RNA polymerase complex",
-  "DNA replication",
-  "DNA repair",
-  "cohesin",
-  "transcription factor",
-];
-const excludeTargetTypes = ["recombinant protein"];
-
-const ctColumns = (species: string): DataTableColumn<any>[] => [
-  {
-    header: "",
-    value: (row) => row.biosample.name,
-    render: (row) => (
-      <CtDetails species={species} celltype={row.biosample.name} row={row} />
-    ),
-    sort: (a, b) => b.counts.targets - a.counts.targets,
-  },
-];
 
 const Summary: React.FC<SummaryProps> = ({ assembly, species, celltype }) => {
-  const { data: ctData, error: ctError } = useQuery<{
-    celltype: CellTypeDescription[];
-  }>(CELLTYPE_DESCRIPTION_QUERY, {
-    variables: {
-      assembly,
-      name: [celltype],
-    },
-  });
+  const apiContext = useContext(ApiContext);
+
+  if (!apiContext) {
+    return <div>Error: ApiContext is not provided</div>;
+  }
+
+  const { client } = apiContext;
+
+  const { data: ctData } = useQuery<{ celltype: CellTypeDescription[] }>(
+    CELLTYPE_DESCRIPTION_QUERY,
+    {
+      client,
+      variables: {
+        assembly,
+        name: [celltype],
+      },
+    }
+  );
+
   const celltypeDesc = ctData?.celltype[0];
 
-  const { data, loading, error } = useQuery(DATASET_QUERY, {
-    variables: {
-      processed_assembly: assembly,
-      biosample: celltype,
-      replicated_peaks: true,
-      include_investigatedas: includeTargetTypes,
-      exclude_investigatedas: excludeTargetTypes,
+  const { data, loading, error } = useQuery<DatasetQueryResponse>(
+    DATASET_QUERY,
+    {
+      client,
+      variables: {
+        processed_assembly: assembly,
+        biosample: celltype,
+        replicated_peaks: true,
+        include_investigatedas: includeTargetTypes,
+        exclude_investigatedas: excludeTargetTypes,
+      },
+    }
+  );
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  const ctRows = [
+    {
+      title: "ENCODE",
+      url: `https://www.encodeproject.org/search/?searchTerm=${celltype.replace(
+        /\s+/g,
+        "+"
+      )}&type=Experiment&assay_title=TF+ChIP-seq&status=released&files.output_type=optimal+IDR+thresholded+peaks&files.output_type=pseudoreplicated+IDR+thresholded+peaks&assembly=${assembly}`,
     },
-  });
+    {
+      title: "Wikipedia",
+      url: `https://en.wikipedia.org/wiki/${celltype}`,
+    },
+  ];
 
-  if (loading) return <CircularProgress />;
-  if (error || ctError)
-    return <p>Error: {error?.message || ctError?.message}</p>;
+  const datasetColumns: DataTableColumn<Dataset>[] = [
+    {
+      header: "Lab Name",
+      value: (row) => row.lab.friendly_name,
+      sort: (a, b) => a.lab.friendly_name.localeCompare(b.lab.friendly_name),
+    },
+    {
+      header: "Accession",
+      value: (row) => row.accession,
+      sort: (a, b) => a.accession.localeCompare(b.accession),
+    },
+    {
+      header: "Target",
+      value: (row) => row.target,
+      sort: (a, b) => a.target.localeCompare(b.target),
+    },
+    {
+      header: "Replicated Peaks",
+      value: (row) =>
+        row.replicated_peaks.map((peak) => peak.accession).join(", "),
+      sort: (a, b) => a.replicated_peaks.length - b.replicated_peaks.length,
+    },
+  ];
 
-  // Adjusted to work with the correct structure
-  const rows = data?.peakDataset?.datasets ?? [];
-  console.log("rows:", rows);
-
-  if (!Array.isArray(rows)) {
-    console.error("rows is not an array. Value:", rows);
-    return <p>Error: Data is not in expected format.</p>;
-  }
+  const tfColumns: DataTableColumn<TargetPartitionedDatasetCollection>[] = [
+    {
+      header: "Target Name",
+      value: (row) => row.target.name,
+      render: (row) => (
+        <TfDetails
+          hideCellTypeCounts={true}
+          row={row}
+          species={species}
+          factor={row.target.name}
+        />
+      ),
+      sort: (a, b) => a.target.name.localeCompare(b.target.name),
+    },
+  ];
 
   return (
     <Container>
-      <Typography variant="h4">Cell Type: {celltype}</Typography>
-      {celltypeDesc?.wiki_desc && (
-        <Typography>{celltypeDesc.wiki_desc}</Typography>
-      )}
-      <DataTable
-        columns={ctColumns(species)}
-        rows={rows}
-        searchable
-        itemsPerPage={4}
-        sortColumn={0}
-        sortDescending
-      />
+      <Grid container spacing={2}>
+        <Grid item xs={3}>
+          <Card>
+            <Typography variant="h5">{celltype}</Typography>
+            <Table>
+              <TableBody>
+                {ctRows.map((row, i) => (
+                  <TableRow key={i}>
+                    <TableCell>
+                      <a
+                        href={row.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {row.title}
+                      </a>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+        </Grid>
+        <Grid item xs={9}>
+          {celltypeDesc && (
+            <Card>
+              <Typography variant="h6">Wikipedia</Typography>
+              <Box p={2}>
+                <Typography>{celltypeDesc.wiki_desc}</Typography>
+              </Box>
+            </Card>
+          )}
+          {data && (
+            <Card>
+              <Typography variant="h6">
+                {data.peakDataset.counts.total} experiments performed
+              </Typography>
+              <DataTable
+                columns={datasetColumns}
+                rows={data.peakDataset.datasets}
+                itemsPerPage={5}
+                searchable
+              />
+            </Card>
+          )}
+          {data && (
+            <Card>
+              <Typography variant="h6">
+                {data.peakDataset.partitionByTarget.length} factors profiled
+              </Typography>
+              <DataTable
+                columns={tfColumns}
+                rows={data.peakDataset.partitionByTarget}
+                itemsPerPage={4}
+                searchable
+              />
+            </Card>
+          )}
+        </Grid>
+      </Grid>
     </Container>
   );
 };
