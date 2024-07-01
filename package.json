@@ -19,15 +19,20 @@
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.18",
     "@mui/material-nextjs": "^5.15.11",
+    "@weng-lab/psychscreen-ui-components": "^0.8.6",
     "next": "14.2.3",
+    "pako": "^1.0.11",
+    "queryz": "^0.0.3",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-router": "^6.24.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/client-preset": "^4.3.0",
     "@graphql-typed-document-node/core": "^3.2.0",
     "@types/node": "^20.14.2",
+    "@types/pako": "^2.0.3",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18",
     "eslint": "^8",
