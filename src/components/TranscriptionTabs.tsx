@@ -39,7 +39,22 @@ const TranscriptionTabs: React.FC<{ species: string }> = ({ species }) => {
         <Tab label="Browse all Cell Types" sx={{ textTransform: "none" }} />
       </Tabs>
       <Box>
-        {tabValue === 0 && <TfDetails species={species} />}
+        {tabValue === 0 && (
+          <TfDetails
+            species={species}
+            row={{
+              target: {
+                name: "",
+              },
+              counts: {
+                total: 0,
+                biosamples: 0,
+              },
+              datasets: undefined,
+            }}
+            factor={""}
+          />
+        )}
         {tabValue === 1 && <CtPage species={species} />}
       </Box>
     </Box>

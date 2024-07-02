@@ -111,15 +111,15 @@ const Footer: React.FC = () => (
         <LinkSection
           title="Portals"
           links={[
-            { text: "TFs in Humans", href: "./TranscriptionFactor/Human" },
-            { text: "TFs in Mouse", href: "./TranscriptionFactor/Mouse" },
-            { text: "Motif Catalog", href: "./MotifsCatalog" },
-            { text: "Annotations", href: "./AnnotationsVariants" },
+            { text: "TFs in Humans", href: "/TranscriptionFactor/Human" },
+            { text: "TFs in Mouse", href: "/TranscriptionFactor/Mouse" },
+            { text: "Motif Catalog", href: "/MotifsCatalog" },
+            { text: "Annotations", href: "/AnnotationsVariants" },
           ]}
         />
         <LinkSection
           title="Resources"
-          links={[{ text: "Downloads", href: "./Downloads" }]}
+          links={[{ text: "Downloads", href: "/Downloads" }]}
         />
       </Box>
     </Box>
