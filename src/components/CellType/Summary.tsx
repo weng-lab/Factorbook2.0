@@ -1,13 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { ApiContext } from "@/ApiContext";
-import {
-  Container,
-  Box,
-  CircularProgress,
-  Typography,
-  Card,
-} from "@mui/material";
+import { Container, Box, CircularProgress, Typography } from "@mui/material";
 import {
   DataTable,
   DataTableColumn,
@@ -16,11 +10,12 @@ import {
   SummaryProps,
   CellTypeDescription,
   DatasetQueryResponse,
+  Dataset,
   FactorRow,
 } from "./types";
 import { CELLTYPE_DESCRIPTION_QUERY, DATASET_QUERY } from "./Queries";
 
-const Summary: React.FC<SummaryProps> = ({ assembly, species, celltype }) => {
+const Summary: React.FC<SummaryProps> = ({ assembly, species }) => {
   const apiContext = useContext(ApiContext);
 
   if (!apiContext) {
@@ -41,7 +36,7 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species, celltype }) => {
       client,
       variables: {
         assembly,
-        name: [celltype],
+        name: [],
       },
     }
   );
@@ -52,7 +47,6 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species, celltype }) => {
       client,
       variables: {
         processed_assembly: assembly,
-        biosample: celltype,
         replicated_peaks: true,
         include_investigatedas: [
           "cofactor",
@@ -74,14 +68,13 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species, celltype }) => {
         (target) => {
           const cellTypeDesc = ctData.celltype[0];
           const description =
-            cellTypeDesc?.wiki_desc?.split(".")[0] ||
-            "Description not available.";
+            cellTypeDesc?.wiki_desc?.split(".")[0] || undefined;
 
           return {
             name: target.target.name,
             experiments: target.counts.total,
             cellTypes: target.counts.biosamples,
-            description: description + ".",
+            description,
           };
         }
       );
@@ -112,37 +105,33 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species, celltype }) => {
     },
     {
       header: "Description",
-      value: (row: FactorRow) => row.description,
-      render: (row: FactorRow) => (
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          style={{ flex: 1 }}
-        >
-          <Typography variant="body2">{row.description}</Typography>
-        </Box>
-      ),
+      value: (row: FactorRow) => row.description || "",
+      render: (row: FactorRow) =>
+        row.description ? (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            style={{ flex: 1 }}
+          >
+            <Typography variant="body2">{row.description}</Typography>
+          </Box>
+        ) : (
+          ""
+        ),
     },
   ];
 
   return (
     <Container>
-      <Card>
-        {ctData && ctData.celltype[0] && (
-          <Box p={2}>
-            <Typography variant="h6">Wikipedia</Typography>
-            <Typography>{ctData.celltype[0].wiki_desc}</Typography>
-          </Box>
-        )}
-      </Card>
-      <DataTable
-        columns={columns}
-        rows={rows}
-        itemsPerPage={5}
-        sortColumn={1}
-        searchable={true}
-      />
+      <Box style={{ overflowX: "auto" }}>
+        <DataTable
+          columns={columns}
+          rows={rows}
+          itemsPerPage={5}
+          searchable={true}
+        />
+      </Box>
     </Container>
   );
 };

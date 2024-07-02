@@ -12,11 +12,11 @@ export type CellTypeDescription = {
     wiki_desc?: string;
 };
 
-export type SummaryProps = {
+export interface SummaryProps {
     assembly: string;
     species: string;
-    celltype: string;
-};
+    celltype?: string; 
+  }  
 
 export type Dataset = {
     lab: {
@@ -126,5 +126,5 @@ export type FactorRow = {
     name: string;
     experiments: number;
     cellTypes: number;
-    description: string;
-};
+    description?: string;
+  };
