@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import {
   Box,
@@ -14,7 +15,7 @@ import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
 import PortalPanel from "@/components/PortalPanel";
-import { gql } from "../types/gql"
+import { gql } from "../types/gql";
 
 const Homepage = () => {
   const theme = useTheme();
@@ -36,11 +37,10 @@ const Homepage = () => {
   };
 
   const handleGoClick = () => {
-    if (selectedValue === "human") {
-      router.push("./HumanTranscriptionFactors");
-    }
-    if (selectedValue === "mouse") {
-      router.push("/MouseTranscriptionFactors");
+    if (selectedValue) {
+      const capitalizedValue =
+        selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1);
+      router.push(`/TranscriptionFactor/${capitalizedValue}`);
     }
   };
 
@@ -52,8 +52,7 @@ const Homepage = () => {
       iCRELdrQuery(study: $study) {
         snps
       }
-    }`
-  )
+    }`);
 
   return (
     <>

@@ -1,9 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Box, Tabs, Tab, Typography } from "@mui/material";
+import { Box, Tabs, Tab } from "@mui/material";
+import dynamic from "next/dynamic";
 
-const TranscriptionTabs: React.FC = () => {
+const TfDetails = dynamic(() => import("@/components/tf/TfDetails"));
+const CtPage = dynamic(() => import("@/components/CellType/CtPage"));
+
+const TranscriptionTabs: React.FC<{ species: string }> = ({ species }) => {
   const [tabValue, setTabValue] = React.useState<number>(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -36,11 +40,22 @@ const TranscriptionTabs: React.FC = () => {
       </Tabs>
       <Box>
         {tabValue === 0 && (
-          <Typography>Content for Browse all Transcription Factors</Typography>
+          <TfDetails
+            species={species}
+            row={{
+              target: {
+                name: "",
+              },
+              counts: {
+                total: 0,
+                biosamples: 0,
+              },
+              datasets: undefined,
+            }}
+            factor={""}
+          />
         )}
-        {tabValue === 1 && (
-          <Typography>Content for Browse all Cell Types</Typography>
-        )}
+        {tabValue === 1 && <CtPage species={species} />}
       </Box>
     </Box>
   );

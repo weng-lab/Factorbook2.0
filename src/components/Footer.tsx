@@ -50,7 +50,7 @@ const Footer: React.FC = () => (
       alignItems="flex-start"
       mb={5}
       width="100%"
-      px={3} // Add padding to match the desired layout
+      px={3}
     >
       <Box sx={{ flex: 1, minWidth: 200, mb: { xs: 3, md: 0 } }}>
         <Typography
@@ -111,15 +111,15 @@ const Footer: React.FC = () => (
         <LinkSection
           title="Portals"
           links={[
-            { text: "TFs in Humans", href: "./HumanTranscriptionFactors" },
-            { text: "TFs in Mouse", href: "./MouseTranscriptionFactors" },
-            { text: "Motif Catalog", href: "./MotifsCatalog" },
-            { text: "Annotations", href: "./AnnotationsVariants" },
+            { text: "TFs in Humans", href: "/TranscriptionFactor/Human" },
+            { text: "TFs in Mouse", href: "/TranscriptionFactor/Mouse" },
+            { text: "Motif Catalog", href: "/MotifsCatalog" },
+            { text: "Annotations", href: "/AnnotationsVariants" },
           ]}
         />
         <LinkSection
           title="Resources"
-          links={[{ text: "Downloads", href: "./Downloads" }]}
+          links={[{ text: "Downloads", href: "/Downloads" }]}
         />
       </Box>
     </Box>

@@ -7,6 +7,8 @@ import {
   InMemoryCache,
   ApolloClient as ApolloClientNext,
 } from "@apollo/experimental-nextjs-app-support";
+import { ReactNode } from "react";
+import { ApiContext, ApiContextType } from "@/ApiContext";
 import Config from "../config.json";
 
 function makeClient(): ApolloClientNext<NormalizedCacheObject> {
@@ -30,10 +32,22 @@ function makeClient(): ApolloClientNext<NormalizedCacheObject> {
   });
 }
 
-export function ApolloWrapper({ children }: React.PropsWithChildren) {
+const client = makeClient();
+
+const apiContextValue: ApiContextType = {
+  client,
+  restEndpoints: {
+    streamPeaks: Config.API.CcreAPI,
+    streamMemeService: Config.API.GraphqlAPI,
+  },
+};
+
+export function ApolloWrapper({ children }: { children: ReactNode }) {
   return (
     <ApolloNextAppProvider makeClient={makeClient}>
-      {children}
+      <ApiContext.Provider value={apiContextValue}>
+        {children}
+      </ApiContext.Provider>
     </ApolloNextAppProvider>
   );
 }
