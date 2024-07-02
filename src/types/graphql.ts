@@ -324,6 +324,27 @@ export type CalderonRnaData = {
   value: Scalars['Float']['output'];
 };
 
+export type CcreLinks = {
+  __typename?: 'CcreLinks';
+  destination: Scalars['String']['output'];
+  distance: Scalars['Int']['output'];
+  path: Scalars['String']['output'];
+  source: Scalars['String']['output'];
+  weights: Scalars['String']['output'];
+};
+
+export type CcreLinksDetails = {
+  __typename?: 'CcreLinksDetails';
+  ccrelinks?: Maybe<Array<Maybe<CcreLinks>>>;
+  ccrenodegroups?: Maybe<Array<Maybe<CcreNodeGroups>>>;
+};
+
+export type CcreNodeGroups = {
+  __typename?: 'CcreNodeGroups';
+  accession: Scalars['String']['output'];
+  ccre_group: Scalars['String']['output'];
+};
+
 export type CellTypeEnrichment = {
   __typename?: 'CellTypeEnrichment';
   encodeid: Scalars['String']['output'];
@@ -1206,8 +1227,19 @@ export type LinkedGenes = {
   assay?: Maybe<Scalars['String']['output']>;
   assembly: Scalars['String']['output'];
   celltype?: Maybe<Scalars['String']['output']>;
+  effectsize?: Maybe<Scalars['Float']['output']>;
   experiment_accession?: Maybe<Scalars['String']['output']>;
-  gene?: Maybe<Scalars['String']['output']>;
+  gene: Scalars['String']['output'];
+  geneid: Scalars['String']['output'];
+  genetype: Scalars['String']['output'];
+  grnaid?: Maybe<Scalars['String']['output']>;
+  method: Scalars['String']['output'];
+  p_val?: Maybe<Scalars['Float']['output']>;
+  score?: Maybe<Scalars['Float']['output']>;
+  slope?: Maybe<Scalars['Float']['output']>;
+  source?: Maybe<Scalars['String']['output']>;
+  tissue?: Maybe<Scalars['String']['output']>;
+  variantid?: Maybe<Scalars['String']['output']>;
 };
 
 export type LinkedSnp = {
@@ -1783,6 +1815,8 @@ export type Query = {
   genomicAssemblies?: Maybe<Array<Maybe<GenomicAssembly>>>;
   getPedatasetValuesbyCelltypeQuery?: Maybe<Array<Maybe<PsychEncodeDatasetValues>>>;
   getPedatasetValuesbySubclassQuery?: Maybe<Array<Maybe<PsychEncodeDatasetValues>>>;
+  getcCRELinksQuery?: Maybe<CcreLinksDetails>;
+  getcCRENodeCelltypes?: Maybe<Array<Maybe<Scalars['String']['output']>>>;
   getcartAccessionsQuery?: Maybe<Array<Scalars['String']['output']>>;
   groundLevelVersionsQuery: Array<GroundLevelVersionsEntries>;
   gtexQTLQuery: Array<GtExQtl>;
@@ -2293,6 +2327,18 @@ export type QueryGetPedatasetValuesbySubclassQueryArgs = {
 };
 
 
+export type QueryGetcCreLinksQueryArgs = {
+  accession: Scalars['String']['input'];
+  celltype: Scalars['String']['input'];
+  degree_of_separation: Scalars['Int']['input'];
+};
+
+
+export type QueryGetcCreNodeCelltypesArgs = {
+  accession: Scalars['String']['input'];
+};
+
+
 export type QueryGetcartAccessionsQueryArgs = {
   uuid: Scalars['String']['input'];
 };
@@ -2436,6 +2482,7 @@ export type QueryLdrArgs = {
 export type QueryLinkedGenesQueryArgs = {
   accession: Array<InputMaybe<Scalars['String']['input']>>;
   assembly: Scalars['String']['input'];
+  method?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>>>;
 };
 
 
