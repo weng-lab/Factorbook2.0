@@ -23,6 +23,7 @@ import {
 import { getRCSBImageUrl } from "@/components/tf/Functions";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
+import { includeTargetTypes, excludeTargetTypes } from "@/consts";
 
 interface FactorRow {
   image?: string;
@@ -82,16 +83,8 @@ const TfDetails: React.FC<TfDetailsProps> = ({
     variables: {
       processed_assembly: assembly,
       replicated_peaks: true,
-      include_investigatedas: [
-        "cofactor",
-        "chromatin remodeler",
-        "RNA polymerase complex",
-        "DNA replication",
-        "DNA repair",
-        "cohesin",
-        "transcription factor",
-      ],
-      exclude_investigatedas: ["recombinant protein"],
+      includeTargetTypes,
+      excludeTargetTypes,
     },
   });
 

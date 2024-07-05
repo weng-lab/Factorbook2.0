@@ -31,14 +31,3 @@ export type BiosamplePartitionedDatasetCollection = {
   };
   datasets?: Dataset[];
 };
-
-// export type TargetPartitionedDatasetCollection = {
-//   target: {
-//     name: string;
-//   };
-//   counts: {
-//     total: number;
-//     biosamples: number;
-//   };
-//   datasets?: Dataset[];
-// };
