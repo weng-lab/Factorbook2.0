@@ -12,7 +12,7 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
 import { FactorQueryResponse } from "@/components/CellType/types";
@@ -79,20 +79,24 @@ const FactorDetailsPage = () => {
   };
 
   return (
-    <Container
-      style={{ display: "flex", padding: "40px 25.5px", minHeight: "100vh" }}
+    <Box
+      style={{
+        display: "flex",
+        padding: "40px 25.5px",
+        minHeight: "100vh",
+      }}
     >
       <Box
         style={{
-          display: "inline-flex",
+          display: "flex",
           flexDirection: "column",
           alignItems: "center",
           background: "var(--grey-500, #494A50)",
           padding: "16px",
           borderRadius: "8px",
           marginRight: "20px",
-          height: "100%",
           width: "300px",
+          minHeight: "calc(100vh - 80px)", // Adjust height to fill the viewport without overlapping header/footer
         }}
       >
         <Typography
@@ -179,7 +183,7 @@ const FactorDetailsPage = () => {
         </Tabs>
         <Box mt={2}>{renderTabContent()}</Box>
       </Box>
-    </Container>
+    </Box>
   );
 };
 
