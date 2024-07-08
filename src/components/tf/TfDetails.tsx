@@ -1,27 +1,157 @@
 "use client";
 
-import React from "react";
-import { Box, Container, Typography, IconButton } from "@mui/material";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
+import { useQuery } from "@apollo/client";
+import {
+  Box,
+  CircularProgress,
+  Container,
+  Typography,
+  IconButton,
+} from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import { TF_INFO_QUERY, FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
+import {
+  TFInfoQueryResponse,
+  FactorQueryResponse,
+  TargetPartitionedDatasetCollection,
+} from "@/components/CellType/types";
 import {
   DataTable,
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
 import { getRCSBImageUrl } from "@/components/tf/Functions";
-import { FactorRow } from "@/components/CellType/types";
+import { inflate } from "pako";
+import { associateBy } from "queryz";
+import Link from "next/link";
+
+interface FactorRow {
+  image?: string;
+  label?: string;
+  name: string;
+  experiments: number;
+  cellTypes: number;
+  description?: string;
+}
+
+const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
 type TfDetailsProps = {
-  rows: FactorRow[];
   species: string;
   hideCellTypeCounts?: boolean;
+  row: TargetPartitionedDatasetCollection;
+  factor: string;
 };
 
 const TfDetails: React.FC<TfDetailsProps> = ({
-  rows,
   species,
   hideCellTypeCounts,
+  row,
+  factor,
 }) => {
+  const [rows, setRows] = useState<FactorRow[]>([]);
+
+  const assembly = species === "Human" ? "GRCh38" : "mm10";
+
+  const [loading, setLoading] = useState(false);
+  const [tfA, setTFA] = useState<Map<string, any> | null>(null);
+
+  useEffect(() => {
+    if (!loading) {
+      fetch("/tf-assignments.json.gz")
+        .then((x) => x.blob())
+        .then((x) => x.arrayBuffer())
+        .then((x) => inflate(x, { to: "string" }))
+        .then((x) =>
+          setTFA(
+            associateBy(
+              JSON.parse(x),
+              (x: any) => x["HGNC symbol"],
+              (x: any) => x
+            )
+          )
+        );
+      setLoading(true);
+    }
+  }, [loading]);
+
+  const {
+    data: tfData,
+    loading: tfLoading,
+    error: tfError,
+  } = useQuery<TFInfoQueryResponse>(TF_INFO_QUERY, {
+    variables: {
+      processed_assembly: assembly,
+      replicated_peaks: true,
+      include_investigatedas: [
+        "cofactor",
+        "chromatin remodeler",
+        "RNA polymerase complex",
+        "DNA replication",
+        "DNA repair",
+        "cohesin",
+        "transcription factor",
+      ],
+      exclude_investigatedas: ["recombinant protein"],
+    },
+  });
+
+  const {
+    data: factorData,
+    loading: factorLoading,
+    error: factorError,
+  } = useQuery<FactorQueryResponse>(FACTOR_DESCRIPTION_QUERY, {
+    variables: {
+      assembly,
+      name: tfData
+        ? tfData.peakDataset.partitionByTarget.map(
+            (target) => target.target.name
+          )
+        : [],
+    },
+    skip: !tfData,
+  });
+
+  useEffect(() => {
+    if (tfData && factorData && tfA) {
+      const factorDescriptions: FactorRow[] =
+        tfData.peakDataset.partitionByTarget.map((target) => {
+          const factor = factorData.factor.find(
+            (factor) => factor.name === target.target.name
+          );
+
+          const image = getRCSBImageUrl(factor?.pdbids);
+
+          const tfAssignment = tfA.get(target.target.name.split("phospho")[0]);
+
+          const description =
+            factor?.factor_wiki?.split(".")[0] || "Description not available.";
+
+          return {
+            image: image,
+            label:
+              tfAssignment === undefined
+                ? ""
+                : (tfAssignment["TF assessment"] as string).includes("Likely")
+                ? "Likely sequence-specific TF - "
+                : SEQUENCE_SPECIFIC.has(tfAssignment["TF assessment"])
+                ? "Sequence-specific TF - "
+                : "Non-sequence-specific factor - ",
+            name: target.target.name,
+            experiments: target.counts.total,
+            cellTypes: target.counts.biosamples,
+            description: description + ".",
+          };
+        });
+
+      setRows(factorDescriptions);
+    }
+  }, [tfData, factorData, tfA]);
+
+  if (tfLoading || factorLoading) return <CircularProgress />;
+  if (tfError || factorError)
+    return <p>Error: {tfError?.message || factorError?.message}</p>;
+
   const columns: DataTableColumn<FactorRow>[] = [
     {
       header: "Image",
@@ -49,7 +179,8 @@ const TfDetails: React.FC<TfDetailsProps> = ({
           <Typography variant="h6" style={{ fontWeight: "bold" }}>
             <Link
               href={`/TranscriptionFactor/${species}/${row.name}/Function`}
-              passHref
+              target="_blank"
+              rel="noopener noreferrer"
             >
               {species === "Mouse"
                 ? row.name.charAt(0) + row.name.slice(1).toLowerCase()
@@ -93,7 +224,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
           </IconButton>
         </Box>
       ),
-      value: (row: FactorRow) => row.description,
+      value: (row: FactorRow) => row.description || "",
     },
   ];
 
