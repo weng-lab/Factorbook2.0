@@ -1,10 +1,7 @@
 "use client";
 
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
+import React from "react";
+import { Box, Typography, Card, CardContent } from "@mui/material";
 
 interface ExperimentProps {
   title: string;
@@ -24,10 +21,10 @@ const ContentCard: React.FC<ExperimentProps> = ({
       alignItems: "flex-start",
       gap: 4,
       padding: 3,
-      width: "100%", // Set width to 100% to fit the screen
+      width: "100%",
       borderRadius: "24px",
       backgroundColor: "#EDE7F6",
-      boxShadow: "none", // Remove the default box shadow
+      boxShadow: "none",
     }}
   >
     <CardContent sx={{ width: "100%" }}>

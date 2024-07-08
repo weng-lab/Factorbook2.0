@@ -1,12 +1,14 @@
 "use client";
 
 import React from "react";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  InputAdornment,
+} from "@mui/material";
 
 interface SearchBarProps {
   placeholder: string;

@@ -1,8 +1,7 @@
 "use client";
 
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import React from "react";
+import { Box, Typography } from "@mui/material";
 import SvgIcon from "@mui/material/SvgIcon";
 
 const Header: React.FC = () => {

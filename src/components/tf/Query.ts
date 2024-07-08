@@ -37,7 +37,7 @@ export const EXPERIMENT_QUERY: TypedDocumentNode<
 `);
 
 export const DATASETS_QUERY = gql(`
-  query Datasets1(
+  query Datasets_Query(
     $target: String
     $processed_assembly: String
     $replicated_peaks: Boolean
@@ -151,7 +151,7 @@ export const FACTOR_DESCRIPTION_QUERY: TypedDocumentNode<
 `);
 
 export const TF_INFO_QUERY = gql(`
-  query Datasets2(
+  query Tf_Info(
     $processed_assembly: String
     $replicated_peaks: Boolean
     $include_investigatedas: [String]
