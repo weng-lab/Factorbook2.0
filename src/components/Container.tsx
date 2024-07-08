@@ -109,33 +109,4 @@ const ReferenceSection: React.FC<ReferenceProps> = ({ title, sources }) => {
   );
 };
 
-const Container: React.FC = () => {
-  const referenceSources = [
-    { name: "ENCODE", url: "https://www.encodeproject.org/" },
-    { name: "Ensembl", url: "https://www.ensembl.org/" },
-    { name: "GO", url: "http://geneontology.org/" },
-    { name: "GeneCards", url: "https://www.genecards.org/" },
-    { name: "HGNC", url: "https://www.genenames.org/" },
-    { name: "RefSeq", url: "https://www.ncbi.nlm.nih.gov/refseq/" },
-    { name: "UCSC Genome Browser", url: "https://genome.ucsc.edu/" },
-    { name: "UniProt", url: "https://www.uniprot.org/" },
-    { name: "Wikipedia", url: "https://www.wikipedia.org/" },
-  ];
-
-  return (
-    <Box
-      sx={{
-        display: "flex",
-        width: "100%",
-        padding: "var(--5, 40px) var(--3, 24px)",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        gap: "var(--3, 24px)",
-      }}
-    >
-      <ReferenceSection title="References" sources={referenceSources} />
-    </Box>
-  );
-};
-
-export default Container;
+export default ReferenceSection;

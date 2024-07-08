@@ -123,6 +123,8 @@ export type TargetPartitionedDatasetCollection = {
 };
 
 export type FactorRow = {
+    image?: string;
+    label?: string;
     name: string;
     experiments: number;
     cellTypes: number;
