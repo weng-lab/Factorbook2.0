@@ -5,7 +5,7 @@ import { Box, Typography, Card, CardContent } from "@mui/material";
 
 interface ExperimentProps {
   title: string;
-  count: number;
+  count?: number;
   description: string;
 }
 
@@ -40,16 +40,23 @@ const ContentCard: React.FC<ExperimentProps> = ({
         <Typography variant="h6" sx={{ fontWeight: "bold", color: "#558B2F" }}>
           {title}
         </Typography>
-        <Typography
-          variant="body2"
-          sx={{ fontWeight: "medium", color: "#333" }}
-        >
-          {count} performed
-        </Typography>
+        {count !== undefined && (
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: "medium", color: "#333" }}
+          >
+            {count} performed
+          </Typography>
+        )}
       </Box>
       <Typography
         variant="body1"
-        sx={{ color: "#333", marginTop: 2, width: "100%" }}
+        sx={{
+          color: "#333",
+          marginTop: 2,
+          width: "100%",
+          whiteSpace: "pre-line",
+        }}
       >
         {description}
       </Typography>

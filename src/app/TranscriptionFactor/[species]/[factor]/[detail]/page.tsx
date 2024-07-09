@@ -54,15 +54,48 @@ const FactorDetailsPage = () => {
   const imageUrl = getRCSBImageUrl(factorData?.pdbids);
 
   const references = [
-    { name: "ENCODE", url: "https://www.encodeproject.org/" },
-    { name: "Ensembl", url: "https://www.ensembl.org/" },
-    { name: "GO", url: "http://geneontology.org/" },
-    { name: "GeneCards", url: "https://www.genecards.org/" },
-    { name: "HGNC", url: "https://www.genenames.org/" },
-    { name: "RefSeq", url: "https://www.ncbi.nlm.nih.gov/refseq/" },
-    { name: "UCSC Genome Browser", url: "https://genome.ucsc.edu/" },
-    { name: "UniProt", url: "https://www.uniprot.org/" },
-    { name: "Wikipedia", url: "https://www.wikipedia.org/" },
+    {
+      name: "ENCODE",
+      url: `https://www.encodeproject.org/search/?searchTerm=${factor}&type=Experiment&assembly=${
+        species === "Human" ? "GRCh38" : "mm10"
+      }&assay_title=TF+ChIP-seq&files.output_type=optimal+IDR+thresholded+peaks&files.output_type=pseudoreplicated+IDR+thresholded+peaks&status=released`,
+    },
+    {
+      name: "Ensembl",
+      url: `http://www.ensembl.org/Human/Search/Results?q=${factor};site=ensembl;facet_species=Human`,
+    },
+    {
+      name: "GO",
+      url: `http://amigo.geneontology.org/amigo/search/bioentity?q=${factor}`,
+    },
+    {
+      name: "GeneCards",
+      url: `http://www.genecards.org/cgi-bin/carddisp.pl?gene=${factor}`,
+    },
+    {
+      name: "HGNC",
+      url: `http://www.genenames.org/cgi-bin/gene_search?search=${factor}&submit=Submit`,
+    },
+    {
+      name: "RefSeq",
+      url: `http://www.ncbi.nlm.nih.gov/nuccore/?term=${factor}+AND+${
+        species.toLowerCase() !== "mm10"
+          ? '"Homo sapiens"[porgn:__txid9606]'
+          : '"Mus musculus"[porgn]'
+      }`,
+    },
+    {
+      name: "UCSC Genome Browser",
+      url: `https://genome.ucsc.edu/cgi-bin/hgTracks?clade=mammal&org=Human&db=hg19&position=${factor}&hgt.suggestTrack=knownGene&Submit=submit`,
+    },
+    {
+      name: "UniProt",
+      url: `http://www.uniprot.org/uniprot/?query=${factor}&sort=score`,
+    },
+    {
+      name: "Wikipedia",
+      url: `https://en.wikipedia.org/wiki/${factor}`,
+    },
   ];
 
   const renderTabContent = () => {
