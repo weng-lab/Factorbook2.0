@@ -32,21 +32,38 @@ export type Dataset = {
 
 export type DatasetQueryResponse = {
     peakDataset: {
-        datasets: Dataset[];
-        partitionByTarget: {
-            target: {
-                name: string;
-            };
-            counts: {
-                total: number;
-                biosamples: number;
-            };
-        }[];
-        counts: {
-            total: number;
+      datasets: Dataset[];
+      partitionByTarget: {
+        target: {
+          name: string;
         };
+        counts: {
+          total: number;
+          biosamples: number;
+        };
+      }[];
+      counts: {
+        total: number;
+      };
+      partitionByBiosample: {
+        biosample: {
+          name: string;
+        };
+        counts: {
+          targets: number;
+        };
+      }[];
     };
-};
+  };
+  
+  export type FunctionPageProps = {
+    factor: string;
+    assembly: string;
+    datasets: DatasetQueryResponse;
+    datasetsLoading: boolean;
+    label?: string;
+  };
+  
 
 export type TFInfoQueryResponse = {
     peakDataset: {

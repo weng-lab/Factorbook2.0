@@ -2,17 +2,20 @@
 
 import React from "react";
 import { Box, Typography, Card, CardContent } from "@mui/material";
+import { SxProps } from "@mui/system";
 
 interface ExperimentProps {
   title: string;
   count?: number;
   description: string;
+  sx?: SxProps;
 }
 
 const ContentCard: React.FC<ExperimentProps> = ({
   title,
   count,
   description,
+  sx,
 }) => (
   <Card
     sx={{
@@ -25,6 +28,7 @@ const ContentCard: React.FC<ExperimentProps> = ({
       borderRadius: "24px",
       backgroundColor: "#EDE7F6",
       boxShadow: "none",
+      ...sx,
     }}
   >
     <CardContent sx={{ width: "100%" }}>
