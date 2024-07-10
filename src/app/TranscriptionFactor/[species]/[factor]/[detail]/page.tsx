@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import {
@@ -26,7 +26,6 @@ import Search from "./Search";
 import Link from "next/link";
 
 const FactorDetailsPage = () => {
-  const router = useRouter();
   const { species, factor, detail = "Function" } = useParams();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -47,7 +46,21 @@ const FactorDetailsPage = () => {
   const renderTabContent = () => {
     switch (detail) {
       case "Function":
-        return <FunctionTab />;
+        return (
+          <FunctionTab
+            factor={factor}
+            assembly={species === "Human" ? "GRCh38" : "mm10"}
+            datasets={{
+              peakDataset: {
+                datasets: [],
+                partitionByTarget: [],
+                counts: { total: 0 },
+                partitionByBiosample: [],
+              },
+            }}
+            datasetsLoading={false}
+          />
+        );
       case "Expression":
         return <Expression />;
       case "MotifEnrichmentMEME":
@@ -59,7 +72,21 @@ const FactorDetailsPage = () => {
       case "Search":
         return <Search />;
       default:
-        return <FunctionTab />;
+        return (
+          <FunctionTab
+            factor={factor}
+            assembly={species === "Human" ? "GRCh38" : "mm10"}
+            datasets={{
+              peakDataset: {
+                datasets: [],
+                partitionByTarget: [],
+                counts: { total: 0 },
+                partitionByBiosample: [],
+              },
+            }}
+            datasetsLoading={false}
+          />
+        );
     }
   };
 
@@ -90,7 +117,7 @@ const FactorDetailsPage = () => {
                 tabsScroller.scrollBy({ left: -200, behavior: "smooth" });
               }
             }}
-          ></ArrowBackIosIcon>
+          />
           <Tabs
             value={detail}
             indicatorColor="primary"
@@ -104,18 +131,14 @@ const FactorDetailsPage = () => {
               value="Function"
               component={Link}
               href={`/TranscriptionFactor/${species}/${factor}/Function`}
-              sx={{
-                color: detail === "Function" ? "#8169BF" : "inherit",
-              }}
+              sx={{ color: detail === "Function" ? "#8169BF" : "inherit" }}
             />
             <Tab
               label="Expression (RNA-seq)"
               value="Expression"
               component={Link}
               href={`/TranscriptionFactor/${species}/${factor}/Expression`}
-              sx={{
-                color: detail === "Expression" ? "#8169BF" : "inherit",
-              }}
+              sx={{ color: detail === "Expression" ? "#8169BF" : "inherit" }}
             />
             <Tab
               label="Motif Enrichment (MEME, ChIP-seq)"
@@ -150,9 +173,7 @@ const FactorDetailsPage = () => {
               value="Search"
               component={Link}
               href={`/TranscriptionFactor/${species}/${factor}/Search`}
-              sx={{
-                color: detail === "Search" ? "#8169BF" : "inherit",
-              }}
+              sx={{ color: detail === "Search" ? "#8169BF" : "inherit" }}
             />
           </Tabs>
           <ArrowForwardIosIcon
@@ -162,7 +183,7 @@ const FactorDetailsPage = () => {
                 tabsScroller.scrollBy({ left: 200, behavior: "smooth" });
               }
             }}
-          ></ArrowForwardIosIcon>
+          />
         </Box>
 
         <Box mt={2}>{renderTabContent()}</Box>
