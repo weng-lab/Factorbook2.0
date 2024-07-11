@@ -6,9 +6,13 @@ import { useQuery } from "@apollo/client";
 import { Box, CircularProgress, Typography, IconButton } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
+import {
+  FACTOR_DESCRIPTION_QUERY,
+  DATASETS_QUERY,
+} from "@/components/tf/Query";
 import {
   FactorQueryResponse,
+  DatasetQueryResponse,
   FunctionPageProps,
 } from "@/components/CellType/types";
 import { getRCSBImageUrl } from "@/components/tf/Functions";
@@ -76,24 +80,42 @@ const biosampleColumns = (species: string): DataTableColumn<any>[] => [
 ];
 
 const FunctionTab: React.FC<FunctionPageProps> = (props) => {
-  const { species, factor } = useParams();
+  const { species, factor } = useParams<{ species: string; factor: string }>();
   const [imageVisible, setImageVisible] = React.useState(true);
 
-  const { data, loading, error } = useQuery<FactorQueryResponse>(
-    FACTOR_DESCRIPTION_QUERY,
-    {
-      variables: {
-        assembly: props.assembly,
-        name: [props.factor],
-      },
-    }
-  );
+  const {
+    data: factorData,
+    loading: factorLoading,
+    error: factorError,
+  } = useQuery<FactorQueryResponse>(FACTOR_DESCRIPTION_QUERY, {
+    variables: {
+      assembly: props.assembly,
+      name: [props.factor],
+    },
+  });
 
-  if (loading) return <CircularProgress />;
-  if (error) return <p>Error: {error.message}</p>;
+  const {
+    data: datasetData,
+    loading: datasetLoading,
+    error: datasetError,
+  } = useQuery<DatasetQueryResponse>(DATASETS_QUERY, {
+    variables: {
+      processed_assembly: props.assembly,
+      target: props.factor,
+      replicated_peaks: true,
+      include_investigatedas: [], // provide the correct types
+      exclude_investigatedas: [], // provide the correct types
+    },
+  });
 
-  const factorData = data?.factor[0];
-  const imageUrl = getRCSBImageUrl(factorData?.pdbids);
+  if (factorLoading || datasetLoading) return <CircularProgress />;
+  if (factorError)
+    return <p>Error loading factor data: {factorError.message}</p>;
+  if (datasetError)
+    return <p>Error loading datasets: {datasetError.message}</p>;
+
+  const factorDetails = factorData?.factor[0];
+  const imageUrl = getRCSBImageUrl(factorDetails?.pdbids);
 
   const references = [
     {
@@ -144,56 +166,59 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
 
   const renderCards = () => (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      {factorData?.ncbi_data && (
+      {factorDetails?.ncbi_data && (
         <ContentCard
           title="NCBI"
-          description={factorData.ncbi_data}
+          description={factorDetails.ncbi_data}
           sx={{ marginBottom: 2 }}
         />
       )}
-      {factorData?.uniprot_data && (
+      {factorDetails?.uniprot_data && (
         <ContentCard
           title="UniProt"
-          description={factorData.uniprot_data}
+          description={factorDetails.uniprot_data}
           sx={{ marginBottom: 2 }}
         />
       )}
-      {factorData?.factor_wiki && looksBiological(factorData.factor_wiki) && (
-        <ContentCard
-          title="Wikipedia"
-          description={factorData.factor_wiki}
-          sx={{ marginBottom: 2 }}
-        />
-      )}
-      {factorData?.hgnc_data && (
+      {factorDetails?.factor_wiki &&
+        looksBiological(factorDetails.factor_wiki) && (
+          <ContentCard
+            title="Wikipedia"
+            description={factorDetails.factor_wiki}
+            sx={{ marginBottom: 2 }}
+          />
+        )}
+      {factorDetails?.hgnc_data && (
         <ContentCard
           title="HGNC"
-          description={`HGNC ID: ${factorData.hgnc_data.hgnc_id}\nLocus Type: ${
-            factorData.hgnc_data.locus_type
+          description={`HGNC ID: ${
+            factorDetails.hgnc_data.hgnc_id
+          }\nLocus Type: ${
+            factorDetails.hgnc_data.locus_type
           }\nChromosomal Location: ${
-            factorData.hgnc_data.location
+            factorDetails.hgnc_data.location
           }\nGene Groups: ${
-            Array.isArray(factorData.hgnc_data.gene_group)
-              ? factorData.hgnc_data.gene_group.join(", ")
+            Array.isArray(factorDetails.hgnc_data.gene_group)
+              ? factorDetails.hgnc_data.gene_group.join(", ")
               : ""
           }\nPrevious Names: ${
-            Array.isArray(factorData.hgnc_data.prev_name)
-              ? factorData.hgnc_data.prev_name.join(", ")
+            Array.isArray(factorDetails.hgnc_data.prev_name)
+              ? factorDetails.hgnc_data.prev_name.join(", ")
               : ""
           }`}
           sx={{ marginBottom: 2 }}
         />
       )}
-      {factorData?.ensemble_data && (
+      {factorDetails?.ensemble_data && (
         <ContentCard
           title="Ensembl"
           description={`Gene Type: ${
-            factorData.ensemble_data.biotype
+            factorDetails.ensemble_data.biotype
           }\nDescription: ${
-            factorData.ensemble_data.description
-          }\nEnsembl Version: ${factorData.ensemble_data.id}\nCCDS: ${
-            Array.isArray(factorData.ensemble_data.ccds_id)
-              ? factorData.ensemble_data.ccds_id.join(", ")
+            factorDetails.ensemble_data.description
+          }\nEnsembl Version: ${factorDetails.ensemble_data.id}\nCCDS: ${
+            Array.isArray(factorDetails.ensemble_data.ccds_id)
+              ? factorDetails.ensemble_data.ccds_id.join(", ")
               : ""
           }`}
           sx={{ marginBottom: 2 }}
@@ -226,13 +251,13 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         }}
       >
         <Typography variant="h4" sx={{ color: "white", marginBottom: "20px" }}>
-          {factorData?.name}
+          {factorDetails?.name}
         </Typography>
         {imageVisible && imageUrl && (
           <Box position="relative" mb={2}>
             <img
               src={imageUrl}
-              alt={factorData?.name}
+              alt={factorDetails?.name}
               style={{ width: "200px", marginBottom: "20px" }}
             />
             <IconButton
@@ -262,10 +287,10 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       <Box sx={{ flex: 1 }}>
         {renderCards()}
         <Box mt={2}>
-          {props.datasets && (
+          {datasetData && (
             <DataTable
-              columns={datasetColumns(props.assembly)}
-              rows={props.datasets.peakDataset.datasets}
+              columns={datasetColumns(species)}
+              rows={datasetData.peakDataset.datasets}
               searchable
               itemsPerPage={5}
               sortColumn={2}
@@ -274,10 +299,10 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
           )}
         </Box>
         <Box mt={2}>
-          {props.datasets && (
+          {datasetData && (
             <DataTable
-              columns={biosampleColumns(props.assembly)}
-              rows={props.datasets.peakDataset.partitionByBiosample}
+              columns={biosampleColumns(species)}
+              rows={datasetData.peakDataset.partitionByBiosample}
               searchable
               itemsPerPage={4}
               sortColumn={0}

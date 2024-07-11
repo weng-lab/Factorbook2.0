@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import {
@@ -26,7 +26,12 @@ import Search from "./Search";
 import Link from "next/link";
 
 const FactorDetailsPage = () => {
-  const { species, factor, detail = "Function" } = useParams();
+  const router = useRouter();
+  const {
+    species,
+    factor,
+    detail = "Function",
+  } = useParams<{ species: string; factor: string; detail: string }>();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -54,7 +59,9 @@ const FactorDetailsPage = () => {
               peakDataset: {
                 datasets: [],
                 partitionByTarget: [],
-                counts: { total: 0 },
+                counts: {
+                  total: 0,
+                },
                 partitionByBiosample: [],
               },
             }}
@@ -80,7 +87,9 @@ const FactorDetailsPage = () => {
               peakDataset: {
                 datasets: [],
                 partitionByTarget: [],
-                counts: { total: 0 },
+                counts: {
+                  total: 0,
+                },
                 partitionByBiosample: [],
               },
             }}
@@ -117,7 +126,7 @@ const FactorDetailsPage = () => {
                 tabsScroller.scrollBy({ left: -200, behavior: "smooth" });
               }
             }}
-          />
+          ></ArrowBackIosIcon>
           <Tabs
             value={detail}
             indicatorColor="primary"
@@ -131,14 +140,18 @@ const FactorDetailsPage = () => {
               value="Function"
               component={Link}
               href={`/TranscriptionFactor/${species}/${factor}/Function`}
-              sx={{ color: detail === "Function" ? "#8169BF" : "inherit" }}
+              sx={{
+                color: detail === "Function" ? "#8169BF" : "inherit",
+              }}
             />
             <Tab
               label="Expression (RNA-seq)"
               value="Expression"
               component={Link}
               href={`/TranscriptionFactor/${species}/${factor}/Expression`}
-              sx={{ color: detail === "Expression" ? "#8169BF" : "inherit" }}
+              sx={{
+                color: detail === "Expression" ? "#8169BF" : "inherit",
+              }}
             />
             <Tab
               label="Motif Enrichment (MEME, ChIP-seq)"
@@ -173,7 +186,9 @@ const FactorDetailsPage = () => {
               value="Search"
               component={Link}
               href={`/TranscriptionFactor/${species}/${factor}/Search`}
-              sx={{ color: detail === "Search" ? "#8169BF" : "inherit" }}
+              sx={{
+                color: detail === "Search" ? "#8169BF" : "inherit",
+              }}
             />
           </Tabs>
           <ArrowForwardIosIcon
@@ -183,7 +198,7 @@ const FactorDetailsPage = () => {
                 tabsScroller.scrollBy({ left: 200, behavior: "smooth" });
               }
             }}
-          />
+          ></ArrowForwardIosIcon>
         </Box>
 
         <Box mt={2}>{renderTabContent()}</Box>
