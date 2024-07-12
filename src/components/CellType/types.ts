@@ -3,8 +3,6 @@ import { BiosamplePartitionedDatasetCollection } from '../../components/Types';
 export type CtDetailProps = {
     celltype: string;
     species: string;
-    row: BiosamplePartitionedDatasetCollection;
-    hideFactorCounts?: boolean;
 };
 
 export type CellTypeDescription = {
