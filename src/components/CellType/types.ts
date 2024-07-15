@@ -3,8 +3,6 @@ import { BiosamplePartitionedDatasetCollection } from '../../components/Types';
 export type CtDetailProps = {
     celltype: string;
     species: string;
-    row: BiosamplePartitionedDatasetCollection;
-    hideFactorCounts?: boolean;
 };
 
 export type CellTypeDescription = {
@@ -12,11 +10,11 @@ export type CellTypeDescription = {
     wiki_desc?: string;
 };
 
-export type SummaryProps = {
+export interface SummaryProps {
     assembly: string;
     species: string;
-    celltype: string;
-};
+    celltype?: string; 
+  }  
 
 export type Dataset = {
     lab: {
@@ -31,21 +29,37 @@ export type Dataset = {
 };
 
 export type DatasetQueryResponse = {
-    peakDataset: {
-        datasets: Dataset[];
-        partitionByTarget: {
-            target: {
-                name: string;
-            };
-            counts: {
-                total: number;
-                biosamples: number;
-            };
-        }[];
-        counts: {
-            total: number;
-        };
+  peakDataset: {
+    datasets: Dataset[];
+    partitionByTarget: {
+      target: {
+        name: string;
+      };
+      counts: {
+        total: number;
+        biosamples: number;
+      };
+    }[];
+    counts: {
+      total: number;
     };
+    partitionByBiosample: {
+      biosample: {
+        name: string;
+      };
+      counts: {
+        targets: number;
+      };
+    }[];
+  };
+};
+
+export type FunctionPageProps = {
+  factor: string;
+  assembly: string;
+  datasets: DatasetQueryResponse;
+  datasetsLoading: boolean;
+  label?: string;
 };
 
 export type TFInfoQueryResponse = {
@@ -123,8 +137,10 @@ export type TargetPartitionedDatasetCollection = {
 };
 
 export type FactorRow = {
+    image?: string;
+    label?: string;
     name: string;
     experiments: number;
     cellTypes: number;
-    description: string;
-};
+    description?: string;
+  };

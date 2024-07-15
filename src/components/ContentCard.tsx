@@ -1,21 +1,21 @@
 "use client";
 
-import * as React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
+import React from "react";
+import { Box, Typography, Card, CardContent } from "@mui/material";
+import { SxProps } from "@mui/system";
 
 interface ExperimentProps {
   title: string;
-  count: number;
+  count?: number;
   description: string;
+  sx?: SxProps;
 }
 
 const ContentCard: React.FC<ExperimentProps> = ({
   title,
   count,
   description,
+  sx,
 }) => (
   <Card
     sx={{
@@ -24,10 +24,11 @@ const ContentCard: React.FC<ExperimentProps> = ({
       alignItems: "flex-start",
       gap: 4,
       padding: 3,
-      width: "100%", // Set width to 100% to fit the screen
+      width: "100%",
       borderRadius: "24px",
       backgroundColor: "#EDE7F6",
-      boxShadow: "none", // Remove the default box shadow
+      boxShadow: "none",
+      ...sx,
     }}
   >
     <CardContent sx={{ width: "100%" }}>
@@ -43,16 +44,23 @@ const ContentCard: React.FC<ExperimentProps> = ({
         <Typography variant="h6" sx={{ fontWeight: "bold", color: "#558B2F" }}>
           {title}
         </Typography>
-        <Typography
-          variant="body2"
-          sx={{ fontWeight: "medium", color: "#333" }}
-        >
-          {count} performed
-        </Typography>
+        {count !== undefined && (
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: "medium", color: "#333" }}
+          >
+            {count} performed
+          </Typography>
+        )}
       </Box>
       <Typography
         variant="body1"
-        sx={{ color: "#333", marginTop: 2, width: "100%" }}
+        sx={{
+          color: "#333",
+          marginTop: 2,
+          width: "100%",
+          whiteSpace: "pre-line",
+        }}
       >
         {description}
       </Typography>

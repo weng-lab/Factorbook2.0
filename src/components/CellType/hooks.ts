@@ -21,14 +21,15 @@ export function useCellTypeDescription(assembly: string, celltype: string) {
   });
 }
 
-export function useTFInfo() {
+export function useTFInfo(species: string) {
   const apiContext = useContext(ApiContext);
   if (!apiContext) {
     throw new Error("ApiContext is not provided");
   }
   const { client } = apiContext;
-  const { species } = useParams<{ species: string }>();
-  const assembly = species === "human" ? "GRCh38" : "mm10";
+  
+  
+  const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";
   return useQuery<TFInfoQueryResponse>(TF_INFO_QUERY, {
     client,
     variables: {

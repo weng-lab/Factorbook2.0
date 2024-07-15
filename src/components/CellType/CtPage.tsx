@@ -1,18 +1,16 @@
 "use client";
 
 import React from "react";
-import { Box, Container, Typography } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import Summary from "./Summary";
 
 const CtPage: React.FC<{ species: string }> = ({ species }) => {
-  const assembly = species === "human" ? "GRCh38" : "mm10";
-  const celltype = species === "human" ? "GRCh38" : "mm10";
-  const details = "summary";
+  const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";
 
   return (
     <Container>
       <Box mt={4}>
-        <Summary assembly={assembly} celltype={celltype} species={species} />
+        <Summary assembly={assembly} species={species} />
       </Box>
     </Container>
   );

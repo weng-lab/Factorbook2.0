@@ -1,28 +1,32 @@
 "use client";
 
 import * as React from "react";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
-import HomeIcon from "@mui/icons-material/Home";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItemText from "@mui/material/ListItemText";
-import Collapse from "@mui/material/Collapse";
-import Divider from "@mui/material/Divider";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import Grid from "@mui/material/Grid";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItemText,
+  Collapse,
+  Divider,
+  Grid,
+  useMediaQuery,
+  ListItemButton,
+} from "@mui/material";
+import {
+  Menu as MenuIcon,
+  Close as CloseIcon,
+  Home as HomeIcon,
+  MenuBook as MenuBookIcon,
+  ExpandLess,
+  ExpandMore,
+} from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import styles from "./Topbar.module.css";
-import { ListItemButton } from "@mui/material";
 
 const navItems = [
   { title: "Home", href: "/", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
@@ -87,7 +91,7 @@ const Topbar: React.FC = () => {
             color: "var(--grey-700, #1F2021)",
             fontSize: "32px",
             fontStyle: "normal",
-            fontWeight: 700 /* Set to 700 */,
+            fontWeight: 700,
             lineHeight: "0.745", // 74.5%
             letterSpacing: "-1.28px",
           }}
@@ -102,7 +106,7 @@ const Topbar: React.FC = () => {
               alignItems: "flex-start",
               fontSize: "32px",
               fontStyle: "normal",
-              fontWeight: 700 /* Set to 700 */,
+              fontWeight: 700,
               lineHeight: "0.745", // 74.5%
               letterSpacing: "-1.28px",
               color: "var(--grey-700, #1F2021)",
@@ -174,7 +178,11 @@ const Topbar: React.FC = () => {
     <AppBar
       position="static"
       className={styles.topbar}
-      sx={{ backgroundColor: "transparent", boxShadow: "none", width: "100%" }}
+      sx={{
+        backgroundColor: "transparent",
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Added shadow
+        width: "100%",
+      }}
     >
       <Toolbar disableGutters className={styles.toolbar}>
         <Grid container alignItems="center">
@@ -206,7 +214,7 @@ const Topbar: React.FC = () => {
                     color: "var(--grey-700, #1F2021)",
                     fontSize: "32px",
                     fontStyle: "normal",
-                    fontWeight: 700 /* Set to 700 */,
+                    fontWeight: 700,
                     lineHeight: "0.745", // 74.5%
                     letterSpacing: "-1.28px",
                   }}
@@ -221,7 +229,7 @@ const Topbar: React.FC = () => {
                       alignItems: "flex-start",
                       fontSize: "32px",
                       fontStyle: "normal",
-                      fontWeight: 700 /* Set to 700 */,
+                      fontWeight: 700,
                       lineHeight: "0.745", // 74.5%
                       letterSpacing: "-1.28px",
                       color: "var(--grey-700, #1F2021)",
@@ -247,7 +255,7 @@ const Topbar: React.FC = () => {
                     color: "var(--grey-700, #1F2021)",
                     fontSize: "32px",
                     fontStyle: "normal",
-                    fontWeight: 700 /* Set to 700 */,
+                    fontWeight: 700,
                     letterSpacing: "-1.28px",
                   }}
                 >
@@ -261,7 +269,7 @@ const Topbar: React.FC = () => {
                       alignItems: "flex-start",
                       fontSize: "32px",
                       fontStyle: "normal",
-                      fontWeight: 700 /* Set to 700 */,
+                      fontWeight: 700,
                       lineHeight: "0.745", // 74.5%
                       letterSpacing: "-1.28px",
                       color: "var(--grey-700, #1F2021)",
@@ -288,7 +296,7 @@ const Topbar: React.FC = () => {
                       sx={{
                         fontSize: "15px",
                         fontStyle: "normal",
-                        fontWeight: 700 /* Set to 700 */,
+                        fontWeight: 700,
                         lineHeight: "26px", // 173.333%
                         letterSpacing: "0.46px",
                         color: "var(--primary-mainText, #6750A4)",

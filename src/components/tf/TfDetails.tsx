@@ -23,6 +23,7 @@ import {
 import { getRCSBImageUrl } from "@/components/tf/Functions";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
+import Link from "next/link";
 
 interface FactorRow {
   image?: string;
@@ -30,7 +31,7 @@ interface FactorRow {
   name: string;
   experiments: number;
   cellTypes: number;
-  description: string;
+  description?: string;
 }
 
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
@@ -176,9 +177,15 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       render: (row: FactorRow) => (
         <Box style={{ minWidth: "150px" }}>
           <Typography variant="h6" style={{ fontWeight: "bold" }}>
-            {species === "Mouse"
-              ? row.name.charAt(0) + row.name.slice(1).toLowerCase()
-              : row.name}
+            <Link
+              href={`/TranscriptionFactor/${species}/${row.name}/Function`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {species === "Mouse"
+                ? row.name.charAt(0) + row.name.slice(1).toLowerCase()
+                : row.name}
+            </Link>
           </Typography>
           <Typography>
             {row.label ? (
@@ -217,7 +224,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
           </IconButton>
         </Box>
       ),
-      value: (row: FactorRow) => row.description,
+      value: (row: FactorRow) => row.description || "",
     },
   ];
 
