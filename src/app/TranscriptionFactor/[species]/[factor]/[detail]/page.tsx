@@ -20,10 +20,10 @@ import { FactorQueryResponse } from "@/components/CellType/types";
 import FunctionTab from "./Function";
 import Expression from "./Expression";
 import MotifEnrichmentMEME from "./MotifEnrichmentMEME";
-import MotifEnrichmentSELEX from "./MotifEnrichmentSELEX";
 import EpigeneticProfile from "./EpigeneticProfile";
 import Search from "./Search";
 import Link from "next/link";
+import DeepLearnedSelexMotifs from "./MotifEnrichmentSELEX";
 
 const FactorDetailsPage = () => {
   const router = useRouter();
@@ -73,7 +73,7 @@ const FactorDetailsPage = () => {
       case "MotifEnrichmentMEME":
         return <MotifEnrichmentMEME />;
       case "MotifEnrichmentSELEX":
-        return <MotifEnrichmentSELEX />;
+        return <DeepLearnedSelexMotifs factor={factor} species={species} />;
       case "EpigeneticProfile":
         return <EpigeneticProfile />;
       case "Search":
