@@ -13,6 +13,12 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Searchbar from "@/components/Searchbar";
 import { styled } from "@mui/material/styles";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Divider from "@mui/material/Divider";
+import Link from "@mui/material/Link";
 
 const StyledBox = styled(Box)({
   "& .MuiOutlinedInput-root": {
@@ -47,6 +53,7 @@ const AnnotationsVariants = () => {
   const [value, setValue] = React.useState(0);
   const [population, setPopulation] = React.useState("");
   const [subpopulation, setSubpopulation] = React.useState("");
+  const [page, setPage] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -59,6 +66,13 @@ const AnnotationsVariants = () => {
   const handleSubpopulationChange = (event: SelectChangeEvent<unknown>) => {
     setSubpopulation(event.target.value as string);
   };
+
+  const CodeBox = styled(Box)({
+    backgroundColor: "#f5f5f5",
+    padding: "16px",
+    overflowX: "auto",
+    fontFamily: "monospace",
+  });
 
   const annotationsContent = `
   Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Often identified in genome-wide association studies, these variants can disrupt gene regulatory networks, leading to varied phenotypic effects or predispositions to diseases. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants.
@@ -93,7 +107,7 @@ const AnnotationsVariants = () => {
           <StyledBox>
             <Searchbar placeholder="Enter rsID or locus" helperText="" />
             <Typography variant="body2" sx={{ mt: -2 }}>
-              SExample: rs3794102
+              Example: rs3794102
             </Typography>
           </StyledBox>
           <Box sx={{ mt: 4 }}>
@@ -136,21 +150,79 @@ const AnnotationsVariants = () => {
               />
             </FlexBox>
             <Typography variant="body2" sx={{ mt: 2 }}>
-              LD data is derived from the <a href="#">1,000 Genomes Project</a>
+              LD data is derived from the{" "}
+              <Link href="#">1,000 Genomes Project</Link>
             </Typography>
           </Box>
         </Box>
       )}
       {value === 1 && (
         <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
-          <Typography variant="h6" gutterBottom>
-            Quantify Trait Heritability
+          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            Partitioned LD Score Regression
           </Typography>
-          <StyledBox>
-            <Typography variant="body1">
-              Content for Quantify Trait Heritability tab goes here.
-            </Typography>
-          </StyledBox>
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Quantify heritability enrichment in TF peaks and motif sites
+          </Typography>
+          <Accordion
+            expanded={page === 0}
+            onChange={() => setPage(page === 0 ? -1 : 0)}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6">Getting Started</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body1" gutterBottom>
+                Quantifying heritability enrichment takes ~5 minutes on a
+                standard laptop. We recommend running this workflow using our
+                provided Docker image. Click for detailed instructions.
+              </Typography>
+              <ol>
+                <li>
+                  <Link
+                    href="https://docs.docker.com/get-docker/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Install Docker
+                  </Link>
+                </li>
+                <li>
+                  Run the following command to partition heritability for motif
+                  sites in ChIP-seq peaks from seven ENCODE cell lines:
+                </li>
+              </ol>
+              <CodeBox>
+                <pre>
+                  docker run \<br />
+                  &nbsp;&nbsp;--volume /path/to/inputs:/input \<br />
+                  &nbsp;&nbsp;ghcr.io/weng-lab/ldr/ldr:latest \<br />
+                  &nbsp;&nbsp;python3 -m ldr.h2 \<br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;--ld-scores <br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;http://gcp.wenglab.org/ldr-models/seven-cell-type-motifs.tar.gz
+                  \<br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;--ld-prefix annotations \<br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;--summary-statistics <br />
+                  &nbsp;&nbsp;&nbsp;&nbsp;/input/summary-stats.txt &gt;
+                  partitioned-heritability.txt
+                </pre>
+              </CodeBox>
+              <Typography variant="body2" gutterBottom>
+                To quantify heritability for a different subset of peaks or
+                motif sites, simply sub a different URL for the ld-scores
+                parameter. You can find URLs for each model in the{" "}
+                <strong>View Models</strong> section below.
+              </Typography>
+              <Typography variant="body2">
+                Output will be located at{" "}
+                <Box component="pre" display="inline">
+                  /path/to/outputs/partitioned-heritability.txt
+                </Box>{" "}
+                when the command finishes.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+          <Divider />
         </Box>
       )}
     </>
