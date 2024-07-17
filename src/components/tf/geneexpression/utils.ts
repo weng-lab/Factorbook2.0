@@ -31,7 +31,7 @@ function hslToRgb(h: number, s: number, l: number): [ number, number, number ] {
     return [ Math.round(r * 255), Math.round(g * 255), Math.round(b * 255) ];
 }
 
-function spacedColors(size: number): (index: number) => string {
+export function spacedColors(size: number): (index: number) => string {
     const baseColors = ['#FF5733', '#33FF57', '#3357FF'];
     return (index: number) => baseColors[index % baseColors.length];
   }
