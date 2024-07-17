@@ -53,10 +53,11 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
       DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
       {
         client,
-        variables: { tf: factor, species, selex_round: [1, 2, 3, 4, 5, 6, 7] },
+        variables: { tf: factor, species: species.toLowerCase(), selex_round: [1, 2, 3, 4, 5, 6, 7] },
       }
     );
-
+console.log("metadata",data)
+  
   const studies = useMemo(
     () => [...new Set(data?.deep_learned_motifs.map((d) => d.source))],
     [data]
@@ -65,6 +66,8 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
     () => [...new Set(data?.deep_learned_motifs.map((d) => d.assay))],
     [data]
   );
+
+  console.log(studies,assays)
 
   const selexMotifs = useMemo(
     () =>
@@ -87,7 +90,7 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
         : [],
     [data, assays, studies]
   );
-
+  
   useEffect(() => {
     if (selexMotifs && selexMotifs.length > 0) {
       setMotif(
@@ -96,6 +99,7 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
     }
   }, [selexMotifs]);
 
+  console.log("motifs",motif)
   if (loading || !data)
     return (
       <Box
@@ -160,7 +164,7 @@ const SelexMotifsForAssayStudyAndProteinType: React.FC<{
       client,
       variables: {
         tf,
-        species,
+        species: species.toLowerCase(),
         selex_round: [1, 2, 3, 4, 5, 6, 7],
         protein_type,
         assay,
@@ -169,6 +173,7 @@ const SelexMotifsForAssayStudyAndProteinType: React.FC<{
     }
   );
 
+  console.log(data,"dlselex")
   if (loading || !data)
     return (
       <Box
@@ -258,6 +263,8 @@ const DeepLearnedSelexMotif: React.FC<{
     roc_curve: number[][];
   }[];
 }> = ({ study, assay, protein_type, data }) => {
+
+  console.log("roc",data)
   const points = useMemo(
     () =>
       data[0].roc_curve.map((r) => ({
