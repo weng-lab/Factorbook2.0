@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import {
@@ -18,14 +18,28 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
 import { FactorQueryResponse } from "@/components/CellType/types";
 import FunctionTab from "./Function";
-import Expression from "./Expression";
 import MotifEnrichmentMEME from "./MotifEnrichmentMEME";
 import EpigeneticProfile from "./EpigeneticProfile";
 import Search from "./Search";
 import Link from "next/link";
 import DeepLearnedSelexMotifs from "./MotifEnrichmentSELEX";
+import GeneExpressionPage from "./GeneExpression";
+import { AppContext } from "@/AppContext";
 
 const FactorDetailsPage = () => {
+  const appContext = useContext(AppContext);
+
+  // To Ensure appContext is defined
+  if (!appContext) {
+    return <div>Loading...</div>;
+  }
+
+  const { geneName, assembly } = appContext;
+
+  if (!geneName || !assembly) {
+    return <div>Loading...</div>;
+  }
+
   const router = useRouter();
   const {
     species,
@@ -69,7 +83,7 @@ const FactorDetailsPage = () => {
           />
         );
       case "Expression":
-        return <Expression />;
+        return <GeneExpressionPage gene_name={geneName} assembly={assembly} />;
       case "MotifEnrichmentMEME":
         return <MotifEnrichmentMEME />;
       case "MotifEnrichmentSELEX":

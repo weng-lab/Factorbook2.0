@@ -6,6 +6,8 @@ import { ReactNode } from "react";
 import Topbar from "@/components/Topbar";
 import Footer from "@/components/Footer";
 import { ApolloWrapper } from "../../lib/apollo-wrapper";
+import { ApiContext, apiContextValue } from "@/ApiContext";
+import { AppProvider } from "@/AppContext";
 
 const ClientThemeProvider = dynamic(
   () => import("../components/ClientThemeProvider"),
@@ -27,11 +29,15 @@ export default function RootLayout({ children }: LayoutProps) {
       </head>
       <body>
         <ApolloWrapper>
-          <ClientThemeProvider>
-            <Topbar />
-            {children}
-            <Footer />
-          </ClientThemeProvider>
+          <ApiContext.Provider value={apiContextValue}>
+            <AppProvider>
+              <ClientThemeProvider>
+                <Topbar />
+                {children}
+                <Footer />
+              </ClientThemeProvider>
+            </AppProvider>
+          </ApiContext.Provider>
         </ApolloWrapper>
       </body>
     </html>
