@@ -11,6 +11,12 @@ import {
   FormControl,
   InputLabel,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ApiContext } from "@/ApiContext";
@@ -20,6 +26,8 @@ import { Group } from "@visx/group";
 import { LinePath, Bar } from "@visx/shape";
 import { LegendOrdinal } from "@visx/legend";
 import { AxisBottom, AxisLeft } from "@visx/axis";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import {
   DEEP_LEARNED_MOTIFS_SELEX_QUERY,
   DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
@@ -201,76 +209,127 @@ const SelexMotifsForAssayStudyAndProteinType: React.FC<{
   );
 };
 
-interface DownloadableMotifProps {
-  ppm: number[][];
-  name: string;
-  yAxisMax: number;
-  height: number;
-  alphabet: any;
-  width: string;
-}
-
-const DownloadableMotif: React.FC<DownloadableMotifProps> = ({
+const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
   ppm,
   name,
-  yAxisMax,
-  height,
-  alphabet,
-  width,
 }) => {
   const svg = useRef<SVGSVGElement>(null);
-  const [isReverseComplement, setReverseComplement] = useState(false);
-  const motifppm = isReverseComplement ? reverseComplement(ppm) : ppm;
+  const [reverseComplement, setReverseComplement] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [exportOptions, setExportOptions] = useState({
+    meme: true,
+    logo: false,
+  });
+
+  const handleExport = () => {
+    if (exportOptions.meme) {
+      downloadData(
+        meme([
+          {
+            accession: name,
+            pwm: ppm,
+            factor: "",
+            dbd: "",
+            color: "",
+            coordinates: [0, 0],
+          } as MMotif,
+        ]),
+        `${name}.meme`
+      );
+    }
+    if (exportOptions.logo) {
+      downloadSVG(svg, "logo.svg");
+    }
+    setOpen(false);
+  };
 
   if (!ppm || ppm.length === 0) {
     return null; // or render a message indicating that no data is available
   }
 
+  const motifppm = reverseComplement ? reverseComplement(ppm) : ppm;
+
   return (
     <Box sx={{ textAlign: "center", marginBottom: 2 }}>
-      <Logo
-        ppm={motifppm}
-        ref={svg}
-        yAxisMax={yAxisMax}
-        height={height}
-        alphabet={alphabet}
-        width={width}
-      />
       <Button
-        variant="contained"
-        color="primary"
-        onClick={() =>
-          downloadData(
-            meme([
-              {
-                accession: name,
-                pwm: ppm,
-                factor: "",
-                dbd: "",
-                color: "",
-                coordinates: [0, 0],
-              } as MMotif,
-            ]),
-            `${name}.meme`
-          )
-        }
-      >
-        Export motif (MEME)
-      </Button>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => downloadSVG(svg, "logo.svg")}
-      >
-        Export Logo
-      </Button>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setReverseComplement(!isReverseComplement)}
+        variant="outlined"
+        startIcon={<SwapHorizIcon />}
+        onClick={() => setReverseComplement(!reverseComplement)}
+        sx={{
+          borderRadius: "20px",
+          color: "#8169BF",
+          borderColor: "#8169BF",
+        }}
       >
         Reverse Complement
       </Button>
+      <Logo ppm={motifppm} alphabet={DNAAlphabet} ref={svg} />
+      <Button
+        variant="contained"
+        color="primary"
+        startIcon={<SaveAltIcon />}
+        onClick={() => setOpen(true)}
+        sx={{
+          marginTop: 2,
+          backgroundColor: "#8169BF",
+          borderRadius: "20px",
+        }}
+      >
+        Export
+      </Button>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Export as</DialogTitle>
+        <DialogContent>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={exportOptions.meme}
+                onChange={(e) =>
+                  setExportOptions({
+                    ...exportOptions,
+                    meme: e.target.checked,
+                  })
+                }
+                sx={{
+                  color: "#8169BF",
+                  "&.Mui-checked": {
+                    color: "#8169BF",
+                  },
+                }}
+              />
+            }
+            label="Motif (MEME)"
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={exportOptions.logo}
+                onChange={(e) =>
+                  setExportOptions({
+                    ...exportOptions,
+                    logo: e.target.checked,
+                  })
+                }
+                sx={{
+                  color: "#8169BF",
+                  "&.Mui-checked": {
+                    color: "#8169BF",
+                  },
+                }}
+              />
+            }
+            label="Logo"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)} sx={{ color: "#8169BF" }}>
+            Cancel
+          </Button>
+          <Button onClick={handleExport} sx={{ backgroundColor: "#8169BF" }}>
+            Export
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
@@ -389,24 +448,16 @@ const DeepLearnedSelexMotif: React.FC<{
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={6}>
-          <Grid container direction="column" alignItems="center">
-            {data.map((d, i) => (
-              <React.Fragment key={`logo${i}`}>
-                <Typography variant="h6" color="primary" align="center">
-                  Cycle {d.selex_round}
-                </Typography>
-                <DownloadableMotif
-                  yAxisMax={2}
-                  height={100}
-                  alphabet={DNAAlphabet}
-                  ppm={d.ppm}
-                  width="100%"
-                  name={study}
-                />
-                <br />
-              </React.Fragment>
-            ))}
-          </Grid>
+          {data.map((d, i) => (
+            <Box key={`logo${i}`} sx={{ textAlign: "center" }}>
+              <Typography variant="h6" color="primary">
+                Cycle {d.selex_round}
+              </Typography>
+              {d.ppm && d.ppm.length > 0 && (
+                <DownloadableMotif ppm={d.ppm} name={study} />
+              )}
+            </Box>
+          ))}
         </Grid>
         <Grid item xs={6}>
           <svg ref={lineref} width={width} height={height}>
@@ -462,10 +513,16 @@ const DeepLearnedSelexMotif: React.FC<{
           </svg>
           <Button
             variant="contained"
+            startIcon={<SaveAltIcon />}
             color="primary"
             onClick={() => {
               downloadSVG(lineref, "lineplot.svg");
               downloadSVG(llegendref, "lineplot.legend.svg");
+            }}
+            sx={{
+              marginTop: 2,
+              backgroundColor: "#8169BF",
+              borderRadius: "20px",
             }}
           >
             Download
@@ -526,10 +583,16 @@ const DeepLearnedSelexMotif: React.FC<{
           </svg>
           <Button
             variant="contained"
+            startIcon={<SaveAltIcon />}
             color="primary"
             onClick={() => {
               downloadSVG(barref, "barplot.svg");
               downloadSVG(blegendref, "barplot.legend.svg");
+            }}
+            sx={{
+              marginTop: 2,
+              backgroundColor: "#8169BF",
+              borderRadius: "20px",
             }}
           >
             Download
