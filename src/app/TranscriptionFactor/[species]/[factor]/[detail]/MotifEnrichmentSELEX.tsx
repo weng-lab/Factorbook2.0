@@ -12,9 +12,9 @@ import {
   InputLabel,
   Button,
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
+  DialogContent,
+  DialogActions,
   FormControlLabel,
   Checkbox,
 } from "@mui/material";
@@ -26,8 +26,8 @@ import { Group } from "@visx/group";
 import { LinePath, Bar } from "@visx/shape";
 import { LegendOrdinal } from "@visx/legend";
 import { AxisBottom, AxisLeft } from "@visx/axis";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import {
   DEEP_LEARNED_MOTIFS_SELEX_QUERY,
   DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
@@ -38,7 +38,7 @@ import {
 } from "./types";
 import { downloadData, downloadSVG } from "../../../../../utilities/svgdata";
 import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
-import { reverseComplement } from "../../../../../components/tf/geneexpression/utils";
+import { reverseComplement as rc } from "../../../../../components/tf/geneexpression/utils";
 
 const colors = {
   1: "#FFA500",
@@ -215,14 +215,17 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
 }) => {
   const svg = useRef<SVGSVGElement>(null);
   const [reverseComplement, setReverseComplement] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [exportOptions, setExportOptions] = useState({
-    meme: true,
-    logo: false,
-  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [exportMotif, setExportMotif] = useState(true);
+  const [exportLogo, setExportLogo] = useState(false);
+  const motifppm = reverseComplement ? rc(ppm) : ppm;
+
+  if (!ppm || ppm.length === 0) {
+    return null; // or render a message indicating that no data is available
+  }
 
   const handleExport = () => {
-    if (exportOptions.meme) {
+    if (exportMotif) {
       downloadData(
         meme([
           {
@@ -237,65 +240,55 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         `${name}.meme`
       );
     }
-    if (exportOptions.logo) {
+    if (exportLogo) {
       downloadSVG(svg, "logo.svg");
     }
-    setOpen(false);
+    setIsDialogOpen(false);
   };
-
-  if (!ppm || ppm.length === 0) {
-    return null; // or render a message indicating that no data is available
-  }
-
-  const motifppm = reverseComplement ? reverseComplement(ppm) : ppm;
 
   return (
     <Box sx={{ textAlign: "center", marginBottom: 2 }}>
-      <Button
-        variant="outlined"
-        startIcon={<SwapHorizIcon />}
-        onClick={() => setReverseComplement(!reverseComplement)}
-        sx={{
-          borderRadius: "20px",
-          color: "#8169BF",
-          borderColor: "#8169BF",
-        }}
-      >
-        Reverse Complement
-      </Button>
+      <Box sx={{ marginBottom: 2 }}>
+        <Button
+          variant="outlined"
+          startIcon={<SwapHorizIcon />}
+          onClick={() => setReverseComplement(!reverseComplement)}
+          sx={{
+            borderRadius: "20px",
+            borderColor: "#8169BF",
+            color: "#8169BF",
+            marginBottom: 2,
+          }}
+        >
+          Reverse Complement
+        </Button>
+      </Box>
       <Logo ppm={motifppm} alphabet={DNAAlphabet} ref={svg} />
       <Button
         variant="contained"
-        color="primary"
         startIcon={<SaveAltIcon />}
-        onClick={() => setOpen(true)}
+        onClick={() => setIsDialogOpen(true)}
         sx={{
-          marginTop: 2,
-          backgroundColor: "#8169BF",
           borderRadius: "20px",
+          backgroundColor: "#8169BF",
+          color: "white",
         }}
       >
         Export
       </Button>
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Export as</DialogTitle>
+      <Dialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        aria-labelledby="export-dialog-title"
+      >
+        <DialogTitle id="export-dialog-title">Export as</DialogTitle>
         <DialogContent>
           <FormControlLabel
             control={
               <Checkbox
-                checked={exportOptions.meme}
-                onChange={(e) =>
-                  setExportOptions({
-                    ...exportOptions,
-                    meme: e.target.checked,
-                  })
-                }
-                sx={{
-                  color: "#8169BF",
-                  "&.Mui-checked": {
-                    color: "#8169BF",
-                  },
-                }}
+                checked={exportMotif}
+                onChange={(e) => setExportMotif(e.target.checked)}
+                sx={{ color: "#8169BF" }}
               />
             }
             label="Motif (MEME)"
@@ -303,29 +296,29 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
           <FormControlLabel
             control={
               <Checkbox
-                checked={exportOptions.logo}
-                onChange={(e) =>
-                  setExportOptions({
-                    ...exportOptions,
-                    logo: e.target.checked,
-                  })
-                }
-                sx={{
-                  color: "#8169BF",
-                  "&.Mui-checked": {
-                    color: "#8169BF",
-                  },
-                }}
+                checked={exportLogo}
+                onChange={(e) => setExportLogo(e.target.checked)}
+                sx={{ color: "#8169BF" }}
               />
             }
             label="Logo"
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpen(false)} sx={{ color: "#8169BF" }}>
+          <Button
+            onClick={() => setIsDialogOpen(false)}
+            sx={{ color: "#8169BF" }}
+          >
             Cancel
           </Button>
-          <Button onClick={handleExport} sx={{ backgroundColor: "#8169BF" }}>
+          <Button
+            onClick={handleExport}
+            sx={{
+              borderRadius: "20px",
+              backgroundColor: "#8169BF",
+              color: "white",
+            }}
+          >
             Export
           </Button>
         </DialogActions>
@@ -513,16 +506,15 @@ const DeepLearnedSelexMotif: React.FC<{
           </svg>
           <Button
             variant="contained"
-            startIcon={<SaveAltIcon />}
-            color="primary"
             onClick={() => {
               downloadSVG(lineref, "lineplot.svg");
               downloadSVG(llegendref, "lineplot.legend.svg");
             }}
             sx={{
-              marginTop: 2,
-              backgroundColor: "#8169BF",
               borderRadius: "20px",
+              backgroundColor: "#8169BF",
+              color: "white",
+              marginTop: "10px",
             }}
           >
             Download
@@ -583,16 +575,15 @@ const DeepLearnedSelexMotif: React.FC<{
           </svg>
           <Button
             variant="contained"
-            startIcon={<SaveAltIcon />}
-            color="primary"
             onClick={() => {
               downloadSVG(barref, "barplot.svg");
               downloadSVG(blegendref, "barplot.legend.svg");
             }}
             sx={{
-              marginTop: 2,
-              backgroundColor: "#8169BF",
               borderRadius: "20px",
+              backgroundColor: "#8169BF",
+              color: "white",
+              marginTop: "10px",
             }}
           >
             Download
