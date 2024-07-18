@@ -53,16 +53,20 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
       DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
       {
         client,
-        variables: { tf: factor, species, selex_round: [1, 2, 3, 4, 5, 6, 7] },
+        variables: {
+          tf: factor,
+          species: species.toLowerCase(),
+          selex_round: [1, 2, 3, 4, 5, 6, 7],
+        },
       }
     );
 
   const studies = useMemo(
-    () => [...new Set(data?.deep_learned_motifs.map((d) => d.source))],
+    () => [...new Set(data?.deep_learned_motifs?.map((d) => d.source))],
     [data]
   );
   const assays = useMemo(
-    () => [...new Set(data?.deep_learned_motifs.map((d) => d.assay))],
+    () => [...new Set(data?.deep_learned_motifs?.map((d) => d.assay))],
     [data]
   );
 
@@ -160,7 +164,7 @@ const SelexMotifsForAssayStudyAndProteinType: React.FC<{
       client,
       variables: {
         tf,
-        species,
+        species: species.toLowerCase(),
         selex_round: [1, 2, 3, 4, 5, 6, 7],
         protein_type,
         assay,
@@ -197,17 +201,41 @@ const SelexMotifsForAssayStudyAndProteinType: React.FC<{
   );
 };
 
-const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
+interface DownloadableMotifProps {
+  ppm: number[][];
+  name: string;
+  yAxisMax: number;
+  height: number;
+  alphabet: any;
+  width: string;
+}
+
+const DownloadableMotif: React.FC<DownloadableMotifProps> = ({
   ppm,
   name,
+  yAxisMax,
+  height,
+  alphabet,
+  width,
 }) => {
   const svg = useRef<SVGSVGElement>(null);
   const [isReverseComplement, setReverseComplement] = useState(false);
   const motifppm = isReverseComplement ? reverseComplement(ppm) : ppm;
 
+  if (!ppm || ppm.length === 0) {
+    return null; // or render a message indicating that no data is available
+  }
+
   return (
     <Box sx={{ textAlign: "center", marginBottom: 2 }}>
-      <Logo ppm={motifppm} ref={svg} />
+      <Logo
+        ppm={motifppm}
+        ref={svg}
+        yAxisMax={yAxisMax}
+        height={height}
+        alphabet={alphabet}
+        width={width}
+      />
       <Button
         variant="contained"
         color="primary"
@@ -260,10 +288,10 @@ const DeepLearnedSelexMotif: React.FC<{
 }> = ({ study, assay, protein_type, data }) => {
   const points = useMemo(
     () =>
-      data[0].roc_curve.map((r) => ({
+      data[0]?.roc_curve?.map((r) => ({
         x: r[0],
         y: r[1],
-      })),
+      })) || [],
     [data]
   );
 
@@ -361,14 +389,24 @@ const DeepLearnedSelexMotif: React.FC<{
       </Typography>
       <Grid container spacing={3}>
         <Grid item xs={6}>
-          {data.map((d, i) => (
-            <Box key={`logo${i}`} sx={{ textAlign: "center" }}>
-              <Typography variant="h6" color="primary">
-                Cycle {d.selex_round}
-              </Typography>
-              <DownloadableMotif ppm={d.ppm} name={study} />
-            </Box>
-          ))}
+          <Grid container direction="column" alignItems="center">
+            {data.map((d, i) => (
+              <React.Fragment key={`logo${i}`}>
+                <Typography variant="h6" color="primary" align="center">
+                  Cycle {d.selex_round}
+                </Typography>
+                <DownloadableMotif
+                  yAxisMax={2}
+                  height={100}
+                  alphabet={DNAAlphabet}
+                  ppm={d.ppm}
+                  width="100%"
+                  name={study}
+                />
+                <br />
+              </React.Fragment>
+            ))}
+          </Grid>
         </Grid>
         <Grid item xs={6}>
           <svg ref={lineref} width={width} height={height}>
@@ -398,7 +436,24 @@ const DeepLearnedSelexMotif: React.FC<{
                 >
                   {(labels) =>
                     labels.map((label) => (
-                      <LegendOrdinal key={`legend-${label.text}`} {...label} />
+                      <g key={`legend-${label.text}`}>
+                        <rect
+                          fill={label.value}
+                          height={7}
+                          width={7}
+                          y={9}
+                          x={0}
+                        />
+                        <text
+                          x={15}
+                          y={15}
+                          fill="black"
+                          fontSize="10"
+                          fontFamily="Arial"
+                        >
+                          {label.text}
+                        </text>
+                      </g>
                     ))
                   }
                 </LegendOrdinal>
@@ -445,7 +500,24 @@ const DeepLearnedSelexMotif: React.FC<{
                 >
                   {(labels) =>
                     labels.map((label) => (
-                      <LegendOrdinal key={`legend-${label.text}`} {...label} />
+                      <g key={`legend-${label.text}`}>
+                        <rect
+                          fill={label.value}
+                          height={7}
+                          width={7}
+                          y={9}
+                          x={0}
+                        />
+                        <text
+                          x={15}
+                          y={15}
+                          fill="black"
+                          fontSize="10"
+                          fontFamily="Arial"
+                        >
+                          {label.text}
+                        </text>
+                      </g>
                     ))
                   }
                 </LegendOrdinal>
