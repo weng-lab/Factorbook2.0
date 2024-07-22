@@ -36,11 +36,11 @@ import {
   DeepLearnedSELEXMotifsQueryResponse,
   DeepLearnedSELEXMotifsMetadataQueryResponse,
 } from "./types";
-import { downloadData, downloadSVG } from "../../../../../utilities/svgdata";
+import { downloadData, downloadSVG } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
-import { reverseComplement as rc } from "../../../../../components/tf/geneexpression/utils";
+import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 
-const colors = {
+const colors: { [key: number]: string } = {
   1: "#FFA500",
   2: "#FF0000",
   3: "#008000",
@@ -102,6 +102,14 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
 
   useEffect(() => {
     if (selexMotifs && selexMotifs.length > 0) {
+      setMotif(
+        `${selexMotifs[0].protein_type}:${selexMotifs[0].study}:${selexMotifs[0].assay}`
+      );
+    }
+  }, [selexMotifs]);
+
+  useEffect(() => {
+    if (selexMotifs && selexMotifs.length === 1) {
       setMotif(
         `${selexMotifs[0].protein_type}:${selexMotifs[0].study}:${selexMotifs[0].assay}`
       );
@@ -340,10 +348,13 @@ const DeepLearnedSelexMotif: React.FC<{
 }> = ({ study, assay, protein_type, data }) => {
   const points = useMemo(
     () =>
-      data[0]?.roc_curve?.map((r) => ({
-        x: r[0],
-        y: r[1],
-      })) || [],
+      data.flatMap((d) =>
+        d.roc_curve.map((r) => ({
+          x: r[0],
+          y: r[1],
+          round: d.selex_round,
+        }))
+      ),
     [data]
   );
 
@@ -455,54 +466,41 @@ const DeepLearnedSelexMotif: React.FC<{
         <Grid item xs={6}>
           <svg ref={lineref} width={width} height={height}>
             <Group>
-              <AxisLeft scale={yScale} />
-              <AxisBottom scale={xScale} top={height} />
-              <LinePath
-                data={points}
-                x={(d) => xScale(d.x)}
-                y={(d) => yScale(d.y)}
-                stroke="#000"
-                strokeWidth={2}
-              />
+              <AxisLeft scale={yScale} label="FPR" />
+              <AxisBottom scale={xScale} top={height} label="TPR" />
+              {data.map((d, i) => (
+                <LinePath
+                  key={i}
+                  data={points.filter((p) => p.round === d.selex_round)}
+                  x={(p) => xScale(p.x)}
+                  y={(p) => yScale(p.y)}
+                  stroke={colors[d.selex_round]}
+                  strokeWidth={2}
+                />
+              ))}
             </Group>
           </svg>
-          <svg ref={llegendref} viewBox="0 0 400 40">
-            <g transform="translate(130,15)">
-              <text x={0} y={0} fill="black">
-                Cycle
-              </text>
-            </g>
-            {data.map((d, i) => (
-              <g transform={`translate(${170 + i * 30},0)`} key={i}>
-                <LegendOrdinal
-                  scale={colorScale}
-                  labelFormat={(label) => `${label}`}
+          <svg ref={llegendref} width={width} height={50}>
+            <Group transform="translate(130,15)">
+              {data.map((d, i) => (
+                <Group
+                  key={i}
+                  transform={`translate(${i * 50},0)`}
+                  style={{ textAnchor: "middle" }}
                 >
-                  {(labels) =>
-                    labels.map((label) => (
-                      <g key={`legend-${label.text}`}>
-                        <rect
-                          fill={label.value}
-                          height={7}
-                          width={7}
-                          y={9}
-                          x={0}
-                        />
-                        <text
-                          x={15}
-                          y={15}
-                          fill="black"
-                          fontSize="10"
-                          fontFamily="Arial"
-                        >
-                          {label.text}
-                        </text>
-                      </g>
-                    ))
-                  }
-                </LegendOrdinal>
-              </g>
-            ))}
+                  <rect fill={colors[d.selex_round]} height={7} width={7} />
+                  <text
+                    x={15}
+                    y={15}
+                    fill="black"
+                    fontSize="10"
+                    fontFamily="Arial"
+                  >
+                    Cycle {d.selex_round}
+                  </text>
+                </Group>
+              ))}
+            </Group>
           </svg>
           <Button
             variant="contained"
@@ -521,8 +519,8 @@ const DeepLearnedSelexMotif: React.FC<{
           </Button>
           <svg ref={barref} width={width} height={height}>
             <Group>
-              <AxisLeft scale={barYScale} />
-              <AxisBottom scale={barXScale} top={height} />
+              <AxisLeft scale={barYScale} label="Fractional Enrichment" />
+              <AxisBottom scale={barXScale} top={height} label="Cycle" />
               {data.map((d, i) => (
                 <Bar
                   key={`bar-${i}`}
@@ -530,48 +528,32 @@ const DeepLearnedSelexMotif: React.FC<{
                   y={barYScale(d.fractional_enrichment)}
                   height={height - barYScale(d.fractional_enrichment)}
                   width={barXScale.bandwidth()}
-                  fill={colorScale(d.selex_round)}
+                  fill={colors[d.selex_round]}
                 />
               ))}
             </Group>
           </svg>
-          <svg ref={blegendref} viewBox="0 0 400 40">
-            <g transform="translate(130,15)">
-              <text x={0} y={0} fill="black">
-                Cycle
-              </text>
-            </g>
-            {data.map((d, i) => (
-              <g transform={`translate(${170 + i * 30},0)`} key={i}>
-                <LegendOrdinal
-                  scale={colorScale}
-                  labelFormat={(label) => `${label}`}
+          <svg ref={blegendref} width={width} height={50}>
+            <Group transform="translate(130,15)">
+              {data.map((d, i) => (
+                <Group
+                  key={i}
+                  transform={`translate(${i * 50},0)`}
+                  style={{ textAnchor: "middle" }}
                 >
-                  {(labels) =>
-                    labels.map((label) => (
-                      <g key={`legend-${label.text}`}>
-                        <rect
-                          fill={label.value}
-                          height={7}
-                          width={7}
-                          y={9}
-                          x={0}
-                        />
-                        <text
-                          x={15}
-                          y={15}
-                          fill="black"
-                          fontSize="10"
-                          fontFamily="Arial"
-                        >
-                          {label.text}
-                        </text>
-                      </g>
-                    ))
-                  }
-                </LegendOrdinal>
-              </g>
-            ))}
+                  <rect fill={colors[d.selex_round]} height={7} width={7} />
+                  <text
+                    x={15}
+                    y={15}
+                    fill="black"
+                    fontSize="10"
+                    fontFamily="Arial"
+                  >
+                    Cycle {d.selex_round}
+                  </text>
+                </Group>
+              ))}
+            </Group>
           </svg>
           <Button
             variant="contained"
