@@ -17,6 +17,7 @@ import {
   DialogActions,
   FormControlLabel,
   Checkbox,
+  Divider,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ApiContext } from "@/ApiContext";
@@ -24,7 +25,6 @@ import { Logo, DNAAlphabet } from "logojs-react";
 import { scaleLinear, scaleBand, scaleOrdinal } from "@visx/scale";
 import { Group } from "@visx/group";
 import { LinePath, Bar } from "@visx/shape";
-import { LegendOrdinal } from "@visx/legend";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -36,9 +36,9 @@ import {
   DeepLearnedSELEXMotifsQueryResponse,
   DeepLearnedSELEXMotifsMetadataQueryResponse,
 } from "./types";
-import { downloadData, downloadSVG } from "@/utilities/svgdata";
+import { downloadData, downloadSVG } from "../../../../../utilities/svgdata";
 import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
-import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
+import { reverseComplement as rc } from "../../../../../components/tf/geneexpression/utils";
 
 const colors: { [key: number]: string } = {
   1: "#FFA500",
@@ -256,7 +256,9 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
 
   return (
     <Box sx={{ textAlign: "center", marginBottom: 2 }}>
-      <Box sx={{ marginBottom: 2 }}>
+      <Box
+        sx={{ display: "flex", justifyContent: "flex-start", marginBottom: 2 }}
+      >
         <Button
           variant="outlined"
           startIcon={<SwapHorizIcon />}
@@ -265,13 +267,19 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
             borderRadius: "20px",
             borderColor: "#8169BF",
             color: "#8169BF",
-            marginBottom: 2,
+            marginRight: 2,
           }}
         >
           Reverse Complement
         </Button>
       </Box>
-      <Logo ppm={motifppm} alphabet={DNAAlphabet} ref={svg} />
+      <Logo
+        ppm={motifppm}
+        alphabet={DNAAlphabet}
+        ref={svg}
+        width={450} // Adjusted width to a medium size
+        height={225} // Adjusted height to a medium size
+      />
       <Button
         variant="contained"
         startIcon={<SaveAltIcon />}
@@ -280,6 +288,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
           borderRadius: "20px",
           backgroundColor: "#8169BF",
           color: "white",
+          marginTop: "10px",
         }}
       >
         Export
@@ -394,7 +403,7 @@ const DeepLearnedSelexMotif: React.FC<{
     () =>
       scaleLinear({
         domain: [domain.x.start, domain.x.end],
-        range: [0, width],
+        range: [25, width - 50], // Add half the previous padding (25)
       }),
     [domain, width]
   );
@@ -403,7 +412,7 @@ const DeepLearnedSelexMotif: React.FC<{
     () =>
       scaleLinear({
         domain: [domain.y.start, domain.y.end],
-        range: [height, 0],
+        range: [height - 50, 0],
       }),
     [domain, height]
   );
@@ -412,7 +421,7 @@ const DeepLearnedSelexMotif: React.FC<{
     () =>
       scaleBand({
         domain: data.map((d) => d.selex_round),
-        range: [0, width],
+        range: [0, width - 50],
         padding: 0.3,
       }),
     [data, width]
@@ -422,7 +431,7 @@ const DeepLearnedSelexMotif: React.FC<{
     () =>
       scaleLinear({
         domain: [barplotDomain.y.start, barplotDomain.y.end],
-        range: [height, 0],
+        range: [height - 50, 0],
       }),
     [barplotDomain, height]
   );
@@ -454,20 +463,55 @@ const DeepLearnedSelexMotif: React.FC<{
         <Grid item xs={6}>
           {data.map((d, i) => (
             <Box key={`logo${i}`} sx={{ textAlign: "center" }}>
-              <Typography variant="h6" color="primary">
+              <Typography variant="h6" sx={{ color: "brown" }}>
                 Cycle {d.selex_round}
               </Typography>
               {d.ppm && d.ppm.length > 0 && (
-                <DownloadableMotif ppm={d.ppm} name={study} />
+                <>
+                  <DownloadableMotif ppm={d.ppm} name={study} />
+                  <Divider sx={{ my: 2 }} />
+                </>
               )}
             </Box>
           ))}
         </Grid>
         <Grid item xs={6}>
           <svg ref={lineref} width={width} height={height}>
-            <Group>
-              <AxisLeft scale={yScale} label="FPR" />
-              <AxisBottom scale={xScale} top={height} label="TPR" />
+            <Group left={50} top={20}>
+              <AxisLeft
+                scale={yScale}
+                label="FPR"
+                labelProps={{
+                  fontSize: 12,
+                  fill: "black",
+                  textAnchor: "middle",
+                  transform: "translate(-40, 0) rotate(-90)",
+                }}
+                tickLabelProps={() => ({
+                  fontSize: 10,
+                  fill: "black",
+                  textAnchor: "end",
+                  dx: "-0.25em",
+                  dy: "0.25em",
+                })}
+              />
+              <AxisBottom
+                scale={xScale}
+                top={height - 20}
+                label="TPR"
+                labelProps={{
+                  fontSize: 12,
+                  fill: "black",
+                  textAnchor: "middle",
+                  transform: "translate(0, 30)",
+                }}
+                tickLabelProps={() => ({
+                  fontSize: 10,
+                  fill: "black",
+                  textAnchor: "middle",
+                  dy: "0.25em",
+                })}
+              />
               {data.map((d, i) => (
                 <LinePath
                   key={i}
@@ -493,7 +537,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     x={15}
                     y={15}
                     fill="black"
-                    fontSize="10"
+                    fontSize="14" // Increased font size
                     fontFamily="Arial"
                   >
                     Cycle {d.selex_round}
@@ -518,15 +562,47 @@ const DeepLearnedSelexMotif: React.FC<{
             Download
           </Button>
           <svg ref={barref} width={width} height={height}>
-            <Group>
-              <AxisLeft scale={barYScale} label="Fractional Enrichment" />
-              <AxisBottom scale={barXScale} top={height} label="Cycle" />
+            <Group left={50} top={20}>
+              <AxisLeft
+                scale={barYScale}
+                label="Fractional Enrichment"
+                labelProps={{
+                  fontSize: 12,
+                  fill: "black",
+                  textAnchor: "middle",
+                  transform: "translate(-40, 0) rotate(-90)",
+                }}
+                tickLabelProps={() => ({
+                  fontSize: 10,
+                  fill: "black",
+                  textAnchor: "end",
+                  dx: "-0.25em",
+                  dy: "0.25em",
+                })}
+              />
+              <AxisBottom
+                scale={barXScale}
+                top={height - 20}
+                label="Cycle"
+                labelProps={{
+                  fontSize: 12,
+                  fill: "black",
+                  textAnchor: "middle",
+                  transform: "translate(0, 30)",
+                }}
+                tickLabelProps={() => ({
+                  fontSize: 10,
+                  fill: "black",
+                  textAnchor: "middle",
+                  dy: "0.25em",
+                })}
+              />
               {data.map((d, i) => (
                 <Bar
                   key={`bar-${i}`}
                   x={barXScale(d.selex_round)}
                   y={barYScale(d.fractional_enrichment)}
-                  height={height - barYScale(d.fractional_enrichment)}
+                  height={height - 20 - barYScale(d.fractional_enrichment)}
                   width={barXScale.bandwidth()}
                   fill={colors[d.selex_round]}
                 />
@@ -546,7 +622,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     x={15}
                     y={15}
                     fill="black"
-                    fontSize="10"
+                    fontSize="14" // Increased font size
                     fontFamily="Arial"
                   >
                     Cycle {d.selex_round}
