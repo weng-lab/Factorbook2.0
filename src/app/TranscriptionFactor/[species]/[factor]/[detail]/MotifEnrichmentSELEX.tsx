@@ -36,9 +36,9 @@ import {
   DeepLearnedSELEXMotifsQueryResponse,
   DeepLearnedSELEXMotifsMetadataQueryResponse,
 } from "./types";
-import { downloadData, downloadSVG } from "../../../../../utilities/svgdata";
+import { downloadData, downloadSVG } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
-import { reverseComplement as rc } from "../../../../../components/tf/geneexpression/utils";
+import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 
 const colors: { [key: number]: string } = {
   1: "#FFA500",
