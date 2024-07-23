@@ -26,6 +26,7 @@ import { scaleLinear, scaleBand, scaleOrdinal } from "@visx/scale";
 import { Group } from "@visx/group";
 import { LinePath, Bar } from "@visx/shape";
 import { AxisBottom, AxisLeft } from "@visx/axis";
+import { Text } from "@visx/text";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import {
@@ -36,7 +37,7 @@ import {
   DeepLearnedSELEXMotifsQueryResponse,
   DeepLearnedSELEXMotifsMetadataQueryResponse,
 } from "./types";
-import { downloadData, downloadSVG } from "@/utilities/svgdata";
+import { downloadData, downloadSVG, combineSVG } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 
@@ -277,8 +278,8 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         ppm={motifppm}
         alphabet={DNAAlphabet}
         ref={svg}
-        width={450} // Adjusted width to a medium size
-        height={225} // Adjusted height to a medium size
+        width={500}
+        height={250}
       />
       <Button
         variant="contained"
@@ -396,44 +397,47 @@ const DeepLearnedSelexMotif: React.FC<{
     [data]
   );
 
-  const height = 400;
-  const width = 600;
+  const lineHeight = 400;
+  const lineWidth = 600;
+
+  const barHeight = 300;
+  const barWidth = 400;
 
   const xScale = useMemo(
     () =>
       scaleLinear({
         domain: [domain.x.start, domain.x.end],
-        range: [25, width - 50], // Add half the previous padding (25)
+        range: [25, lineWidth - 50], // Add half the previous padding (25)
       }),
-    [domain, width]
+    [domain, lineWidth]
   );
 
   const yScale = useMemo(
     () =>
       scaleLinear({
         domain: [domain.y.start, domain.y.end],
-        range: [height - 50, 0],
+        range: [lineHeight - 50, 0],
       }),
-    [domain, height]
+    [domain, lineHeight]
   );
 
   const barXScale = useMemo(
     () =>
       scaleBand({
         domain: data.map((d) => d.selex_round),
-        range: [0, width - 50],
+        range: [0, barWidth - 50],
         padding: 0.3,
       }),
-    [data, width]
+    [data, barWidth]
   );
 
   const barYScale = useMemo(
     () =>
       scaleLinear({
         domain: [barplotDomain.y.start, barplotDomain.y.end],
-        range: [height - 50, 0],
+        range: [barHeight - 50, 0],
       }),
-    [barplotDomain, height]
+    [barplotDomain, barHeight]
   );
 
   const colorScale = useMemo(
@@ -449,6 +453,16 @@ const DeepLearnedSelexMotif: React.FC<{
   const llegendref = useRef<SVGSVGElement>(null);
   const barref = useRef<SVGSVGElement>(null);
   const blegendref = useRef<SVGSVGElement>(null);
+
+  const downloadCombinedSVG = (
+    graphRef: React.RefObject<SVGSVGElement>,
+    legendRef: React.RefObject<SVGSVGElement>,
+    filename: string
+  ) => {
+    if (graphRef.current && legendRef.current) {
+      combineSVG(graphRef.current, legendRef.current, filename);
+    }
+  };
 
   return (
     <Box sx={{ padding: "1em" }}>
@@ -476,7 +490,7 @@ const DeepLearnedSelexMotif: React.FC<{
           ))}
         </Grid>
         <Grid item xs={6}>
-          <svg ref={lineref} width={width} height={height}>
+          <svg ref={lineref} width={lineWidth} height={lineHeight}>
             <Group left={50} top={20}>
               <AxisLeft
                 scale={yScale}
@@ -497,7 +511,7 @@ const DeepLearnedSelexMotif: React.FC<{
               />
               <AxisBottom
                 scale={xScale}
-                top={height - 20}
+                top={lineHeight - 20}
                 label="TPR"
                 labelProps={{
                   fontSize: 12,
@@ -524,7 +538,7 @@ const DeepLearnedSelexMotif: React.FC<{
               ))}
             </Group>
           </svg>
-          <svg ref={llegendref} width={width} height={50}>
+          <svg ref={llegendref} width={lineWidth} height={50}>
             <Group transform="translate(130,15)">
               {data.map((d, i) => (
                 <Group
@@ -537,7 +551,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     x={15}
                     y={15}
                     fill="black"
-                    fontSize="14" // Increased font size
+                    fontSize="14"
                     fontFamily="Arial"
                   >
                     Cycle {d.selex_round}
@@ -548,10 +562,9 @@ const DeepLearnedSelexMotif: React.FC<{
           </svg>
           <Button
             variant="contained"
-            onClick={() => {
-              downloadSVG(lineref, "lineplot.svg");
-              downloadSVG(llegendref, "lineplot.legend.svg");
-            }}
+            onClick={() =>
+              downloadCombinedSVG(lineref, llegendref, "lineplot.svg")
+            }
             sx={{
               borderRadius: "20px",
               backgroundColor: "#8169BF",
@@ -561,7 +574,7 @@ const DeepLearnedSelexMotif: React.FC<{
           >
             Download
           </Button>
-          <svg ref={barref} width={width} height={height}>
+          <svg ref={barref} width={barWidth} height={barHeight}>
             <Group left={50} top={20}>
               <AxisLeft
                 scale={barYScale}
@@ -582,7 +595,7 @@ const DeepLearnedSelexMotif: React.FC<{
               />
               <AxisBottom
                 scale={barXScale}
-                top={height - 20}
+                top={barHeight - 20}
                 label="Cycle"
                 labelProps={{
                   fontSize: 12,
@@ -598,18 +611,28 @@ const DeepLearnedSelexMotif: React.FC<{
                 })}
               />
               {data.map((d, i) => (
-                <Bar
-                  key={`bar-${i}`}
-                  x={barXScale(d.selex_round)}
-                  y={barYScale(d.fractional_enrichment)}
-                  height={height - 20 - barYScale(d.fractional_enrichment)}
-                  width={barXScale.bandwidth()}
-                  fill={colors[d.selex_round]}
-                />
+                <React.Fragment key={i}>
+                  <Bar
+                    x={barXScale(d.selex_round)}
+                    y={barYScale(d.fractional_enrichment)}
+                    height={barHeight - 20 - barYScale(d.fractional_enrichment)}
+                    width={barXScale.bandwidth()}
+                    fill={colors[d.selex_round]}
+                  />
+                  <Text
+                    x={barXScale(d.selex_round)! + barXScale.bandwidth() / 2}
+                    y={barYScale(d.fractional_enrichment) - 5}
+                    fontSize={12}
+                    fill={colors[d.selex_round]}
+                    textAnchor="middle"
+                  >
+                    {d.fractional_enrichment.toFixed(2)}
+                  </Text>
+                </React.Fragment>
               ))}
             </Group>
           </svg>
-          <svg ref={blegendref} width={width} height={50}>
+          <svg ref={blegendref} width={barWidth} height={50}>
             <Group transform="translate(130,15)">
               {data.map((d, i) => (
                 <Group
@@ -622,7 +645,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     x={15}
                     y={15}
                     fill="black"
-                    fontSize="14" // Increased font size
+                    fontSize="14"
                     fontFamily="Arial"
                   >
                     Cycle {d.selex_round}
@@ -633,10 +656,9 @@ const DeepLearnedSelexMotif: React.FC<{
           </svg>
           <Button
             variant="contained"
-            onClick={() => {
-              downloadSVG(barref, "barplot.svg");
-              downloadSVG(blegendref, "barplot.legend.svg");
-            }}
+            onClick={() =>
+              downloadCombinedSVG(barref, blegendref, "barplot.svg")
+            }
             sx={{
               borderRadius: "20px",
               backgroundColor: "#8169BF",
