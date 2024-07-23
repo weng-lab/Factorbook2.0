@@ -30,6 +30,7 @@
     "@visx/scale": "^3.5.0",
     "@visx/shape": "^3.5.0",
     "@visx/stats": "^3.5.0",
+    "@visx/text": "^3.3.0",
     "@visx/tooltip": "^3.3.0",
     "@weng-lab/psychscreen-ui-components": "^0.8.6",
     "copy-to-clipboard": "^3.3.3",

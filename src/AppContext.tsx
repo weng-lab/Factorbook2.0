@@ -20,14 +20,8 @@ interface AppProviderProps {
 }
 
 export const AppProvider: FC<AppProviderProps> = ({ children }) => {
-  const [geneName, setGeneName] = useState<string>(""); // Default value can be set here
-  const [assembly, setAssembly] = useState<string>(""); // Default value can be set here
-
-  useEffect(() => {
-    // Fetch or set initial values for geneName and assembly
-    setGeneName("InitialGene"); // Example initial value
-    setAssembly("hg38"); // Example initial value
-  }, []);
+  const [geneName, setGeneName] = useState<string>("InitialGene");
+  const [assembly, setAssembly] = useState<string>("hg38");
 
   return (
     <AppContext.Provider

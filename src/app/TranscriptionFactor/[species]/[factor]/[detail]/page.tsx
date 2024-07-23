@@ -7,14 +7,11 @@ import {
   Box,
   CircularProgress,
   Typography,
-  IconButton,
   Tabs,
   Tab,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
 import { FactorQueryResponse } from "@/components/CellType/types";
 import FunctionTab from "./Function";
@@ -23,22 +20,11 @@ import EpigeneticProfile from "./EpigeneticProfile";
 import Search from "./Search";
 import Link from "next/link";
 import DeepLearnedSelexMotifs from "./MotifEnrichmentSELEX";
+import { ApiContext } from "@/ApiContext";
 import GeneExpressionPage from "./GeneExpression";
-import { AppContext } from "@/AppContext";
 
 const FactorDetailsPage = () => {
-  const appContext = useContext(AppContext);
-
-  // To Ensure appContext is defined
-  if (!appContext) {
-    return <div>Loading...</div>;
-  }
-
-  const { geneName, assembly } = appContext;
-
-  if (!geneName || !assembly) {
-    return <div>Loading...</div>;
-  }
+  const apiContext = useContext(ApiContext);
 
   const router = useRouter();
   const {
@@ -83,7 +69,7 @@ const FactorDetailsPage = () => {
           />
         );
       case "Expression":
-        return <GeneExpressionPage gene_name={geneName} assembly={assembly} />;
+        return <GeneExpressionPage gene_name={""} assembly={""} />;
       case "MotifEnrichmentMEME":
         return <MotifEnrichmentMEME />;
       case "MotifEnrichmentSELEX":
@@ -133,20 +119,13 @@ const FactorDetailsPage = () => {
         </Box>
 
         <Box display="flex" alignItems="center">
-          <ArrowBackIosIcon
-            onClick={() => {
-              const tabsScroller = document.querySelector(".MuiTabs-scroller");
-              if (tabsScroller) {
-                tabsScroller.scrollBy({ left: -200, behavior: "smooth" });
-              }
-            }}
-          ></ArrowBackIosIcon>
           <Tabs
             value={detail}
             indicatorColor="primary"
             textColor="primary"
             variant="scrollable"
-            scrollButtons="auto"
+            scrollButtons
+            allowScrollButtonsMobile
             sx={{ flex: 1 }}
           >
             <Tab
@@ -205,14 +184,6 @@ const FactorDetailsPage = () => {
               }}
             />
           </Tabs>
-          <ArrowForwardIosIcon
-            onClick={() => {
-              const tabsScroller = document.querySelector(".MuiTabs-scroller");
-              if (tabsScroller) {
-                tabsScroller.scrollBy({ left: 200, behavior: "smooth" });
-              }
-            }}
-          ></ArrowForwardIosIcon>
         </Box>
 
         <Box mt={2}>{renderTabContent()}</Box>
