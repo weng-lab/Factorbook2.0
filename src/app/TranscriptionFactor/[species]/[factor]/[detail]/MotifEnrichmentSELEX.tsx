@@ -397,47 +397,45 @@ const DeepLearnedSelexMotif: React.FC<{
     [data]
   );
 
-  const lineHeight = 400;
-  const lineWidth = 600;
-
-  const barHeight = 300;
-  const barWidth = 400;
+  const graphHeight = 400;
+  const graphWidth = 600;
+  const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 
   const xScale = useMemo(
     () =>
       scaleLinear({
         domain: [domain.x.start, domain.x.end],
-        range: [25, lineWidth - 50], // Add half the previous padding (25)
+        range: [margin.left, graphWidth - margin.right],
       }),
-    [domain, lineWidth]
+    [domain, graphWidth, margin]
   );
 
   const yScale = useMemo(
     () =>
       scaleLinear({
         domain: [domain.y.start, domain.y.end],
-        range: [lineHeight - 50, 0],
+        range: [graphHeight - margin.bottom, margin.top],
       }),
-    [domain, lineHeight]
+    [domain, graphHeight, margin]
   );
 
   const barXScale = useMemo(
     () =>
       scaleBand({
         domain: data.map((d) => d.selex_round),
-        range: [0, barWidth - 50],
+        range: [margin.left, graphWidth - margin.right],
         padding: 0.3,
       }),
-    [data, barWidth]
+    [data, graphWidth, margin]
   );
 
   const barYScale = useMemo(
     () =>
       scaleLinear({
         domain: [barplotDomain.y.start, barplotDomain.y.end],
-        range: [barHeight - 50, 0],
+        range: [graphHeight - margin.bottom, margin.top],
       }),
-    [barplotDomain, barHeight]
+    [barplotDomain, graphHeight, margin]
   );
 
   const colorScale = useMemo(
@@ -490,8 +488,8 @@ const DeepLearnedSelexMotif: React.FC<{
           ))}
         </Grid>
         <Grid item xs={6}>
-          <svg ref={lineref} width={lineWidth} height={lineHeight}>
-            <Group left={50} top={20}>
+          <svg ref={lineref} width={graphWidth} height={graphHeight}>
+            <Group left={margin.left} top={margin.top}>
               <AxisLeft
                 scale={yScale}
                 label="FPR"
@@ -511,7 +509,7 @@ const DeepLearnedSelexMotif: React.FC<{
               />
               <AxisBottom
                 scale={xScale}
-                top={lineHeight - 20}
+                top={graphHeight - margin.bottom}
                 label="TPR"
                 labelProps={{
                   fontSize: 12,
@@ -538,7 +536,7 @@ const DeepLearnedSelexMotif: React.FC<{
               ))}
             </Group>
           </svg>
-          <svg ref={llegendref} width={lineWidth} height={50}>
+          <svg ref={llegendref} width={graphWidth} height={50}>
             <Group transform="translate(130,15)">
               {data.map((d, i) => (
                 <Group
@@ -574,8 +572,8 @@ const DeepLearnedSelexMotif: React.FC<{
           >
             Download
           </Button>
-          <svg ref={barref} width={barWidth} height={barHeight}>
-            <Group left={50} top={20}>
+          <svg ref={barref} width={graphWidth} height={graphHeight}>
+            <Group left={margin.left} top={margin.top}>
               <AxisLeft
                 scale={barYScale}
                 label="Fractional Enrichment"
@@ -595,7 +593,7 @@ const DeepLearnedSelexMotif: React.FC<{
               />
               <AxisBottom
                 scale={barXScale}
-                top={barHeight - 20}
+                top={graphHeight - margin.bottom}
                 label="Cycle"
                 labelProps={{
                   fontSize: 12,
@@ -615,7 +613,11 @@ const DeepLearnedSelexMotif: React.FC<{
                   <Bar
                     x={barXScale(d.selex_round)}
                     y={barYScale(d.fractional_enrichment)}
-                    height={barHeight - 20 - barYScale(d.fractional_enrichment)}
+                    height={
+                      graphHeight -
+                      margin.bottom -
+                      barYScale(d.fractional_enrichment)
+                    }
                     width={barXScale.bandwidth()}
                     fill={colors[d.selex_round]}
                   />
@@ -632,7 +634,7 @@ const DeepLearnedSelexMotif: React.FC<{
               ))}
             </Group>
           </svg>
-          <svg ref={blegendref} width={barWidth} height={50}>
+          <svg ref={blegendref} width={graphWidth} height={50}>
             <Group transform="translate(130,15)">
               {data.map((d, i) => (
                 <Group

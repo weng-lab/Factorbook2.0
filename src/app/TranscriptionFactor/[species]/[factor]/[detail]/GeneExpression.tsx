@@ -1,4 +1,3 @@
-// GeneExpressionPage.tsx
 import { groupBy } from "queryz";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
@@ -17,11 +16,7 @@ import { Download as DownloadIcon } from "@mui/icons-material";
 import { formatFactorName } from "@/utilities/misc";
 import { useGeneExpressionData } from "@/components/tf/geneexpression/hooks";
 import { GeneExpressionPageProps } from "@/components/tf/geneexpression/types";
-import {
-  downloadTSV,
-  spacedColors,
-  downloadSVG,
-} from "@/components/tf/geneexpression/utils";
+import { downloadTSV, downloadSVG } from "@/components/tf/geneexpression/utils";
 import { Group } from "@visx/group";
 import { ViolinPlot, BoxPlot } from "@visx/stats";
 import { scaleLinear } from "@visx/scale";
@@ -305,3 +300,6 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   );
 };
 export default GeneExpressionPage;
+function spacedColors(length: number): any {
+  throw new Error("Function not implemented.");
+}
