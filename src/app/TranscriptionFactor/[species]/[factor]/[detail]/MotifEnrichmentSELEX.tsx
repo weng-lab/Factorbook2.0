@@ -18,8 +18,9 @@ import {
   FormControlLabel,
   Checkbox,
   Divider,
+  SelectChangeEvent,
 } from "@mui/material";
-import Grid from "@mui/material/Grid";
+import Grid from "@mui/material/Unstable_Grid2"; // Grid2 for MUI v2
 import { ApiContext } from "@/ApiContext";
 import { Logo, DNAAlphabet } from "logojs-react";
 import { scaleLinear, scaleBand, scaleOrdinal } from "@visx/scale";
@@ -110,13 +111,9 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
     }
   }, [selexMotifs]);
 
-  useEffect(() => {
-    if (selexMotifs && selexMotifs.length === 1) {
-      setMotif(
-        `${selexMotifs[0].protein_type}:${selexMotifs[0].study}:${selexMotifs[0].assay}`
-      );
-    }
-  }, [selexMotifs]);
+  const handleMotifChange = (event: SelectChangeEvent<string>) => {
+    setMotif(event.target.value);
+  };
 
   if (loading || !data)
     return (
@@ -143,9 +140,9 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
           <InputLabel id="motif-select-label">Select Motif</InputLabel>
           <Select
             labelId="motif-select-label"
-            value={motif}
+            value={motif ?? ""}
             label="Select Motif"
-            onChange={(e) => setMotif(e.target.value as string)}
+            onChange={handleMotifChange}
           >
             {dropDownOptions.map((option) => (
               <MenuItem key={option.key} value={option.value}>
@@ -469,7 +466,7 @@ const DeepLearnedSelexMotif: React.FC<{
         found in {study.replace("_", " ")} study
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           {data.map((d, i) => (
             <Box key={`logo${i}`} sx={{ textAlign: "center" }}>
               <Typography variant="h6" sx={{ color: "brown" }}>
@@ -484,13 +481,14 @@ const DeepLearnedSelexMotif: React.FC<{
             </Box>
           ))}
         </Grid>
-        <Grid item xs={12} md={6}>
+        <Grid xs={12} md={6}>
           <Box
             sx={{
               display: "flex",
               justifyContent: "center",
               flexDirection: "column",
               alignItems: "center",
+              fontFamily: "Helvetica Neue",
             }}
           >
             <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
@@ -582,7 +580,7 @@ const DeepLearnedSelexMotif: React.FC<{
                           y={25}
                           fill="black"
                           fontSize="14"
-                          fontFamily="Arial"
+                          fontFamily="Helvetica Neue"
                         >
                           {label.text}
                         </text>
@@ -602,6 +600,7 @@ const DeepLearnedSelexMotif: React.FC<{
                 backgroundColor: "#8169BF",
                 color: "white",
                 marginTop: "10px",
+                fontFamily: "Helvetica Neue",
               }}
             >
               Download
@@ -709,7 +708,7 @@ const DeepLearnedSelexMotif: React.FC<{
                           y={20}
                           fill="black"
                           fontSize="14"
-                          fontFamily="Arial"
+                          fontFamily="Helvetica Neue"
                         >
                           {label.text}
                         </text>
@@ -729,6 +728,7 @@ const DeepLearnedSelexMotif: React.FC<{
                 backgroundColor: "#8169BF",
                 color: "white",
                 marginTop: "10px",
+                fontFamily: "Helvetica Neue",
               }}
             >
               Download

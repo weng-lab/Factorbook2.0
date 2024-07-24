@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import {
@@ -22,6 +22,8 @@ import Link from "next/link";
 import DeepLearnedSelexMotifs from "./MotifEnrichmentSELEX";
 import { ApiContext } from "@/ApiContext";
 import GeneExpressionPage from "./GeneExpression";
+import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./Queries";
+import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
 
 const FactorDetailsPage = () => {
   const apiContext = useContext(ApiContext);
@@ -45,7 +47,30 @@ const FactorDetailsPage = () => {
     }
   );
 
-  if (loading) return <CircularProgress />;
+  const { data: selexData, loading: selexLoading } =
+    useQuery<DeepLearnedSELEXMotifsMetadataQueryResponse>(
+      DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
+      {
+        variables: {
+          tf: factor,
+          species: species.toLowerCase(),
+          selex_round: [1, 2, 3, 4, 5, 6, 7],
+        },
+        context: apiContext,
+      }
+    );
+
+  const [hasSelexData, setHasSelexData] = useState(false);
+
+  useEffect(() => {
+    if (selexData && selexData.deep_learned_motifs.length > 0) {
+      setHasSelexData(true);
+    } else {
+      setHasSelexData(false);
+    }
+  }, [selexData]);
+
+  if (loading || selexLoading) return <CircularProgress />;
   if (error) return <p>Error: {error.message}</p>;
 
   const renderTabContent = () => {
@@ -155,16 +180,18 @@ const FactorDetailsPage = () => {
                 color: detail === "MotifEnrichmentMEME" ? "#8169BF" : "inherit",
               }}
             />
-            <Tab
-              label="Motif Enrichment (SELEX)"
-              value="MotifEnrichmentSELEX"
-              component={Link}
-              href={`/TranscriptionFactor/${species}/${factor}/MotifEnrichmentSELEX`}
-              sx={{
-                color:
-                  detail === "MotifEnrichmentSELEX" ? "#8169BF" : "inherit",
-              }}
-            />
+            {hasSelexData && (
+              <Tab
+                label="Motif Enrichment (SELEX)"
+                value="MotifEnrichmentSELEX"
+                component={Link}
+                href={`/TranscriptionFactor/${species}/${factor}/MotifEnrichmentSELEX`}
+                sx={{
+                  color:
+                    detail === "MotifEnrichmentSELEX" ? "#8169BF" : "inherit",
+                }}
+              />
+            )}
             <Tab
               label="Epigenetic Profile"
               value="EpigeneticProfile"
