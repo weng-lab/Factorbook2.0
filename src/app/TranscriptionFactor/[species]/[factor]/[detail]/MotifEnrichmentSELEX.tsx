@@ -26,6 +26,7 @@ import { scaleLinear, scaleBand, scaleOrdinal } from "@visx/scale";
 import { Group } from "@visx/group";
 import { LinePath, Bar } from "@visx/shape";
 import { AxisBottom, AxisLeft } from "@visx/axis";
+import { LegendOrdinal } from "@visx/legend";
 import { Text } from "@visx/text";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -426,7 +427,7 @@ const DeepLearnedSelexMotif: React.FC<{
       scaleBand({
         domain: data.map((d) => d.selex_round),
         range: [margin.left, barGraphWidth - margin.right],
-        paddingInner: 0.5, // Increased padding to make bars thinner
+        paddingInner: 0.5,
         paddingOuter: 0.3,
       }),
     [data, barGraphWidth, margin]
@@ -456,6 +457,8 @@ const DeepLearnedSelexMotif: React.FC<{
     }
   };
 
+  const presentCycles = data.map((d) => d.selex_round);
+
   return (
     <Box sx={{ padding: "1em" }}>
       <Typography variant="h5" align="center">
@@ -466,7 +469,7 @@ const DeepLearnedSelexMotif: React.FC<{
         found in {study.replace("_", " ")} study
       </Typography>
       <Grid container spacing={3}>
-        <Grid item xs={6}>
+        <Grid item xs={12} md={6}>
           {data.map((d, i) => (
             <Box key={`logo${i}`} sx={{ textAlign: "center" }}>
               <Typography variant="h6" sx={{ color: "brown" }}>
@@ -481,227 +484,256 @@ const DeepLearnedSelexMotif: React.FC<{
             </Box>
           ))}
         </Grid>
-        <Grid item xs={6}>
-          <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
-            <Group left={margin.left} top={margin.top}>
-              <AxisLeft
-                scale={yScale}
-                label="FPR"
-                labelProps={{
-                  fontSize: 12,
-                  fill: "black",
-                  textAnchor: "middle",
-                  transform: "translate(-60, 0) rotate(-90)", // Adjusted translation
-                }}
-                tickLabelProps={() => ({
-                  fontSize: 10,
-                  fill: "black",
-                  textAnchor: "end",
-                  dx: "-0.25em",
-                  dy: "0.25em",
-                })}
-              />
-              <AxisBottom
-                scale={xScale}
-                top={lineGraphHeight - margin.bottom}
-                label="TPR"
-                labelProps={{
-                  fontSize: 12,
-                  fill: "black",
-                  textAnchor: "middle",
-                  transform: "translate(0, 40)", // Adjusted translation
-                }}
-                tickLabelProps={() => ({
-                  fontSize: 10,
-                  fill: "black",
-                  textAnchor: "middle",
-                  dy: "0.25em",
-                })}
-              />
-              {data.map((d, i) => (
-                <LinePath
-                  key={i}
-                  data={points.filter((p) => p.round === d.selex_round)}
-                  x={(p) => xScale(p.x)}
-                  y={(p) => yScale(p.y)}
-                  stroke={colors[d.selex_round]}
-                  strokeWidth={2}
+        <Grid item xs={12} md={6}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
+              <Group left={margin.left} top={margin.top}>
+                <AxisLeft
+                  scale={yScale}
+                  label="FPR"
+                  labelProps={{
+                    fontSize: 12,
+                    fill: "black",
+                    textAnchor: "middle",
+                    transform: "translate(-60, 0) rotate(-90)",
+                  }}
+                  tickLabelProps={() => ({
+                    fontSize: 10,
+                    fill: "black",
+                    textAnchor: "end",
+                    dx: "-0.25em",
+                    dy: "0.25em",
+                  })}
                 />
-              ))}
-              <Text
-                x={310}
-                y={370} // Adjusted position
-                fontSize={14}
-                textAnchor="middle"
-                fill="black"
-              >
-                TPR
-              </Text>
-              <Text
-                x={-170}
-                y={-40} // Adjusted position
-                fontSize={14}
-                textAnchor="middle"
-                fill="black"
-                transform="rotate(-90)"
-              >
-                FPR
-              </Text>
-            </Group>
-          </svg>
-          <svg ref={llegendref} width={lineGraphWidth} height={50}>
-            <Group transform="translate(130,15)">
-              {data.map((d, i) => (
-                <Group
-                  key={i}
-                  transform={`translate(${i * 100},0)`} // Adjusted translation for more spacing
-                  style={{ textAnchor: "middle" }}
-                >
-                  <rect fill={colors[d.selex_round]} height={10} width={10} />
-                  <text
-                    x={10} // Adjusted x position for spacing
-                    y={25} // Adjusted y position for better alignment
-                    fill="black"
-                    fontSize="14"
-                    fontFamily="Arial"
-                  >
-                    Cycle {d.selex_round}
-                  </text>
-                </Group>
-              ))}
-            </Group>
-          </svg>
-          <Button
-            variant="contained"
-            onClick={() =>
-              downloadCombinedSVG(lineref, llegendref, "lineplot.svg")
-            }
-            sx={{
-              borderRadius: "20px",
-              backgroundColor: "#8169BF",
-              color: "white",
-              marginTop: "10px",
-            }}
-          >
-            Download
-          </Button>
-          <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
-            <Group left={margin.left} top={margin.top}>
-              <AxisLeft
-                scale={barYScale}
-                label="Fractional Enrichment"
-                labelProps={{
-                  fontSize: 12,
-                  fill: "black",
-                  textAnchor: "middle",
-                  transform: "translate(-60, 0) rotate(-90)", // Adjusted translation
-                }}
-                tickLabelProps={() => ({
-                  fontSize: 10,
-                  fill: "black",
-                  textAnchor: "end",
-                  dx: "-0.25em",
-                  dy: "0.25em",
-                })}
-              />
-              <AxisBottom
-                scale={barXScale}
-                top={barGraphHeight - margin.bottom}
-                label="Cycle"
-                labelProps={{
-                  fontSize: 12,
-                  fill: "black",
-                  textAnchor: "middle",
-                  transform: "translate(0, 40)", // Adjusted translation
-                }}
-                tickLabelProps={() => ({
-                  fontSize: 10,
-                  fill: "black",
-                  textAnchor: "middle",
-                  dy: "0.25em",
-                })}
-              />
-              {data.map((d, i) => (
-                <React.Fragment key={i}>
-                  <Bar
-                    x={barXScale(d.selex_round)}
-                    y={barYScale(d.fractional_enrichment)}
-                    height={
-                      barGraphHeight -
-                      margin.bottom -
-                      barYScale(d.fractional_enrichment)
-                    }
-                    width={barXScale.bandwidth()}
-                    fill={colors[d.selex_round]}
+                <AxisBottom
+                  scale={xScale}
+                  top={lineGraphHeight - margin.bottom}
+                  label="TPR"
+                  labelProps={{
+                    fontSize: 12,
+                    fill: "black",
+                    textAnchor: "middle",
+                    transform: "translate(0, 40)",
+                  }}
+                  tickLabelProps={() => ({
+                    fontSize: 10,
+                    fill: "black",
+                    textAnchor: "middle",
+                    dy: "0.25em",
+                  })}
+                />
+                {data.map((d, i) => (
+                  <LinePath
+                    key={i}
+                    data={points.filter((p) => p.round === d.selex_round)}
+                    x={(p) => xScale(p.x)}
+                    y={(p) => yScale(p.y)}
+                    stroke={colors[d.selex_round]}
+                    strokeWidth={2}
                   />
-                  <Text
-                    x={barXScale(d.selex_round)! + barXScale.bandwidth() / 2}
-                    y={barYScale(d.fractional_enrichment) - 5}
-                    fontSize={12}
-                    fill={colors[d.selex_round]}
-                    textAnchor="middle"
-                  >
-                    {d.fractional_enrichment.toFixed(2)}
-                  </Text>
-                </React.Fragment>
-              ))}
-              <Text
-                x={220}
-                y={370} // Adjusted position
-                fontSize={14}
-                textAnchor="middle"
-                fill="black"
-              >
-                Cycle
-              </Text>
-              <Text
-                x={-170}
-                y={-30} // Adjusted position
-                fontSize={14}
-                textAnchor="middle"
-                fill="black"
-                transform="rotate(-90)"
-              >
-                Fractional Enrichment
-              </Text>
-            </Group>
-          </svg>
-          <svg ref={blegendref} width={barGraphWidth} height={50}>
-            <Group transform="translate(130,15)">
-              {data.map((d, i) => (
-                <Group
-                  key={i}
-                  transform={`translate(${i * 100},0)`} // Adjusted translation for more spacing
-                  style={{ textAnchor: "middle" }}
+                ))}
+                <Text
+                  x={310}
+                  y={370}
+                  fontSize={14}
+                  textAnchor="middle"
+                  fill="black"
                 >
-                  <rect fill={colors[d.selex_round]} height={9} width={9} />
-                  <text
-                    x={10} // Adjusted x position for spacing
-                    y={20} // Adjusted y position for better alignment
-                    fill="black"
-                    fontSize="14"
-                    fontFamily="Arial"
-                  >
-                    Cycle {d.selex_round}
-                  </text>
-                </Group>
-              ))}
-            </Group>
-          </svg>
-          <Button
-            variant="contained"
-            onClick={() =>
-              downloadCombinedSVG(barref, blegendref, "barplot.svg")
-            }
-            sx={{
-              borderRadius: "20px",
-              backgroundColor: "#8169BF",
-              color: "white",
-              marginTop: "10px",
-            }}
-          >
-            Download
-          </Button>
+                  TPR
+                </Text>
+                <Text
+                  x={-170}
+                  y={-40}
+                  fontSize={14}
+                  textAnchor="middle"
+                  fill="black"
+                  transform="rotate(-90)"
+                >
+                  FPR
+                </Text>
+              </Group>
+            </svg>
+            <LegendOrdinal
+              scale={scaleOrdinal({
+                domain: presentCycles,
+                range: presentCycles.map((cycle) => colors[cycle]),
+              })}
+              labelFormat={(label) => `Cycle ${label}`}
+            >
+              {(labels) => (
+                <svg ref={llegendref} width={lineGraphWidth} height={50}>
+                  <Group transform="translate(130,15)">
+                    {labels.map((label, i) => (
+                      <Group
+                        key={i}
+                        transform={`translate(${i * 100},0)`}
+                        style={{ textAnchor: "middle" }}
+                      >
+                        <rect fill={label.value} height={10} width={10} />
+                        <text
+                          x={10}
+                          y={25}
+                          fill="black"
+                          fontSize="14"
+                          fontFamily="Arial"
+                        >
+                          {label.text}
+                        </text>
+                      </Group>
+                    ))}
+                  </Group>
+                </svg>
+              )}
+            </LegendOrdinal>
+            <Button
+              variant="contained"
+              onClick={() =>
+                downloadCombinedSVG(lineref, llegendref, "lineplot.svg")
+              }
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#8169BF",
+                color: "white",
+                marginTop: "10px",
+              }}
+            >
+              Download
+            </Button>
+            <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
+              <Group left={margin.left} top={margin.top}>
+                <AxisLeft
+                  scale={barYScale}
+                  label="Fractional Enrichment"
+                  labelProps={{
+                    fontSize: 12,
+                    fill: "black",
+                    textAnchor: "middle",
+                    transform: "translate(-60, 0) rotate(-90)",
+                  }}
+                  tickLabelProps={() => ({
+                    fontSize: 10,
+                    fill: "black",
+                    textAnchor: "end",
+                    dx: "-0.25em",
+                    dy: "0.25em",
+                  })}
+                />
+                <AxisBottom
+                  scale={barXScale}
+                  top={barGraphHeight - margin.bottom}
+                  label="Cycle"
+                  labelProps={{
+                    fontSize: 12,
+                    fill: "black",
+                    textAnchor: "middle",
+                    transform: "translate(0, 40)",
+                  }}
+                  tickLabelProps={() => ({
+                    fontSize: 10,
+                    fill: "black",
+                    textAnchor: "middle",
+                    dy: "0.25em",
+                  })}
+                />
+                {data.map((d, i) => (
+                  <React.Fragment key={i}>
+                    <Bar
+                      x={barXScale(d.selex_round)}
+                      y={barYScale(d.fractional_enrichment)}
+                      height={
+                        barGraphHeight -
+                        margin.bottom -
+                        barYScale(d.fractional_enrichment)
+                      }
+                      width={barXScale.bandwidth()}
+                      fill={colors[d.selex_round]}
+                    />
+                    <Text
+                      x={barXScale(d.selex_round)! + barXScale.bandwidth() / 2}
+                      y={barYScale(d.fractional_enrichment) - 5}
+                      fontSize={12}
+                      fill={colors[d.selex_round]}
+                      textAnchor="middle"
+                    >
+                      {d.fractional_enrichment.toFixed(2)}
+                    </Text>
+                  </React.Fragment>
+                ))}
+                <Text
+                  x={220}
+                  y={370}
+                  fontSize={14}
+                  textAnchor="middle"
+                  fill="black"
+                >
+                  Cycle
+                </Text>
+                <Text
+                  x={-170}
+                  y={-30}
+                  fontSize={14}
+                  textAnchor="middle"
+                  fill="black"
+                  transform="rotate(-90)"
+                >
+                  Fractional Enrichment
+                </Text>
+              </Group>
+            </svg>
+            <LegendOrdinal
+              scale={scaleOrdinal({
+                domain: presentCycles,
+                range: presentCycles.map((cycle) => colors[cycle]),
+              })}
+              labelFormat={(label) => `Cycle ${label}`}
+            >
+              {(labels) => (
+                <svg ref={blegendref} width={barGraphWidth} height={50}>
+                  <Group transform="translate(130,15)">
+                    {labels.map((label, i) => (
+                      <Group
+                        key={i}
+                        transform={`translate(${i * 100},0)`}
+                        style={{ textAnchor: "middle" }}
+                      >
+                        <rect fill={label.value} height={9} width={9} />
+                        <text
+                          x={10}
+                          y={20}
+                          fill="black"
+                          fontSize="14"
+                          fontFamily="Arial"
+                        >
+                          {label.text}
+                        </text>
+                      </Group>
+                    ))}
+                  </Group>
+                </svg>
+              )}
+            </LegendOrdinal>
+            <Button
+              variant="contained"
+              onClick={() =>
+                downloadCombinedSVG(barref, blegendref, "barplot.svg")
+              }
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#8169BF",
+                color: "white",
+                marginTop: "10px",
+              }}
+            >
+              Download
+            </Button>
+          </Box>
         </Grid>
       </Grid>
     </Box>
