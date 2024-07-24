@@ -278,7 +278,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         ppm={motifppm}
         alphabet={DNAAlphabet}
         ref={svg}
-        width={500}
+        width={400}
         height={250}
       />
       <Button
@@ -397,54 +397,48 @@ const DeepLearnedSelexMotif: React.FC<{
     [data]
   );
 
-  const graphHeight = 400;
-  const graphWidth = 600;
-  const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+  const lineGraphHeight = 400;
+  const lineGraphWidth = 600;
+  const barGraphHeight = 400;
+  const barGraphWidth = 400;
+  const margin = { top: 20, right: 90, bottom: 70, left: 70 };
 
   const xScale = useMemo(
     () =>
       scaleLinear({
         domain: [domain.x.start, domain.x.end],
-        range: [margin.left, graphWidth - margin.right],
+        range: [margin.left, lineGraphWidth - margin.right],
       }),
-    [domain, graphWidth, margin]
+    [domain, lineGraphWidth, margin]
   );
 
   const yScale = useMemo(
     () =>
       scaleLinear({
         domain: [domain.y.start, domain.y.end],
-        range: [graphHeight - margin.bottom, margin.top],
+        range: [lineGraphHeight - margin.bottom, margin.top],
       }),
-    [domain, graphHeight, margin]
+    [domain, lineGraphHeight, margin]
   );
 
   const barXScale = useMemo(
     () =>
       scaleBand({
         domain: data.map((d) => d.selex_round),
-        range: [margin.left, graphWidth - margin.right],
-        padding: 0.3,
+        range: [margin.left, barGraphWidth - margin.right],
+        paddingInner: 0.5, // Increased padding to make bars thinner
+        paddingOuter: 0.3,
       }),
-    [data, graphWidth, margin]
+    [data, barGraphWidth, margin]
   );
 
   const barYScale = useMemo(
     () =>
       scaleLinear({
         domain: [barplotDomain.y.start, barplotDomain.y.end],
-        range: [graphHeight - margin.bottom, margin.top],
+        range: [barGraphHeight - margin.bottom, margin.top],
       }),
-    [barplotDomain, graphHeight, margin]
-  );
-
-  const colorScale = useMemo(
-    () =>
-      scaleOrdinal<number, string>({
-        domain: data.map((d) => d.selex_round),
-        range: Object.values(colors),
-      }),
-    [data]
+    [barplotDomain, barGraphHeight, margin]
   );
 
   const lineref = useRef<SVGSVGElement>(null);
@@ -488,7 +482,7 @@ const DeepLearnedSelexMotif: React.FC<{
           ))}
         </Grid>
         <Grid item xs={6}>
-          <svg ref={lineref} width={graphWidth} height={graphHeight}>
+          <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
             <Group left={margin.left} top={margin.top}>
               <AxisLeft
                 scale={yScale}
@@ -497,7 +491,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   fontSize: 12,
                   fill: "black",
                   textAnchor: "middle",
-                  transform: "translate(-40, 0) rotate(-90)",
+                  transform: "translate(-60, 0) rotate(-90)", // Adjusted translation
                 }}
                 tickLabelProps={() => ({
                   fontSize: 10,
@@ -509,13 +503,13 @@ const DeepLearnedSelexMotif: React.FC<{
               />
               <AxisBottom
                 scale={xScale}
-                top={graphHeight - margin.bottom}
+                top={lineGraphHeight - margin.bottom}
                 label="TPR"
                 labelProps={{
                   fontSize: 12,
                   fill: "black",
                   textAnchor: "middle",
-                  transform: "translate(0, 30)",
+                  transform: "translate(0, 40)", // Adjusted translation
                 }}
                 tickLabelProps={() => ({
                   fontSize: 10,
@@ -534,20 +528,39 @@ const DeepLearnedSelexMotif: React.FC<{
                   strokeWidth={2}
                 />
               ))}
+              <Text
+                x={310}
+                y={370} // Adjusted position
+                fontSize={14}
+                textAnchor="middle"
+                fill="black"
+              >
+                TPR
+              </Text>
+              <Text
+                x={-170}
+                y={-40} // Adjusted position
+                fontSize={14}
+                textAnchor="middle"
+                fill="black"
+                transform="rotate(-90)"
+              >
+                FPR
+              </Text>
             </Group>
           </svg>
-          <svg ref={llegendref} width={graphWidth} height={50}>
+          <svg ref={llegendref} width={lineGraphWidth} height={50}>
             <Group transform="translate(130,15)">
               {data.map((d, i) => (
                 <Group
                   key={i}
-                  transform={`translate(${i * 50},0)`}
+                  transform={`translate(${i * 100},0)`} // Adjusted translation for more spacing
                   style={{ textAnchor: "middle" }}
                 >
-                  <rect fill={colors[d.selex_round]} height={7} width={7} />
+                  <rect fill={colors[d.selex_round]} height={10} width={10} />
                   <text
-                    x={15}
-                    y={15}
+                    x={10} // Adjusted x position for spacing
+                    y={25} // Adjusted y position for better alignment
                     fill="black"
                     fontSize="14"
                     fontFamily="Arial"
@@ -572,7 +585,7 @@ const DeepLearnedSelexMotif: React.FC<{
           >
             Download
           </Button>
-          <svg ref={barref} width={graphWidth} height={graphHeight}>
+          <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
             <Group left={margin.left} top={margin.top}>
               <AxisLeft
                 scale={barYScale}
@@ -581,7 +594,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   fontSize: 12,
                   fill: "black",
                   textAnchor: "middle",
-                  transform: "translate(-40, 0) rotate(-90)",
+                  transform: "translate(-60, 0) rotate(-90)", // Adjusted translation
                 }}
                 tickLabelProps={() => ({
                   fontSize: 10,
@@ -593,13 +606,13 @@ const DeepLearnedSelexMotif: React.FC<{
               />
               <AxisBottom
                 scale={barXScale}
-                top={graphHeight - margin.bottom}
+                top={barGraphHeight - margin.bottom}
                 label="Cycle"
                 labelProps={{
                   fontSize: 12,
                   fill: "black",
                   textAnchor: "middle",
-                  transform: "translate(0, 30)",
+                  transform: "translate(0, 40)", // Adjusted translation
                 }}
                 tickLabelProps={() => ({
                   fontSize: 10,
@@ -614,7 +627,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     x={barXScale(d.selex_round)}
                     y={barYScale(d.fractional_enrichment)}
                     height={
-                      graphHeight -
+                      barGraphHeight -
                       margin.bottom -
                       barYScale(d.fractional_enrichment)
                     }
@@ -632,20 +645,39 @@ const DeepLearnedSelexMotif: React.FC<{
                   </Text>
                 </React.Fragment>
               ))}
+              <Text
+                x={220}
+                y={370} // Adjusted position
+                fontSize={14}
+                textAnchor="middle"
+                fill="black"
+              >
+                Cycle
+              </Text>
+              <Text
+                x={-170}
+                y={-30} // Adjusted position
+                fontSize={14}
+                textAnchor="middle"
+                fill="black"
+                transform="rotate(-90)"
+              >
+                Fractional Enrichment
+              </Text>
             </Group>
           </svg>
-          <svg ref={blegendref} width={graphWidth} height={50}>
+          <svg ref={blegendref} width={barGraphWidth} height={50}>
             <Group transform="translate(130,15)">
               {data.map((d, i) => (
                 <Group
                   key={i}
-                  transform={`translate(${i * 50},0)`}
+                  transform={`translate(${i * 100},0)`} // Adjusted translation for more spacing
                   style={{ textAnchor: "middle" }}
                 >
-                  <rect fill={colors[d.selex_round]} height={7} width={7} />
+                  <rect fill={colors[d.selex_round]} height={9} width={9} />
                   <text
-                    x={15}
-                    y={15}
+                    x={10} // Adjusted x position for spacing
+                    y={20} // Adjusted y position for better alignment
                     fill="black"
                     fontSize="14"
                     fontFamily="Arial"
