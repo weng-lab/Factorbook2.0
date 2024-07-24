@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactNode, MouseEvent } from "react";
 import { useQuery } from "@apollo/client";
 import {
   Box,
@@ -42,6 +42,22 @@ type TfDetailsProps = {
   row: TargetPartitionedDatasetCollection;
   factor: string;
 };
+
+interface LinkWrapperProps {
+  url: string;
+  children: ReactNode;
+}
+
+const LinkWrapper: React.FC<LinkWrapperProps> = ({ url, children }) => (
+  <Link
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ textDecoration: "none", color: "inherit" }}
+  >
+    {children}
+  </Link>
+);
 
 const TfDetails: React.FC<TfDetailsProps> = ({
   species,
@@ -157,16 +173,20 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       header: "Image",
       render: (row: FactorRow) =>
         row.image ? (
-          <img
-            src={row.image}
-            alt={row.name}
-            style={{
-              display: "block",
-              minWidth: "250px",
-              height: "250px",
-              padding: "10px",
-            }}
-          />
+          <LinkWrapper
+            url={`/TranscriptionFactor/${species}/${row.name}/Function`}
+          >
+            <img
+              src={row.image}
+              alt={row.name}
+              style={{
+                display: "block",
+                minWidth: "250px",
+                height: "250px",
+                padding: "10px",
+              }}
+            />
+          </LinkWrapper>
         ) : (
           ""
         ),
@@ -175,33 +195,31 @@ const TfDetails: React.FC<TfDetailsProps> = ({
     {
       header: "Details",
       render: (row: FactorRow) => (
-        <Box style={{ minWidth: "150px" }}>
-          <Typography variant="h6" style={{ fontWeight: "bold" }}>
-            <Link
-              href={`/TranscriptionFactor/${species}/${row.name}/Function`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+        <LinkWrapper
+          url={`/TranscriptionFactor/${species}/${row.name}/Function`}
+        >
+          <Box style={{ minWidth: "150px" }}>
+            <Typography variant="h6" style={{ fontWeight: "bold" }}>
               {species === "Mouse"
                 ? row.name.charAt(0) + row.name.slice(1).toLowerCase()
                 : row.name}
-            </Link>
-          </Typography>
-          <Typography>
-            {row.label ? (
-              <>
-                {row.label.replace(/ -/g, "")}
-                <br />
-              </>
-            ) : (
-              ""
+            </Typography>
+            <Typography>
+              {row.label ? (
+                <>
+                  {row.label.replace(/ -/g, "")}
+                  <br />
+                </>
+              ) : (
+                ""
+              )}
+            </Typography>
+            <Typography>{row.experiments} Experiments</Typography>
+            {!hideCellTypeCounts && (
+              <Typography>{row.cellTypes} Cell Types</Typography>
             )}
-          </Typography>
-          <Typography>{row.experiments} Experiments</Typography>
-          {!hideCellTypeCounts && (
-            <Typography>{row.cellTypes} Cell Types</Typography>
-          )}
-        </Box>
+          </Box>
+        </LinkWrapper>
       ),
       value: (row: FactorRow) =>
         `${row.name}, ${row.label || ""}, ${row.experiments} Experiments, ${
@@ -212,17 +230,27 @@ const TfDetails: React.FC<TfDetailsProps> = ({
     {
       header: "Description",
       render: (row: FactorRow) => (
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          style={{ flex: 1 }}
+        <LinkWrapper
+          url={`/TranscriptionFactor/${species}/${row.name}/Function`}
         >
-          <Typography variant="body2">{row.description}</Typography>
-          <IconButton onClick={() => downloadData(row)} aria-label="download">
-            <SaveAltIcon />
-          </IconButton>
-        </Box>
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            style={{ flex: 1 }}
+          >
+            <Typography variant="body2">{row.description}</Typography>
+            <IconButton
+              onClick={(event: MouseEvent) => {
+                event.stopPropagation();
+                downloadData(row);
+              }}
+              aria-label="download"
+            >
+              <SaveAltIcon />
+            </IconButton>
+          </Box>
+        </LinkWrapper>
       ),
       value: (row: FactorRow) => row.description || "",
     },
