@@ -73,6 +73,9 @@ const FactorDetailsPage = () => {
   if (loading || selexLoading) return <CircularProgress />;
   if (error) return <p>Error: {error.message}</p>;
 
+  const defaultGeneId = "ENSG00000102974"; // Replace with a valid default gene id
+  const defaultAssembly = "GRCh38";
+
   const renderTabContent = () => {
     switch (detail) {
       case "Function":
@@ -96,7 +99,12 @@ const FactorDetailsPage = () => {
       case "Expression":
         return <GeneExpressionPage gene_name={""} assembly={""} />;
       case "MotifEnrichmentMEME":
-        return <MotifEnrichmentMEME />;
+        return (
+          <MotifEnrichmentMEME
+            gene_name={"ENSG00000102974"}
+            assembly={"GRCh38"}
+          />
+        );
       case "MotifEnrichmentSELEX":
         return <DeepLearnedSelexMotifs factor={factor} species={species} />;
       case "EpigeneticProfile":

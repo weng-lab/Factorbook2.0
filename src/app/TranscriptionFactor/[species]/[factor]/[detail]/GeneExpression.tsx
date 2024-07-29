@@ -1,4 +1,3 @@
-import { groupBy } from "queryz";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   AppBar,
@@ -16,7 +15,12 @@ import { Download as DownloadIcon } from "@mui/icons-material";
 import { formatFactorName } from "@/utilities/misc";
 import { useGeneExpressionData } from "@/components/tf/geneexpression/hooks";
 import { GeneExpressionPageProps } from "@/components/tf/geneexpression/types";
-import { downloadTSV, downloadSVG } from "@/components/tf/geneexpression/utils";
+import {
+  downloadTSV,
+  downloadSVG,
+  spacedColors,
+} from "@/components/tf/geneexpression/utils";
+import { groupByThenBy } from "@/components/tf/geneexpression/violin/utils";
 import { Group } from "@visx/group";
 import { ViolinPlot, BoxPlot } from "@visx/stats";
 import { scaleLinear } from "@visx/scale";
@@ -28,18 +32,38 @@ import {
 } from "@visx/tooltip";
 import { PatternLines } from "@visx/pattern";
 
+type GeneQuantificationFile = {
+  accession: string;
+  quantifications: {
+    tpm?: number;
+  }[];
+};
+
+type GeneDataset = {
+  accession: string;
+  biosample: string;
+  biosample_type: string;
+  tissue: string;
+  gene_quantification_files: GeneQuantificationFile[];
+};
+
+type Quantification = {
+  value: number;
+};
+
 const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const [polyA, setPolyA] = useState(false);
   const { data, loading } = useGeneExpressionData(
     props.assembly,
     formatFactorName(
       props.gene_name,
-      props.assembly === "mm10" ? "mouse" : "human"
+      props.assembly === "Human" ? "GRCh38" : "mm10"
     ),
     polyA ? "polyA plus RNA-seq" : "total RNA-seq"
   );
+
   const biosampleTypes = new Set(
-    data?.gene_dataset.map((x) => x.biosample_type) || []
+    data?.gene_dataset.map((x: GeneDataset) => x.biosample_type) || []
   );
   const [biosampleType, setBiosampleType] = useState(2);
 
@@ -50,88 +74,88 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         .filter((x) => x !== "in vitro differentiated cells"),
     [biosampleTypes]
   );
+
   const ref = useRef<SVGSVGElement>(null);
 
-  const grouped = useMemo(
-    () =>
-      groupBy(
-        data?.gene_dataset.filter(
-          (x) => x.gene_quantification_files.length > 0
-        ) || [],
-        (x) => x.biosample_type,
-        (x) => x
-      ),
-    [data]
-  );
-  const subGrouped = useMemo(
-    () =>
-      groupBy(
-        grouped.get(sortedBiosampleTypes[biosampleType]) || [],
-        (x) =>
-          sortedBiosampleTypes[biosampleType] === "tissue"
-            ? x.tissue
-            : x.biosample,
-        (x) => x
-      ),
-    [grouped, sortedBiosampleTypes, biosampleType]
-  );
-  const sortedKeys = useMemo(
-    () =>
-      [...subGrouped.keys()]
-        .filter(
-          (x) =>
-            x !== null &&
-            subGrouped
-              .get(x)!
-              .flatMap((x) => x.gene_quantification_files)
-              .filter((x) => x.quantifications[0]?.tpm !== undefined).length > 2
-        )
-        .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())),
-    [subGrouped]
-  );
-  const toPlot = useMemo(
-    () =>
-      new Map(
-        sortedKeys
-          .map(
-            (x) =>
-              [
-                x,
-                new Map([
-                  [
-                    "all",
-                    subGrouped
-                      .get(x)!
-                      .flatMap((x) =>
-                        x.gene_quantification_files.map(
-                          (x) => x.quantifications[0]?.tpm
-                        )
-                      )
-                      .filter((x) => x !== undefined)
-                      .map((x) => Math.log10(x! + 0.01)),
-                  ],
-                ]),
-              ] as [string, Map<string, number[]>]
+  const grouped = useMemo(() => {
+    return groupByThenBy<GeneDataset, GeneDataset>(
+      data?.gene_dataset.filter(
+        (x: GeneDataset) => x.gene_quantification_files.length > 0
+      ) || [],
+      (x: GeneDataset) => x.biosample_type,
+      (x: GeneDataset) =>
+        sortedBiosampleTypes[biosampleType] === "tissue"
+          ? x.tissue
+          : x.biosample,
+      (x: GeneDataset) => x
+    );
+  }, [data, sortedBiosampleTypes, biosampleType]);
+
+  const sortedKeys = useMemo(() => {
+    return Array.from(grouped.keys())
+      .filter((key) => {
+        const items = grouped.get(key) || new Map<string, GeneDataset[]>();
+        const hasSufficientData = Array.from(items.values()).some(
+          (innerArray) => {
+            return innerArray.some((item: GeneDataset) =>
+              item.gene_quantification_files.some(
+                (file: GeneQuantificationFile) =>
+                  file.quantifications[0]?.tpm !== undefined
+              )
+            );
+          }
+        );
+        return hasSufficientData;
+      })
+      .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+  }, [grouped]);
+
+  const toPlot = useMemo(() => {
+    const map = new Map<string, Map<string, Quantification[]>>();
+    sortedKeys.forEach((key) => {
+      const innerMap = grouped.get(key) || new Map<string, GeneDataset[]>();
+      innerMap.forEach((innerItems, innerKey) => {
+        const data = innerItems
+          .flatMap((item: GeneDataset) =>
+            item.gene_quantification_files.map(
+              (file: GeneQuantificationFile) => file.quantifications[0]?.tpm
+            )
           )
-          .filter((x) => x[1].get("all")!.length > 1)
-      ),
-    [sortedKeys, subGrouped]
-  );
+          .filter((x): x is number => x !== undefined)
+          .map((x) => ({ value: Math.log10(x + 0.01) }));
+        if (data.length > 1) {
+          if (!map.has(key)) {
+            map.set(key, new Map());
+          }
+          map.get(key)!.set(innerKey, data);
+        }
+      });
+    });
+    return map;
+  }, [sortedKeys, grouped]);
+
   const domain: [number, number] = useMemo(() => {
-    const values = [...toPlot.values()].flatMap((x) => x.get("all")!);
+    const values: number[] = Array.from(toPlot.values()).flatMap((map) =>
+      Array.from(map.values())
+        .flat()
+        .map((d) => d.value)
+    );
     return [Math.log10(0.01), Math.max(...values, 4.5)];
   }, [toPlot]);
+
   const width = useMemo(() => {
-    const keys = [...toPlot.keys()].length;
+    const keys = sortedKeys.length;
     return (28 + (keys < 27 ? 27 : keys)) * 200;
-  }, [toPlot]);
+  }, [sortedKeys]);
+
   const color = useCallback(spacedColors(sortedKeys.length), [sortedKeys]);
+
   const download = useCallback(() => {
     downloadTSV(
       "cell type\ttissue ontology\tbiosample type\texperiment accession\tfile accession\tTPM\n" +
         (
-          data?.gene_dataset.flatMap((x) =>
-            x.gene_quantification_files.flatMap((q) =>
+          data?.gene_dataset.flatMap((x: GeneDataset) =>
+            x.gene_quantification_files.flatMap((q: GeneQuantificationFile) =>
               q.quantifications
                 .filter((x) => x.tpm !== undefined)
                 .map(
@@ -225,7 +249,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                   x={0}
                   y={0}
                   width={width}
-                  height={width}
+                  height={width / 2}
                   fill="url(#statsplot)"
                 />
                 <PatternLines
@@ -238,18 +262,18 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                 />
                 <Group top={40}>
                   {sortedKeys.map((key, i) => {
-                    const data = toPlot.get(key)?.get("all") || [];
+                    const data = (toPlot.get(key)?.get("all") || []).map(
+                      (value) => ({ value })
+                    );
                     const stats = {
-                      min: Math.min(...data),
-                      max: Math.max(...data),
-                      median: data[Math.floor(data.length / 2)],
-                      firstQuartile: data[Math.floor(data.length / 4)],
+                      median: data[Math.floor(data.length / 2)].value,
+                      firstQuartile: data[Math.floor(data.length / 4)].value,
                       thirdQuartile: data[Math.floor(data.length * (3 / 4))],
                     };
                     return (
                       <g key={i}>
                         <ViolinPlot
-                          data={data.map((d) => ({ value: d }))}
+                          data={data}
                           stroke="#dee2e6"
                           left={i * 200}
                           width={100}
@@ -260,12 +284,6 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                           fill="url(#hViolinLines)"
                         />
                         <BoxPlot
-                          min={stats.min}
-                          max={stats.max}
-                          left={i * 200 + 110}
-                          firstQuartile={stats.firstQuartile}
-                          thirdQuartile={stats.thirdQuartile}
-                          median={stats.median}
                           boxWidth={40}
                           fill="#FFFFFF"
                           fillOpacity={0.3}
@@ -299,7 +317,5 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     </Box>
   );
 };
+
 export default GeneExpressionPage;
-function spacedColors(length: number): any {
-  throw new Error("Function not implemented.");
-}

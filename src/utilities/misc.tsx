@@ -18,6 +18,11 @@ export const range = (min: number, max: number, by: number = 1) => {
 };
 
 export function formatFactorName(target: string, species: string): string {
+  if (!target) {
+    console.warn("Invalid target: target string is empty or undefined.");
+    return ""; // Return an empty string or a default value
+  }
+
   if (species === "human" || species === "Homo sapiens") return target;
   return target[0] + target.substring(1).toLowerCase();
 }

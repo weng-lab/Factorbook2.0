@@ -53,7 +53,7 @@ export const DEEP_LEARNED_MOTIF_OCCURRENCES_QUERY = gql`
 `;
 
 export const DEEP_LEARNED_MOTIFS_SELEX_QUERY = gql`
-    query DLMotifs(
+    query DLMotifsSelex(
         $tf: String
         $assay: String
         $source: String
@@ -81,7 +81,7 @@ export const DEEP_LEARNED_MOTIFS_SELEX_QUERY = gql`
 `;
 
 export const DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY = gql`
-    query DLMotifs(
+    query DLMotifsSelexMetadata(
         $tf: String
         $assay: String
         $source: String
@@ -109,7 +109,7 @@ export const DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY = gql`
 `;
 
 export const DEEP_LEARNED_MOTIFS_NONSELEX_QUERY = gql`
-    query DLMotifs(
+    query DLMotifsNonSelex(
         $tf: String
         $assay: String
         $source: String

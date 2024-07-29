@@ -31,19 +31,21 @@ function hslToRgb(h: number, s: number, l: number): [ number, number, number ] {
     return [ Math.round(r * 255), Math.round(g * 255), Math.round(b * 255) ];
 }
 
-function spacedColors(size: number): (index: number) => string {
-    const baseColors = ['#FF5733', '#33FF57', '#3357FF'];
-    return (index: number) => baseColors[index % baseColors.length];
-  }
-  
-  export function assignColors(items: Set<string>): { [key: string]: string } {
+export function spacedColors(n: number, s: number = 50, l: number = 50): (i: number) => string {
+    return i => {
+        const [ r, g, b ] = hslToRgb(((i * (360 / (n || 1))) % 360) / 360, s / 100, l / 100);
+        return `rgb(${r},${g},${b})`
+    };
+}
+
+export function assignColors(items: Set<string>): { [key: string]: string } {
     const colors = spacedColors(items.size);
     const r: { [key: string]: string } = {};
-    Array.from(items).forEach((item, i) => {
-      r[item] = colors(i);
+    [...items].forEach((item, i) => {
+        r[item] = colors(i);
     });
     return r;
-  }
+}
 
 export const FRIENDLY: Map<string, string> = new Map([]);
 
