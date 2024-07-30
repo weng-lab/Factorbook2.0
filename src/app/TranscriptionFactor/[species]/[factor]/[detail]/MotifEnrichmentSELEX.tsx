@@ -228,7 +228,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
   const motifppm = reverseComplement ? rc(ppm) : ppm;
 
   if (!ppm || ppm.length === 0) {
-    return null; // or render a message indicating that no data is available
+    return null;
   }
 
   const handleExport = () => {
@@ -271,6 +271,18 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         >
           Reverse Complement
         </Button>
+        <Button
+          variant="contained"
+          startIcon={<SaveAltIcon />}
+          onClick={() => setIsDialogOpen(true)}
+          sx={{
+            borderRadius: "20px",
+            backgroundColor: "#8169BF",
+            color: "white",
+          }}
+        >
+          Export
+        </Button>
       </Box>
       <Logo
         ppm={motifppm}
@@ -279,19 +291,6 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         width={400}
         height={250}
       />
-      <Button
-        variant="contained"
-        startIcon={<SaveAltIcon />}
-        onClick={() => setIsDialogOpen(true)}
-        sx={{
-          borderRadius: "20px",
-          backgroundColor: "#8169BF",
-          color: "white",
-          marginTop: "10px",
-        }}
-      >
-        Export
-      </Button>
       <Dialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
@@ -369,16 +368,15 @@ const DeepLearnedSelexMotif: React.FC<{
   const domain = useMemo(
     () => ({
       x: {
-        start:
-          Math.floor(Math.min(...points.map((point) => point.x)) / 0.1) * 0.1,
-        end: Math.ceil(Math.max(...points.map((point) => point.x)) / 0.1) * 0.1,
+        start: 0,
+        end: 1,
       },
       y: {
-        start: Math.floor(Math.min(...points.map((point) => point.y)) / 1) * 1,
-        end: Math.ceil(Math.max(...points.map((point) => point.y)) / 1) * 1,
+        start: 0,
+        end: 1,
       },
     }),
-    [points]
+    []
   );
 
   const barplotDomain = useMemo(
@@ -495,13 +493,14 @@ const DeepLearnedSelexMotif: React.FC<{
               <Group left={margin.left} top={margin.top}>
                 <AxisLeft
                   scale={yScale}
-                  label="FPR"
+                  label="Formyl peptide receptor"
                   labelProps={{
                     fontSize: 12,
                     fill: "black",
                     textAnchor: "middle",
                     transform: "translate(-60, 0) rotate(-90)",
                   }}
+                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]} // Set tick values to even numbers
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -513,13 +512,14 @@ const DeepLearnedSelexMotif: React.FC<{
                 <AxisBottom
                   scale={xScale}
                   top={lineGraphHeight - margin.bottom}
-                  label="TPR"
+                  label="Tetratricopeptide Repeat"
                   labelProps={{
                     fontSize: 12,
                     fill: "black",
                     textAnchor: "middle",
                     transform: "translate(0, 40)",
                   }}
+                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -544,7 +544,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   textAnchor="middle"
                   fill="black"
                 >
-                  TPR
+                  Tetratricopeptide Repeat
                 </Text>
                 <Text
                   x={-170}
@@ -554,7 +554,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   fill="black"
                   transform="rotate(-90)"
                 >
-                  FPR
+                  Formyl Peptide Receptor
                 </Text>
               </Group>
             </svg>
@@ -592,6 +592,7 @@ const DeepLearnedSelexMotif: React.FC<{
             </LegendOrdinal>
             <Button
               variant="contained"
+              startIcon={<SaveAltIcon />}
               onClick={() =>
                 downloadCombinedSVG(lineref, llegendref, "lineplot.svg")
               }
@@ -602,9 +603,7 @@ const DeepLearnedSelexMotif: React.FC<{
                 marginTop: "10px",
                 fontFamily: "Helvetica Neue",
               }}
-            >
-              Download
-            </Button>
+            ></Button>
             <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
               <Group left={margin.left} top={margin.top}>
                 <AxisLeft
@@ -720,6 +719,7 @@ const DeepLearnedSelexMotif: React.FC<{
             </LegendOrdinal>
             <Button
               variant="contained"
+              startIcon={<SaveAltIcon />}
               onClick={() =>
                 downloadCombinedSVG(barref, blegendref, "barplot.svg")
               }
@@ -730,9 +730,7 @@ const DeepLearnedSelexMotif: React.FC<{
                 marginTop: "10px",
                 fontFamily: "Helvetica Neue",
               }}
-            >
-              Download
-            </Button>
+            ></Button>
           </Box>
         </Grid>
       </Grid>
