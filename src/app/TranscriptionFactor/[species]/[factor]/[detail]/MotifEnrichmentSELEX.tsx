@@ -396,7 +396,7 @@ const DeepLearnedSelexMotif: React.FC<{
   const lineGraphHeight = 400;
   const lineGraphWidth = 600;
   const barGraphHeight = 400;
-  const barGraphWidth = 400;
+  const barGraphWidth = 600;
   const margin = { top: 20, right: 90, bottom: 70, left: 70 };
 
   const xScale = useMemo(
@@ -413,6 +413,7 @@ const DeepLearnedSelexMotif: React.FC<{
       scaleLinear({
         domain: [domain.y.start, domain.y.end],
         range: [lineGraphHeight - margin.bottom, margin.top],
+        tickValues: [0, 0.2, 0.4, 0.6, 0.8, 1.0], // Set tick values to quarters
       }),
     [domain, lineGraphHeight, margin]
   );
@@ -483,7 +484,6 @@ const DeepLearnedSelexMotif: React.FC<{
           <Box
             sx={{
               display: "flex",
-              justifyContent: "center",
               flexDirection: "column",
               alignItems: "center",
               fontFamily: "Helvetica Neue",
@@ -500,7 +500,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     textAnchor: "middle",
                     transform: "translate(-60, 0) rotate(-90)",
                   }}
-                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]} // Set tick values to even numbers
+                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]} // Set tick values to quarters
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -519,7 +519,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     textAnchor: "middle",
                     transform: "translate(0, 40)",
                   }}
-                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
+                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]} // Set tick values to quarters
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -728,6 +728,7 @@ const DeepLearnedSelexMotif: React.FC<{
                 backgroundColor: "#8169BF",
                 color: "white",
                 marginTop: "10px",
+                alignSelf: "center",
                 fontFamily: "Helvetica Neue",
               }}
             ></Button>
