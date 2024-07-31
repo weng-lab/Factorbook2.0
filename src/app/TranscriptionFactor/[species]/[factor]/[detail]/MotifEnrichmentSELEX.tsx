@@ -47,7 +47,7 @@ import {
   DeepLearnedSELEXMotifsQueryResponse,
   DeepLearnedSELEXMotifsMetadataQueryResponse,
 } from "./types";
-import { downloadData, svgToImage } from "@/utilities/svgdata";
+import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 
@@ -256,7 +256,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
       );
     }
     if (exportLogo && svgRef.current) {
-      await svgToImage(svgRef.current, `${name}-logo.png`);
+      downloadSVGElementAsSVG(svgRef, `${name}-logo.svg`);
     }
     setIsDialogOpen(false);
   };
@@ -449,15 +449,15 @@ const DeepLearnedSelexMotif: React.FC<{
     [barplotDomain, barGraphHeight, margin]
   );
 
-  const lineref = useRef<SVGSVGElement>(null);
-  const barref = useRef<SVGSVGElement>(null);
+  const lineref = useRef<SVGSVGElement | null>(null);
+  const barref = useRef<SVGSVGElement | null>(null);
 
-  const downloadSVGElement = async (
-    ref: React.RefObject<SVGSVGElement>,
+  const downloadSVGElement = (
+    ref: MutableRefObject<SVGSVGElement | null>,
     filename: string
   ) => {
     if (ref.current) {
-      await svgToImage(ref.current, filename);
+      downloadSVGElementAsSVG(ref, filename);
     }
   };
 
@@ -580,7 +580,7 @@ const DeepLearnedSelexMotif: React.FC<{
             <Button
               variant="contained"
               startIcon={<SaveAltIcon />}
-              onClick={() => downloadSVGElement(lineref, "lineplot.png")}
+              onClick={() => downloadSVGElement(lineref, "lineplot.svg")}
               sx={{
                 borderRadius: "20px",
                 backgroundColor: "#8169BF",
@@ -686,7 +686,7 @@ const DeepLearnedSelexMotif: React.FC<{
             <Button
               variant="contained"
               startIcon={<SaveAltIcon />}
-              onClick={() => downloadSVGElement(barref, "barplot.png")}
+              onClick={() => downloadSVGElement(barref, "barplot.svg")}
               sx={{
                 borderRadius: "20px",
                 backgroundColor: "#8169BF",

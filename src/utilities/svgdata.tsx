@@ -1,9 +1,9 @@
-import { RefObject } from "react";
+import { MutableRefObject, RefObject } from "react";
 
-export const svgData = (_svg: any): string => {
-  let svg = _svg.cloneNode(true);
+export const svgData = (_svg: SVGSVGElement): string => {
+  const svg = _svg.cloneNode(true) as SVGSVGElement;
   svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  let preface = '<?xml version="1.0" standalone="no"?>';
+  const preface = '<?xml version="1.0" standalone="no"?>';
   return preface + svg.outerHTML.replace(/\n/g, "").replace(/[ ]{8}/g, "");
 };
 
@@ -25,105 +25,35 @@ export const downloadData = (
 };
 
 export const downloadSVG = (
-  ref: React.MutableRefObject<any>,
-  filename: string
-) =>
-  ref.current &&
-  downloadData(svgData(ref.current!), filename, "image/svg;charset=utf-8");
-
-export const combineSVG = (
-  graphSVG: SVGSVGElement,
-  legendSVG: SVGSVGElement,
+  ref: MutableRefObject<SVGSVGElement | null>,
   filename: string
 ) => {
-  const combinedSVG = document.createElementNS(
-    "http://www.w3.org/2000/svg",
-    "svg"
-  );
-  const graphClone = graphSVG.cloneNode(true) as SVGSVGElement;
-  const legendClone = legendSVG.cloneNode(true) as SVGSVGElement;
-
-  const graphWidth = graphSVG.getAttribute("width");
-  const graphHeight = graphSVG.getAttribute("height");
-  const legendHeight = legendSVG.getAttribute("height");
-
-  if (!graphWidth || !graphHeight || !legendHeight) {
-    console.error("SVG attributes missing");
-    return;
+  if (ref.current) {
+    downloadData(svgData(ref.current), filename, "image/svg+xml;charset=utf-8");
   }
-
-  combinedSVG.setAttribute("width", graphWidth);
-  combinedSVG.setAttribute(
-    "height",
-    (parseInt(graphHeight) + parseInt(legendHeight)).toString()
-  );
-
-  graphClone.setAttribute("y", "0");
-  legendClone.setAttribute("y", graphHeight);
-
-  combinedSVG.appendChild(graphClone);
-  combinedSVG.appendChild(legendClone);
-
-  const serializer = new XMLSerializer();
-  const combinedSVGString = serializer.serializeToString(combinedSVG);
-  const blob = new Blob([combinedSVGString], {
-    type: "image/svg+xml;charset=utf-8",
-  });
-  downloadBlob(blob, filename);
 };
 
-export function downloadBlob(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
+export const addWhiteBackgroundToSVG = (svg: SVGSVGElement) => {
+  const background = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "rect"
+  );
+  background.setAttribute("x", "0");
+  background.setAttribute("y", "0");
+  background.setAttribute("width", svg.getAttribute("width") || "100%");
+  background.setAttribute("height", svg.getAttribute("height") || "100%");
+  background.setAttribute("fill", "white");
 
-export const svgToImage = async (
-  svgElement: SVGSVGElement,
+  svg.insertBefore(background, svg.firstChild);
+};
+
+export const downloadSVGElementAsSVG = (
+  ref: MutableRefObject<SVGSVGElement | null>,
   filename: string
 ) => {
-  const svgData = new XMLSerializer().serializeToString(svgElement);
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-
-  const img = new Image();
-  img.src = "data:image/svg+xml;base64," + btoa(svgData);
-
-  return new Promise((resolve, reject) => {
-    img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
-
-      if (ctx) {
-        // Draw white background
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        ctx.drawImage(img, 0, 0);
-
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = filename;
-            a.click();
-            URL.revokeObjectURL(url);
-            resolve(true);
-          } else {
-            reject(new Error("Canvas conversion failed"));
-          }
-        });
-      } else {
-        reject(new Error("Canvas context is null"));
-      }
-    };
-
-    img.onerror = (error) => reject(error);
-  });
+  if (ref.current) {
+    const svg = ref.current.cloneNode(true) as SVGSVGElement;
+    addWhiteBackgroundToSVG(svg);
+    downloadData(svgData(svg), filename, "image/svg+xml;charset=utf-8");
+  }
 };
