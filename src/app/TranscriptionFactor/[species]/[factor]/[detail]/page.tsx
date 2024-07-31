@@ -94,7 +94,7 @@ const FactorDetailsPage = () => {
           />
         );
       case "Expression":
-        return <GeneExpressionPage />;
+        return <GeneExpressionPage gene_name={""} assembly={""} />;
       case "MotifEnrichmentMEME":
         return <MotifEnrichmentMEME />;
       case "MotifEnrichmentSELEX":
