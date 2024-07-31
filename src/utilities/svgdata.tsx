@@ -82,3 +82,48 @@ export function downloadBlob(blob: Blob, filename: string) {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+export const svgToImage = async (
+  svgElement: SVGSVGElement,
+  filename: string
+) => {
+  const svgData = new XMLSerializer().serializeToString(svgElement);
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const img = new Image();
+  img.src = "data:image/svg+xml;base64," + btoa(svgData);
+
+  return new Promise((resolve, reject) => {
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+
+      if (ctx) {
+        // Draw white background
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.drawImage(img, 0, 0);
+
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+            resolve(true);
+          } else {
+            reject(new Error("Canvas conversion failed"));
+          }
+        });
+      } else {
+        reject(new Error("Canvas context is null"));
+      }
+    };
+
+    img.onerror = (error) => reject(error);
+  });
+};

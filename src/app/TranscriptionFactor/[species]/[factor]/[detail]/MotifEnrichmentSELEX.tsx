@@ -1,6 +1,13 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState, useContext } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useContext,
+  MutableRefObject,
+} from "react";
 import { useQuery } from "@apollo/client";
 import {
   Box,
@@ -19,15 +26,16 @@ import {
   Checkbox,
   Divider,
   SelectChangeEvent,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid2 for MUI v2
 import { ApiContext } from "@/ApiContext";
 import { Logo, DNAAlphabet } from "logojs-react";
-import { scaleLinear, scaleBand, scaleOrdinal } from "@visx/scale";
+import { scaleLinear, scaleBand } from "@visx/scale";
 import { Group } from "@visx/group";
 import { LinePath, Bar } from "@visx/shape";
 import { AxisBottom, AxisLeft } from "@visx/axis";
-import { LegendOrdinal } from "@visx/legend";
 import { Text } from "@visx/text";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -39,7 +47,7 @@ import {
   DeepLearnedSELEXMotifsQueryResponse,
   DeepLearnedSELEXMotifsMetadataQueryResponse,
 } from "./types";
-import { downloadData, downloadSVG, combineSVG } from "@/utilities/svgdata";
+import { downloadData, svgToImage } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 
@@ -220,7 +228,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
   ppm,
   name,
 }) => {
-  const svg = useRef<SVGSVGElement>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
   const [reverseComplement, setReverseComplement] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [exportMotif, setExportMotif] = useState(true);
@@ -231,7 +239,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
     return null;
   }
 
-  const handleExport = () => {
+  const handleExport = async () => {
     if (exportMotif) {
       downloadData(
         meme([
@@ -247,8 +255,8 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         `${name}.meme`
       );
     }
-    if (exportLogo) {
-      downloadSVG(svg, "logo.svg");
+    if (exportLogo && svgRef.current) {
+      await svgToImage(svgRef.current, `${name}-logo.png`);
     }
     setIsDialogOpen(false);
   };
@@ -287,7 +295,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
       <Logo
         ppm={motifppm}
         alphabet={DNAAlphabet}
-        ref={svg}
+        ref={svgRef as MutableRefObject<SVGSVGElement>}
         width={400}
         height={250}
       />
@@ -351,6 +359,7 @@ const DeepLearnedSelexMotif: React.FC<{
     ppm: number[][];
     fractional_enrichment: number;
     roc_curve: number[][];
+    selex?: any;
   }[];
 }> = ({ study, assay, protein_type, data }) => {
   const points = useMemo(
@@ -399,13 +408,16 @@ const DeepLearnedSelexMotif: React.FC<{
   const barGraphWidth = 600;
   const margin = { top: 20, right: 90, bottom: 70, left: 70 };
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const xScale = useMemo(
     () =>
       scaleLinear({
         domain: [domain.x.start, domain.x.end],
-        range: [margin.left, lineGraphWidth - margin.right],
+        range: [margin.left, lineGraphWidth - (isMobile ? 0 : margin.right)],
       }),
-    [domain, lineGraphWidth, margin]
+    [domain, lineGraphWidth, margin, isMobile]
   );
 
   const yScale = useMemo(
@@ -413,7 +425,6 @@ const DeepLearnedSelexMotif: React.FC<{
       scaleLinear({
         domain: [domain.y.start, domain.y.end],
         range: [lineGraphHeight - margin.bottom, margin.top],
-        tickValues: [0, 0.2, 0.4, 0.6, 0.8, 1.0], // Set tick values to quarters
       }),
     [domain, lineGraphHeight, margin]
   );
@@ -422,11 +433,11 @@ const DeepLearnedSelexMotif: React.FC<{
     () =>
       scaleBand({
         domain: data.map((d) => d.selex_round),
-        range: [margin.left, barGraphWidth - margin.right],
+        range: [margin.left, barGraphWidth - (isMobile ? 0 : margin.right)],
         paddingInner: 0.5,
         paddingOuter: 0.3,
       }),
-    [data, barGraphWidth, margin]
+    [data, barGraphWidth, margin, isMobile]
   );
 
   const barYScale = useMemo(
@@ -439,17 +450,14 @@ const DeepLearnedSelexMotif: React.FC<{
   );
 
   const lineref = useRef<SVGSVGElement>(null);
-  const llegendref = useRef<SVGSVGElement>(null);
   const barref = useRef<SVGSVGElement>(null);
-  const blegendref = useRef<SVGSVGElement>(null);
 
-  const downloadCombinedSVG = (
-    graphRef: React.RefObject<SVGSVGElement>,
-    legendRef: React.RefObject<SVGSVGElement>,
+  const downloadSVGElement = async (
+    ref: React.RefObject<SVGSVGElement>,
     filename: string
   ) => {
-    if (graphRef.current && legendRef.current) {
-      combineSVG(graphRef.current, legendRef.current, filename);
+    if (ref.current) {
+      await svgToImage(ref.current, filename);
     }
   };
 
@@ -485,12 +493,12 @@ const DeepLearnedSelexMotif: React.FC<{
             sx={{
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
+              alignItems: isMobile ? "flex-start" : "center",
               fontFamily: "Helvetica Neue",
             }}
           >
             <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
-              <Group left={margin.left} top={margin.top}>
+              <Group left={isMobile ? 0 : margin.left} top={margin.top}>
                 <AxisLeft
                   scale={yScale}
                   label="Formyl peptide receptor"
@@ -500,7 +508,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     textAnchor: "middle",
                     transform: "translate(-60, 0) rotate(-90)",
                   }}
-                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]} // Set tick values to quarters
+                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -519,7 +527,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     textAnchor: "middle",
                     transform: "translate(0, 40)",
                   }}
-                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]} // Set tick values to quarters
+                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -558,44 +566,21 @@ const DeepLearnedSelexMotif: React.FC<{
                 </Text>
               </Group>
             </svg>
-            <LegendOrdinal
-              scale={scaleOrdinal({
-                domain: presentCycles,
-                range: presentCycles.map((cycle) => colors[cycle]),
-              })}
-              labelFormat={(label) => `Cycle ${label}`}
-            >
-              {(labels) => (
-                <svg ref={llegendref} width={lineGraphWidth} height={50}>
-                  <Group transform="translate(130,15)">
-                    {labels.map((label, i) => (
-                      <Group
-                        key={i}
-                        transform={`translate(${i * 100},0)`}
-                        style={{ textAnchor: "middle" }}
-                      >
-                        <rect fill={label.value} height={10} width={10} />
-                        <text
-                          x={10}
-                          y={25}
-                          fill="black"
-                          fontSize="14"
-                          fontFamily="Helvetica Neue"
-                        >
-                          {label.text}
-                        </text>
-                      </Group>
-                    ))}
-                  </Group>
-                </svg>
-              )}
-            </LegendOrdinal>
+            <Box sx={{ display: "flex", marginTop: 1 }}>
+              {presentCycles.map((cycle) => (
+                <Typography
+                  key={cycle}
+                  variant="body1"
+                  sx={{ color: colors[cycle], marginRight: 2 }}
+                >
+                  Cycle {cycle}
+                </Typography>
+              ))}
+            </Box>
             <Button
               variant="contained"
               startIcon={<SaveAltIcon />}
-              onClick={() =>
-                downloadCombinedSVG(lineref, llegendref, "lineplot.svg")
-              }
+              onClick={() => downloadSVGElement(lineref, "lineplot.png")}
               sx={{
                 borderRadius: "20px",
                 backgroundColor: "#8169BF",
@@ -603,9 +588,11 @@ const DeepLearnedSelexMotif: React.FC<{
                 marginTop: "10px",
                 fontFamily: "Helvetica Neue",
               }}
-            ></Button>
+            >
+              Export Line Plot
+            </Button>
             <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
-              <Group left={margin.left} top={margin.top}>
+              <Group left={isMobile ? 0 : margin.left} top={margin.top}>
                 <AxisLeft
                   scale={barYScale}
                   label="Fractional Enrichment"
@@ -685,53 +672,31 @@ const DeepLearnedSelexMotif: React.FC<{
                 </Text>
               </Group>
             </svg>
-            <LegendOrdinal
-              scale={scaleOrdinal({
-                domain: presentCycles,
-                range: presentCycles.map((cycle) => colors[cycle]),
-              })}
-              labelFormat={(label) => `Cycle ${label}`}
-            >
-              {(labels) => (
-                <svg ref={blegendref} width={barGraphWidth} height={50}>
-                  <Group transform="translate(130,15)">
-                    {labels.map((label, i) => (
-                      <Group
-                        key={i}
-                        transform={`translate(${i * 100},0)`}
-                        style={{ textAnchor: "middle" }}
-                      >
-                        <rect fill={label.value} height={9} width={9} />
-                        <text
-                          x={10}
-                          y={20}
-                          fill="black"
-                          fontSize="14"
-                          fontFamily="Helvetica Neue"
-                        >
-                          {label.text}
-                        </text>
-                      </Group>
-                    ))}
-                  </Group>
-                </svg>
-              )}
-            </LegendOrdinal>
+            <Box sx={{ display: "flex", marginTop: 1 }}>
+              {presentCycles.map((cycle) => (
+                <Typography
+                  key={cycle}
+                  variant="body1"
+                  sx={{ color: colors[cycle], marginRight: 2 }}
+                >
+                  Cycle {cycle}
+                </Typography>
+              ))}
+            </Box>
             <Button
               variant="contained"
               startIcon={<SaveAltIcon />}
-              onClick={() =>
-                downloadCombinedSVG(barref, blegendref, "barplot.svg")
-              }
+              onClick={() => downloadSVGElement(barref, "barplot.png")}
               sx={{
                 borderRadius: "20px",
                 backgroundColor: "#8169BF",
                 color: "white",
                 marginTop: "10px",
-                alignSelf: "center",
                 fontFamily: "Helvetica Neue",
               }}
-            ></Button>
+            >
+              Export Bar Plot
+            </Button>
           </Box>
         </Grid>
       </Grid>
