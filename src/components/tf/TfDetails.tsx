@@ -86,7 +86,8 @@ const TfDetails: React.FC<TfDetailsProps> = ({
               (x: any) => x
             )
           )
-        );
+        )
+        .catch(console.error);
       setLoading(true);
     }
   }, [loading]);

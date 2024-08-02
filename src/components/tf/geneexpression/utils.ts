@@ -47,10 +47,6 @@ export function assignColors(items: Set<string>): { [key: string]: string } {
     return r;
 }
 
-export const FRIENDLY: Map<string, string> = new Map([]);
-
-export const COLORS = {};
-
 export function downloadBlob(blob: Blob, filename: string) {
     const url = URL.createObjectURL(blob);
     const downloadLink = document.createElement('a');

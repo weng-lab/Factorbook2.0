@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useState } from "react";
 import TranscriptionFactors from "@/components/TranscriptionFactors";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -50,10 +50,10 @@ const SmallTextField = styled(TextField)({
 });
 
 const AnnotationsVariants = () => {
-  const [value, setValue] = React.useState(0);
-  const [population, setPopulation] = React.useState("");
-  const [subpopulation, setSubpopulation] = React.useState("");
-  const [page, setPage] = React.useState(0);
+  const [value, setValue] = useState(0);
+  const [population, setPopulation] = useState("");
+  const [subpopulation, setSubpopulation] = useState("");
+  const [page, setPage] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
