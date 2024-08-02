@@ -96,7 +96,7 @@ const FactorDetailsPage = () => {
       case "Expression":
         return <GeneExpressionPage />;
       case "MotifEnrichmentMEME":
-        return <MotifEnrichmentMEME />;
+        return <MotifEnrichmentMEME factor={factor} species={species} />;
       case "MotifEnrichmentSELEX":
         return <DeepLearnedSelexMotifs factor={factor} species={species} />;
       case "EpigeneticProfile":
