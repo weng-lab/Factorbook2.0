@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { Box, Typography } from "@mui/material";
 import { useCellTypeDescription } from "./hooks";
 import { CtDetailProps } from "./types";

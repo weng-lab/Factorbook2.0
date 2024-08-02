@@ -1,7 +1,7 @@
 import React from "react";
 
-function MotifEnrichmentMEME() {
+const MotifEnrichmentMEME = () => {
   return <div>MotifEnrichmentMEME</div>;
-}
+};
 
 export default MotifEnrichmentMEME;

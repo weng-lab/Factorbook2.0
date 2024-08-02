@@ -103,8 +103,8 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       processed_assembly: props.assembly,
       target: props.factor,
       replicated_peaks: true,
-      include_investigatedas: [], // provide the correct types
-      exclude_investigatedas: [], // provide the correct types
+      // include_investigatedas: [],
+      // exclude_investigatedas: [],
     },
   });
 

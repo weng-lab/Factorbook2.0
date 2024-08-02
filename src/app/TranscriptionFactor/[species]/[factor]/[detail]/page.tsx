@@ -1,31 +1,33 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import {
   Box,
   CircularProgress,
   Typography,
-  IconButton,
   Tabs,
   Tab,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
 import { FactorQueryResponse } from "@/components/CellType/types";
 import FunctionTab from "./Function";
-import Expression from "./Expression";
 import MotifEnrichmentMEME from "./MotifEnrichmentMEME";
-import MotifEnrichmentSELEX from "./MotifEnrichmentSELEX";
 import EpigeneticProfile from "./EpigeneticProfile";
 import Search from "./Search";
 import Link from "next/link";
+import DeepLearnedSelexMotifs from "./MotifEnrichmentSELEX";
+import { ApiContext } from "@/ApiContext";
+import GeneExpressionPage from "./GeneExpression";
+import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./Queries";
+import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
 
 const FactorDetailsPage = () => {
+  const apiContext = useContext(ApiContext);
+
   const router = useRouter();
   const {
     species,
@@ -45,7 +47,30 @@ const FactorDetailsPage = () => {
     }
   );
 
-  if (loading) return <CircularProgress />;
+  const { data: selexData, loading: selexLoading } =
+    useQuery<DeepLearnedSELEXMotifsMetadataQueryResponse>(
+      DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
+      {
+        variables: {
+          tf: factor,
+          species: species.toLowerCase(),
+          selex_round: [1, 2, 3, 4, 5, 6, 7],
+        },
+        context: apiContext,
+      }
+    );
+
+  const [hasSelexData, setHasSelexData] = useState(false);
+
+  useEffect(() => {
+    if (selexData && selexData.deep_learned_motifs.length > 0) {
+      setHasSelexData(true);
+    } else {
+      setHasSelexData(false);
+    }
+  }, [selexData]);
+
+  if (loading || selexLoading) return <CircularProgress />;
   if (error) return <p>Error: {error.message}</p>;
 
   const renderTabContent = () => {
@@ -69,11 +94,11 @@ const FactorDetailsPage = () => {
           />
         );
       case "Expression":
-        return <Expression />;
+        return <GeneExpressionPage />;
       case "MotifEnrichmentMEME":
         return <MotifEnrichmentMEME />;
       case "MotifEnrichmentSELEX":
-        return <MotifEnrichmentSELEX />;
+        return <DeepLearnedSelexMotifs factor={factor} species={species} />;
       case "EpigeneticProfile":
         return <EpigeneticProfile />;
       case "Search":
@@ -119,20 +144,13 @@ const FactorDetailsPage = () => {
         </Box>
 
         <Box display="flex" alignItems="center">
-          <ArrowBackIosIcon
-            onClick={() => {
-              const tabsScroller = document.querySelector(".MuiTabs-scroller");
-              if (tabsScroller) {
-                tabsScroller.scrollBy({ left: -200, behavior: "smooth" });
-              }
-            }}
-          ></ArrowBackIosIcon>
           <Tabs
             value={detail}
             indicatorColor="primary"
             textColor="primary"
             variant="scrollable"
-            scrollButtons="auto"
+            scrollButtons
+            allowScrollButtonsMobile
             sx={{ flex: 1 }}
           >
             <Tab
@@ -162,16 +180,18 @@ const FactorDetailsPage = () => {
                 color: detail === "MotifEnrichmentMEME" ? "#8169BF" : "inherit",
               }}
             />
-            <Tab
-              label="Motif Enrichment (SELEX)"
-              value="MotifEnrichmentSELEX"
-              component={Link}
-              href={`/TranscriptionFactor/${species}/${factor}/MotifEnrichmentSELEX`}
-              sx={{
-                color:
-                  detail === "MotifEnrichmentSELEX" ? "#8169BF" : "inherit",
-              }}
-            />
+            {hasSelexData && (
+              <Tab
+                label="Motif Enrichment (SELEX)"
+                value="MotifEnrichmentSELEX"
+                component={Link}
+                href={`/TranscriptionFactor/${species}/${factor}/MotifEnrichmentSELEX`}
+                sx={{
+                  color:
+                    detail === "MotifEnrichmentSELEX" ? "#8169BF" : "inherit",
+                }}
+              />
+            )}
             <Tab
               label="Epigenetic Profile"
               value="EpigeneticProfile"
@@ -191,14 +211,6 @@ const FactorDetailsPage = () => {
               }}
             />
           </Tabs>
-          <ArrowForwardIosIcon
-            onClick={() => {
-              const tabsScroller = document.querySelector(".MuiTabs-scroller");
-              if (tabsScroller) {
-                tabsScroller.scrollBy({ left: 200, behavior: "smooth" });
-              }
-            }}
-          ></ArrowForwardIosIcon>
         </Box>
 
         <Box mt={2}>{renderTabContent()}</Box>

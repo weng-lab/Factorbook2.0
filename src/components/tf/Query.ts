@@ -25,7 +25,7 @@ export const EXPERIMENT_QUERY = gql`
 `;
 
 export const DATASETS_QUERY = gql`
-    query Datasets(
+    query DatasetsQuery(
         $target: String
         $processed_assembly: String
         $replicated_peaks: Boolean
