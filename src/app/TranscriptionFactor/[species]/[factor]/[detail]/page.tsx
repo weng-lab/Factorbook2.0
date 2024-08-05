@@ -33,7 +33,11 @@ const FactorDetailsPage = () => {
     species,
     factor,
     detail = "Function",
-  } = useParams<{ species: string; factor: string; detail: string }>();
+  } = useParams<{
+    species: string;
+    factor: string;
+    detail: string;
+  }>();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
