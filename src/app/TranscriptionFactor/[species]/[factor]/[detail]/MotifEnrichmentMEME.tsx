@@ -1,6 +1,8 @@
-// Import necessary modules and components
-import React, { useState } from "react";
-import { useQuery } from "@apollo/client";
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useQuery, useLazyQuery } from "@apollo/client";
+import { useRouter } from "next/navigation";
 import {
   CircularProgress,
   Typography,
@@ -11,36 +13,66 @@ import {
   ListItem,
   ListItemText,
   Chip,
-  Divider,
   TextField,
   Box,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { DATASETS_QUERY } from "@/components/MotifMeme/Queries";
+import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/MotifMeme/Queries";
 import {
   DataResponse,
   BiosamplePartition,
   Dataset,
-} from "@/components/MotifMeme/Types"; // Ensure correct import path
+  MotifResponse,
+} from "@/components/MotifMeme/Types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 
-// Define the main component
-const MotifEnrichmentMEME: React.FC = () => {
-  // Define state variables
+interface MotifEnrichmentMEMEProps {
+  accession?: string;
+  factor: string; // Add factor prop
+}
+
+const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
+  accession,
+  factor,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const handleAccessionClick = (accession: string) => {
+    if (isMounted) {
+      router.push(`/components/MotifMeme/${accession}`);
+    }
+  };
 
   // Query data from the server
   const { data, loading, error } = useQuery<DataResponse>(DATASETS_QUERY, {
     variables: {
       processed_assembly: "GRCh38",
-      target: "CTCF",
+      target: factor, // Use factor prop instead of hardcoded "CTCF"
       replicated_peaks: true,
       include_investigatedas: includeTargetTypes,
       exclude_investigatedas: excludeTargetTypes,
     },
   });
 
-  // Display loading or error messages
+  const [
+    fetchMotifData,
+    { data: motifData, loading: motifLoading, error: motifError },
+  ] = useLazyQuery<MotifResponse>(MOTIF_QUERY, {
+    variables: { peaks_accession: accession ? [accession] : [] },
+  });
+
+  useEffect(() => {
+    if (accession) {
+      fetchMotifData();
+    }
+  }, [accession, fetchMotifData]);
+
   if (loading) return <CircularProgress />;
   if (error) return <p>Error: {error.message}</p>;
 
@@ -58,51 +90,68 @@ const MotifEnrichmentMEME: React.FC = () => {
   );
 
   return (
-    <Box>
-      {/* Search bar */}
-      <Box mb={2}>
-        <TextField
-          label="Search Biosamples"
-          variant="outlined"
-          fullWidth
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </Box>
-      {/* List of biosamples */}
-      <List>
-        {filteredBiosamples.map((biosample, index) => (
-          <Accordion key={index}>
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls={`panel${index}-content`}
-              id={`panel${index}-header`}
-            >
-              <Typography>{biosample.biosample.name}</Typography>
-              <Chip
-                label={`${biosample.counts.total} exp`}
-                color="primary"
-                style={{ marginLeft: "auto" }}
-              />
-            </AccordionSummary>
-            <AccordionDetails>
-              <List>
-                {biosample.datasets.map((dataset: Dataset, idx: number) => (
-                  <React.Fragment key={idx}>
-                    <ListItem style={{ paddingLeft: "30px" }}>
+    <Box display="flex">
+      {/* Search bar and list of biosamples with 20% width */}
+      <Box width="20%">
+        <Box mb={2}>
+          <TextField
+            label="Search Biosamples"
+            variant="outlined"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </Box>
+        <List>
+          {filteredBiosamples.map((biosample, index) => (
+            <Accordion key={index}>
+              <AccordionSummary
+                aria-controls={`panel${index}-content`}
+                id={`panel${index}-header`}
+              >
+                <Typography style={{ fontWeight: "bold" }}>
+                  {biosample.biosample.name}
+                </Typography>
+                <Chip
+                  label={`${biosample.counts.total} exp`}
+                  style={{
+                    backgroundColor: "#8169BF",
+                    color: "white",
+                    marginLeft: "auto",
+                  }}
+                />
+              </AccordionSummary>
+              <AccordionDetails>
+                <List disablePadding>
+                  {biosample.datasets.map((dataset: Dataset, idx: number) => (
+                    <ListItem
+                      key={idx}
+                      style={{ paddingLeft: "30px", cursor: "pointer" }}
+                      onClick={() => handleAccessionClick(dataset.accession)}
+                    >
                       <ListItemText
-                        primary={dataset.lab.friendly_name}
-                        secondary={dataset.accession}
+                        primary={`${dataset.lab.friendly_name} (${dataset.accession})`}
                       />
                     </ListItem>
-                    {idx < biosample.datasets.length - 1 && <Divider />}
-                  </React.Fragment>
-                ))}
-              </List>
-            </AccordionDetails>
-          </Accordion>
-        ))}
-      </List>
+                  ))}
+                </List>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </List>
+      </Box>
+      {/* Remaining content */}
+      <Box flexGrow={1} ml={2}>
+        {/* Display motif data if available */}
+        {motifLoading && <CircularProgress />}
+        {motifError && <p>Error: {motifError.message}</p>}
+        {motifData && (
+          <Box>
+            <Typography variant="h6">Motif Data</Typography>
+            <pre>{JSON.stringify(motifData, null, 2)}</pre>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 };
