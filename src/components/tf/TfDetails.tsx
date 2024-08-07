@@ -185,6 +185,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
                 minWidth: "250px",
                 height: "250px",
                 padding: "10px",
+                borderRadius: "30px",
               }}
             />
           </LinkWrapper>
