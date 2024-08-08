@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 
+
 export const GENE_EXPRESSION_QUERY = gql`
     query geneexpression($assembly: String!, $gene_id: [String], $assay_term_name: [String]) {
         gene_dataset(assay_term_name: $assay_term_name) {
