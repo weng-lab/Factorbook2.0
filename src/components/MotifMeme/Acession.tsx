@@ -10,6 +10,8 @@ interface Params extends ParsedUrlQuery {
 
 interface AccessionPageProps {
   accession: string;
+  factor: string;
+  species: string;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -21,16 +23,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     variables: { peaks_accession: [accession] },
   });
 
+  // Mock the factor, replace this with actual logic to retrieve the factor
+  const factor = "CTCF";
+
   return {
     props: {
       initialApolloState: client.cache.extract(),
       accession,
+      factor, // Pass the factor
     },
   };
 };
 
-const AccessionPage: React.FC<AccessionPageProps> = ({ accession }) => {
-  return <MotifEnrichmentMEME accession={accession} />;
+const AccessionPage: React.FC<AccessionPageProps> = ({ accession, factor }) => {
+  return (
+    <MotifEnrichmentMEME accession={accession} factor={factor} species={""} />
+  );
 };
 
 export default AccessionPage;

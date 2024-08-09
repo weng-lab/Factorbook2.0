@@ -16,7 +16,6 @@ import {
   TextField,
   Box,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/MotifMeme/Queries";
 import {
   DataResponse,
@@ -28,12 +27,14 @@ import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 
 interface MotifEnrichmentMEMEProps {
   accession?: string;
-  factor: string; // Add factor prop
+  factor: string;
+  species: string;
 }
 
 const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   accession,
   factor,
+  species,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isMounted, setIsMounted] = useState(false);
@@ -45,7 +46,9 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
 
   const handleAccessionClick = (accession: string) => {
     if (isMounted) {
-      router.push(`/components/MotifMeme/${accession}`);
+      router.push(
+        `/TranscriptionFactor/${species}/${factor}/MotifEnrichmentMEME/${accession}`
+      );
     }
   };
 
@@ -53,7 +56,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const { data, loading, error } = useQuery<DataResponse>(DATASETS_QUERY, {
     variables: {
       processed_assembly: "GRCh38",
-      target: factor, // Use factor prop instead of hardcoded "CTCF"
+      target: factor,
       replicated_peaks: true,
       include_investigatedas: includeTargetTypes,
       exclude_investigatedas: excludeTargetTypes,
@@ -91,7 +94,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
 
   return (
     <Box display="flex">
-      {/* Search bar and list of biosamples with 20% width */}
       <Box width="20%">
         <Box mb={2}>
           <TextField
@@ -140,9 +142,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
           ))}
         </List>
       </Box>
-      {/* Remaining content */}
       <Box flexGrow={1} ml={2}>
-        {/* Display motif data if available */}
         {motifLoading && <CircularProgress />}
         {motifError && <p>Error: {motifError.message}</p>}
         {motifData && (
