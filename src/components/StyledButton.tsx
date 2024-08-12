@@ -9,6 +9,7 @@ interface StyledButtonProps {
   href: string;
   display?: string;
   sx?: object;
+  onClick?: () => void; // Add onClick prop
 }
 
 const StyledButton: React.FC<StyledButtonProps> = ({
@@ -16,6 +17,7 @@ const StyledButton: React.FC<StyledButtonProps> = ({
   href,
   display = "block",
   sx = {},
+  onClick, // Destructure onClick prop
 }) => {
   return (
     <Link href={href} passHref>
@@ -34,6 +36,7 @@ const StyledButton: React.FC<StyledButtonProps> = ({
           },
           ...sx,
         }}
+        onClick={onClick} // Attach onClick to Button
       >
         {text}
       </Button>

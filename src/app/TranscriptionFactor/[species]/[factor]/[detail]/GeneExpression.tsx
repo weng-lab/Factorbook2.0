@@ -8,7 +8,6 @@ import {
   CircularProgress,
   Paper,
   MenuItem,
-  Button,
   Grid,
 } from "@mui/material";
 import { groupBy } from "queryz";
@@ -23,37 +22,7 @@ import {
   spacedColors,
 } from "@/components/tf/geneexpression/utils";
 import ViolinPlot from "./violin/violin";
-import styled from "@emotion/styled";
-
-export const StyledButton = styled(Button)(() => ({
-  textTransform: "none" as any,
-  backgroundColor: "#8169BF",
-  fontWeight: "bold",
-  padding: "12px 24px",
-  borderRadius: "12px",
-  "&:hover": {
-    backgroundColor: "#6f58b0",
-  },
-}));
-
-type GeneQuantificationFile = {
-  accession: string;
-  quantifications: {
-    tpm?: number;
-  }[];
-};
-
-type GeneDataset = {
-  accession: string;
-  biosample: string;
-  biosample_type: string;
-  tissue: string;
-  gene_quantification_files: GeneQuantificationFile[];
-};
-
-type Quantification = {
-  value: number;
-};
+import StyledButton from "@/components/StyledButton"; // Import StyledButton
 
 const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const [polyA, setPolyA] = useState(false);
@@ -67,7 +36,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     outer: null,
   });
   const biosampleTypes = new Set(
-    data?.gene_dataset.map((x: GeneDataset) => x.biosample_type) || []
+    data?.gene_dataset.map((x) => x.biosample_type) || []
   );
   const [biosampleType, setBiosampleType] = useState(2);
   const sortedBiosampleTypes = useMemo(
@@ -158,8 +127,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     downloadTSV(
       "cell type\ttissue ontology\tbiosample type\texperiment accession\tfile accession\tTPM\n" +
         (
-          data?.gene_dataset.flatMap((x: GeneDataset) =>
-            x.gene_quantification_files.flatMap((q: GeneQuantificationFile) =>
+          data?.gene_dataset.flatMap((x) =>
+            x.gene_quantification_files.flatMap((q) =>
               q.quantifications
                 .filter((x) => x.tpm !== undefined)
                 .map(
@@ -266,25 +235,18 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                 }}
               >
                 <StyledButton
-                  variant="contained"
-                  size="small"
-                  startIcon={<DownloadIcon />}
+                  text={`Download all ${polyA ? "poly-A enriched" : "total RNA-seq"} expression data for ${props.gene_name}`}
+                  href="#"
                   onClick={download}
-                >
-                  Download all {polyA ? "poly-A enriched" : "total RNA-seq"}{" "}
-                  expression data for {props.gene_name}
-                </StyledButton>
+                />
                 <StyledButton
-                  variant="contained"
-                  size="small"
-                  startIcon={<DownloadIcon />}
+                  text="Export plot as SVG"
+                  href="#"
                   onClick={() =>
                     ref.current &&
                     downloadSVG(ref, `${props.gene_name}-gene-expression.svg`)
                   }
-                >
-                  Export plot as SVG
-                </StyledButton>
+                />
               </Box>
             </Paper>
           </Grid>
