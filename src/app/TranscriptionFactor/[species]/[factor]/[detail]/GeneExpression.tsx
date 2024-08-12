@@ -27,6 +27,13 @@ import styled from "@emotion/styled";
 
 export const StyledButton = styled(Button)(() => ({
   textTransform: "none" as any,
+  backgroundColor: "#8169BF",
+  fontWeight: "bold",
+  padding: "12px 24px",
+  borderRadius: "12px",
+  "&:hover": {
+    backgroundColor: "#6f58b0",
+  },
 }));
 
 type GeneQuantificationFile = {
@@ -189,16 +196,10 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         </Tabs>
       </AppBar>
       <Box sx={{ marginTop: "1em" }}>
-        {" "}
-        {/* Added margin to create a gap beneath the tabs */}
         <Grid container>
           <Grid item xs={3}>
             <Paper sx={{ backgroundColor: "#f5f5f5", padding: "1em" }}>
-              {" "}
-              {/* Added background color and padding */}
               <Typography variant="subtitle1" gutterBottom>
-                {" "}
-                {/* Adjusted the font size */}
                 Select a biosample type:
               </Typography>
               {sortedBiosampleTypes.map((t, i) => (
@@ -213,39 +214,20 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
             </Paper>
           </Grid>
           <Grid item xs={9}>
-            <Paper>
-              <Typography variant="h5" style={{ marginLeft: "5em" }}>
+            <Paper sx={{ boxShadow: "none" }}>
+              {" "}
+              {/* Removed shadow */}
+              <Typography
+                variant="h5"
+                style={{ marginLeft: "5em", marginTop: "1em" }}
+              >
                 {props.gene_name} expression in{" "}
                 {sortedBiosampleTypes[biosampleType]}s: RNA-seq
               </Typography>
-              <StyledButton
-                variant="contained"
-                color="primary"
-                size="small"
-                startIcon={<DownloadIcon />}
-                style={{ marginLeft: "7.5em" }}
-                onClick={download}
-              >
-                Download all {polyA ? "poly-A enriched" : "total RNA-seq"}{" "}
-                expression data for {props.gene_name}
-              </StyledButton>
-              <StyledButton
-                variant="contained"
-                color="primary"
-                size="small"
-                startIcon={<DownloadIcon />}
-                style={{ marginLeft: "7.5em" }}
-                onClick={() =>
-                  ref.current &&
-                  downloadSVG(ref, `${props.gene_name}-gene-expression.svg`)
-                }
-              >
-                Export plot as SVG
-              </StyledButton>
               {toPlot.size > 0 ? (
                 <svg
                   viewBox={`0 0 ${width} ${width / 2}`}
-                  style={{ width: "100%" }}
+                  style={{ width: "100%", marginTop: "1em" }}
                   ref={ref}
                 >
                   <ViolinPlot
@@ -275,6 +257,35 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                   </Typography>
                 </Paper>
               )}
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "0.5em",
+                  marginTop: "-0.5em",
+                }}
+              >
+                <StyledButton
+                  variant="contained"
+                  size="small"
+                  startIcon={<DownloadIcon />}
+                  onClick={download}
+                >
+                  Download all {polyA ? "poly-A enriched" : "total RNA-seq"}{" "}
+                  expression data for {props.gene_name}
+                </StyledButton>
+                <StyledButton
+                  variant="contained"
+                  size="small"
+                  startIcon={<DownloadIcon />}
+                  onClick={() =>
+                    ref.current &&
+                    downloadSVG(ref, `${props.gene_name}-gene-expression.svg`)
+                  }
+                >
+                  Export plot as SVG
+                </StyledButton>
+              </Box>
             </Paper>
           </Grid>
         </Grid>
