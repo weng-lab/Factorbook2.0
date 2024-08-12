@@ -98,7 +98,7 @@ const FactorDetailsPage = () => {
           />
         );
       case "Expression":
-        return <GeneExpressionPage />;
+        return <GeneExpressionPage gene_name={factor} assembly={species.toLowerCase() === "human" ? "GRCh38" : "mm10"} />;
       case "MotifEnrichmentMEME":
         return <MotifEnrichmentMEME factor={factor} species={species} />;
       case "MotifEnrichmentSELEX":
