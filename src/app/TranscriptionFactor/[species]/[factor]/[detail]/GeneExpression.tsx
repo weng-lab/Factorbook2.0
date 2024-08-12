@@ -10,8 +10,10 @@ import {
   MenuItem,
   Grid,
 } from "@mui/material";
-import { groupBy } from "queryz";
-import { Download as DownloadIcon } from "@mui/icons-material";
+import {
+  Download as DownloadIcon,
+  SaveAlt as SaveAltIcon,
+} from "@mui/icons-material";
 import { formatFactorName } from "@/utilities/misc";
 import { useGeneExpressionData } from "@/components/tf/geneexpression/hooks";
 import { GeneExpressionPageProps } from "@/components/tf/geneexpression/types";
@@ -22,7 +24,8 @@ import {
   spacedColors,
 } from "@/components/tf/geneexpression/utils";
 import ViolinPlot from "./violin/violin";
-import StyledButton from "@/components/StyledButton"; // Import StyledButton
+import StyledButton from "@/components/StyledButton";
+import { groupBy } from "queryz";
 
 const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const [polyA, setPolyA] = useState(false);
@@ -166,7 +169,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
       </AppBar>
       <Box sx={{ marginTop: "1em" }}>
         <Grid container>
-          <Grid item xs={3}>
+          <Grid item xs={12} sm={3}>
             <Paper sx={{ backgroundColor: "#f5f5f5", padding: "1em" }}>
               <Typography variant="subtitle1" gutterBottom>
                 Select a biosample type:
@@ -182,13 +185,11 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               ))}
             </Paper>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={12} sm={9}>
             <Paper sx={{ boxShadow: "none" }}>
-              {" "}
-              {/* Removed shadow */}
               <Typography
                 variant="h5"
-                style={{ marginLeft: "5em", marginTop: "1em" }}
+                sx={{ marginLeft: { xs: "0", sm: "5em" }, marginTop: "1em" }}
               >
                 {props.gene_name} expression in{" "}
                 {sortedBiosampleTypes[biosampleType]}s: RNA-seq
@@ -216,7 +217,11 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                 </svg>
               ) : (
                 <Paper
-                  style={{ marginLeft: "6.5em", width: "70%", padding: "1em" }}
+                  sx={{
+                    marginLeft: { xs: "0", sm: "6.5em" },
+                    width: "70%",
+                    padding: "1em",
+                  }}
                 >
                   <Typography variant="body1" color="error">
                     There is no expression data available for the assay and
@@ -229,17 +234,22 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               <Box
                 sx={{
                   display: "flex",
-                  justifyContent: "center",
+                  justifyContent: { xs: "center", sm: "flex-start" },
                   gap: "0.5em",
+                  marginLeft: { xs: "0", sm: "5em" },
                   marginTop: "-0.5em",
                 }}
               >
                 <StyledButton
-                  text={`Download all ${polyA ? "poly-A enriched" : "total RNA-seq"} expression data for ${props.gene_name}`}
+                  startIcon={<SaveAltIcon />}
+                  text={`Download all ${
+                    polyA ? "poly-A enriched" : "total RNA-seq"
+                  } expression data for ${props.gene_name}`}
                   href="#"
                   onClick={download}
                 />
                 <StyledButton
+                  startIcon={<SaveAltIcon />}
                   text="Export plot as SVG"
                   href="#"
                   onClick={() =>
