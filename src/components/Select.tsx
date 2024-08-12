@@ -82,9 +82,9 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
             },
           }}
         >
-          <InputLabel>Select your host</InputLabel>
+          <InputLabel>Select species</InputLabel>
           <Select
-            label="Select your host"
+            label="Select species"
             value={selectedValue}
             IconComponent={ArrowDropDownIcon}
             onChange={onChange}
