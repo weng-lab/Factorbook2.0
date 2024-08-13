@@ -33,7 +33,11 @@ const FactorDetailsPage = () => {
     species,
     factor,
     detail = "Function",
-  } = useParams<{ species: string; factor: string; detail: string }>();
+  } = useParams<{
+    species: string;
+    factor: string;
+    detail: string;
+  }>();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -96,7 +100,7 @@ const FactorDetailsPage = () => {
       case "Expression":
         return <GeneExpressionPage gene_name={factor} assembly={species.toLowerCase() === "human" ? "GRCh38" : "mm10"} />;
       case "MotifEnrichmentMEME":
-        return <MotifEnrichmentMEME />;
+        return <MotifEnrichmentMEME factor={factor} species={species} />;
       case "MotifEnrichmentSELEX":
         return <DeepLearnedSelexMotifs factor={factor} species={species} />;
       case "EpigeneticProfile":

@@ -119,6 +119,7 @@ export type FactorData = {
     uniprot_data?: string;
     ncbi_data?: string;
     factor_wiki?: string;
+    peaks_accession?: string[];
 };
 
 export type FactorQueryResponse = {
