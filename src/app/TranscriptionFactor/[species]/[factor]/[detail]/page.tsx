@@ -16,7 +16,6 @@ import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
 import { FactorQueryResponse } from "@/components/CellType/types";
 import FunctionTab from "./Function";
 import MotifEnrichmentMEME from "./MotifEnrichmentMEME";
-import EpigeneticProfile from "./EpigeneticProfile";
 import Search from "./Search";
 import Link from "next/link";
 import DeepLearnedSelexMotifs from "./MotifEnrichmentSELEX";
@@ -98,13 +97,16 @@ const FactorDetailsPage = () => {
           />
         );
       case "Expression":
-        return <GeneExpressionPage gene_name={factor} assembly={species.toLowerCase() === "human" ? "GRCh38" : "mm10"} />;
+        return (
+          <GeneExpressionPage
+            gene_name={factor}
+            assembly={species.toLowerCase() === "human" ? "GRCh38" : "mm10"}
+          />
+        );
       case "MotifEnrichmentMEME":
         return <MotifEnrichmentMEME factor={factor} species={species} />;
       case "MotifEnrichmentSELEX":
         return <DeepLearnedSelexMotifs factor={factor} species={species} />;
-      case "EpigeneticProfile":
-        return <EpigeneticProfile />;
       case "Search":
         return <Search />;
       default:
@@ -196,15 +198,7 @@ const FactorDetailsPage = () => {
                 }}
               />
             )}
-            <Tab
-              label="Epigenetic Profile"
-              value="EpigeneticProfile"
-              component={Link}
-              href={`/TranscriptionFactor/${species}/${factor}/EpigeneticProfile`}
-              sx={{
-                color: detail === "EpigeneticProfile" ? "#8169BF" : "inherit",
-              }}
-            />
+            {/* EpigeneticProfile Tab Hidden */}
             <Tab
               label={`Search ${factor} peaks by region`}
               value="Search"
