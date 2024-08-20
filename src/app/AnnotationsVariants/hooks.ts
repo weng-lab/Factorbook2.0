@@ -15,20 +15,17 @@ const client = new ApolloClient<any>({
     uri: 'https://ga.staging.wenglab.org/graphql',
     cache: new InMemoryCache(),
 });
-
 function liftOver(region: GenomicRange, chainFile: ChainFile): GenomicRange[] {
-        const l = chainFile.liftOverRegion(new Region(region.chromosome!, region.start!, region.end!));
-        return l.map(x => ({
-            chromosome: x.chromosome,
-            start: x.start,
-            end: x.stop
-        }));
-    
-  
-   
+    const l = chainFile.liftOverRegion(new Region(region.chromosome!, region.start!, region.end!));
+    return l.map(x => ({
+        chromosome: x.chromosome,
+        start: x.start,
+        end: x.stop,
+    }));
 }
 
-export function useSNPData(id: string, assembly: string, population: string, subpopulation?: string, chainFile?: ChainFile) {
+
+export function useSNPData(id: string, assembly: string, population?: string, subpopulation?: string, chainFile?: ChainFile) {
     const { data, loading } = useQuery<SNPQueryResponse>(SNP_QUERY, {
         client,
         variables: {
@@ -37,6 +34,7 @@ export function useSNPData(id: string, assembly: string, population: string, sub
             population,
             subpopulation: subpopulation === 'NONE' ? undefined : subpopulation,
         },
+        skip: !chainFile,
         errorPolicy: 'ignore',
     });
     const filteredLD = useMemo( () => data?.snpQuery[0]?.linkageDisequilibrium.filter(x => x.snp), [ data ]);

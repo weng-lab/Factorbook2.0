@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 import TranscriptionFactors from "@/components/TranscriptionFactors";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -26,7 +26,9 @@ import styled from "@emotion/styled";
 import Config from "../../../config.json";
 import { FormControl } from "@mui/material";
 import { SNP_AUTOCOMPLETE_QUERY } from "./queries";
-import { useSNPData } from "./hooks";
+import { useParams } from "react-router";
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
 
 type Snp = {
   id: string;
@@ -106,6 +108,14 @@ const SUBPOPULATIONS: Map<string, { text: string; value: string }[]> = new Map([
   ],
 ]);
 
+const POPULATION_MAP = new Map(POPULATIONS.map((x) => [x.value, x.text]));
+const SUBPOPULATION_MAP = new Map(
+  ["AFRICAN", "AMERICAN", "EAST_ASIAN", "EUROPEAN", "SOUTH_ASIAN"].map((x) => [
+    x,
+    new Map(SUBPOPULATIONS.get(x)!.map((xx) => [xx.value, xx.text])),
+  ])
+);
+
 const StyledBox = styled(Box)({
   "& .MuiOutlinedInput-root": {
     backgroundColor: "#EDE7F6",
@@ -164,8 +174,8 @@ const PurpleFormControl = styled(FormControl)({
 
 const AnnotationsVariants = () => {
   const [value, setValue] = useState(0);
-  const [population, setPopulation] = useState(POPULATIONS[0].value);
-  const [subpopulation, setSubpopulation] = useState("NONE");
+  const params = useParams();
+
   const [snpValue, setSnpValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [options, setOptions] = useState([]);
@@ -173,13 +183,14 @@ const AnnotationsVariants = () => {
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState(true);
 
-  // const { data, loading, mafResults } = useSNPData(id || "", "GRCh38", population, subpopulation, props.chainFile);
-  // const match = useRouteMatch<{
-  //   i?: string;
-  //   p?: string;
-  //   s?: string;
-  //   r?: string;
-  // }>(/snpannotation/GRChg38/:i?/:p?/:r?/:s?);
+  const { _assembly, _i, p, s, r } = useParams();
+
+  const snpid = params?.[2];
+
+  const [id, setId] = useState<string | undefined>(params.i);
+  const [population, setPopulation] = useState(p || POPULATIONS[0].value);
+  const [subpopulation, setSubpopulation] = useState(s || "NONE");
+  const [rSquaredThreshold, setRSquaredThreshold] = useState(+(r || 0.7));
 
   // autocomplete fetch logic
   const onSearchChange = async (value: string) => {
@@ -218,13 +229,9 @@ const AnnotationsVariants = () => {
   };
 
   const debounceFn = useCallback(debounce(onSearchChange, 500), []);
-
   const handleSubmit = () => {
     if (snpValue) {
-      const selectedSnp = snpids.find((g) => g.id === snpValue);
-      if (selectedSnp) {
-        window.location.href = `snpannotation/GRChg38/${snpValue}/`;
-      }
+      setId(snpid);
     }
   };
 
@@ -244,6 +251,16 @@ const AnnotationsVariants = () => {
     setSelected(!prev);
   };
   const annotationsContent = ` Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Often identified in genome-wide association studies, these variants can disrupt gene regulatory networks, leading to varied phenotypic effects or predispositions to diseases. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants.`;
+  const str: string = selected
+    ? "/AnnotationsVariants/GRCh38/" +
+      snpValue +
+      "/" +
+      population +
+      "/" +
+      subpopulation +
+      "/" +
+      rSquaredThreshold
+    : "/AnnotationsVariants/GRCh38/" + snpValue;
   return (
     <>
       <TranscriptionFactors
@@ -265,138 +282,190 @@ const AnnotationsVariants = () => {
           <Tab label="Quantify Trait Heritability" />
         </Tabs>
       </Box>
-      {value === 0 && (
-        <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
-          <Typography variant="h6" gutterBottom>
-            Annotate a variant of interest using peaks and motif sites
-          </Typography>
-          <StyledBox>
-            <Stack direction="row" spacing={2}>
-              <PurpleFormControl fullWidth variant="outlined">
-                <PurpleAutocomplete
-                  options={options}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" && snpValue) {
-                      event.preventDefault();
-                      handleSubmit();
-                    }
-                  }}
-                  value={snpValue}
-                  onChange={(_, newValue: any) => setSnpValue(newValue)}
-                  inputValue={inputValue}
-                  onInputChange={(_, newInputValue) => {
-                    if (newInputValue) {
-                      debounceFn(newInputValue);
-                    }
-                    setInputValue(newInputValue);
-                  }}
-                  noOptionsText="e.g. rs11669173"
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Enter a SNP rsID"
-                      placeholder="e.g. rs11669173"
-                      fullWidth
-                    />
-                  )}
-                  renderOption={(props, option: any) => {
-                    const selectedSnp = snpids.find((g) => g.id === option);
-                    return (
-                      <li {...props} key={option}>
-                        <Grid2 container alignItems="center">
-                          <Grid2 sx={{ width: "100%", wordWrap: "break-word" }}>
-                            <Box component="span">{option}</Box>
-                            {selectedSnp && (
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
+      {id === "" || id === undefined
+        ? value === 0 && (
+            <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+              <Typography variant="h6" gutterBottom>
+                Annotate a variant of interest using peaks and motif sites
+              </Typography>
+              <StyledBox>
+                <Stack direction="row" spacing={2}>
+                  <PurpleFormControl fullWidth variant="outlined">
+                    <PurpleAutocomplete
+                      options={options}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" && snpValue) {
+                          event.preventDefault();
+                          handleSubmit();
+                        }
+                      }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          height: "40px",
+                          borderRadius: "24px",
+                          paddingLeft: "12px",
+                        },
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "gray",
+                        },
+                        "& .MuiInputBase-input::placeholder": {
+                          color: "gray",
+                          opacity: 1,
+                        },
+                      }}
+                      value={snpValue}
+                      onChange={(_, newValue: any) => setSnpValue(newValue)}
+                      inputValue={inputValue}
+                      onInputChange={(_, newInputValue) => {
+                        if (newInputValue) {
+                          debounceFn(newInputValue);
+                        }
+                        setInputValue(newInputValue);
+                      }}
+                      noOptionsText="e.g. rs11669173"
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          placeholder="e.g. rs11669173"
+                          fullWidth
+                          InputProps={{
+                            ...params.InputProps,
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <SearchIcon />
+                              </InputAdornment>
+                            ),
+                            style: { textAlign: "center" },
+                          }}
+                          InputLabelProps={{
+                            style: { textAlign: "center", width: "100%" },
+                          }}
+                        />
+                      )}
+                      renderOption={(props, option: any) => {
+                        const selectedSnp = snpids.find((g) => g.id === option);
+                        return (
+                          <li {...props} key={option}>
+                            <Grid2 container alignItems="center">
+                              <Grid2
+                                sx={{ width: "100%", wordWrap: "break-word" }}
                               >
-                                {`${selectedSnp.chrom}:${selectedSnp.end}`}
-                              </Typography>
-                            )}
-                          </Grid2>
-                        </Grid2>
-                      </li>
-                    );
-                  }}
-                />
-              </PurpleFormControl>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleSubmit}
-                sx={{ backgroundColor: "#8169BF" }}
-              >
-                Search
-              </Button>
-            </Stack>
-          </StyledBox>
-          <Box sx={{ mt: 4 }}>
-            <Typography variant="h6" gutterBottom>
-              Linkage Disequilibrium Settings
-            </Typography>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  defaultChecked
-                  onClick={() => handleSelectionChange(selected)}
-                  style={{ color: "purple" }}
-                />
-              }
-              label="Include SNPs in linkage disequilibrium with the query"
-              style={{ marginBottom: "5px" }}
-            />
-            {selected && (
-              <>
-                <FlexBox>
-                  <Typography variant="body1">Select a Population:</Typography>
-                  <SmallSelect
-                    value={population}
-                    onChange={handlePopulationChange}
-                    defaultValue={POPULATIONS[0].value}
+                                <Box component="span">{option}</Box>
+                                {selectedSnp && (
+                                  <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                  >
+                                    {`${selectedSnp.chrom}:${selectedSnp.end}`}
+                                  </Typography>
+                                )}
+                              </Grid2>
+                            </Grid2>
+                          </li>
+                        );
+                      }}
+                    />
+                  </PurpleFormControl>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleSubmit}
+                    sx={{
+                      width: "125px",
+                      height: "41px",
+                      padding: "8px 24px",
+                      borderRadius: "24px",
+                      backgroundColor: "#8169BF",
+                      color: "white",
+                      fontFeatureSettings: "'clig' off, 'liga' off",
+                      fontSize: "15px",
+                      fontStyle: "normal",
+                      fontWeight: 500,
+                      lineHeight: "26px",
+                      letterSpacing: "0.46px",
+                      textTransform: "none",
+                      "&:hover": {
+                        backgroundColor: "#7151A1",
+                      },
+                    }}
+                    href={str}
                   >
-                    {POPULATIONS.map((e) => {
-                      return <MenuItem value={e.value}>{e.text}</MenuItem>;
-                    })}
-                  </SmallSelect>
-                </FlexBox>
-                <FlexBox>
-                  <Typography variant="body1">
-                    Select a Subpopulation:
-                  </Typography>
-                  <SmallSelect
-                    value={subpopulation}
-                    onChange={handleSubpopulationChange}
-                  >
-                    {SUBPOPULATIONS.get(population)?.map((e) => {
-                      return <MenuItem value={e.value}>{e.text}</MenuItem>;
-                    })}
-                  </SmallSelect>
-                </FlexBox>
-                <FlexBox>
-                  <Typography variant="body1">
-                    r<sup>2</sup> threshold:
-                  </Typography>
-                  <SmallTextField
-                    label=""
-                    variant="outlined"
-                    placeholder="Type a value"
-                    defaultValue="0.7"
-                  />
-                </FlexBox>
-                <Typography
-                  variant="body2"
-                  sx={{ mt: 2 }}
-                  style={{ marginBottom: "5px" }}
-                >
-                  LD data is derived from the{" "}
-                  <Link href="#">1,000 Genomes Project</Link>
+                    Search
+                  </Button>
+                </Stack>
+              </StyledBox>
+              <Box sx={{ mt: 4 }}>
+                <Typography variant="h6" gutterBottom>
+                  Linkage Disequilibrium Settings
                 </Typography>
-              </>
-            )}
-          </Box>
-        </Box>
-      )}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      defaultChecked
+                      onClick={() => handleSelectionChange(selected)}
+                      style={{ color: "purple" }}
+                    />
+                  }
+                  label="Include SNPs in linkage disequilibrium with the query"
+                  style={{ marginBottom: "5px" }}
+                />
+                {selected && (
+                  <>
+                    <FlexBox>
+                      <Typography variant="body1">
+                        Select a Population:
+                      </Typography>
+                      <SmallSelect
+                        value={population}
+                        onChange={handlePopulationChange}
+                        defaultValue={POPULATIONS[0].value}
+                      >
+                        {POPULATIONS.map((e) => {
+                          return <MenuItem value={e.value}>{e.text}</MenuItem>;
+                        })}
+                      </SmallSelect>
+                    </FlexBox>
+                    <FlexBox>
+                      <Typography variant="body1">
+                        Select a Subpopulation:
+                      </Typography>
+                      <SmallSelect
+                        value={subpopulation}
+                        onChange={handleSubpopulationChange}
+                      >
+                        {SUBPOPULATIONS.get(population)?.map((e) => {
+                          return <MenuItem value={e.value}>{e.text}</MenuItem>;
+                        })}
+                      </SmallSelect>
+                    </FlexBox>
+                    <FlexBox>
+                      <Typography variant="body1">
+                        r<sup>2</sup> threshold:
+                      </Typography>
+                      <SmallTextField
+                        label=""
+                        variant="outlined"
+                        placeholder="Type a value"
+                        defaultValue="0.7"
+                      />
+                    </FlexBox>
+                    <Typography
+                      variant="body2"
+                      sx={{ mt: 2 }}
+                      style={{ marginBottom: "5px" }}
+                    >
+                      LD data is derived from the{" "}
+                      <Link href="#" style={{ color: "purple" }}>
+                        1,000 Genomes Project
+                      </Link>
+                    </Typography>
+                  </>
+                )}
+              </Box>
+            </Box>
+          )
+        : null}
+
       {value === 1 && (
         <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
