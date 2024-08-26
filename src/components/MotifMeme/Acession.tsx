@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import { ParsedUrlQuery } from "querystring";
 import { getClient } from "../../../lib/client";
 import { MOTIF_QUERY } from "@/components/MotifMeme/Queries";
-import MotifEnrichmentMEME from "@/app/TranscriptionFactor/[species]/[factor]/[detail]/MotifEnrichmentMEME";
+import MotifEnrichmentMEME from "./MotifEnrichmentMEME";
 
 interface Params extends ParsedUrlQuery {
   accession: string;

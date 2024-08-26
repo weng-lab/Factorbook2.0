@@ -1,8 +1,5 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
-import { useQuery, useLazyQuery } from "@apollo/client";
-import { useRouter } from "next/navigation";
+import { useQuery } from "@apollo/client";
 import {
   CircularProgress,
   Typography,
@@ -19,40 +16,23 @@ import {
 import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/MotifMeme/Queries";
 import {
   DataResponse,
-  BiosamplePartition,
   Dataset,
   MotifResponse,
+  ReplicatedPeaks,
 } from "@/components/MotifMeme/Types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 
 interface MotifEnrichmentMEMEProps {
-  accession?: string;
   factor: string;
   species: string;
 }
 
 const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
-  accession,
   factor,
   species,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [isMounted, setIsMounted] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  const handleAccessionClick = (accession: string) => {
-    if (isMounted) {
-      router.push(
-        `/TranscriptionFactor/${species}/${factor}/MotifEnrichmentMEME/${accession}`
-      );
-    }
-  };
-
-  // Query data from the server
+  const [selectedPeak, setSelectedPeak] = useState<string | null>(null);
   const { data, loading, error } = useQuery<DataResponse>(DATASETS_QUERY, {
     variables: {
       processed_assembly: "GRCh38",
@@ -63,23 +43,22 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     },
   });
 
-  const [
-    fetchMotifData,
-    { data: motifData, loading: motifLoading, error: motifError },
-  ] = useLazyQuery<MotifResponse>(MOTIF_QUERY, {
-    variables: { peaks_accession: accession ? [accession] : [] },
+  const {
+    data: motifData,
+    loading: motifLoading,
+    error: motifError,
+  } = useQuery<MotifResponse>(MOTIF_QUERY, {
+    variables: { peaks_accession: selectedPeak ? [selectedPeak] : [] },
+    skip: !selectedPeak, // Skip query if no peak is selected
   });
 
-  useEffect(() => {
-    if (accession) {
-      fetchMotifData();
-    }
-  }, [accession, fetchMotifData]);
+  const handleAccessionClick = (peakAccession: string) => {
+    setSelectedPeak(peakAccession);
+  };
 
   if (loading) return <CircularProgress />;
   if (error) return <p>Error: {error.message}</p>;
 
-  // Sort and filter the biosamples
   const sortedBiosamples = [
     ...(data?.peakDataset.partitionByBiosample || []),
   ].sort((a, b) => {
@@ -94,6 +73,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
 
   return (
     <Box display="flex">
+      {/* Left side: List of biosamples */}
       <Box width="20%">
         <Box mb={2}>
           <TextField
@@ -125,23 +105,29 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
               </AccordionSummary>
               <AccordionDetails>
                 <List disablePadding>
-                  {biosample.datasets.map((dataset: Dataset, idx: number) => (
-                    <ListItem
-                      key={idx}
-                      style={{ paddingLeft: "30px", cursor: "pointer" }}
-                      onClick={() => handleAccessionClick(dataset.accession)}
-                    >
-                      <ListItemText
-                        primary={`${dataset.lab.friendly_name} (${dataset.accession})`}
-                      />
-                    </ListItem>
-                  ))}
+                  {biosample.datasets.map((dataset: Dataset, idx: number) =>
+                    dataset.replicated_peaks.map(
+                      (peak: ReplicatedPeaks, peakIdx: number) => (
+                        <ListItem
+                          key={`${idx}-${peakIdx}`}
+                          style={{ paddingLeft: "30px", cursor: "pointer" }}
+                          onClick={() => handleAccessionClick(peak.accession)}
+                        >
+                          <ListItemText
+                            primary={`${dataset.lab.friendly_name} (${dataset.accession})`}
+                          />
+                        </ListItem>
+                      )
+                    )
+                  )}
                 </List>
               </AccordionDetails>
             </Accordion>
           ))}
         </List>
       </Box>
+
+      {/* Right side: Display motif data */}
       <Box flexGrow={1} ml={2}>
         {motifLoading && <CircularProgress />}
         {motifError && <p>Error: {motifError.message}</p>}
@@ -150,6 +136,9 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
             <Typography variant="h6">Motif Data</Typography>
             <pre>{JSON.stringify(motifData, null, 2)}</pre>
           </Box>
+        )}
+        {!motifLoading && !motifData && (
+          <Typography>Select a peak to view motif data</Typography>
         )}
       </Box>
     </Box>
