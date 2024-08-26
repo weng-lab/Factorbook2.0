@@ -31,18 +31,17 @@ export type BiosamplePartition = {
 export type MotifResponse = {
   meme_motifs: {
     consensus_regex: string;
-    pwm: string;
-    sites: number;
+    pwm: number[][];
     e_value: number;
     original_peaks_occurrences: number;
-    original_peaks: string;
+    original_peaks: number;
     flank_occurrences_ratio: number;
     flank_z_score: number;
     flank_p_value: number;
     shuffled_occurrences_ratio: number;
     shuffled_z_score: number;
     shuffled_p_value: number;
-    peak_centrality: number;
+    peak_centrality: { [key: string]: number };
     id: string;
     name: string;
   }[];

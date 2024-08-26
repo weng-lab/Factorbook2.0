@@ -28,10 +28,14 @@ const StyledButton = forwardRef<HTMLButtonElement, StyledButtonProps>(
             textTransform: "none",
             fontWeight: "medium",
             color: "#FFFFFF",
-            justifyContent: "flex-start", // Ensure icon and text are aligned horizontally
-            alignItems: "center", // Vertically center align icon and text
-            width: "100%", // Make the button take up the full width of its container
-            maxWidth: "400px", // Set a max width for larger screens
+            justifyContent: "center", // Center align the content of the button
+            alignItems: "center", // Align items in the center
+            width: "100%", // Full width for the button
+            maxWidth: "400px", // Maximum width for larger screens
+            "& .MuiButton-startIcon": {
+              marginRight: "8px", // Ensure there is space between the icon and the text
+              marginLeft: "-4px", // Adjust left margin to align the icon properly
+            },
             "&:focus, &:hover, &:active": {
               backgroundColor: "#8169BF",
             },
