@@ -388,7 +388,7 @@ const AnnotationsVariants = () => {
                         backgroundColor: "#7151A1",
                       },
                     }}
-                    href={str}
+                    href={snpValue ? str : ""}
                   >
                     Search
                   </Button>

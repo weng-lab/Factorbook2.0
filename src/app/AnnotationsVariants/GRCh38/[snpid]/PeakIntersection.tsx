@@ -8,8 +8,13 @@ import {
   PeakWithSNP,
   IntersectionViewProps,
   GenomicRange,
+  SNPWithPeakCount,
 } from "../../types";
-import DataTable from "@weng-lab/psychscreen-ui-components";
+import {
+  DataTable,
+  DataTableColumn,
+} from "@weng-lab/psychscreen-ui-components";
+import Link from "next/link";
 
 function f(coordinates: GenomicRange): {
   chrom: string;
@@ -22,6 +27,103 @@ function f(coordinates: GenomicRange): {
     chrom_end: coordinates.end!,
   };
 }
+
+// const cellTypeRoute = (
+//   species?: string,
+//   celltype?: string,
+//   details?: string
+// ): string =>
+//   `/ct${species ? `/${species}` : ""}${
+//     species && celltype ? `/${celltype}` : ""
+//   }${species && celltype && details ? `/${details}` : ""}`;
+
+const tfRoute = (species?: string, factor?: string, details?: string): string =>
+  `/TranscriptionFactor${species ? `/${species}` : ""}${
+    species && factor ? `/${factor}` : ""
+  }${species && factor && details ? `/${details}` : ""}/Function`;
+
+const PEAK_TABLE_COLUMNS: DataTableColumn<SNPWithPeakCount>[] = [
+  {
+    header: "SNP",
+    value: (x) => x.id,
+  },
+  {
+    header: "r squared with lead SNP",
+    value: (x) => x.rSquared || 0,
+  },
+  {
+    header: "Total intersecting peaks",
+    value: (x) => x.peakCount,
+  },
+  {
+    header: "Unique factors with intersecting peaks",
+    value: (x) => x.factorCount,
+  },
+];
+
+const COMPLETE_PEAK_TABLE_COLUMNS: DataTableColumn<PeakWithSNP>[] = [
+  {
+    header: "SNP",
+    value: (x) => x.snp?.id || "",
+  },
+  {
+    header: "SNP coordinates",
+    value: (x) =>
+      `${x.snp?.coordinates?.chromosome || ""}:${
+        x.snp?.coordinates?.start || ""
+      }`,
+  },
+  {
+    header: "r squared with lead SNP",
+    value: (x) =>
+      x.snp?.rSquared !== undefined ? x.snp.rSquared.toString() : "0",
+  },
+  {
+    header: "Peak coordinates",
+    value: (x) =>
+      `${x.chrom || ""}:${x.chrom_start || ""}-${x.chrom_end || ""}`,
+  },
+  {
+    header: "Peak biosample",
+    value: (x) => x.dataset?.biosample || "",
+    render: (x) => (x.dataset?.biosample ? x.dataset.biosample : ""),
+  },
+  {
+    header: "Peak factor",
+    value: (x) => x.dataset?.target || "",
+    render: (x) =>
+      x.dataset?.target ? (
+        <Link
+          href={tfRoute("human", x.dataset.target)}
+          style={{ color: "purple" }}
+        >
+          {x.dataset.target}
+        </Link>
+      ) : (
+        ""
+      ),
+  },
+  {
+    header: "ChIP-seq experiment accession",
+    value: (x) => x.experiment_accession || "",
+    render: (x) =>
+      x.experiment_accession ? (
+        <a
+          href={`https://www.encodeproject.org/experiments/${x.experiment_accession}`}
+          style={{ color: "purple" }}
+        >
+          {x.experiment_accession}
+        </a>
+      ) : (
+        ""
+      ),
+  },
+  {
+    header: "Peak q-value",
+    value: (x) =>
+      x.q_value !== undefined ? x.q_value.toString().slice(0, 4) : "N/A",
+  },
+];
 
 const PeakIntersectionMerger: React.FC<PeakIntersectionMergerProps> = (
   props
@@ -73,6 +175,7 @@ const PeakIntersectionMerger: React.FC<PeakIntersectionMergerProps> = (
       <CircularProgress
         variant="determinate"
         value={(progress * 100.0) / props.snps.length}
+        color="secondary"
       />
     </Box>
   );
@@ -148,15 +251,21 @@ const PeakIntersection: React.FC<IntersectionViewProps> = (props) => {
 
       <Box mt={2}>
         {page === 0 ? (
-          <Box>
-            <Typography variant="h6">Summary View</Typography>
-            {/* Render summary view content here */}
-          </Box>
+          <DataTable
+            key="summary"
+            columns={PEAK_TABLE_COLUMNS}
+            rows={groupedSNPs}
+            itemsPerPage={10}
+            searchable
+          />
         ) : (
-          <Box>
-            <Typography variant="h6">Complete List</Typography>
-            {/* Render complete list content here */}
-          </Box>
+          <DataTable
+            key="complete"
+            columns={COMPLETE_PEAK_TABLE_COLUMNS}
+            rows={results}
+            itemsPerPage={10}
+            searchable
+          />
         )}
       </Box>
     </Box>

@@ -33,6 +33,7 @@
     "@visx/text": "^3.3.0",
     "@visx/tooltip": "^3.3.0",
     "@weng-lab/psychscreen-ui-components": "^0.8.9",
+    "context": "^3.0.31",
     "copy-to-clipboard": "^3.3.3",
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",

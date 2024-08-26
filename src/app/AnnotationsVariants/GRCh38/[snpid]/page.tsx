@@ -12,6 +12,7 @@ import {
   Breadcrumbs,
   Link,
   Grid,
+  CircularProgress,
 } from "@mui/material";
 import PeakIntersectionView from "./PeakIntersection";
 import MotifIntersectionView from "./MotifIntersection";
@@ -75,7 +76,7 @@ const AnnotationDetailPage = () => {
   );
 
   if (loading) {
-    return <div>Loading SNP data...</div>;
+    return <CircularProgress color="secondary" />;
   }
 
   return (
@@ -154,10 +155,8 @@ const AnnotationDetailPage = () => {
                 height: "41px",
                 padding: "8px 24px",
                 borderRadius: "24px",
-
                 fontFeatureSettings: "'clig' off, 'liga' off",
                 fontFamily: "Helvetica Neue",
-
                 letterSpacing: "0.46px",
                 textTransform: "none",
               }}
@@ -172,7 +171,9 @@ const AnnotationDetailPage = () => {
           {annotationType === "Peak Intersection" && (
             <PeakIntersectionView snps={snps} assembly="GRCh38" />
           )}
-          {annotationType === "Motif Intersection" && <MotifIntersectionView />}
+          {annotationType === "Motif Intersection" && (
+            <MotifIntersectionView snps={snps} assembly="GRCh38" />
+          )}
         </Box>
       </Box>
     </>
