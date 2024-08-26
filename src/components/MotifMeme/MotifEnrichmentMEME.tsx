@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, MutableRefObject } from "react";
 import { useQuery } from "@apollo/client";
 import {
   CircularProgress,
@@ -16,12 +16,22 @@ import {
   Paper,
   Button,
   Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  FormControlLabel,
+  Checkbox,
+  Tooltip,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import DownloadIcon from "@mui/icons-material/Download";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import PublicIcon from "@mui/icons-material/Public";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import InfoIcon from "@mui/icons-material/Info";
 import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/MotifMeme/Queries";
 import {
   DataResponse,
@@ -31,13 +41,16 @@ import {
 } from "@/components/MotifMeme/Types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 import { DNALogo, DNAAlphabet } from "logojs-react";
+import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
+import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import Tooltip from "@mui/material/Tooltip";
+import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
 
-interface MotifEnrichmentMEMEProps {
-  factor: string;
-  species: string;
-}
+const poorPeakCentrality = (motif) =>
+  motif.flank_z_score < 0 || motif.flank_p_value > 0.05;
+
+const poorPeakEnrichment = (motif) =>
+  motif.shuffled_z_score < 0 || motif.shuffled_p_value > 0.05;
 
 const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   factor,
@@ -46,6 +59,11 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedPeak, setSelectedPeak] = useState<string | null>(null);
   const [expandedAccordion, setExpandedAccordion] = useState<number | false>(0);
+  const [reverseComplements, setReverseComplements] = useState<boolean[]>([]);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [exportMotif, setExportMotif] = useState(true);
+  const [exportLogo, setExportLogo] = useState(false);
+
   const svgRefs = useRef<(SVGSVGElement | null)[]>([]);
   const assembly = species === "Human" ? "GRCh38" : "mm10";
 
@@ -78,9 +96,50 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     }
   }, [data, selectedPeak]);
 
+  useEffect(() => {
+    if (motifData && motifData.meme_motifs) {
+      setReverseComplements(
+        new Array(motifData.meme_motifs.length).fill(false)
+      );
+    }
+  }, [motifData]);
+
   const handleAccessionClick = (peakAccession: string, index: number) => {
     setSelectedPeak(peakAccession);
     setExpandedAccordion(index);
+  };
+
+  const handleReverseComplement = (index: number) => {
+    setReverseComplements((prev) =>
+      prev.map((rc, i) => (i === index ? !rc : rc))
+    );
+  };
+
+  const handleDownload = async (
+    name: string,
+    ppm: number[][],
+    svgElement: SVGSVGElement | null
+  ) => {
+    if (exportMotif) {
+      downloadData(
+        meme([
+          {
+            accession: name,
+            pwm: ppm,
+            factor: "",
+            dbd: "",
+            color: "",
+            coordinates: [0, 0],
+          } as MMotif,
+        ]),
+        `${name}.meme`
+      );
+    }
+    if (exportLogo && svgElement) {
+      const ref = { current: svgElement } as MutableRefObject<SVGSVGElement>;
+      downloadSVGElementAsSVG(ref, `${name}-logo.svg`);
+    }
+    setIsDialogOpen(false);
   };
 
   if (loading) return <CircularProgress />;
@@ -183,164 +242,268 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
             motifData.meme_motifs &&
             motifData.meme_motifs.length > 0 && (
               <Box>
-                {motifData.meme_motifs.map((motif, index) => (
-                  <Box key={motif.id} mb={4}>
-                    <Grid container spacing={2}>
-                      <Grid xs={8}>
-                        <DNALogo
-                          ppm={motif.pwm}
-                          alphabet={DNAAlphabet}
-                          ref={(el: SVGSVGElement | null) =>
-                            (svgRefs.current[index] = el)
-                          }
-                          width={400}
-                          height={250}
-                        />
-                        <Box display="flex" mt={2} gap={2}>
-                          <Button
-                            variant="contained"
-                            startIcon={<DownloadIcon />}
-                            sx={{
-                              backgroundColor: "#8169BF",
-                              borderRadius: "24px",
-                              textTransform: "none",
-                              fontWeight: "medium",
-                              "&:hover": {
+                {motifData.meme_motifs.map((motif, index) => {
+                  const motifppm = reverseComplements[index]
+                    ? rc(motif.pwm)
+                    : motif.pwm;
+
+                  return (
+                    <Box key={motif.id} mb={4}>
+                      <Grid container spacing={2}>
+                        <Grid xs={8}>
+                          {poorPeakCentrality(motif) && (
+                            <Chip
+                              icon={<ErrorOutlineIcon />}
+                              label="poor peak centrality"
+                              sx={{
+                                backgroundColor: "rgba(255, 165, 0, 0.15)",
+                                color: "#A52A2A",
+                                fontWeight: "bold",
+                                borderRadius: "16px",
+                                padding: "5px",
+                                marginBottom: "8px",
+                              }}
+                            />
+                          )}
+                          {poorPeakEnrichment(motif) && (
+                            <Chip
+                              icon={<InfoIcon />}
+                              label="poor peak enrichment"
+                              sx={{
+                                backgroundColor: "rgba(75, 0, 130, 0.1)",
+                                color: "#4B0082",
+                                fontWeight: "bold",
+                                borderRadius: "16px",
+                                padding: "5px",
+                                marginBottom: "8px",
+                                marginLeft: "8px",
+                              }}
+                            />
+                          )}
+                          <DNALogo
+                            ppm={motifppm}
+                            alphabet={DNAAlphabet}
+                            ref={(el: SVGSVGElement | null) =>
+                              (svgRefs.current[index] = el)
+                            }
+                            width={400}
+                            height={250}
+                          />
+                          <Box display="flex" mt={2} gap={2}>
+                            <Button
+                              variant="contained"
+                              startIcon={<SaveAltIcon />}
+                              onClick={() => setIsDialogOpen(true)}
+                              sx={{
+                                borderRadius: "20px",
                                 backgroundColor: "#8169BF",
-                              },
-                            }}
-                          >
-                            Download
-                          </Button>
-                          <Button
-                            variant="outlined"
-                            startIcon={<SwapHorizIcon />}
-                            sx={{
-                              borderColor: "#8169BF",
-                              color: "#8169BF",
-                              backgroundColor: "white",
-                              borderRadius: "24px",
-                              textTransform: "none",
-                              fontWeight: "medium",
-                              "&:hover": {
-                                backgroundColor: "white",
+                                color: "white",
+                              }}
+                            >
+                              Download
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              startIcon={<SwapHorizIcon />}
+                              onClick={() => handleReverseComplement(index)}
+                              sx={{
+                                borderRadius: "20px",
                                 borderColor: "#8169BF",
-                              },
-                            }}
-                          >
-                            Reverse Complement
-                          </Button>
-                          <Button
-                            variant="outlined"
-                            startIcon={<PublicIcon />}
-                            sx={{
-                              borderColor: "#8169BF",
-                              color: "#8169BF",
-                              backgroundColor: "white",
-                              borderRadius: "24px",
-                              textTransform: "none",
-                              fontWeight: "medium",
-                              "&:hover": {
+                                color: "#8169BF",
                                 backgroundColor: "white",
+                                marginRight: 2,
+                              }}
+                            >
+                              Reverse Complement
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              startIcon={<PublicIcon />}
+                              sx={{
                                 borderColor: "#8169BF",
-                              },
-                            }}
+                                color: "#8169BF",
+                                backgroundColor: "white",
+                                borderRadius: "24px",
+                                textTransform: "none",
+                                fontWeight: "medium",
+                                "&:hover": {
+                                  backgroundColor: "white",
+                                  borderColor: "#8169BF",
+                                },
+                              }}
+                            >
+                              Show Genomic Sites
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              startIcon={<VisibilityIcon />}
+                              sx={{
+                                borderColor: "#8169BF",
+                                color: "#8169BF",
+                                backgroundColor: "white",
+                                borderRadius: "24px",
+                                textTransform: "none",
+                                fontWeight: "medium",
+                                "&:hover": {
+                                  backgroundColor: "white",
+                                  borderColor: "#8169BF",
+                                },
+                              }}
+                            >
+                              Show QC
+                            </Button>
+                          </Box>
+                          <Dialog
+                            open={isDialogOpen}
+                            onClose={() => setIsDialogOpen(false)}
+                            aria-labelledby="export-dialog-title"
                           >
-                            Show Genomic Sites
-                          </Button>
-                          <Button
-                            variant="outlined"
-                            startIcon={<VisibilityIcon />}
+                            <DialogTitle id="export-dialog-title">
+                              Download as
+                            </DialogTitle>
+                            <DialogContent>
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={exportMotif}
+                                    onChange={(e) =>
+                                      setExportMotif(e.target.checked)
+                                    }
+                                    sx={{ color: "#8169BF" }}
+                                  />
+                                }
+                                label="Motif (MEME)"
+                              />
+                              <FormControlLabel
+                                control={
+                                  <Checkbox
+                                    checked={exportLogo}
+                                    onChange={(e) =>
+                                      setExportLogo(e.target.checked)
+                                    }
+                                    sx={{ color: "#8169BF" }}
+                                  />
+                                }
+                                label="Logo"
+                              />
+                            </DialogContent>
+                            <DialogActions>
+                              <Button
+                                onClick={() => setIsDialogOpen(false)}
+                                sx={{ color: "#8169BF" }}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                onClick={() =>
+                                  handleDownload(
+                                    motif.id,
+                                    motifppm,
+                                    svgRefs.current[index]
+                                  )
+                                }
+                                sx={{
+                                  borderRadius: "20px",
+                                  backgroundColor: "#8169BF",
+                                  color: "white",
+                                }}
+                              >
+                                Download
+                              </Button>
+                            </DialogActions>
+                          </Dialog>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <Paper
+                            elevation={3}
                             sx={{
-                              borderColor: "#8169BF",
-                              color: "#8169BF",
-                              backgroundColor: "white",
-                              borderRadius: "24px",
-                              textTransform: "none",
-                              fontWeight: "medium",
+                              padding: "16px",
+                              height: "auto",
+                              width: "100%",
+                              maxWidth: "250px",
+                              textAlign: "center",
+                              display: "flex",
+                              flexDirection: "column",
                               justifyContent: "center",
-                              height: "100%",
-                              "&:hover": {
-                                backgroundColor: "white",
-                                borderColor: "#8169BF",
-                              },
+                              alignItems: "flex-start",
+                              margin: "0 auto",
                             }}
                           >
-                            Show QC
-                          </Button>
-                        </Box>
-                      </Grid>
-                      <Grid item xs={4}>
-                        <Paper
-                          elevation={3}
-                          sx={{
-                            padding: "16px",
-                            height: "auto",
-                            width: "100%",
-                            maxWidth: "250px",
-                            textAlign: "center",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "flex-start",
-                            margin: "0 auto",
-                          }}
-                        >
-                          {/* E-value Section */}
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                            mb={2}
-                            width="100%"
-                          >
-                            <Tooltip
-                              title="The statistical significance of the motif. The E-value is an estimate of
-              the expected number that one would find in a similarly sized set of
-              random sequences (sequences where each position is independent and
-              letters are chosen according to the background letter frequencies)."
+                            <Box
+                              display="flex"
+                              alignItems="center"
+                              mb={2}
+                              width="100%"
                             >
-                              <HelpOutlineIcon
-                                fontSize="medium"
-                                sx={{ marginRight: 1 }}
-                              />
-                            </Tooltip>
-                            <Typography
-                              variant="body1"
-                              sx={{ fontSize: "1.25rem", fontWeight: "bold" }}
-                            >
-                              <b>E-value:</b> {motif.e_value}
-                            </Typography>
-                          </Box>
+                              <Tooltip
+                                title={
+                                  <Typography sx={{ fontSize: "1rem" }}>
+                                    The statistical significance of the motif.
+                                    The E-value is an estimate of the expected
+                                    number that one would find in a similarly
+                                    sized set of random sequences (sequences
+                                    where each position is independent and
+                                    letters are chosen according to the
+                                    background letter frequencies).
+                                  </Typography>
+                                }
+                              >
+                                <HelpOutlineIcon
+                                  fontSize="medium"
+                                  sx={{ marginRight: 1 }}
+                                />
+                              </Tooltip>
+                              <Typography
+                                variant="body1"
+                                sx={{
+                                  fontSize: "1.25rem",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                <b>E-value:</b> {motif.e_value}
+                              </Typography>
+                            </Box>
 
-                          {/* Divider */}
-                          <Divider sx={{ width: "100%", mb: 2 }} />
+                            <Divider sx={{ width: "100%", mb: 2 }} />
 
-                          {/* Occurrences Section */}
-                          <Box display="flex" alignItems="center" width="100%">
-                            <Tooltip
-                              title="The number of optimal IDR thresholded peaks which contained at least one
-              occurrence of this motif according to FIMO."
+                            <Box
+                              display="flex"
+                              alignItems="center"
+                              width="100%"
                             >
-                              <HelpOutlineIcon
-                                fontSize="medium"
-                                sx={{ marginRight: 1 }}
-                              />
-                            </Tooltip>
-                            <Typography
-                              variant="body1"
-                              sx={{ fontSize: "1.25rem", fontWeight: "bold" }}
-                            >
-                              <b>Occurrences:</b>{" "}
-                              {motif.original_peaks_occurrences.toLocaleString()}{" "}
-                              / {motif.original_peaks.toLocaleString()} peaks
-                            </Typography>
-                          </Box>
-                        </Paper>
+                              <Tooltip
+                                title={
+                                  <Typography sx={{ fontSize: "1rem" }}>
+                                    The number of optimal IDR thresholded peaks
+                                    which contained at least one occurrence of
+                                    this motif according to FIMO.
+                                  </Typography>
+                                }
+                              >
+                                <HelpOutlineIcon
+                                  fontSize="medium"
+                                  sx={{ marginRight: 1 }}
+                                />
+                              </Tooltip>
+                              <Typography
+                                variant="body1"
+                                sx={{
+                                  fontSize: "1.25rem",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                <b>Occurrences:</b>{" "}
+                                {motif.original_peaks_occurrences.toLocaleString()}{" "}
+                                / {motif.original_peaks.toLocaleString()} peaks
+                              </Typography>
+                            </Box>
+                          </Paper>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                    <Divider style={{ margin: "20px 0" }} />
-                  </Box>
-                ))}
+                      <Divider style={{ margin: "20px 0" }} />
+                    </Box>
+                  );
+                })}
               </Box>
             )}
           {!motifLoading && !motifData && (
