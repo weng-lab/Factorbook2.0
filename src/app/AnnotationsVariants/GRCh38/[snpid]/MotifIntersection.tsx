@@ -216,19 +216,15 @@ const COMPLETE_MOTIF_TABLE_COLUMNS: DataTableColumn<MotifOccurrenceMatchWithSNP>
       ),
     },
     {
-      header: "Best database match",
-      value: (x) => {
-        const bestMatch = x.motif?.tomtom_matches
-          ?.slice()
-          .sort((a, b) => (a.e_value || 0) - (b.e_value || 0))[0];
-        return bestMatch
-          ? `${bestMatch.target_id}${
-              bestMatch.jaspar_name !== undefined
-                ? `/${bestMatch.jaspar_name}`
-                : ""
-            } (${bestMatch.target_id.startsWith("MA") ? "JASPAR" : "HOCOMOCO"})`
-          : "--";
-      },
+        header: 'Best database match',
+        value: x => {
+            const bestMatch = x.motif.tomtom_matches?.slice().sort((a, b) => a.e_value - b.e_value)[0];
+            return bestMatch
+                ? `${bestMatch.target_id}${bestMatch.jaspar_name ? `/${bestMatch.jaspar_name}` : ''} (${
+                      bestMatch.target_id.startsWith('MA') ? 'JASPAR' : 'HOCOMOCO'
+                  })`
+                : '--';
+        },
     },
     {
       header: "Occurrence q-value",
