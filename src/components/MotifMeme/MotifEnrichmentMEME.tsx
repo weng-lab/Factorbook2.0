@@ -269,6 +269,10 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 ? rc(motif.pwm)
                 : motif.pwm;
 
+              // Determine if the motif should be greyed out
+              const isGreyedOut =
+                poorPeakCentrality(motif) || poorPeakEnrichment(motif);
+
               return (
                 <Box key={motif.id} mb={4}>
                   <Grid container spacing={2}>
@@ -303,15 +307,22 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                           }}
                         />
                       )}
-                      <DNALogo
-                        ppm={motifppm}
-                        alphabet={DNAAlphabet}
-                        ref={(el: SVGSVGElement | null) =>
-                          (svgRefs.current[index] = el)
-                        }
-                        width={400}
-                        height={250}
-                      />
+                      <Box
+                        sx={{
+                          opacity: isGreyedOut ? 0.5 : 1,
+                          filter: isGreyedOut ? "grayscale(100%)" : "none",
+                        }}
+                      >
+                        <DNALogo
+                          ppm={motifppm}
+                          alphabet={DNAAlphabet}
+                          ref={(el: SVGSVGElement | null) =>
+                            (svgRefs.current[index] = el)
+                          }
+                          width={400}
+                          height={250}
+                        />
+                      </Box>
                       <Box display="flex" mt={2} gap={2}>
                         <Button
                           variant="contained"
