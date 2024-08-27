@@ -172,11 +172,35 @@ const PeakIntersectionMerger: React.FC<PeakIntersectionMergerProps> = (
       <Typography variant="h6">
         Searching for intersecting ChIP-seq peaks...
       </Typography>
-      <CircularProgress
-        variant="determinate"
-        value={(progress * 100.0) / props.snps.length}
-        color="secondary"
-      />
+
+      <Box sx={{ position: "relative", display: "inline-flex" }}>
+        <CircularProgress
+          variant="determinate"
+          value={(progress * 100.0) / props.snps.length}
+          color="secondary"
+        />
+
+        <Box
+          sx={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            position: "absolute",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            variant="caption"
+            component="div"
+            sx={{ color: "text.secondary" }}
+          >{`${((progress * 100.0) / props.snps.length).toFixed(
+            0
+          )}%`}</Typography>
+        </Box>
+      </Box>
     </Box>
   );
 };

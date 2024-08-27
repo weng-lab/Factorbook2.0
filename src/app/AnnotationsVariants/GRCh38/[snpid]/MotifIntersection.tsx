@@ -4,8 +4,6 @@ import React, {
   useMemo,
   useState,
   useContext,
-  useRef,
-  MutableRefObject,
 } from "react";
 import {
   Box,
@@ -17,12 +15,6 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
-  Button,
-  DialogTitle,
-  Checkbox,
-  DialogContent,
-  DialogActions,
-  Dialog,
 } from "@mui/material";
 import {
   MotifIntersectionMergerProps,
@@ -38,11 +30,6 @@ import {
 } from "@weng-lab/psychscreen-ui-components";
 import { MOTIF_QUERY, RDHS_OCCU_QUERY } from "../../queries";
 import { ApiContext } from "../../../../ApiContext";
-import { Logo, DNAAlphabet } from "logojs-react";
-import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
-import { meme, MMotif, rc } from "@/components/MotifSearch/MotifUtil";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import AnnotatedLogo from "./AnnotatedLogo";
 
 const usePrevious = (value: any) => {
@@ -118,11 +105,34 @@ const MotifIntersectionMerger: React.FC<MotifIntersectionMergerProps> = (
       <Typography variant="h6">
         Searching for intersecting TF motifs...
       </Typography>
-      <CircularProgress
-        variant="determinate"
-        value={(progress * 100.0) / props.snps.length}
-        color="secondary"
-      />
+
+      <Box sx={{ position: "relative", display: "inline-flex" }}>
+        <CircularProgress
+          variant="determinate"
+          value={(progress * 100.0) / props.snps.length}
+          color="secondary"
+        />
+        <Box
+          sx={{
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            position: "absolute",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography
+            variant="caption"
+            component="div"
+            sx={{ color: "text.secondary" }}
+          >{`${((progress * 100.0) / props.snps.length).toFixed(
+            0
+          )}%`}</Typography>
+        </Box>
+      </Box>
     </Box>
   );
 };
@@ -130,6 +140,20 @@ const MotifIntersectionMerger: React.FC<MotifIntersectionMergerProps> = (
 function fq(x: MinorAlleleFrequency): number {
   return (x.afr_af + x.amr_af + x.eas_af + x.eur_af + x.sas_af) / 5;
 }
+
+const alteredValue = (
+  pwm: number[][],
+  snp: number,
+  ref: string,
+  alt: string,
+  strand: string
+): number => {
+  const index = strand === "+" ? snp : pwm.length - snp - 1;
+  const refIndex = strand === "+" ? 0 : 3;
+  const altIndex = strand === "+" ? 1 : 2;
+  if (!pwm[index] || !pwm[index][altIndex] || !pwm[index][refIndex]) return 0.0;
+  return Math.abs(pwm[index][altIndex] - pwm[index][refIndex]);
+};
 
 const MOTIF_TABLE_COLUMNS: DataTableColumn<any>[] = [
   {
@@ -145,20 +169,6 @@ const MOTIF_TABLE_COLUMNS: DataTableColumn<any>[] = [
     value: (x) => (x.motifCount !== undefined ? x.motifCount : 0),
   },
 ];
-
-const alteredValue = (
-  pwm: number[][],
-  snp: number,
-  ref: string,
-  alt: string,
-  strand: string
-): number => {
-  const index = strand === "+" ? snp : pwm.length - snp - 1;
-  const refIndex = strand === "+" ? 0 : 3;
-  const altIndex = strand === "+" ? 1 : 2;
-  if (!pwm[index] || !pwm[index][altIndex] || !pwm[index][refIndex]) return 0.0;
-  return Math.abs(pwm[index][altIndex] - pwm[index][refIndex]);
-};
 
 const COMPLETE_MOTIF_TABLE_COLUMNS: DataTableColumn<MotifOccurrenceMatchWithSNP>[] =
   [
@@ -216,19 +226,17 @@ const COMPLETE_MOTIF_TABLE_COLUMNS: DataTableColumn<MotifOccurrenceMatchWithSNP>
       ),
     },
     {
-        header: 'Best database match',
-        value: x => {
-            const bestMatch = x.motif.tomtom_matches?.slice().sort((a, b) => a.e_value - b.e_value)[0];
-            return bestMatch
-                ? `${bestMatch.target_id}${bestMatch.jaspar_name ? `/${bestMatch.jaspar_name}` : ''} (${
-                      bestMatch.target_id.startsWith('MA') ? 'JASPAR' : 'HOCOMOCO'
-                  })`
-                : '--';
-        },
-    },
-    {
-      header: "Occurrence q-value",
-      value: (x) => (x.q_value !== undefined ? x.q_value.toString() : "N/A"),
+      header: "Best database match",
+      value: (x) => {
+        const bestMatch = x.motif.tomtom_matches
+          ?.slice()
+          .sort((a, b) => a.e_value - b.e_value)[0];
+        return bestMatch
+          ? `${bestMatch.target_id}${
+              bestMatch.jaspar_name ? `/${bestMatch.jaspar_name}` : ""
+            } (${bestMatch.target_id.startsWith("MA") ? "JASPAR" : "HOCOMOCO"})`
+          : "--";
+      },
     },
   ];
 

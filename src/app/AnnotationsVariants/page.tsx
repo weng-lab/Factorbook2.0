@@ -149,6 +149,18 @@ const SmallTextField = styled(TextField)({
   "& .MuiInputBase-root": {
     height: "32px",
   },
+  "& .MuiOutlinedInput-root": {
+    backgroundColor: "#EDE7F6",
+    height: "40px",
+    borderRadius: "24px",
+    paddingLeft: "5px",
+    "&:hover fieldset": {
+      borderColor: "#673AB7",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#673AB7",
+    },
+  },
 });
 
 const PurpleAutocomplete = styled(Autocomplete)({
@@ -322,11 +334,11 @@ const AnnotationsVariants = () => {
                         }
                         setInputValue(newInputValue);
                       }}
-                      noOptionsText="e.g. rs11669173"
+                      noOptionsText="Example: rs3794102"
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          placeholder="e.g. rs11669173"
+                          placeholder="Enter rsID or locus"
                           fullWidth
                           InputProps={{
                             ...params.InputProps,
@@ -366,6 +378,7 @@ const AnnotationsVariants = () => {
                       }}
                     />
                   </PurpleFormControl>
+
                   <Button
                     variant="contained"
                     color="secondary"
@@ -393,6 +406,11 @@ const AnnotationsVariants = () => {
                     Search
                   </Button>
                 </Stack>
+                <Box sx={{ marginLeft: "10px" }}>
+                  <Typography variant="caption" sx={{ color: "gray" }}>
+                    Example: rs3794102
+                  </Typography>
+                </Box>
               </StyledBox>
               <Box sx={{ mt: 4 }}>
                 <Typography variant="h6" gutterBottom>
