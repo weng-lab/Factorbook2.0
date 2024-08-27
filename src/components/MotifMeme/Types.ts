@@ -30,6 +30,7 @@ export type BiosamplePartition = {
 
 export type MotifResponse = {
   meme_motifs: {
+    tomtomMatch: any;
     consensus_regex: string;
     pwm: number[][];
     e_value: number;
