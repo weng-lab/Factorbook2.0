@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useMemo } from "react";
+import React, { useState, useCallback } from "react";
 import TranscriptionFactors from "@/components/TranscriptionFactors";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Checkbox from "@mui/material/Checkbox";
-import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -16,19 +15,27 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Divider from "@mui/material/Divider";
-import Autocomplete from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import { debounce } from "lodash";
 import Link from "@mui/material/Link";
-import styled from "@emotion/styled";
 import Config from "../../../config.json";
-import { FormControl } from "@mui/material";
 import { SNP_AUTOCOMPLETE_QUERY } from "./queries";
 import { useParams } from "react-router";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
+import {
+  POPULATIONS,
+  SUBPOPULATIONS,
+  StyledBox,
+  CodeBox,
+  FlexBox,
+  SmallSelect,
+  SmallTextField,
+  PurpleAutocomplete,
+  PurpleFormControl,
+} from "./const";
 
 type Snp = {
   id: string;
@@ -36,153 +43,6 @@ type Snp = {
   start: number;
   end: number;
 };
-
-const NONE = { text: "(none)", value: "NONE" };
-
-const POPULATIONS = [
-  { text: "African", value: "AFRICAN" },
-  { text: "Native American", value: "AMERICAN" },
-  { text: "East Asian", value: "EAST_ASIAN" },
-  { text: "European", value: "EUROPEAN" },
-  { text: "South Asian", value: "SOUTH_ASIAN" },
-];
-
-const SUBPOPULATIONS: Map<string, { text: string; value: string }[]> = new Map([
-  [
-    "AFRICAN",
-    [
-      NONE,
-      { text: "Gambian", value: "GAMBIAN" },
-      { text: "Mende", value: "MENDE" },
-      { text: "Easn", value: "ESAN" },
-      { text: "African American", value: "AFRICAN_AMERICAN" },
-      { text: "African Caribbean", value: "AFRICAN_CARIBBEAN" },
-    ],
-  ],
-  [
-    "AMERICAN",
-    [
-      NONE,
-      { text: "Mexican", value: "MEXICAN" },
-      { text: "Puerto Rican", value: "PUERTO_RICAN" },
-      { text: "Colombian", value: "COLOMBIAN" },
-      { text: "Peruvian", value: "PERUVIAN" },
-      { text: "Southern Han Chinese", value: "SOUTHERN_HAN_CHINESE" },
-    ],
-  ],
-  [
-    "EAST_ASIAN",
-    [
-      NONE,
-      { text: "Han Chinese from Beijing", value: "HAN_CHINESE_BEIJING" },
-      { text: "Japanese", value: "JAPANESE" },
-      { text: "Dai", value: "DAI" },
-      { text: "Kinh", value: "KINH" },
-      { text: "Southern Han Chinese", value: "SOUTHERN_HAN_CHINESE" },
-    ],
-  ],
-  [
-    "EUROPEAN",
-    [
-      NONE,
-      { text: "Iberian", value: "IBERIAN" },
-      { text: "British", value: "BRITISH" },
-      { text: "Finnish", value: "FINNISH" },
-      { text: "Toscani", value: "TOSCANI" },
-      {
-        text: "Utah resident northwest European",
-        value: "UTAH_RESIDENT_NW_EUROPEAN",
-      },
-    ],
-  ],
-  [
-    "SOUTH_ASIAN",
-    [
-      NONE,
-      { text: "Gujarati", value: "GUJARATI" },
-      { text: "Punjabi", value: "PUNJABI" },
-      { text: "Bengali", value: "BENGALI" },
-      { text: "Sri Lankan Tamil", value: "SRI_LANKAN_TAMIL" },
-      { text: "Indian Telugu", value: "INDIAN_TELUGU" },
-    ],
-  ],
-]);
-
-const POPULATION_MAP = new Map(POPULATIONS.map((x) => [x.value, x.text]));
-const SUBPOPULATION_MAP = new Map(
-  ["AFRICAN", "AMERICAN", "EAST_ASIAN", "EUROPEAN", "SOUTH_ASIAN"].map((x) => [
-    x,
-    new Map(SUBPOPULATIONS.get(x)!.map((xx) => [xx.value, xx.text])),
-  ])
-);
-
-const StyledBox = styled(Box)({
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#EDE7F6",
-  },
-});
-
-const CodeBox = styled(Box)({
-  backgroundColor: "#f5f5f5",
-  padding: "16px",
-  overflowX: "auto",
-  fontFamily: "monospace",
-});
-
-const FlexBox = styled(Box)({
-  display: "flex",
-  alignItems: "center",
-  gap: "4px",
-  marginTop: "8px",
-});
-
-const SmallSelect = styled(Select)({
-  minWidth: "200px",
-  height: "32px",
-  "& .MuiSelect-select": {
-    padding: "6px 14px",
-  },
-});
-
-const SmallTextField = styled(TextField)({
-  minWidth: "200px",
-  "& .MuiInputBase-root": {
-    height: "32px",
-  },
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#EDE7F6",
-    height: "40px",
-    borderRadius: "24px",
-    paddingLeft: "5px",
-    "&:hover fieldset": {
-      borderColor: "#673AB7",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#673AB7",
-    },
-  },
-});
-
-const PurpleAutocomplete = styled(Autocomplete)({
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#EDE7F6",
-    "&:hover fieldset": {
-      borderColor: "#673AB7",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#673AB7",
-    },
-  },
-  "& .MuiAutocomplete-endAdornment": {
-    color: "#673AB7",
-  },
-});
-
-const PurpleFormControl = styled(FormControl)({
-  "& .MuiInputLabel-root.Mui-focused": {
-    color: "#673AB7",
-  },
-});
 
 const AnnotationsVariants = () => {
   const [value, setValue] = useState(0);
@@ -195,7 +55,7 @@ const AnnotationsVariants = () => {
   const [page, setPage] = useState(0);
   const [selected, setSelected] = useState(true);
 
-  const { _assembly, _i, p, s, r } = useParams();
+  const { p, s, r } = useParams();
 
   const snpid = params?.[2];
 

@@ -28,15 +28,6 @@ function f(coordinates: GenomicRange): {
   };
 }
 
-// const cellTypeRoute = (
-//   species?: string,
-//   celltype?: string,
-//   details?: string
-// ): string =>
-//   `/ct${species ? `/${species}` : ""}${
-//     species && celltype ? `/${celltype}` : ""
-//   }${species && celltype && details ? `/${details}` : ""}`;
-
 const tfRoute = (species?: string, factor?: string, details?: string): string =>
   `/TranscriptionFactor${species ? `/${species}` : ""}${
     species && factor ? `/${factor}` : ""

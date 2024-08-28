@@ -17,10 +17,10 @@ import {
 import PeakIntersectionView from "../../../PeakIntersection";
 import MotifIntersectionView from "../../../MotifIntersection";
 import { useSNPData } from "../../../../../hooks";
-import { ChainFile, loadChainFile } from "liftover";
+import { ChainFile } from "liftover";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
-import { inflate } from "pako";
+import { chainFileFetch } from "../../../chainFileFetch";
 
 const AnnotationDetailLD = () => {
   const [loadingChains, setLoadingChains] = useState(false);
@@ -28,27 +28,16 @@ const AnnotationDetailLD = () => {
 
   useEffect(() => {
     setLoadingChains(true);
-    fetch(
-      "https://hgdownload.cse.ucsc.edu/goldenpath/hg38/liftOver/hg38ToHg19.over.chain.gz"
-    )
-      .then((x) => x.blob())
-      .then((x) => x.arrayBuffer())
-      .then((x) => new TextDecoder().decode(inflate(new Uint8Array(x))))
-      .then((x) => {
-        const loadedChainFile = loadChainFile(x);
+    chainFileFetch().then(
+      (loadedChainFile: React.SetStateAction<ChainFile | undefined>) => {
         setChainFile(loadedChainFile);
         setLoadingChains(false);
-        console.log(loadedChainFile);
-      })
-      .catch((err) => {
-        console.error("Error loading chain file:", err);
-        setLoadingChains(false);
-      });
+      }
+    );
   }, []);
 
   const [annotationType, setAnnotationType] = useState("Peak Intersection");
   const { snpid, population, subpopulation, rSquared } = useParams();
-  console.log(chainFile);
 
   const { data, loading, mafResults } = useSNPData(
     snpid.toString(),

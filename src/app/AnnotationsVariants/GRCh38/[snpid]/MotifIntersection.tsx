@@ -4,6 +4,7 @@ import React, {
   useMemo,
   useState,
   useContext,
+  useRef,
 } from "react";
 import {
   Box,
@@ -22,6 +23,8 @@ import {
   IntersectionViewProps,
   GenomicRange,
   MinorAlleleFrequency,
+  SNPWithMotifCount,
+  RdhsOccurrenceMatch,
 } from "../../types";
 import { groupBy } from "lodash";
 import {
@@ -32,8 +35,8 @@ import { MOTIF_QUERY, RDHS_OCCU_QUERY } from "../../queries";
 import { ApiContext } from "../../../../ApiContext";
 import AnnotatedLogo from "./AnnotatedLogo";
 
-const usePrevious = (value: any) => {
-  const ref = React.useRef();
+const usePrevious = (value: String) => {
+  const ref = useRef<String>();
   useEffect(() => {
     ref.current = value;
   });
@@ -155,7 +158,7 @@ const alteredValue = (
   return Math.abs(pwm[index][altIndex] - pwm[index][refIndex]);
 };
 
-const MOTIF_TABLE_COLUMNS: DataTableColumn<any>[] = [
+const MOTIF_TABLE_COLUMNS: DataTableColumn<SNPWithMotifCount>[] = [
   {
     header: "SNP",
     value: (x) => x.id || "",
@@ -280,11 +283,13 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
           ...COMPLETE_MOTIF_TABLE_COLUMNS,
           {
             header: "occurrence p-value",
-            value: (x: any) => (x.p_value !== undefined ? x.p_value : "N/A"),
+            value: (x: RdhsOccurrenceMatch) =>
+              x.p_value !== undefined ? x.p_value : "N/A",
           },
           {
             header: "rdhs",
-            value: (x: any) => (x.rdhs !== undefined ? x.rdhs : "N/A"),
+            value: (x: RdhsOccurrenceMatch) =>
+              x.rdhs !== undefined ? x.rdhs : "N/A",
           },
         ]
       : COMPLETE_MOTIF_TABLE_COLUMNS;
