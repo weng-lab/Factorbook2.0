@@ -1,4 +1,4 @@
-import { Autocomplete, Box, FormControl, Select, styled, TextField } from "@mui/material";
+
 
 export const NONE = { text: "(none)", value: "NONE" };
 
@@ -70,71 +70,3 @@ export const SUBPOPULATIONS: Map<string, { text: string; value: string }[]> = ne
     ],
   ],
 ]);
-
-export const StyledBox = styled(Box)({
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#EDE7F6",
-  },
-});
-
-export const CodeBox = styled(Box)({
-  backgroundColor: "#f5f5f5",
-  padding: "16px",
-  overflowX: "auto",
-  fontFamily: "monospace",
-});
-
-export const FlexBox = styled(Box)({
-  display: "flex",
-  alignItems: "center",
-  gap: "4px",
-  marginTop: "8px",
-});
-
-export const SmallSelect = styled(Select)({
-  minWidth: "200px",
-  height: "32px",
-  "& .MuiSelect-select": {
-    padding: "6px 14px",
-  },
-});
-
-export const SmallTextField = styled(TextField)({
-  minWidth: "200px",
-  "& .MuiInputBase-root": {
-    height: "32px",
-  },
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#EDE7F6",
-    height: "40px",
-    borderRadius: "24px",
-    paddingLeft: "5px",
-    "&:hover fieldset": {
-      borderColor: "#673AB7",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#673AB7",
-    },
-  },
-});
-
-export const PurpleAutocomplete = styled(Autocomplete)({
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#EDE7F6",
-    "&:hover fieldset": {
-      borderColor: "#673AB7",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#673AB7",
-    },
-  },
-  "& .MuiAutocomplete-endAdornment": {
-    color: "#673AB7",
-  },
-});
-
-export const PurpleFormControl = styled(FormControl)({
-  "& .MuiInputLabel-root.Mui-focused": {
-    color: "#673AB7",
-  },
-});

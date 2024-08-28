@@ -25,17 +25,9 @@ import { SNP_AUTOCOMPLETE_QUERY } from "./queries";
 import { useParams } from "react-router";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
-import {
-  POPULATIONS,
-  SUBPOPULATIONS,
-  StyledBox,
-  CodeBox,
-  FlexBox,
-  SmallSelect,
-  SmallTextField,
-  PurpleAutocomplete,
-  PurpleFormControl,
-} from "./const";
+import { POPULATIONS, SUBPOPULATIONS } from "./const";
+import styled from "@emotion/styled";
+import { Autocomplete, FormControl, Select } from "@mui/material";
 
 type Snp = {
   id: string;
@@ -43,6 +35,74 @@ type Snp = {
   start: number;
   end: number;
 };
+
+const StyledBox = styled(Box)({
+  "& .MuiOutlinedInput-root": {
+    backgroundColor: "#EDE7F6",
+  },
+});
+
+const CodeBox = styled(Box)({
+  backgroundColor: "#f5f5f5",
+  padding: "16px",
+  overflowX: "auto",
+  fontFamily: "monospace",
+});
+
+const FlexBox = styled(Box)({
+  display: "flex",
+  alignItems: "center",
+  gap: "4px",
+  marginTop: "8px",
+});
+
+const SmallSelect = styled(Select)({
+  minWidth: "200px",
+  height: "32px",
+  "& .MuiSelect-select": {
+    padding: "6px 14px",
+  },
+});
+
+const SmallTextField = styled(TextField)({
+  minWidth: "200px",
+  "& .MuiInputBase-root": {
+    height: "32px",
+  },
+  "& .MuiOutlinedInput-root": {
+    backgroundColor: "#EDE7F6",
+    height: "40px",
+    borderRadius: "24px",
+    paddingLeft: "5px",
+    "&:hover fieldset": {
+      borderColor: "#673AB7",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#673AB7",
+    },
+  },
+});
+
+const PurpleAutocomplete = styled(Autocomplete)({
+  "& .MuiOutlinedInput-root": {
+    backgroundColor: "#EDE7F6",
+    "&:hover fieldset": {
+      borderColor: "#673AB7",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#673AB7",
+    },
+  },
+  "& .MuiAutocomplete-endAdornment": {
+    color: "#673AB7",
+  },
+});
+
+const PurpleFormControl = styled(FormControl)({
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "#673AB7",
+  },
+});
 
 const AnnotationsVariants = () => {
   const [value, setValue] = useState(0);
