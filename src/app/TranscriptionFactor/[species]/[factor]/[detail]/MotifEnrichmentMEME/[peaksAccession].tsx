@@ -47,7 +47,6 @@ const MotifPage: React.FC<MotifPageProps> = ({
 }) => {
   return (
     <MotifEnrichmentMEME
-      accession={peakAccession}
       factor={factor}
       species={species}
     />

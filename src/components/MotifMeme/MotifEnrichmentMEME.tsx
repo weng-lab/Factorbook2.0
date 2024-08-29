@@ -44,6 +44,9 @@ import { DNALogo, DNAAlphabet } from "logojs-react";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
+import CentralityPlot from "./CenrtralityPlot";
+import ATACPlot from "./ATACPlot";
+import ConservationPlot from "./ConservationPlot";
 
 interface MotifEnrichmentMEMEProps {
   factor: string;
@@ -67,6 +70,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [exportMotif, setExportMotif] = useState<boolean>(true);
   const [exportLogo, setExportLogo] = useState<boolean>(false);
+  const [showQC, setShowQC] = useState<boolean>(false); // State to handle QC visibility
 
   const svgRefs = useRef<(SVGSVGElement | null)[]>([]);
   const assembly = species === "Human" ? "GRCh38" : "mm10";
@@ -171,9 +175,23 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   );
 
   return (
-    <Box sx={{ height: "calc(100vh - 64px)", display: "flex", padding: "5px" }}>
+    <Box
+      sx={{
+        height: "calc(100vh - 64px)",
+        display: "flex",
+        padding: "5px",
+        flexDirection: { xs: "column", md: "row" },
+      }}
+    >
       {/* Left Side */}
-      <Box sx={{ width: "25%", overflowY: "auto", paddingRight: "10px" }}>
+      <Box
+        sx={{
+          width: { xs: "100%", md: "25%" },
+          overflowY: "auto",
+          paddingRight: { md: "10px" },
+          paddingBottom: { xs: "10px", md: "0" },
+        }}
+      >
         <Box mb={2}>
           <TextField
             label="Search Biosamples"
@@ -251,15 +269,23 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
       {/* Divider */}
       <Box
         sx={{
-          width: "1px",
+          width: { xs: "100%", md: "1px" },
+          height: { xs: "1px", md: "auto" },
           backgroundColor: "#ccc",
-          marginRight: "10px",
-          marginLeft: "10px",
+          marginRight: { md: "10px" },
+          marginLeft: { md: "10px" },
+          marginY: { xs: "10px", md: "0" },
         }}
       />
 
       {/* Right Side */}
-      <Box sx={{ flexGrow: 1, overflowY: "auto", paddingLeft: "10px" }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          overflowY: "auto",
+          paddingLeft: { md: "10px" },
+        }}
+      >
         {motifLoading && <CircularProgress />}
         {motifError && <p>Error: {motifError.message}</p>}
         {motifData && sortedMotifs.length > 0 && (
@@ -276,7 +302,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
               return (
                 <Box key={motif.id} mb={4}>
                   <Grid container spacing={2}>
-                    <Grid item xs={8}>
+                    <Grid item xs={12} md={8}>
                       {/* Add indicators for poor peak centrality and enrichment */}
                       {poorPeakCentrality(motif) && (
                         <Chip
@@ -383,10 +409,44 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                               borderColor: "#8169BF",
                             },
                           }}
+                          onClick={() => setShowQC(!showQC)} // Toggle QC visibility
                         >
-                          Show QC
+                          {showQC ? "Hide QC" : "Show QC"}
                         </Button>
                       </Box>
+
+                      {showQC && selectedPeak && (
+                        <Box mt={3}>
+                          <Grid container spacing={2}>
+                            <Grid item xs={12} md={6}>
+                              <CentralityPlot
+                                peak_centrality={motif.peak_centrality}
+                              />
+                            </Grid>
+
+                            {/* Conditionally render ATACPlot only if atac_data is a valid array */}
+                            {motif.atac_data &&
+                              Array.isArray(motif.atac_data) &&
+                              motif.atac_data.length > 0 && (
+                                <Grid item xs={12} md={6}>
+                                  <ATACPlot
+                                    name={motif.name}
+                                    accession={selectedPeak}
+                                    pwm={motifppm}
+                                  />
+                                </Grid>
+                              )}
+
+                            <Grid item xs={12} md={6}>
+                              <ConservationPlot
+                                name={motif.name}
+                                accession={selectedPeak}
+                                pwm={motifppm}
+                              />
+                            </Grid>
+                          </Grid>
+                        </Box>
+                      )}
                       <Dialog
                         open={isDialogOpen}
                         onClose={() => setIsDialogOpen(false)}
@@ -447,7 +507,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         </DialogActions>
                       </Dialog>
                     </Grid>
-                    <Grid item xs={4}>
+                    <Grid item xs={12} md={4}>
                       <Paper
                         elevation={3}
                         sx={{

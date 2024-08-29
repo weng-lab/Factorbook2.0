@@ -30,6 +30,7 @@ export type BiosamplePartition = {
 
 export type MotifResponse = {
   meme_motifs: {
+    atac_data: boolean;
     tomtomMatch: any;
     consensus_regex: string;
     pwm: number[][];
@@ -85,6 +86,13 @@ export type TOMTOMMatch = {
   sites: number;
   jaspar_name?: string;
   motifid: string;
+};
+
+export type GraphDataset = {
+  title: string;
+  forward_values: number[];
+  reverse_values?: number[];
+  color: string;
 };
 
 export type CentralityPlotProps = {
