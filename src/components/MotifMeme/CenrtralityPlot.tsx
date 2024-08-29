@@ -1,75 +1,47 @@
-import React, { useMemo, useRef } from "react";
-import { Button, Typography } from "@mui/material";
-import { MultiXLineChart } from "jubilant-carnival";
+import React, { useRef } from "react";
+import { Button } from "@mui/material";
+import { Graph } from "./Aggregate/Graphs";
 import { downloadSVG } from "@/utilities/svgdata";
-import { CentralityPlotProps } from "./Types";
 
-const CentralityPlot: React.FC<CentralityPlotProps> = ({ peak_centrality }) => {
-  const pcX = useMemo(
-    () =>
-      Object.keys(peak_centrality)
-        .map((s) => +s)
-        .filter((m: number) => m >= -300 && m <= 300)
-        .sort((a, b) => a - b),
-    [peak_centrality]
-  );
-
-  const pcY = useMemo(
-    () =>
-      pcX
-        .map((p) => peak_centrality[p])
-        .map((p, i, pcY) => {
-          let sum = p;
-          let count = 1;
-          for (
-            let j = Math.max(0, i - 3);
-            j < Math.min(pcY.length, i + 3);
-            j++
-          ) {
-            sum = sum + pcY[j];
-            count += 1;
-          }
-          return sum / count;
-        }),
-    [pcX, peak_centrality]
-  );
-
+const CentralityPlot: React.FC<{ peak_centrality: Record<number, number> }> = ({
+  peak_centrality,
+}) => {
+  const pcX = Object.keys(peak_centrality)
+    .map((s) => +s)
+    .sort((a, b) => a - b);
+  const pcY = pcX.map((p) => peak_centrality[p]);
   const ref = useRef<SVGSVGElement>(null);
 
   return (
-    <>
-      <Typography variant="h6" align="center" gutterBottom>
-        Peak Centrality
-      </Typography>
-      <MultiXLineChart
-        xDomain={{ start: -300, end: 300 }}
-        yDomain={{ start: 0, end: Math.max(...pcY) * 1.2 }}
-        lineProps={{ strokeWidth: 4 }}
-        data={[{ data: pcY, label: "motif density", color: "#000088" }]}
-        innerSize={{ width: 400, height: 220 }}
-        xAxisProps={{ fontSize: 15, title: "distance from peak summit (bp)" }}
-        yAxisProps={{ fontSize: 15, title: "motif density" }}
-        plotAreaProps={{
-          withGuideLines: true,
-          guideLineProps: { hideHorizontal: true },
-        }}
-        legendProps={{
-          size: { width: 135, height: 25 },
-          headerProps: {
-            numberFormat: (x: number) => Math.round(x).toString(),
-          },
-        }}
-        ref={ref}
+    <div>
+      <Graph
+        dataset={{ target: "peak_centrality", accession: "" }}
+        proximal_values={pcY}
+        distal_values={pcY}
+        is_forward_reverse={false}
+        xlabel="distance from peak summit (bp)"
+        ylabel="motif density"
+        height={220}
+        yMax={Math.max(...pcY) * 1.2}
+        padBottom
+        hideTitle
+        sref={ref}
       />
       <Button
         variant="contained"
-        color="primary"
         onClick={() => downloadSVG(ref, "peak-centrality.svg")}
-        sx={{ mt: 2 }}
+        sx={{
+          marginTop: "1em",
+          backgroundColor: "#8169BF",
+          color: "white",
+          "&:hover": {
+            backgroundColor: "#6954A1",
+          },
+        }}
       >
         Export SVG
       </Button>
-    </>
+    </div>
   );
 };
 
