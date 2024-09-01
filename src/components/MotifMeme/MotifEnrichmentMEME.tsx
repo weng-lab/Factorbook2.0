@@ -70,7 +70,9 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [exportMotif, setExportMotif] = useState<boolean>(true);
   const [exportLogo, setExportLogo] = useState<boolean>(false);
-  const [showQC, setShowQC] = useState<boolean>(false); // State to handle QC visibility
+  const [showQCStates, setShowQCStates] = useState<{ [key: string]: boolean }>(
+    {}
+  );
 
   const svgRefs = useRef<(SVGSVGElement | null)[]>([]);
   const assembly = species === "Human" ? "GRCh38" : "mm10";
@@ -121,6 +123,13 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     setReverseComplements((prev) =>
       prev.map((rc, i) => (i === index ? !rc : rc))
     );
+  };
+
+  const toggleShowQC = (motifId: string) => {
+    setShowQCStates((prevState) => ({
+      ...prevState,
+      [motifId]: !prevState[motifId],
+    }));
   };
 
   const handleDownload = async (
@@ -336,7 +345,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                       <Box
                         sx={{
                           opacity: isGreyedOut ? 0.5 : 1,
-                          filter: isGreyedOut ? "grayscale(100%)" : "none",
+                          filter: isGreyedOut ? "brightness(50%)" : "none",
                         }}
                       >
                         <DNALogo
@@ -409,13 +418,13 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                               borderColor: "#8169BF",
                             },
                           }}
-                          onClick={() => setShowQC(!showQC)} // Toggle QC visibility
+                          onClick={() => toggleShowQC(motif.id)} // Toggle QC visibility for this motif
                         >
-                          {showQC ? "Hide QC" : "Show QC"}
+                          {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
                         </Button>
                       </Box>
 
-                      {showQC && selectedPeak && (
+                      {showQCStates[motif.id] && selectedPeak && (
                         <Box mt={3}>
                           <Grid container spacing={2}>
                             <Grid item xs={12} md={6}>
