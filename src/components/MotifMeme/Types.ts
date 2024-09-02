@@ -99,6 +99,10 @@ export type CentralityPlotProps = {
   peak_centrality: { [key: string]: number };
 };
 
+export type TOMTOMMessageProps = {
+  tomtomMatch?: TOMTOMMatch;
+};
+
 export interface MemeMotifOccurrence {
   peaks_accession: string;
   consensus_regex: string;

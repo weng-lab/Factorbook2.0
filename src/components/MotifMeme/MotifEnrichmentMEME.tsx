@@ -47,6 +47,7 @@ import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
 import CentralityPlot from "./CenrtralityPlot";
 import ATACPlot from "./ATACPlot";
 import ConservationPlot from "./ConservationPlot";
+import { TOMTOMMessage } from "./TOMTOMMessage";
 
 interface MotifEnrichmentMEMEProps {
   factor: string;
@@ -70,6 +71,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [exportMotif, setExportMotif] = useState<boolean>(true);
   const [exportLogo, setExportLogo] = useState<boolean>(false);
+  // Removed showQC state
   const [showQCStates, setShowQCStates] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -358,6 +360,12 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                           height={250}
                         />
                       </Box>
+
+                      {/* Integrate TOMTOMMessage component here */}
+                      {motif.tomtomMatch && (
+                        <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
+                      )}
+
                       <Box display="flex" mt={2} gap={2}>
                         <Button
                           variant="contained"
@@ -418,7 +426,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                               borderColor: "#8169BF",
                             },
                           }}
-                          onClick={() => toggleShowQC(motif.id)} // Toggle QC visibility for this motif
+                          onClick={() => toggleShowQC(motif.id)} // Toggle QC visibility
                         >
                           {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
                         </Button>
