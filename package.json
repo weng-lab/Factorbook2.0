@@ -22,6 +22,7 @@
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
     "@visx/axis": "^3.10.1",
+    "@visx/event": "^3.3.0",
     "@visx/glyph": "^3.3.0",
     "@visx/gradient": "^3.3.0",
     "@visx/group": "^3.3.0",

@@ -23,15 +23,19 @@ import {
   Checkbox,
   Tooltip,
   Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import PublicIcon from "@mui/icons-material/Public";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import InfoIcon from "@mui/icons-material/Info";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/MotifMeme/Queries";
 import {
   DataResponse,
@@ -49,16 +53,44 @@ import ATACPlot from "./ATACPlot";
 import ConservationPlot from "./ConservationPlot";
 import { TOMTOMMessage } from "./TOMTOMMessage";
 
+// Helper function to convert numbers to scientific notation
+export function toScientificNotationElement(
+  num: number,
+  variant:
+    | "body1"
+    | "h1"
+    | "h2"
+    | "h3"
+    | "h4"
+    | "h5"
+    | "h6"
+    | "subtitle1"
+    | "subtitle2"
+    | "caption"
+    | "overline" = "body1",
+  sigFigs = 2
+) {
+  const scientific = num.toExponential(sigFigs);
+  const [coefficient, exponent] = scientific.split("e");
+  return (
+    <Typography variant={variant}>
+      {coefficient}&nbsp;×&nbsp;10<sup>{exponent}</sup>
+    </Typography>
+  );
+}
+
+// Check for poor peak centrality based on motif properties
+const poorPeakCentrality = (motif: any): boolean =>
+  motif.flank_z_score < 0 || motif.flank_p_value > 0.05;
+
+// Check for poor peak enrichment based on motif properties
+const poorPeakEnrichment = (motif: any): boolean =>
+  motif.shuffled_z_score < 0 || motif.shuffled_p_value > 0.05;
+
 interface MotifEnrichmentMEMEProps {
   factor: string;
   species: string;
 }
-
-const poorPeakCentrality = (motif: any): boolean =>
-  motif.flank_z_score < 0 || motif.flank_p_value > 0.05;
-
-const poorPeakEnrichment = (motif: any): boolean =>
-  motif.shuffled_z_score < 0 || motif.shuffled_p_value > 0.05;
 
 const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   factor,
@@ -71,7 +103,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [exportMotif, setExportMotif] = useState<boolean>(true);
   const [exportLogo, setExportLogo] = useState<boolean>(false);
-  // Removed showQC state
   const [showQCStates, setShowQCStates] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -361,7 +392,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         />
                       </Box>
 
-                      {/* Integrate TOMTOMMessage component here */}
+                      {/* TOMTOMMessage component */}
                       {motif.tomtomMatch && (
                         <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
                       )}
@@ -426,7 +457,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                               borderColor: "#8169BF",
                             },
                           }}
-                          onClick={() => toggleShowQC(motif.id)} // Toggle QC visibility
+                          onClick={() => toggleShowQC(motif.id)} // Toggle QC visibility for this specific motif
                         >
                           {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
                         </Button>
@@ -434,14 +465,15 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
 
                       {showQCStates[motif.id] && selectedPeak && (
                         <Box mt={3}>
-                          <Grid container spacing={2}>
+                          <Grid container spacing={2} mt={3}>
+                            {/* Centrality Plot */}
                             <Grid item xs={12} md={6}>
                               <CentralityPlot
                                 peak_centrality={motif.peak_centrality}
                               />
                             </Grid>
 
-                            {/* Conditionally render ATACPlot only if atac_data is a valid array */}
+                            {/* Conditionally render ATACPlot */}
                             {motif.atac_data &&
                               Array.isArray(motif.atac_data) &&
                               motif.atac_data.length > 0 && (
@@ -454,6 +486,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                                 </Grid>
                               )}
 
+                            {/* Conservation Plot */}
                             <Grid item xs={12} md={6}>
                               <ConservationPlot
                                 name={motif.name}
@@ -531,78 +564,81 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                           padding: "16px",
                           height: "auto",
                           width: "100%",
-                          maxWidth: "250px",
+                          maxWidth: "350px",
                           textAlign: "center",
                           display: "flex",
                           flexDirection: "column",
                           justifyContent: "center",
                           alignItems: "flex-start",
                           margin: "0 auto",
+                          backgroundColor: "white",
                         }}
                       >
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          mb={2}
-                          width="100%"
-                        >
-                          <Tooltip
-                            title={
-                              <Typography sx={{ fontSize: "1rem" }}>
-                                The statistical significance of the motif. The
-                                E-value is an estimate of the expected number
-                                that one would find in a similarly sized set of
-                                random sequences (sequences where each position
-                                is independent and letters are chosen according
-                                to the background letter frequencies).
-                              </Typography>
-                            }
-                          >
-                            <HelpOutlineIcon
-                              fontSize="medium"
-                              sx={{ marginRight: 1 }}
-                            />
-                          </Tooltip>
-                          <Typography
-                            variant="body1"
-                            sx={{
-                              fontSize: "1.25rem",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            <b>E-value:</b> {motif.e_value}
-                          </Typography>
-                        </Box>
-
-                        <Divider sx={{ width: "100%", mb: 2 }} />
-
-                        <Box display="flex" alignItems="center" width="100%">
-                          <Tooltip
-                            title={
-                              <Typography sx={{ fontSize: "1rem" }}>
-                                The number of optimal IDR thresholded peaks
-                                which contained at least one occurrence of this
-                                motif according to FIMO.
-                              </Typography>
-                            }
-                          >
-                            <HelpOutlineIcon
-                              fontSize="medium"
-                              sx={{ marginRight: 1 }}
-                            />
-                          </Tooltip>
-                          <Typography
-                            variant="body1"
-                            sx={{
-                              fontSize: "1.25rem",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            <b>Occurrences:</b>{" "}
-                            {motif.original_peaks_occurrences.toLocaleString()}{" "}
-                            / {motif.original_peaks.toLocaleString()} peaks
-                          </Typography>
-                        </Box>
+                        <Table>
+                          <TableBody>
+                            <TableRow>
+                              <TableCell>
+                                <Box display="flex" alignItems="center">
+                                  <Tooltip
+                                    title={
+                                      <Typography sx={{ fontSize: "1rem" }}>
+                                        The statistical significance of the
+                                        motif. The E-value is an estimate of the
+                                        expected number that one would find in a
+                                        similarly sized set of random sequences.
+                                      </Typography>
+                                    }
+                                  >
+                                    <HelpOutlineIcon
+                                      fontSize="small"
+                                      sx={{ marginRight: 1 }}
+                                    />
+                                  </Tooltip>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{ fontWeight: "bold" }}
+                                  >
+                                    E-value
+                                  </Typography>
+                                </Box>
+                              </TableCell>
+                              <TableCell align="right">
+                                {toScientificNotationElement(motif.e_value)}
+                              </TableCell>
+                            </TableRow>
+                            <TableRow>
+                              <TableCell>
+                                <Box display="flex" alignItems="center">
+                                  <Tooltip
+                                    title={
+                                      <Typography sx={{ fontSize: "1rem" }}>
+                                        The number of optimal IDR thresholded
+                                        peaks which contained at least one
+                                        occurrence of this motif according to
+                                        FIMO.
+                                      </Typography>
+                                    }
+                                  >
+                                    <HelpOutlineIcon
+                                      fontSize="small"
+                                      sx={{ marginRight: 1 }}
+                                    />
+                                  </Tooltip>
+                                  <Typography
+                                    variant="body1"
+                                    sx={{ fontWeight: "bold" }}
+                                  >
+                                    Occurrences
+                                  </Typography>
+                                </Box>
+                              </TableCell>
+                              <TableCell align="right">
+                                {motif.original_peaks_occurrences.toLocaleString()}{" "}
+                                / {motif.original_peaks.toLocaleString()} peaks
+                              </TableCell>
+                            </TableRow>
+                          </TableBody>
+                        </Table>
                       </Paper>
                     </Grid>
                   </Grid>

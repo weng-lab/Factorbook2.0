@@ -1,16 +1,16 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Button, CircularProgress } from "@mui/material";
-import { Graph } from "./Aggregate/Graphs"; // Adjust the import path as necessary
-import { downloadSVG } from "@/utilities/svgdata"; // Adjust the import path as necessary
+import React, { useRef, useEffect, useState } from "react";
+import { CircularProgress, Button } from "@mui/material";
+import { Graph } from "./Aggregate/Graphs";
+import { downloadSVG } from "@/utilities/svgdata";
 
 const ATACPlot: React.FC<{
   name: string;
   accession: string;
   pwm: number[][];
-  atac_data?: number[]; // Add the optional atac_data prop
+  atac_data?: number[];
 }> = ({ name, accession, pwm, atac_data }) => {
-  const [data, setData] = useState<number[] | null>(atac_data || null); // Initialize with atac_data if provided
-  const [loading, setLoading] = useState(!atac_data); // If atac_data is provided, no need to load
+  const [data, setData] = useState<number[] | null>(atac_data || null);
+  const [loading, setLoading] = useState(!atac_data);
 
   const sref = useRef<SVGSVGElement>(null);
 
@@ -26,36 +26,32 @@ const ATACPlot: React.FC<{
           setData(x);
           setLoading(false);
         })
-        .catch(() => setLoading(false)); // Handle errors gracefully
+        .catch(() => setLoading(false));
     }
-  }, [accession, name, atac_data]);
-
-  // Function to handle SVG download
-  const handleDownload = useCallback(() => {
-    if (sref.current) {
-      downloadSVG(sref, `${name}-atac.svg`);
-    }
-  }, [sref, name]);
+  }, [accession, atac_data]);
 
   if (loading) return <CircularProgress />;
 
-  // Render nothing if there's no data
   if (!data || data.length === 0) return null;
 
   return (
     <div>
       <Graph
         proximal_values={data}
-        distal_values={[]} // Assuming the first graph uses only proximal values
-        dataset={{ accession, target: name }} // Add the dataset prop
+        distal_values={[]}
+        dataset={{ accession, target: name }}
         title="ATAC-seq Plot"
-        width={500}
+        xlabel="Position"
+        ylabel="ATAC-seq Signal"
         height={300}
-        xAxisProps={{ fontSize: 12, title: "Position" }}
-        yAxisProps={{ fontSize: 12, title: "ATAC-seq Signal" }}
-        sref={sref} // Use sref instead of ref
+        yMax={Math.max(...data) * 1.2}
+        sref={sref}
       />
-      <Button variant="contained" color="primary" onClick={handleDownload}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => downloadSVG(sref, `${name}-atac.svg`)}
+      >
         Export SVG
       </Button>
     </div>

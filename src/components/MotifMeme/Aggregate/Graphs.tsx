@@ -1,151 +1,159 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import {
-  Grid,
-  Typography,
-  Divider,
-  IconButton,
-  CircularProgress,
-  Button,
-} from "@mui/material";
-import { MultiXLineChart, LegendEntry } from "jubilant-carnival";
-import JSZip from "jszip";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import React, { useMemo, useState } from "react";
+import { LinePath } from "@visx/shape";
+import { scaleLinear } from "@visx/scale";
+import { AxisBottom, AxisLeft } from "@visx/axis";
+import { Group } from "@visx/group";
+import { Tooltip, useTooltip, defaultStyles } from "@visx/tooltip";
+import { localPoint } from "@visx/event";
+import { bisector } from "d3-array";
+import { curveMonotoneX } from "d3-shape";
 
-import { useAggregateData, useHistoneMetadata } from "./hooks";
-import { GraphProps, GraphSetProps, CollapsibleGraphsetProps } from "./types";
-import { MARK_COLORS, MARK_TYPES, MARK_TYPE_ORDER } from "./marks";
-import { associateBy, groupBy } from "queryz";
-import { shadeHexColor } from "@/utilities/misc";
-import { downloadBlob, svgDataE } from "@/components/tf/geneexpression/utils";
+interface GraphProps {
+  proximal_values: number[];
+  distal_values: number[];
+  dataset: { target: string };
+  title?: string;
+  limit?: number;
+  xlabel?: string;
+  ylabel?: string;
+  height?: number;
+  yMax?: number;
+  padBottom?: boolean;
+  hideTitle?: boolean;
+}
+
+interface TooltipData {
+  x: number;
+  y: number;
+}
 
 export const Graph: React.FC<GraphProps> = ({
   proximal_values,
   distal_values,
   dataset,
-  is_forward_reverse,
   title,
-  limit,
+  limit = 2000,
   xlabel,
   ylabel,
-  height,
+  height = 300,
   yMax,
   padBottom,
   hideTitle,
-  sref,
-  lref,
-  yMin,
-  is_stranded_motif,
-  semiTransparent,
 }) => {
-  const validProximalValues = Array.isArray(proximal_values)
-    ? proximal_values
-    : [];
-  const validDistalValues = Array.isArray(distal_values) ? distal_values : [];
+  const width = 400;
+  const margin = { top: 20, right: 20, bottom: 40, left: 40 };
 
-  const minLength = Math.min(
-    validProximalValues.length,
-    validDistalValues.length
-  );
-  const adjustedProximalValues = validProximalValues.slice(0, minLength);
-  const adjustedDistalValues = validDistalValues.slice(0, minLength);
+  const [tooltipData, setTooltipData] = useState<TooltipData | null>(null);
 
-  const max = useMemo(
-    () =>
-      Math.max(...adjustedProximalValues, ...adjustedDistalValues, yMax ?? 5),
-    [adjustedDistalValues, adjustedProximalValues, yMax]
-  );
-  const min = useMemo(
-    () =>
-      yMin ?? Math.min(...adjustedProximalValues, ...adjustedDistalValues, 0),
-    [adjustedDistalValues, adjustedProximalValues, yMin]
-  );
+  const {
+    showTooltip,
+    hideTooltip,
+    tooltipLeft,
+    tooltipTop,
+    tooltipData: tooltipContent,
+  } = useTooltip<TooltipData>();
 
-  const range = max - min;
-  const color = MARK_COLORS[dataset.target] || "#000000";
-  const darkColor = useMemo(() => shadeHexColor(color, -0.4), [color]);
+  const xScale = scaleLinear({
+    domain: [-(limit || 2000), limit || 2000],
+    range: [margin.left, width - margin.right],
+  });
+
+  const yScale = scaleLinear({
+    domain: [
+      padBottom ? Math.min(...proximal_values, ...distal_values) : 0,
+      yMax || Math.max(...proximal_values, ...distal_values),
+    ],
+    range: [height - margin.bottom, margin.top],
+  });
+
+  const bisectDate = bisector((d: number) => d).left;
+
+  const handleMouseMove = (
+    event: React.MouseEvent<SVGRectElement, MouseEvent>
+  ) => {
+    const { x } = localPoint(event) || { x: 0 };
+    const x0 = xScale.invert(x);
+    const index = bisectDate(proximal_values, x0, 1);
+    const y = proximal_values[index];
+    setTooltipData({ x: x0, y });
+
+    showTooltip({
+      tooltipData: { x: x0, y },
+      tooltipLeft: xScale(x0),
+      tooltipTop: yScale(y),
+    });
+  };
 
   return (
-    <>
-      {!hideTitle && (
-        <Typography
-          variant="h6"
-          align="center"
-          gutterBottom
+    <div style={{ position: "relative" }}>
+      <svg width={width} height={height}>
+        <Group>
+          {!hideTitle && (
+            <text
+              x={width / 2}
+              y={margin.top}
+              textAnchor="middle"
+              fontSize={16}
+            >
+              {title || dataset.target}
+            </text>
+          )}
+          <LinePath
+            data={proximal_values}
+            x={(d, i) => xScale(i - proximal_values.length / 2)}
+            y={(d) => yScale(d)}
+            stroke="#000088"
+            strokeWidth={2}
+            curve={curveMonotoneX}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={hideTooltip}
+          />
+          <LinePath
+            data={distal_values}
+            x={(d, i) => xScale(i - distal_values.length / 2)}
+            y={(d) => yScale(d)}
+            stroke="#FF0000"
+            strokeWidth={2}
+            curve={curveMonotoneX}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={hideTooltip}
+          />
+          <AxisBottom
+            top={height - margin.bottom}
+            scale={xScale}
+            numTicks={5}
+            label={xlabel}
+            stroke="#000"
+            tickStroke="#000"
+          />
+          <AxisLeft
+            left={margin.left}
+            scale={yScale}
+            numTicks={5}
+            label={ylabel}
+            stroke="#000"
+            tickStroke="#000"
+          />
+        </Group>
+      </svg>
+      {tooltipContent && (
+        <Tooltip
+          top={tooltipTop}
+          left={tooltipLeft}
           style={{
-            marginBottom: dataset.target === "PhyloP 100-way" ? "0em" : "-1em",
+            ...defaultStyles,
+            backgroundColor: "rgba(0, 0, 0, 0.9)",
+            color: "white",
           }}
         >
-          {title || dataset.target}
-        </Typography>
+          <div>
+            <strong>{`x: ${tooltipContent.x}`}</strong>
+          </div>
+          <div>
+            <strong>{`y: ${tooltipContent.y}`}</strong>
+          </div>
+        </Tooltip>
       )}
-      <MultiXLineChart
-        xDomain={{ start: -(limit || 2000), end: limit || 2000 }}
-        yDomain={{
-          start: padBottom ? min - range / 5 : min,
-          end: max + range / 5,
-        }}
-        lineProps={{
-          strokeWidth: 4,
-          strokeOpacity: semiTransparent ? 0.6 : 1.0,
-        }}
-        data={[
-          { data: adjustedProximalValues, label: "proximal", color },
-          { data: adjustedDistalValues, label: "distal", color: darkColor },
-        ]}
-        innerSize={{ width: 400, height: height || 280 }}
-        xAxisProps={{
-          fontSize: 15,
-          title: xlabel || "distance from summit (bp)",
-        }}
-        yAxisProps={{ fontSize: 12, title: ylabel || "fold change signal" }}
-        plotAreaProps={{
-          withGuideLines: true,
-          guideLineProps: { hideHorizontal: true },
-        }}
-        legendProps={{
-          size: { width: 135, height: 55 },
-          headerProps: {
-            numberFormat: (x: number) =>
-              x !== undefined ? Math.round(x).toString() : "",
-          },
-        }}
-        ref={sref}
-      />
-      <svg viewBox="0 0 400 40" style={{ marginTop: "-0.4em" }} ref={lref}>
-        <g transform="translate(95,0)">
-          <LegendEntry
-            label={{
-              color,
-              label: is_forward_reverse
-                ? "motif strand"
-                : is_stranded_motif
-                ? "(+) strand motif"
-                : "TSS-proximal",
-              value: "",
-            }}
-            simple
-            size={{ width: 150, height: 25 }}
-            rectProps={{ height: 7, y: 9 }}
-          />
-        </g>
-        <g transform="translate(210,0)">
-          <LegendEntry
-            label={{
-              color: darkColor,
-              label: is_forward_reverse
-                ? "complement strand"
-                : is_stranded_motif
-                ? "(-) strand motif"
-                : "TSS-distal",
-              value: "",
-            }}
-            simple
-            size={{ width: 150, height: 25 }}
-            rectProps={{ height: 7, y: 9 }}
-          />
-        </g>
-      </svg>
-    </>
+    </div>
   );
 };

@@ -1,47 +1,115 @@
-import React, { useRef } from "react";
-import { Button } from "@mui/material";
-import { Graph } from "./Aggregate/Graphs";
+import React, { useRef, useMemo } from "react";
+import { Button, Box, Typography } from "@mui/material";
+import { LinePath } from "@visx/shape";
+import { curveBasis } from "d3-shape";
+import { scaleLinear } from "@visx/scale";
+import { AxisLeft, AxisBottom } from "@visx/axis";
+import { Group } from "@visx/group";
+import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
+import { localPoint } from "@visx/event";
 import { downloadSVG } from "@/utilities/svgdata";
 
-const CentralityPlot: React.FC<{ peak_centrality: Record<number, number> }> = ({
-  peak_centrality,
-}) => {
-  const pcX = Object.keys(peak_centrality)
-    .map((s) => +s)
-    .sort((a, b) => a - b);
-  const pcY = pcX.map((p) => peak_centrality[p]);
-  const ref = useRef<SVGSVGElement>(null);
+interface CentralityPlotProps {
+  peak_centrality: Record<number, number>;
+}
+
+const CentralityPlot: React.FC<CentralityPlotProps> = ({ peak_centrality }) => {
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  const pcX = useMemo(
+    () =>
+      Object.keys(peak_centrality)
+        .map((s) => +s)
+        .sort((a, b) => a - b),
+    [peak_centrality]
+  );
+  const pcY = useMemo(
+    () => pcX.map((p) => peak_centrality[p]),
+    [pcX, peak_centrality]
+  );
+
+  const max = Math.max(...pcY);
+  const xScale = useMemo(
+    () =>
+      scaleLinear({ domain: [pcX[0], pcX[pcX.length - 1]], range: [0, 500] }),
+    [pcX]
+  );
+  const yScale = useMemo(
+    () => scaleLinear({ domain: [0, max], range: [220, 0] }),
+    [max]
+  );
+
+  const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
+    useTooltip<{
+      xValue: number;
+      yValue: number;
+    }>();
+
+  const handleMouseOver = (event: React.MouseEvent<SVGRectElement>) => {
+    const { x } = localPoint(event) || { x: 0 };
+    const xValue = Math.round(xScale.invert(x - 50));
+    const index = pcX.indexOf(xValue);
+
+    // Check if the index is valid
+    if (index !== -1) {
+      const yValue = parseFloat(pcY[index].toFixed(2));
+
+      if (!isNaN(yValue)) {
+        showTooltip({
+          tooltipData: { xValue, yValue },
+          tooltipLeft: x,
+          tooltipTop: yScale(yValue) + 20, // Adjusted for better positioning
+        });
+      }
+    }
+  };
 
   return (
-    <div>
-      <Graph
-        dataset={{ target: "peak_centrality", accession: "" }}
-        proximal_values={pcY}
-        distal_values={pcY}
-        is_forward_reverse={false}
-        xlabel="distance from peak summit (bp)"
-        ylabel="motif density"
-        height={220}
-        yMax={Math.max(...pcY) * 1.2}
-        padBottom
-        hideTitle
-        sref={ref}
-      />
-      <Button
-        variant="contained"
-        onClick={() => downloadSVG(ref, "peak-centrality.svg")}
-        sx={{
-          marginTop: "1em",
-          backgroundColor: "#8169BF",
-          color: "white",
-          "&:hover": {
-            backgroundColor: "#6954A1",
-          },
-        }}
-      >
-        Export SVG
-      </Button>
-    </div>
+    <Box position="relative">
+      <Typography variant="h6" align="center" gutterBottom>
+        Centrality Plot
+      </Typography>
+      <svg width={500} height={300} ref={svgRef}>
+        <Group left={50} top={20}>
+          <LinePath
+            data={pcY}
+            x={(d, i) => xScale(pcX[i])}
+            y={yScale}
+            stroke="#0000FF"
+            strokeWidth={2}
+            curve={curveBasis}
+          />
+          <AxisLeft scale={yScale} />
+          <AxisBottom scale={xScale} top={220} />
+          <rect
+            width={500}
+            height={220}
+            fill="transparent"
+            onMouseMove={handleMouseOver}
+            onMouseLeave={hideTooltip}
+          />
+        </Group>
+      </svg>
+      {tooltipData && (
+        <TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
+          <div style={{ fontSize: "12px", color: "black" }}>
+            <strong>X:</strong> {tooltipData.xValue}
+          </div>
+          <div style={{ fontSize: "12px", color: "black" }}>
+            <strong>Density:</strong> {tooltipData.yValue}
+          </div>
+        </TooltipWithBounds>
+      )}
+      <Box display="flex" justifyContent="center" mt={1}>
+        <Button
+          variant="contained"
+          onClick={() => downloadSVG(svgRef, "centrality.svg")}
+          sx={{ marginRight: 2 }}
+        >
+          Export SVG
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
