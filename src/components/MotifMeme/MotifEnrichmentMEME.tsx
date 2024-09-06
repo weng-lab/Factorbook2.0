@@ -241,6 +241,27 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
             fullWidth
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              sx: {
+                backgroundColor: "rgba(129, 105, 191, 0.09)", // #8169BF with 9% opacity
+                borderRadius: "50px", // Circular shape
+                paddingLeft: "20px", // Adds some padding
+              },
+            }}
+            sx={{
+              marginTop: "5px", // Adds a 5px margin to the top to fix label alignment
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#8169BF", // Set border color to match background
+                },
+                "&:hover fieldset": {
+                  borderColor: "#8169BF", // Set border color on hover
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#8169BF", // Set border color when focused
+                },
+              },
+            }}
           />
         </Box>
         <List>

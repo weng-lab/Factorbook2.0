@@ -20,20 +20,20 @@ interface ConservationPlotProps {
   name: string;
   accession: string;
   pwm: number[][];
-  width?: number; // Custom width
-  height?: number; // Custom height
+  width?: number;
+  height?: number;
 }
 
 const ConservationPlot: React.FC<ConservationPlotProps> = ({
   name,
   accession,
   pwm,
-  width = 500, // Set default width
-  height = 300, // Set default height
+  width = 600,
+  height = 350,
 }) => {
   const [data, setData] = useState<number[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [limit, setLimit] = useState(500); // Handles zooming
+  const [limit, setLimit] = useState(500); // Handles zoom level
   const svgRef = useRef<SVGSVGElement>(null);
 
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
@@ -51,7 +51,7 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
     )
       .then((x) => x.json())
       .then((x) => {
-        setData(x.slice(16)); // Adjust data as needed
+        setData(x.slice(16)); // Adjust data accordingly if needed
         setLoading(false);
       });
   }, [accession, name]);
@@ -65,51 +65,51 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
   const max = useMemo(() => (data ? Math.max(...data) : 0), [data]);
   const min = useMemo(() => (data ? Math.min(...data) : 0), [data]);
 
-  const margin = { top: 40, right: 20, bottom: 50, left: 150 };
-
   const xScale = useMemo(
     () =>
       scaleLinear({
-        domain: [-limit, limit],
-        range: [0, width - margin.left - margin.right],
+        domain: [-limit, limit], // Adjusting zoom by setting x-axis domain based on zoom limit
+        range: [0, width - 120],
+        clamp: true, // Ensures that the graph stays within bounds when zooming
       }),
     [limit, width]
   );
+
   const yScale = useMemo(
     () =>
       scaleLinear({
         domain: [min, max * 1.2],
-        range: [height - margin.top - margin.bottom, 0],
+        range: [height - 80, 0],
+        clamp: true, // Ensures the y-values don't go out of bounds
       }),
     [min, max, height]
   );
 
   const handleMouseOver = (event: React.MouseEvent<SVGRectElement>) => {
+    if (!data) return; // Prevents accessing length if data is null
+
     const { x } = localPoint(event) || { x: 0 };
     const svgRect = svgRef.current?.getBoundingClientRect();
-    const graphX = x - (svgRect?.left || 0); // Get X relative to graph
+    const graphX = x - (svgRect?.left || 0) - 60; // Adjust for left margin
+    const xValue = xScale.invert(graphX); // Get the x-value from the graph scale
 
-    const index = Math.floor(
-      xScale.invert(graphX - margin.left) + data!.length / 2
-    );
+    const index = Math.floor(xValue + data.length / 2); // Find the index of data
 
-    // Ensure the index is within bounds and show the tooltip
-    if (index >= 0 && index < data!.length) {
-      const proximal = parseFloat(data![index].toFixed(2));
-      const distal = parseFloat(data![data!.length - 1 - index].toFixed(2)); // Assuming distal is reverse of proximal
+    if (index >= 0 && index < data.length) {
+      const proximal = parseFloat(data[index].toFixed(2)); // Get proximal value
+      const distal = parseFloat(data[data.length - 1 - index].toFixed(2)); // Get distal value (reverse)
 
       showTooltip({
-        tooltipData: { xValue: index - data!.length / 2, proximal, distal },
-        tooltipLeft: graphX, // Correctly position tooltip relative to graph
-        tooltipTop: yScale(proximal) + margin.top, // Adjust for better positioning
+        tooltipData: { xValue, proximal, distal },
+        tooltipLeft: graphX + 60, // Position tooltip correctly relative to graph
+        tooltipTop: yScale(proximal) + 30, // Ensure tooltip follows graph scale
       });
     } else {
-      hideTooltip();
+      hideTooltip(); // Hide tooltip if out of bounds
     }
   };
 
-  if (loading || !data) return <div>Loading...</div>;
-  if (!data || data.length === 0) return null;
+  if (loading || !data) return <div>Loading...</div>; // Loading state
 
   return (
     <Box position="relative">
@@ -117,50 +117,25 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
         Evolutionary Conservation: phyloP 100-way
       </Typography>
       <svg width={width} height={height} ref={svgRef}>
-        <defs>
-          <clipPath id="clipPath">
-            <rect
-              x="0"
-              y="0"
-              width={width - margin.left - margin.right}
-              height={height - margin.top - margin.bottom}
-            />
-          </clipPath>
-        </defs>
-        <Group left={margin.left} top={margin.top}>
+        <Group left={60} top={20}>
           <LinePath
-            data={data ?? undefined} // Safely handle data null check
-            x={(d, i) => xScale(i - data!.length / 2)}
+            data={data ?? undefined}
+            x={(d, i) => xScale(i - data.length / 2)}
             y={(d) => yScale(d)}
             stroke="#444444"
             strokeWidth={2}
             curve={curveBasis}
-            clipPath="url(#clipPath)"
           />
           <AxisLeft
             scale={yScale}
             label="Conservation Score"
-            labelOffset={70}
-            labelProps={{ fontSize: 12, fill: "#000", textAnchor: "middle" }}
-            tickLabelProps={() => ({
-              fontSize: 10,
-              fill: "#000",
-              textAnchor: "end",
-              dy: "0.33em",
-            })}
+            labelOffset={40}
           />
           <AxisBottom
             scale={xScale}
-            top={height - margin.bottom - margin.top}
+            top={height - 80}
             label="Distance from Motif (bp)"
-            labelOffset={35}
-            labelProps={{ fontSize: 12, fill: "#000", textAnchor: "middle" }}
-            tickLabelProps={() => ({
-              fontSize: 10,
-              fill: "#000",
-              textAnchor: "middle",
-              dy: "0.33em",
-            })}
+            labelOffset={40}
           />
           <g
             transform={`translate(${
@@ -177,8 +152,8 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
             />
           </g>
           <rect
-            width={width - margin.left - margin.right}
-            height={height - margin.top - margin.bottom}
+            width={width - 120}
+            height={height - 80}
             fill="transparent"
             onMouseMove={handleMouseOver}
             onMouseLeave={hideTooltip}
@@ -188,7 +163,7 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
       {tooltipData && (
         <TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
           <div style={{ fontSize: "12px", color: "black" }}>
-            <strong>X:</strong> {tooltipData.xValue}
+            <strong>X:</strong> {Math.round(tooltipData.xValue)}
           </div>
           <div style={{ fontSize: "12px", color: "black" }}>
             <strong>Proximal:</strong> {tooltipData.proximal}
@@ -202,7 +177,11 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
         <Button
           variant="contained"
           onClick={() => downloadSVG(svgRef, "conservation.svg")}
-          sx={{ marginRight: 2 }}
+          sx={{
+            backgroundColor: "#8169BF",
+            color: "white",
+            marginRight: 2,
+          }}
         >
           Export SVG
         </Button>
