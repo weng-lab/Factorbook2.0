@@ -42,7 +42,6 @@ import {
   Dataset,
   MotifResponse,
   ReplicatedPeaks,
-  TOMTOMMatch,
 } from "@/components/MotifMeme/Types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 import { DNALogo, DNAAlphabet } from "logojs-react";
@@ -198,11 +197,14 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   if (loading) return <CircularProgress />;
   if (error) return <p>Error: {error.message}</p>;
 
-  // Sort the motifs so that those with poor metrics are at the bottom
+  // Sort the motifs so that those with either poor peak centrality or enrichment are at the bottom
   const sortedMotifs = [...(motifData?.meme_motifs || [])].sort((a, b) => {
-    const aPoor = poorPeakCentrality(a) || poorPeakEnrichment(a);
-    const bPoor = poorPeakCentrality(b) || poorPeakEnrichment(b);
-    return aPoor === bPoor ? 0 : aPoor ? 1 : -1;
+    const aIsPoor = poorPeakCentrality(a) || poorPeakEnrichment(a);
+    const bIsPoor = poorPeakCentrality(b) || poorPeakEnrichment(b);
+
+    if (aIsPoor && !bIsPoor) return 1; // Move 'a' down if it's poor but 'b' isn't
+    if (!aIsPoor && bIsPoor) return -1; // Move 'b' down if it's poor but 'a' isn't
+    return 0; // Otherwise, keep them in the same order
   });
 
   const sortedBiosamples = [
@@ -218,14 +220,13 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   );
 
   // Map meme_motifs with target_motifs (tomtomMatch) by index
-  const motifsWithMatches =
-    motifData?.meme_motifs.map((motif, index) => ({
-      ...motif,
-      tomtomMatch:
-        motifData?.target_motifs && motifData.target_motifs[index]
-          ? motifData.target_motifs[index]
-          : undefined, // Change `null` to `undefined`
-    })) || [];
+  const motifsWithMatches = sortedMotifs.map((motif, index) => ({
+    ...motif,
+    tomtomMatch:
+      motifData?.target_motifs && motifData.target_motifs[index]
+        ? motifData.target_motifs[index]
+        : undefined, // Change `null` to `undefined`
+  }));
 
   return (
     <Box
@@ -596,7 +597,14 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         </DialogActions>
                       </Dialog>
                     </Grid>
-                    <Grid item xs={12} md={4}>
+                    <Grid
+                      item
+                      xs={12}
+                      md={4}
+                      sx={{
+                        marginTop: "90px",
+                      }}
+                    >
                       <Paper
                         elevation={3}
                         sx={{
@@ -608,7 +616,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                           display: "flex",
                           flexDirection: "column",
                           justifyContent: "center",
-                          alignItems: "flex-start",
+                          alignItems: "center",
                           margin: "0 auto",
                           backgroundColor: "white",
                         }}
