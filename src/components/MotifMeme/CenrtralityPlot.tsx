@@ -11,9 +11,15 @@ import { downloadSVG } from "@/utilities/svgdata";
 
 interface CentralityPlotProps {
   peak_centrality: Record<number, number>;
+  width?: number; // Add optional width
+  height?: number; // Add optional height
 }
 
-const CentralityPlot: React.FC<CentralityPlotProps> = ({ peak_centrality }) => {
+const CentralityPlot: React.FC<CentralityPlotProps> = ({
+  peak_centrality,
+  width = 500, // Set default width if not passed
+  height = 300, // Set default height if not passed
+}) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   const pcX = useMemo(
@@ -31,12 +37,15 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({ peak_centrality }) => {
   const max = Math.max(...pcY);
   const xScale = useMemo(
     () =>
-      scaleLinear({ domain: [pcX[0], pcX[pcX.length - 1]], range: [0, 500] }),
-    [pcX]
+      scaleLinear({
+        domain: [pcX[0], pcX[pcX.length - 1]],
+        range: [0, width - 100],
+      }),
+    [pcX, width]
   );
   const yScale = useMemo(
-    () => scaleLinear({ domain: [0, max], range: [220, 0] }),
-    [max]
+    () => scaleLinear({ domain: [0, max], range: [height - 80, 0] }),
+    [max, height]
   );
 
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
@@ -50,7 +59,6 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({ peak_centrality }) => {
     const xValue = Math.round(xScale.invert(x - 50));
     const index = pcX.indexOf(xValue);
 
-    // Check if the index is valid
     if (index !== -1) {
       const yValue = parseFloat(pcY[index].toFixed(2));
 
@@ -58,7 +66,7 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({ peak_centrality }) => {
         showTooltip({
           tooltipData: { xValue, yValue },
           tooltipLeft: x,
-          tooltipTop: yScale(yValue) + 20, // Adjusted for better positioning
+          tooltipTop: yScale(yValue) + 20,
         });
       }
     }
@@ -69,7 +77,7 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({ peak_centrality }) => {
       <Typography variant="h6" align="center" gutterBottom>
         Centrality Plot
       </Typography>
-      <svg width={500} height={300} ref={svgRef}>
+      <svg width={width} height={height} ref={svgRef}>
         <Group left={50} top={20}>
           <LinePath
             data={pcY}
@@ -80,10 +88,10 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({ peak_centrality }) => {
             curve={curveBasis}
           />
           <AxisLeft scale={yScale} />
-          <AxisBottom scale={xScale} top={220} />
+          <AxisBottom scale={xScale} top={height - 80} />
           <rect
-            width={500}
-            height={220}
+            width={width - 100}
+            height={height - 80}
             fill="transparent"
             onMouseMove={handleMouseOver}
             onMouseLeave={hideTooltip}

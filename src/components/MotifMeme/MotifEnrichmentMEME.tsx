@@ -465,11 +465,18 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
 
                       {showQCStates[motif.id] && selectedPeak && (
                         <Box mt={3}>
-                          <Grid container spacing={2} mt={3}>
+                          <Grid
+                            container
+                            spacing={2}
+                            mt={3}
+                            justifyContent="space-between"
+                          >
                             {/* Centrality Plot */}
                             <Grid item xs={12} md={6}>
                               <CentralityPlot
                                 peak_centrality={motif.peak_centrality}
+                                width={500}
+                                height={300}
                               />
                             </Grid>
 
@@ -492,6 +499,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                                 name={motif.name}
                                 accession={selectedPeak}
                                 pwm={motifppm}
+                                width={500}
+                                height={300}
                               />
                             </Grid>
                           </Grid>

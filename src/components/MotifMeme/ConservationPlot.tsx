@@ -20,16 +20,20 @@ interface ConservationPlotProps {
   name: string;
   accession: string;
   pwm: number[][];
+  width?: number; // Custom width
+  height?: number; // Custom height
 }
 
 const ConservationPlot: React.FC<ConservationPlotProps> = ({
   name,
   accession,
   pwm,
+  width = 500, // Set default width
+  height = 300, // Set default height
 }) => {
   const [data, setData] = useState<number[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [limit, setLimit] = useState(500);
+  const [limit, setLimit] = useState(500); // Handles zooming
   const svgRef = useRef<SVGSVGElement>(null);
 
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
@@ -52,10 +56,10 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
       });
   }, [accession, name]);
 
-  const setLimitS = useCallback((limit: number) => {
-    if (limit < 10) limit = 10;
-    if (limit > 500) limit = 500;
-    setLimit(limit);
+  const setLimitS = useCallback((newLimit: number) => {
+    if (newLimit < 10) newLimit = 10;
+    if (newLimit > 500) newLimit = 500;
+    setLimit(newLimit);
   }, []);
 
   const max = useMemo(() => (data ? Math.max(...data) : 0), [data]);
@@ -63,16 +67,13 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
 
   const margin = { top: 40, right: 20, bottom: 50, left: 150 };
 
-  const width = 500;
-  const height = 350;
-
   const xScale = useMemo(
     () =>
       scaleLinear({
         domain: [-limit, limit],
         range: [0, width - margin.left - margin.right],
       }),
-    [limit]
+    [limit, width]
   );
   const yScale = useMemo(
     () =>
@@ -80,7 +81,7 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
         domain: [min, max * 1.2],
         range: [height - margin.top - margin.bottom, 0],
       }),
-    [min, max]
+    [min, max, height]
   );
 
   const handleMouseOver = (event: React.MouseEvent<SVGRectElement>) => {
@@ -92,15 +93,10 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
       xScale.invert(graphX - margin.left) + data!.length / 2
     );
 
-    console.log("Mouse X:", graphX);
-    console.log("Index:", index);
-
     // Ensure the index is within bounds and show the tooltip
     if (index >= 0 && index < data!.length) {
       const proximal = parseFloat(data![index].toFixed(2));
       const distal = parseFloat(data![data!.length - 1 - index].toFixed(2)); // Assuming distal is reverse of proximal
-
-      console.log("Proximal:", proximal, "Distal:", distal);
 
       showTooltip({
         tooltipData: { xValue: index - data!.length / 2, proximal, distal },
@@ -133,8 +129,8 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
         </defs>
         <Group left={margin.left} top={margin.top}>
           <LinePath
-            data={data}
-            x={(d, i) => xScale(i - data.length / 2)}
+            data={data ?? undefined} // Safely handle data null check
+            x={(d, i) => xScale(i - data!.length / 2)}
             y={(d) => yScale(d)}
             stroke="#444444"
             strokeWidth={2}
