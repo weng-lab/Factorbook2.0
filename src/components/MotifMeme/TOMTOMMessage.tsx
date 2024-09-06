@@ -5,19 +5,25 @@ import { TOMTOMMessageProps } from "./Types";
 export const TOMTOMMessage: React.FC<TOMTOMMessageProps> = ({
   tomtomMatch,
 }) => {
+  // Log the tomtomMatch to check its value
+  console.log("TOMTOM Match:", tomtomMatch);
+
+  // Ensure we have both a target_id and target_id is not null or empty
+  const hasValidMatch = tomtomMatch && tomtomMatch.target_id;
+
   return (
     <Box
       sx={{
         marginTop: "1em",
         padding: "1em",
         borderRadius: "8px",
-        backgroundColor: tomtomMatch
-          ? "rgba(144, 238, 144, 0.3)"
-          : "rgba(255, 99, 71, 0.3)",
-        border: tomtomMatch ? "2px solid green" : "2px solid red",
+        backgroundColor: hasValidMatch
+          ? "rgba(144, 238, 144, 0.3)" // Light green background for match
+          : "rgba(255, 99, 71, 0.3)", // Light red background for no match
+        border: hasValidMatch ? "2px solid green" : "2px solid red",
       }}
     >
-      {tomtomMatch ? (
+      {hasValidMatch ? (
         <>
           <Typography variant="body1" sx={{ fontWeight: "bold" }}>
             Best external database match:
@@ -44,7 +50,7 @@ export const TOMTOMMessage: React.FC<TOMTOMMessageProps> = ({
         </>
       ) : (
         <Typography variant="body2" color="textSecondary">
-          No external database match found.
+          (no external database match)
         </Typography>
       )}
     </Box>

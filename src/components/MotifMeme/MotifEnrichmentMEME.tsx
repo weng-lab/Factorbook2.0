@@ -42,6 +42,7 @@ import {
   Dataset,
   MotifResponse,
   ReplicatedPeaks,
+  TOMTOMMatch,
 } from "@/components/MotifMeme/Types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 import { DNALogo, DNAAlphabet } from "logojs-react";
@@ -216,6 +217,16 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Map meme_motifs with target_motifs (tomtomMatch) by index
+  const motifsWithMatches =
+    motifData?.meme_motifs.map((motif, index) => ({
+      ...motif,
+      tomtomMatch:
+        motifData?.target_motifs && motifData.target_motifs[index]
+          ? motifData.target_motifs[index]
+          : undefined, // Change `null` to `undefined`
+    })) || [];
+
   return (
     <Box
       sx={{
@@ -351,9 +362,9 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
       >
         {motifLoading && <CircularProgress />}
         {motifError && <p>Error: {motifError.message}</p>}
-        {motifData && sortedMotifs.length > 0 && (
+        {motifsWithMatches.length > 0 && (
           <Box>
-            {sortedMotifs.map((motif, index) => {
+            {motifsWithMatches.map((motif, index) => {
               const motifppm = reverseComplements[index]
                 ? rc(motif.pwm)
                 : motif.pwm;
@@ -414,9 +425,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                       </Box>
 
                       {/* TOMTOMMessage component */}
-                      {motif.tomtomMatch && (
-                        <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
-                      )}
+                      <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
 
                       <Box display="flex" mt={2} gap={2}>
                         <Button
