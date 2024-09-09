@@ -12,7 +12,7 @@ const ATACPlot: React.FC<{
   const [data, setData] = useState<number[] | null>(atac_data || null);
   const [loading, setLoading] = useState(!atac_data);
 
-  const sref = useRef<SVGSVGElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null); // Define the ref for the SVG element
 
   useEffect(() => {
     if (!atac_data) {
@@ -39,18 +39,18 @@ const ATACPlot: React.FC<{
       <Graph
         proximal_values={data}
         distal_values={[]}
-        dataset={{ accession, target: name }}
+        dataset={{ target: name }}
         title="ATAC-seq Plot"
         xlabel="Position"
         ylabel="ATAC-seq Signal"
         height={300}
         yMax={Math.max(...data) * 1.2}
-        sref={sref}
+        svgRef={svgRef} // Pass the ref to the Graph component
       />
       <Button
         variant="contained"
         color="primary"
-        onClick={() => downloadSVG(sref, `${name}-atac.svg`)}
+        onClick={() => downloadSVG(svgRef, `${name}-atac.svg`)}
       >
         Export SVG
       </Button>

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { RefObject, useMemo, useState } from "react";
 import { LinePath } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
@@ -20,6 +20,7 @@ interface GraphProps {
   yMax?: number;
   padBottom?: boolean;
   hideTitle?: boolean;
+  svgRef?: RefObject<SVGSVGElement>;
 }
 
 interface TooltipData {
