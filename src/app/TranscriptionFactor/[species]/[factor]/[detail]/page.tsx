@@ -15,7 +15,7 @@ import {
 import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
 import { FactorQueryResponse } from "@/components/CellType/types";
 import FunctionTab from "./Function";
-import MotifEnrichmentMEME from "./MotifEnrichmentMEME";
+import MotifEnrichmentMEME from "@/components/MotifMeme/MotifEnrichmentMEME";
 import Search from "./Search";
 import Link from "next/link";
 import DeepLearnedSelexMotifs from "./MotifEnrichmentSELEX";
