@@ -485,65 +485,69 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                   <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
 
                   {/* Button controls */}
-                  <Box display="flex" mt={2} gap={2}>
+                  {/* Buttons aligned side by side */}
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    mt={2}
+                    gap={2}
+                  >
                     <Button
                       variant="contained"
                       startIcon={<SaveAltIcon />}
-                      onClick={() => setIsDialogOpen(true)}
                       sx={{
                         borderRadius: "20px",
                         backgroundColor: "#8169BF",
                         color: "white",
+                        flex: 1, // Ensures each button takes up equal space
+                        minWidth: "20%", // Ensure each button is at least 20% width
                       }}
+                      onClick={() => setIsDialogOpen(true)}
                     >
                       Download
                     </Button>
+
                     <Button
                       variant="outlined"
                       startIcon={<SwapHorizIcon />}
-                      onClick={() => handleReverseComplement(index)}
                       sx={{
                         borderRadius: "20px",
                         borderColor: "#8169BF",
                         color: "#8169BF",
                         backgroundColor: "white",
-                        marginRight: 2,
+                        flex: 1, // Equal width distribution
+                        minWidth: "20%", // Ensure each button is at least 20% width
                       }}
+                      onClick={() => handleReverseComplement(index)}
                     >
                       Reverse Complement
                     </Button>
+
                     <Button
                       variant="outlined"
                       startIcon={<PublicIcon />}
                       sx={{
+                        borderRadius: "20px",
                         borderColor: "#8169BF",
                         color: "#8169BF",
                         backgroundColor: "white",
-                        borderRadius: "24px",
-                        textTransform: "none",
-                        fontWeight: "medium",
-                        "&:hover": {
-                          backgroundColor: "white",
-                          borderColor: "#8169BF",
-                        },
+                        flex: 1, // Equal width distribution
+                        minWidth: "20%", // Ensure each button is at least 20% width
                       }}
                     >
                       Show Genomic Sites
                     </Button>
+
                     <Button
                       variant="outlined"
                       startIcon={<VisibilityIcon />}
                       sx={{
+                        borderRadius: "20px",
                         borderColor: "#8169BF",
                         color: "#8169BF",
                         backgroundColor: "white",
-                        borderRadius: "24px",
-                        textTransform: "none",
-                        fontWeight: "medium",
-                        "&:hover": {
-                          backgroundColor: "white",
-                          borderColor: "#8169BF",
-                        },
+                        flex: 1, // Equal width distribution
+                        minWidth: "20%", // Ensure each button is at least 20% width
                       }}
                       onClick={() => toggleShowQC(motif.id)}
                     >
