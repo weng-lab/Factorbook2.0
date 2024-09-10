@@ -23,6 +23,7 @@ import { ApiContext } from "@/ApiContext";
 import GeneExpressionPage from "./GeneExpression";
 import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./Queries";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
+import EpigeneticProfile from "./EpigeneticProfile";
 
 const FactorDetailsPage = () => {
   const apiContext = useContext(ApiContext);
@@ -107,6 +108,8 @@ const FactorDetailsPage = () => {
         return <MotifEnrichmentMEME factor={factor} species={species} />;
       case "MotifEnrichmentSELEX":
         return <DeepLearnedSelexMotifs factor={factor} species={species} />;
+      case "EpigeneticProfile":
+        return <EpigeneticProfile />;
       case "Search":
         return <Search />;
       default:
@@ -198,7 +201,11 @@ const FactorDetailsPage = () => {
                 }}
               />
             )}
-            {/* EpigeneticProfile Tab Hidden */}
+            <Tab
+              label={`Epigenetic Profile`}
+              value="EpigeneticProfile"
+              href={`/TranscriptionFactor/${species}/${factor}/EpigeneticProfile`}
+            />
             <Tab
               label={`Search ${factor} peaks by region`}
               value="Search"

@@ -28,7 +28,7 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
   name,
   accession,
   pwm,
-  width = 600,
+  width = 600, // Increase the width if necessary
   height = 350,
 }) => {
   const [data, setData] = useState<number[] | null>(null);
@@ -113,7 +113,17 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
 
   return (
     <Box position="relative">
-      <Typography variant="h6" align="center" gutterBottom>
+      <Typography
+        variant="h6"
+        align="center"
+        gutterBottom
+        noWrap // This ensures the text doesn't break into two lines
+        sx={{
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }} // Ensures text doesn't overflow if it's too long
+      >
         Evolutionary Conservation: phyloP 100-way
       </Typography>
       <svg width={width} height={height} ref={svgRef}>
