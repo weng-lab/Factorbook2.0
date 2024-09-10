@@ -376,38 +376,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
 
               return (
                 <Box key={motif.id} mb={4}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={8}>
-                      {/* Add indicators for poor peak centrality and enrichment */}
-                      {poorPeakCentrality(motif) && (
-                        <Chip
-                          icon={<ErrorOutlineIcon />}
-                          label="poor peak centrality"
-                          sx={{
-                            backgroundColor: "rgba(255, 165, 0, 0.1)",
-                            color: "#FFA500",
-                            fontWeight: "bold",
-                            borderRadius: "16px",
-                            padding: "5px",
-                            marginBottom: "8px",
-                          }}
-                        />
-                      )}
-                      {poorPeakEnrichment(motif) && (
-                        <Chip
-                          icon={<InfoIcon />}
-                          label="poor peak enrichment"
-                          sx={{
-                            backgroundColor: "rgba(75, 0, 130, 0.1)",
-                            color: "#4B0082",
-                            fontWeight: "bold",
-                            borderRadius: "16px",
-                            padding: "5px",
-                            marginBottom: "8px",
-                            marginLeft: "8px",
-                          }}
-                        />
-                      )}
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={12} md={6}>
                       <Box
                         sx={{
                           opacity: isGreyedOut ? 0.5 : 1,
@@ -424,201 +394,22 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                           height={250}
                         />
                       </Box>
-
-                      {/* TOMTOMMessage component */}
-                      <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
-
-                      <Box display="flex" mt={2} gap={2}>
-                        <Button
-                          variant="contained"
-                          startIcon={<SaveAltIcon />}
-                          onClick={() => setIsDialogOpen(true)}
-                          sx={{
-                            borderRadius: "20px",
-                            backgroundColor: "#8169BF",
-                            color: "white",
-                          }}
-                        >
-                          Download
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          startIcon={<SwapHorizIcon />}
-                          onClick={() => handleReverseComplement(index)}
-                          sx={{
-                            borderRadius: "20px",
-                            borderColor: "#8169BF",
-                            color: "#8169BF",
-                            backgroundColor: "white",
-                            marginRight: 2,
-                          }}
-                        >
-                          Reverse Complement
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          startIcon={<PublicIcon />}
-                          sx={{
-                            borderColor: "#8169BF",
-                            color: "#8169BF",
-                            backgroundColor: "white",
-                            borderRadius: "24px",
-                            textTransform: "none",
-                            fontWeight: "medium",
-                            "&:hover": {
-                              backgroundColor: "white",
-                              borderColor: "#8169BF",
-                            },
-                          }}
-                        >
-                          Show Genomic Sites
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          startIcon={<VisibilityIcon />}
-                          sx={{
-                            borderColor: "#8169BF",
-                            color: "#8169BF",
-                            backgroundColor: "white",
-                            borderRadius: "24px",
-                            textTransform: "none",
-                            fontWeight: "medium",
-                            "&:hover": {
-                              backgroundColor: "white",
-                              borderColor: "#8169BF",
-                            },
-                          }}
-                          onClick={() => toggleShowQC(motif.id)} // Toggle QC visibility for this specific motif
-                        >
-                          {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
-                        </Button>
-                      </Box>
-
-                      {showQCStates[motif.id] && selectedPeak && (
-                        <Box mt={3}>
-                          <Grid
-                            container
-                            spacing={2}
-                            mt={3}
-                            justifyContent="space-between"
-                          >
-                            {/* Centrality Plot */}
-                            <Grid item xs={12} md={6}>
-                              <CentralityPlot
-                                peak_centrality={motif.peak_centrality}
-                                width={500}
-                                height={300}
-                              />
-                            </Grid>
-
-                            {/* Conditionally render ATACPlot */}
-                            {motif.atac_data &&
-                              Array.isArray(motif.atac_data) &&
-                              motif.atac_data.length > 0 && (
-                                <Grid item xs={12} md={6}>
-                                  <ATACPlot
-                                    name={motif.name}
-                                    accession={selectedPeak}
-                                    pwm={motifppm}
-                                  />
-                                </Grid>
-                              )}
-
-                            {/* Conservation Plot */}
-                            <Grid item xs={12} md={6}>
-                              <ConservationPlot
-                                name={motif.name}
-                                accession={selectedPeak}
-                                pwm={motifppm}
-                                width={500}
-                                height={300}
-                              />
-                            </Grid>
-                          </Grid>
-                        </Box>
-                      )}
-                      <Dialog
-                        open={isDialogOpen}
-                        onClose={() => setIsDialogOpen(false)}
-                        aria-labelledby="export-dialog-title"
-                      >
-                        <DialogTitle id="export-dialog-title">
-                          Download as
-                        </DialogTitle>
-                        <DialogContent>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={exportMotif}
-                                onChange={(e) =>
-                                  setExportMotif(e.target.checked)
-                                }
-                                sx={{ color: "#8169BF" }}
-                              />
-                            }
-                            label="Motif (MEME)"
-                          />
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={exportLogo}
-                                onChange={(e) =>
-                                  setExportLogo(e.target.checked)
-                                }
-                                sx={{ color: "#8169BF" }}
-                              />
-                            }
-                            label="Logo"
-                          />
-                        </DialogContent>
-                        <DialogActions>
-                          <Button
-                            onClick={() => setIsDialogOpen(false)}
-                            sx={{ color: "#8169BF" }}
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={() =>
-                              handleDownload(
-                                motif.id,
-                                motifppm,
-                                svgRefs.current[index]
-                              )
-                            }
-                            sx={{
-                              borderRadius: "20px",
-                              backgroundColor: "#8169BF",
-                              color: "white",
-                            }}
-                          >
-                            Download
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
                     </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      md={4}
-                      sx={{
-                        marginTop: "90px",
-                      }}
-                    >
+
+                    {/* E-value and Occurrences table */}
+                    <Grid item xs={12} md={6}>
                       <Paper
                         elevation={3}
                         sx={{
                           padding: "16px",
-                          height: "auto",
-                          width: "100%",
-                          maxWidth: "350px",
                           textAlign: "center",
                           display: "flex",
-                          flexDirection: "column",
                           justifyContent: "center",
                           alignItems: "center",
                           margin: "0 auto",
+                          width: "60%",
                           backgroundColor: "white",
+                          borderRadius: "16px", // Adding rounded corners
                         }}
                       >
                         <Table>
@@ -689,6 +480,172 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                       </Paper>
                     </Grid>
                   </Grid>
+
+                  {/* TOMTOMMessage component */}
+                  <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
+
+                  {/* Button controls */}
+                  <Box display="flex" mt={2} gap={2}>
+                    <Button
+                      variant="contained"
+                      startIcon={<SaveAltIcon />}
+                      onClick={() => setIsDialogOpen(true)}
+                      sx={{
+                        borderRadius: "20px",
+                        backgroundColor: "#8169BF",
+                        color: "white",
+                      }}
+                    >
+                      Download
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      startIcon={<SwapHorizIcon />}
+                      onClick={() => handleReverseComplement(index)}
+                      sx={{
+                        borderRadius: "20px",
+                        borderColor: "#8169BF",
+                        color: "#8169BF",
+                        backgroundColor: "white",
+                        marginRight: 2,
+                      }}
+                    >
+                      Reverse Complement
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      startIcon={<PublicIcon />}
+                      sx={{
+                        borderColor: "#8169BF",
+                        color: "#8169BF",
+                        backgroundColor: "white",
+                        borderRadius: "24px",
+                        textTransform: "none",
+                        fontWeight: "medium",
+                        "&:hover": {
+                          backgroundColor: "white",
+                          borderColor: "#8169BF",
+                        },
+                      }}
+                    >
+                      Show Genomic Sites
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      startIcon={<VisibilityIcon />}
+                      sx={{
+                        borderColor: "#8169BF",
+                        color: "#8169BF",
+                        backgroundColor: "white",
+                        borderRadius: "24px",
+                        textTransform: "none",
+                        fontWeight: "medium",
+                        "&:hover": {
+                          backgroundColor: "white",
+                          borderColor: "#8169BF",
+                        },
+                      }}
+                      onClick={() => toggleShowQC(motif.id)}
+                    >
+                      {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
+                    </Button>
+                  </Box>
+
+                  {/* QC Plots */}
+                  {showQCStates[motif.id] && selectedPeak && (
+                    <Box mt={3}>
+                      <Grid
+                        container
+                        spacing={2}
+                        mt={3}
+                        justifyContent="space-between"
+                      >
+                        <Grid item xs={12} md={6}>
+                          <CentralityPlot
+                            peak_centrality={motif.peak_centrality}
+                            width={500}
+                            height={300}
+                          />
+                        </Grid>
+                        {motif.atac_data &&
+                          Array.isArray(motif.atac_data) &&
+                          motif.atac_data.length > 0 && (
+                            <Grid item xs={12} md={6}>
+                              <ATACPlot
+                                name={motif.name}
+                                accession={selectedPeak}
+                                pwm={motifppm}
+                              />
+                            </Grid>
+                          )}
+                        <Grid item xs={12} md={6}>
+                          <ConservationPlot
+                            name={motif.name}
+                            accession={selectedPeak}
+                            pwm={motifppm}
+                            width={500}
+                            height={300}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  )}
+
+                  <Dialog
+                    open={isDialogOpen}
+                    onClose={() => setIsDialogOpen(false)}
+                    aria-labelledby="export-dialog-title"
+                  >
+                    <DialogTitle id="export-dialog-title">
+                      Download as
+                    </DialogTitle>
+                    <DialogContent>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={exportMotif}
+                            onChange={(e) => setExportMotif(e.target.checked)}
+                            sx={{ color: "#8169BF" }}
+                          />
+                        }
+                        label="Motif (MEME)"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={exportLogo}
+                            onChange={(e) => setExportLogo(e.target.checked)}
+                            sx={{ color: "#8169BF" }}
+                          />
+                        }
+                        label="Logo"
+                      />
+                    </DialogContent>
+                    <DialogActions>
+                      <Button
+                        onClick={() => setIsDialogOpen(false)}
+                        sx={{ color: "#8169BF" }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          handleDownload(
+                            motif.id,
+                            motifppm,
+                            svgRefs.current[index]
+                          )
+                        }
+                        sx={{
+                          borderRadius: "20px",
+                          backgroundColor: "#8169BF",
+                          color: "white",
+                        }}
+                      >
+                        Download
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                   <Divider style={{ margin: "20px 0" }} />
                 </Box>
               );
