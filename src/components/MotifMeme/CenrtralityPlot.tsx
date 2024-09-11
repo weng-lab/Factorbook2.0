@@ -77,7 +77,17 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({
 
   return (
     <Box position="relative">
-      <Typography variant="h6" align="center" gutterBottom>
+      <Typography
+        variant="h6"
+        align="center"
+        gutterBottom
+        noWrap
+        sx={{
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
         Peak Centrality
       </Typography>
       <svg width={width} height={height} ref={svgRef}>
@@ -118,7 +128,8 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({
           </div>
         </TooltipWithBounds>
       )}
-      <Box display="flex" justifyContent="center" mt={1}>
+      {/* Aligning the Export SVG button to the left under the graph */}
+      <Box display="flex" justifyContent="start" mt={1} ml={7}>
         <Button
           variant="contained"
           onClick={() => downloadSVG(svgRef, "centrality.svg")}

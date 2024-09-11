@@ -34,8 +34,7 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import PublicIcon from "@mui/icons-material/Public";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import InfoIcon from "@mui/icons-material/Info";
+
 import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/MotifMeme/Queries";
 import {
   DataResponse,

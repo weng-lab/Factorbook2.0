@@ -115,19 +115,21 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
 
   return (
     <Box position="relative">
-      <Typography
-        variant="h6"
-        align="center"
-        gutterBottom
-        noWrap
-        sx={{
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-      >
-        Evolutionary Conservation: phyloP 100-way
-      </Typography>
+      {/* Centering the Typography inside a Box */}
+      <Box textAlign="center" mb={2}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          noWrap
+          sx={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          Evolutionary Conservation: phyloP 100-way
+        </Typography>
+      </Box>
       <svg width={width} height={height} ref={svgRef}>
         <Group left={60} top={20}>
           <LinePath
