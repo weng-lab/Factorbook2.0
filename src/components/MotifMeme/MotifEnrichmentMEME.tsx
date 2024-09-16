@@ -78,6 +78,10 @@ export function toScientificNotationElement(
   );
 }
 
+// Add custom colors to Alphabet A and T
+DNAAlphabet[0].color = "#228b22";
+DNAAlphabet[3].color = "red";
+
 // Check for poor peak centrality based on motif properties
 const poorPeakCentrality = (motif: any): boolean =>
   motif.flank_z_score < 0 || motif.flank_p_value > 0.05;
