@@ -27,6 +27,8 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  Drawer,
+  IconButton,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -51,6 +53,8 @@ import CentralityPlot from "./CenrtralityPlot";
 import ATACPlot from "./ATACPlot";
 import ConservationPlot from "./ConservationPlot";
 import { TOMTOMMessage } from "./TOMTOMMessage";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 
 // Helper function to convert numbers to scientific notation
 export function toScientificNotationElement(
@@ -106,6 +110,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [exportMotif, setExportMotif] = useState<boolean>(true);
   const [exportLogo, setExportLogo] = useState<boolean>(false);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(true);
   const [showQCStates, setShowQCStates] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -234,134 +239,165 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   return (
     <Box
       sx={{
-        height: "calc(100vh - 64px)",
+        height: "calc(100vh - 64px)", // Respect header/footer
         display: "flex",
         padding: "5px",
         flexDirection: { xs: "column", md: "row" },
+        overflow: "hidden", // Fix extra white space issue
       }}
     >
-      {/* Left Side */}
-      <Box
+      {/* IconButton to toggle drawer - always visible */}
+      <IconButton
+        onClick={() => setDrawerOpen(!drawerOpen)}
         sx={{
-          width: { xs: "100%", md: "25%" },
-          overflowY: "auto",
-          paddingRight: { md: "10px" },
-          paddingBottom: { xs: "10px", md: "0" },
+          position: "fixed",
+          top: "50%", // Center the button vertically
+          left: 0,
+          transform: "translateY(-50%)", // Adjust centering
+          zIndex: 2000,
+          backgroundColor: "white", // Ensure visibility
+          color: "#8169BF",
+          borderRadius: "50%",
+          boxShadow: 3,
         }}
       >
-        <Box mb={2}>
-          <TextField
-            label="Search Biosamples"
-            variant="outlined"
-            fullWidth
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              sx: {
-                backgroundColor: "rgba(129, 105, 191, 0.09)", // #8169BF with 9% opacity
-                borderRadius: "50px", // Circular shape
-                paddingLeft: "20px", // Adds some padding
-              },
-            }}
-            sx={{
-              marginTop: "5px", // Adds a 5px margin to the top to fix label alignment
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#8169BF", // Set border color to match background
-                },
-                "&:hover fieldset": {
-                  borderColor: "#8169BF", // Set border color on hover
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#8169BF", // Set border color when focused
-                },
-              },
-            }}
-          />
-        </Box>
-        <List>
-          {filteredBiosamples.map((biosample, index) => (
-            <Accordion
-              key={index}
-              expanded={expandedAccordion === index}
-              onChange={() =>
-                setExpandedAccordion(
-                  expandedAccordion === index ? false : index
-                )
-              }
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls={`panel${index}-content`}
-                id={`panel${index}-header`}
-              >
-                <Typography style={{ fontWeight: "bold" }}>
-                  {biosample.biosample.name}
-                </Typography>
-                <Chip
-                  label={`${biosample.counts.total} exp`}
-                  style={{
-                    backgroundColor: "#8169BF",
-                    color: "white",
-                    marginLeft: "auto",
-                  }}
-                />
-              </AccordionSummary>
-              <AccordionDetails>
-                <List disablePadding>
-                  {biosample.datasets.map((dataset: Dataset, idx: number) =>
-                    dataset.replicated_peaks.map(
-                      (peak: ReplicatedPeaks, peakIdx: number) => (
-                        <ListItem
-                          key={`${idx}-${peakIdx}`}
-                          style={{
-                            paddingLeft: "30px",
-                            cursor: "pointer",
-                            backgroundColor:
-                              selectedPeak === peak.accession
-                                ? "#D3D3D3"
-                                : "transparent",
-                            fontWeight:
-                              selectedPeak === peak.accession
-                                ? "bold"
-                                : "normal",
-                          }}
-                          onClick={() =>
-                            handleAccessionClick(peak.accession, index)
-                          }
-                        >
-                          <ListItemText
-                            primary={`${dataset.lab.friendly_name} (${dataset.accession})`}
-                          />
-                        </ListItem>
-                      )
-                    )
-                  )}
-                </List>
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </List>
-      </Box>
+        {drawerOpen ? <CloseIcon /> : <MenuIcon />}
+      </IconButton>
 
-      {/* Divider */}
+      {/* Left-side Drawer (Respects header and footer) */}
       <Box
         sx={{
-          width: { xs: "100%", md: "1px" },
-          height: { xs: "1px", md: "auto" },
-          backgroundColor: "#ccc",
-          marginRight: { md: "10px" },
-          marginLeft: { md: "10px" },
-          marginY: { xs: "10px", md: "0" },
+          width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
+          height: "calc(100vh - 128px)", // Respect header/footer
+          marginTop: "64px", // Below header
+          marginBottom: "64px", // Above footer
+          position: "relative", // Not fixed, part of the layout
+          overflowY: "auto", // Allow scrolling of drawer content
+          transition: "width 0.3s ease", // Smooth transition when opening/closing
+          paddingRight: { md: "10px" },
+          paddingBottom: { xs: "10px", md: "0" },
+          backgroundColor: "white",
+          borderRight: drawerOpen ? "1px solid #ccc" : "none", // Show border when open
         }}
-      />
+      >
+        {drawerOpen && (
+          <Box>
+            {/* Sticky Search Bar */}
+            <Box
+              sx={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1100,
+                backgroundColor: "white",
+                padding: "16px",
+                borderBottom: "1px solid #ccc", // Divider between search bar and list
+              }}
+            >
+              <TextField
+                label="Search Biosamples"
+                variant="outlined"
+                fullWidth
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  sx: {
+                    backgroundColor: "rgba(129, 105, 191, 0.09)",
+                    borderRadius: "50px",
+                    paddingLeft: "20px",
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "#8169BF",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#8169BF",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#8169BF",
+                    },
+                  },
+                }}
+              />
+            </Box>
 
-      {/* Right Side */}
+            {/* Scrollable Biosample List */}
+            <List sx={{ padding: "16px" }}>
+              {filteredBiosamples.map((biosample, index) => (
+                <Accordion
+                  key={index}
+                  expanded={expandedAccordion === index}
+                  onChange={() =>
+                    setExpandedAccordion(
+                      expandedAccordion === index ? false : index
+                    )
+                  }
+                >
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls={`panel${index}-content`}
+                    id={`panel${index}-header`}
+                  >
+                    <Typography style={{ fontWeight: "bold" }}>
+                      {biosample.biosample.name}
+                    </Typography>
+                    <Chip
+                      label={`${biosample.counts.total} exp`}
+                      style={{
+                        backgroundColor: "#8169BF",
+                        color: "white",
+                        marginLeft: "auto",
+                      }}
+                    />
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <List disablePadding>
+                      {biosample.datasets.map((dataset: Dataset, idx: number) =>
+                        dataset.replicated_peaks.map(
+                          (peak: ReplicatedPeaks, peakIdx: number) => (
+                            <ListItem
+                              key={`${idx}-${peakIdx}`}
+                              style={{
+                                paddingLeft: "30px",
+                                cursor: "pointer",
+                                backgroundColor:
+                                  selectedPeak === peak.accession
+                                    ? "#D3D3D3"
+                                    : "transparent",
+                                fontWeight:
+                                  selectedPeak === peak.accession
+                                    ? "bold"
+                                    : "normal",
+                              }}
+                              onClick={() =>
+                                handleAccessionClick(peak.accession, index)
+                              }
+                            >
+                              <ListItemText
+                                primary={`${dataset.lab.friendly_name} (${dataset.accession})`}
+                              />
+                            </ListItem>
+                          )
+                        )
+                      )}
+                    </List>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+            </List>
+          </Box>
+        )}
+      </Box>
+
+      {/* Right-side Content */}
       <Box
         sx={{
           flexGrow: 1,
-          overflowY: "auto",
-          paddingLeft: { md: "10px" },
+          marginLeft: drawerOpen ? { xs: 0, md: "25%" } : 0, // Adjust margin when drawer is open
+          transition: "margin-left 0.3s ease", // Smooth transition for content shift
+          padding: "16px",
+          overflowY: "auto", // Scrollable right-side content
         }}
       >
         {motifLoading && <CircularProgress />}
