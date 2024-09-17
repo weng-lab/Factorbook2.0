@@ -27,16 +27,15 @@ import {
   TableBody,
   TableCell,
   TableRow,
-  Drawer,
   IconButton,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import PublicIcon from "@mui/icons-material/Public";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
@@ -119,6 +118,10 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
 
   const svgRefs = useRef<(SVGSVGElement | null)[]>([]);
   const assembly = species === "Human" ? "GRCh38" : "mm10";
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   const { data, loading, error } = useQuery<DataResponse>(DATASETS_QUERY, {
     variables: {
@@ -248,7 +251,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
         overflow: "hidden", // Fix extra white space issue
       }}
     >
-      {/* Drawer Toggle Button (expand button when drawer is collapsed) */}
       {!drawerOpen && (
         <IconButton
           onClick={() => setDrawerOpen(true)}
@@ -284,7 +286,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
       >
         {drawerOpen && (
           <Box>
-            {/* Sticky Search Bar */}
             <Box
               sx={{
                 position: "sticky",
@@ -293,11 +294,10 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 backgroundColor: "white",
                 padding: "16px",
                 borderBottom: "1px solid #ccc", // Divider between search bar and list
-                display: "flex", // Ensure elements are aligned horizontally
-                alignItems: "center", // Center vertically
+                display: "flex",
+                alignItems: "center",
               }}
             >
-              {/* Search Bar */}
               <TextField
                 label="Search Biosamples"
                 variant="outlined"
@@ -313,36 +313,22 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "#8169BF",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#8169BF",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#8169BF",
-                    },
+                    "& fieldset": { borderColor: "#8169BF" },
                   },
                 }}
               />
-
-              {/* Close Icon for collapsing drawer */}
               <IconButton
-                onClick={() => setDrawerOpen(false)} // Collapse the drawer when clicked
+                onClick={() => setDrawerOpen(false)}
                 sx={{
-                  marginLeft: 2, // Add some space between the search bar and icon
+                  marginLeft: 2,
                   backgroundColor: "#8169BF",
                   color: "white",
-                  "&:hover": {
-                    backgroundColor: "#7149b9", // Slightly darker purple to keep it visible
-                  },
                 }}
               >
                 <CloseIcon />
               </IconButton>
             </Box>
 
-            {/* Scrollable Biosample List */}
             <List sx={{ padding: "16px" }}>
               {filteredBiosamples.map((biosample, index) => (
                 <Accordion
@@ -428,7 +414,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 ? rc(motif.pwm)
                 : motif.pwm;
 
-              // Determine if the motif should be greyed out
               const isGreyedOut =
                 poorPeakCentrality(motif) || poorPeakEnrichment(motif);
 
@@ -436,7 +421,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 <Box key={motif.id} mb={4}>
                   <Grid container spacing={2} alignItems="center">
                     <Grid item xs={12} md={6}>
-                      {/* Add indicators for poor peak centrality and enrichment */}
                       {poorPeakCentrality(motif) && (
                         <Chip
                           icon={<HelpOutlineIcon />}
@@ -478,13 +462,12 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                           ref={(el: SVGSVGElement | null) =>
                             (svgRefs.current[index] = el)
                           }
-                          width={400}
-                          height={250}
+                          width={isMobile ? 300 : 400}
+                          height={isMobile ? 150 : 250}
                         />
                       </Box>
                     </Grid>
 
-                    {/* E-value and Occurrences table */}
                     <Grid item xs={12} md={6}>
                       <Paper
                         elevation={3}
@@ -569,11 +552,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                     </Grid>
                   </Grid>
 
-                  {/* TOMTOMMessage component */}
                   <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
 
-                  {/* Button controls */}
-                  {/* Buttons aligned side by side */}
                   <Box
                     display="flex"
                     justifyContent="space-between"
@@ -587,8 +567,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         borderRadius: "20px",
                         backgroundColor: "#8169BF",
                         color: "white",
-                        flex: 1, // Ensures each button takes up equal space
-                        minWidth: "20%", // Ensure each button is at least 20% width
+                        flex: 1,
+                        minWidth: "20%",
                       }}
                       onClick={() => setIsDialogOpen(true)}
                     >
@@ -603,8 +583,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         borderColor: "#8169BF",
                         color: "#8169BF",
                         backgroundColor: "white",
-                        flex: 1, // Equal width distribution
-                        minWidth: "20%", // Ensure each button is at least 20% width
+                        flex: 1,
+                        minWidth: "20%",
                       }}
                       onClick={() => handleReverseComplement(index)}
                     >
@@ -619,8 +599,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         borderColor: "#8169BF",
                         color: "#8169BF",
                         backgroundColor: "white",
-                        flex: 1, // Equal width distribution
-                        minWidth: "20%", // Ensure each button is at least 20% width
+                        flex: 1,
+                        minWidth: "20%",
                       }}
                     >
                       Show Genomic Sites
@@ -634,8 +614,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         borderColor: "#8169BF",
                         color: "#8169BF",
                         backgroundColor: "white",
-                        flex: 1, // Equal width distribution
-                        minWidth: "20%", // Ensure each button is at least 20% width
+                        flex: 1,
+                        minWidth: "20%",
                       }}
                       onClick={() => toggleShowQC(motif.id)}
                     >
@@ -643,20 +623,14 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                     </Button>
                   </Box>
 
-                  {/* QC Plots */}
                   {showQCStates[motif.id] && selectedPeak && (
                     <Box mt={3}>
-                      <Grid
-                        container
-                        spacing={2}
-                        mt={3}
-                        justifyContent="space-between"
-                      >
+                      <Grid container spacing={2} mt={3}>
                         <Grid item xs={12} md={6}>
                           <CentralityPlot
                             peak_centrality={motif.peak_centrality}
-                            width={500}
-                            height={300}
+                            width={isMobile ? 300 : 500}
+                            height={isMobile ? 150 : 300}
                           />
                         </Grid>
                         {motif.atac_data &&
@@ -675,8 +649,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                             name={motif.name}
                             accession={selectedPeak}
                             pwm={motifppm}
-                            width={500}
-                            height={300}
+                            width={isMobile ? 300 : 500}
+                            height={isMobile ? 150 : 300}
                           />
                         </Grid>
                       </Grid>
@@ -690,8 +664,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                     slotProps={{
                       backdrop: {
                         sx: {
-                          backgroundColor: "rgba(255, 255, 255, 0.1)", // Transparent background
-                          backdropFilter: "blur(10px)", // Slight blur effect
+                          backgroundColor: "rgba(255, 255, 255, 0.1)",
+                          backdropFilter: "blur(10px)",
                         },
                       },
                     }}
@@ -700,7 +674,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                       Download as
                     </DialogTitle>
                     <DialogContent>
-                      {/* Your checkboxes for Motif, Logo, and Peak Sites */}
                       <FormControlLabel
                         control={
                           <Checkbox
