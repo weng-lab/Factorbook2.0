@@ -111,6 +111,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const [exportMotif, setExportMotif] = useState<boolean>(true);
   const [exportLogo, setExportLogo] = useState<boolean>(false);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(true);
+  const [exportPeakSites, setExportPeakSites] = useState<boolean>(false);
   const [showQCStates, setShowQCStates] = useState<{ [key: string]: boolean }>(
     {}
   );
@@ -195,8 +196,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     }
 
     if (exportLogo && svgElement) {
-      const ref = { current: svgElement } as MutableRefObject<SVGSVGElement>;
-      downloadSVGElementAsSVG(ref, `${name}-logo.svg`);
+      // No need for MutableRefObject here; just pass the svgElement directly
+      downloadSVGElementAsSVG({ current: svgElement }, `${name}-logo.svg`);
     }
 
     setIsDialogOpen(false);
@@ -269,7 +270,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
         sx={{
           width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
           height: "calc(100vh - 128px)", // Respect header/footer
-          marginTop: "64px", // Below header
           marginBottom: "64px", // Above footer
           position: "relative", // Not fixed, part of the layout
           overflowY: "auto", // Allow scrolling of drawer content
@@ -394,7 +394,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
       <Box
         sx={{
           flexGrow: 1,
-          marginLeft: drawerOpen ? { xs: 0, md: "25%" } : 0, // Adjust margin when drawer is open
+          marginLeft: drawerOpen ? { xs: 0 } : 0, // Adjust margin when drawer is open
           transition: "margin-left 0.3s ease", // Smooth transition for content shift
           padding: "16px",
           overflowY: "auto", // Scrollable right-side content
@@ -638,11 +638,20 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                     open={isDialogOpen}
                     onClose={() => setIsDialogOpen(false)}
                     aria-labelledby="export-dialog-title"
+                    slotProps={{
+                      backdrop: {
+                        sx: {
+                          backgroundColor: "rgba(255, 255, 255, 0.1)", // Transparent background
+                          backdropFilter: "blur(10px)", // Slight blur effect
+                        },
+                      },
+                    }}
                   >
                     <DialogTitle id="export-dialog-title">
                       Download as
                     </DialogTitle>
                     <DialogContent>
+                      {/* Your checkboxes for Motif, Logo, and Peak Sites */}
                       <FormControlLabel
                         control={
                           <Checkbox
@@ -663,6 +672,18 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         }
                         label="Logo"
                       />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={exportPeakSites}
+                            onChange={(e) =>
+                              setExportPeakSites(e.target.checked)
+                            }
+                            sx={{ color: "#8169BF" }}
+                          />
+                        }
+                        label="Peak Sites"
+                      />
                     </DialogContent>
                     <DialogActions>
                       <Button
@@ -672,13 +693,31 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         Cancel
                       </Button>
                       <Button
-                        onClick={() =>
-                          handleDownload(
-                            motif.id,
-                            motifppm,
-                            svgRefs.current[index]
-                          )
-                        }
+                        onClick={() => {
+                          if (exportMotif) {
+                            handleDownload(
+                              motif.id,
+                              motifppm,
+                              svgRefs.current[index]
+                            );
+                          }
+                          if (exportPeakSites) {
+                            const speciesGenome =
+                              species === "Human" ? "hg38" : "mm10";
+                            const downloadUrl = `https://screen-beta-api.wenglab.org/factorbook_downloads/hq-occurrences/${selectedPeak}_${motif.name}.gz`;
+                            const link = document.createElement("a");
+                            link.href = downloadUrl;
+                            link.download = `${selectedPeak}_${motif.name}_${speciesGenome}.gz`;
+                            link.click();
+                          }
+                          if (exportLogo && svgRefs.current[index]) {
+                            downloadSVGElementAsSVG(
+                              { current: svgRefs.current[index] },
+                              `${motif.name}-logo.svg`
+                            );
+                          }
+                          setIsDialogOpen(false);
+                        }}
                         sx={{
                           borderRadius: "20px",
                           backgroundColor: "#8169BF",
