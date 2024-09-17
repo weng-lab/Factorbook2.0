@@ -36,6 +36,8 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import PublicIcon from "@mui/icons-material/Public";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import MenuIcon from "@mui/icons-material/Menu";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/MotifMeme/Queries";
 import {
@@ -53,8 +55,6 @@ import CentralityPlot from "./CenrtralityPlot";
 import ATACPlot from "./ATACPlot";
 import ConservationPlot from "./ConservationPlot";
 import { TOMTOMMessage } from "./TOMTOMMessage";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
 
 // Helper function to convert numbers to scientific notation
 export function toScientificNotationElement(
@@ -417,6 +417,36 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 <Box key={motif.id} mb={4}>
                   <Grid container spacing={2} alignItems="center">
                     <Grid item xs={12} md={6}>
+                      {/* Add indicators for poor peak centrality and enrichment */}
+                      {poorPeakCentrality(motif) && (
+                        <Chip
+                          icon={<HelpOutlineIcon />}
+                          label="Poor Peak Centrality"
+                          sx={{
+                            backgroundColor: "rgba(255, 165, 0, 0.1)",
+                            color: "#FFA500",
+                            fontWeight: "bold",
+                            borderRadius: "16px",
+                            padding: "5px",
+                            marginBottom: "8px",
+                          }}
+                        />
+                      )}
+                      {poorPeakEnrichment(motif) && (
+                        <Chip
+                          icon={<HelpOutlineIcon />}
+                          label="Poor Peak Enrichment"
+                          sx={{
+                            backgroundColor: "rgba(75, 0, 130, 0.1)",
+                            color: "#4B0082",
+                            fontWeight: "bold",
+                            borderRadius: "16px",
+                            padding: "5px",
+                            marginBottom: "8px",
+                            marginLeft: "8px",
+                          }}
+                        />
+                      )}
                       <Box
                         sx={{
                           opacity: isGreyedOut ? 0.5 : 1,
