@@ -38,6 +38,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/MotifMeme/Queries";
 import {
@@ -247,25 +248,27 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
         overflow: "hidden", // Fix extra white space issue
       }}
     >
-      {/* IconButton to toggle drawer - always visible */}
-      <IconButton
-        onClick={() => setDrawerOpen(!drawerOpen)}
-        sx={{
-          position: "fixed",
-          top: "50%", // Center the button vertically
-          left: 0,
-          transform: "translateY(-50%)", // Adjust centering
-          zIndex: 2000,
-          backgroundColor: "white", // Ensure visibility
-          color: "#8169BF",
-          borderRadius: "50%",
-          boxShadow: 3,
-        }}
-      >
-        {drawerOpen ? <CloseIcon /> : <MenuIcon />}
-      </IconButton>
+      {/* Drawer Toggle Button (expand button when drawer is collapsed) */}
+      {!drawerOpen && (
+        <IconButton
+          onClick={() => setDrawerOpen(true)}
+          sx={{
+            position: "fixed",
+            top: "50%", // Center the button vertically
+            left: 0,
+            transform: "translateY(-50%)", // Adjust centering
+            zIndex: 2000,
+            backgroundColor: "white",
+            color: "#8169BF",
+            borderRadius: "50%",
+            boxShadow: 3,
+          }}
+        >
+          <ArrowForwardIosIcon /> {/* Right-facing arrow for expanding */}
+        </IconButton>
+      )}
 
-      {/* Left-side Drawer (Respects header and footer) */}
+      {/* Left-side Drawer */}
       <Box
         sx={{
           width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
@@ -274,8 +277,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
           position: "relative", // Not fixed, part of the layout
           overflowY: "auto", // Allow scrolling of drawer content
           transition: "width 0.3s ease", // Smooth transition when opening/closing
-          paddingRight: { md: "10px" },
-          paddingBottom: { xs: "10px", md: "0" },
+          paddingRight: drawerOpen ? { md: "10px" } : 0,
           backgroundColor: "white",
           borderRight: drawerOpen ? "1px solid #ccc" : "none", // Show border when open
         }}
@@ -291,8 +293,11 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 backgroundColor: "white",
                 padding: "16px",
                 borderBottom: "1px solid #ccc", // Divider between search bar and list
+                display: "flex", // Ensure elements are aligned horizontally
+                alignItems: "center", // Center vertically
               }}
             >
+              {/* Search Bar */}
               <TextField
                 label="Search Biosamples"
                 variant="outlined"
@@ -320,6 +325,21 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                   },
                 }}
               />
+
+              {/* Close Icon for collapsing drawer */}
+              <IconButton
+                onClick={() => setDrawerOpen(false)} // Collapse the drawer when clicked
+                sx={{
+                  marginLeft: 2, // Add some space between the search bar and icon
+                  backgroundColor: "#8169BF",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "#7149b9", // Slightly darker purple to keep it visible
+                  },
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
             </Box>
 
             {/* Scrollable Biosample List */}
@@ -335,7 +355,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                   }
                 >
                   <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
                     aria-controls={`panel${index}-content`}
                     id={`panel${index}-header`}
                   >
