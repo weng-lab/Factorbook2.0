@@ -27,15 +27,18 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  IconButton,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import PublicIcon from "@mui/icons-material/Public";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import InfoIcon from "@mui/icons-material/Info";
+import CloseIcon from "@mui/icons-material/Close";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+
 import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/MotifMeme/Queries";
 import {
   DataResponse,
@@ -79,6 +82,10 @@ export function toScientificNotationElement(
   );
 }
 
+// Add custom colors to Alphabet A and T
+DNAAlphabet[0].color = "#228b22";
+DNAAlphabet[3].color = "red";
+
 // Check for poor peak centrality based on motif properties
 const poorPeakCentrality = (motif: any): boolean =>
   motif.flank_z_score < 0 || motif.flank_p_value > 0.05;
@@ -103,12 +110,18 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [exportMotif, setExportMotif] = useState<boolean>(true);
   const [exportLogo, setExportLogo] = useState<boolean>(false);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(true);
+  const [exportPeakSites, setExportPeakSites] = useState<boolean>(false);
   const [showQCStates, setShowQCStates] = useState<{ [key: string]: boolean }>(
     {}
   );
 
   const svgRefs = useRef<(SVGSVGElement | null)[]>([]);
   const assembly = species === "Human" ? "GRCh38" : "mm10";
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   const { data, loading, error } = useQuery<DataResponse>(DATASETS_QUERY, {
     variables: {
@@ -187,8 +200,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     }
 
     if (exportLogo && svgElement) {
-      const ref = { current: svgElement } as MutableRefObject<SVGSVGElement>;
-      downloadSVGElementAsSVG(ref, `${name}-logo.svg`);
+      // No need for MutableRefObject here; just pass the svgElement directly
+      downloadSVGElementAsSVG({ current: svgElement }, `${name}-logo.svg`);
     }
 
     setIsDialogOpen(false);
@@ -231,134 +244,165 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   return (
     <Box
       sx={{
-        height: "calc(100vh - 64px)",
+        height: "calc(100vh - 64px)", // Respect header/footer
         display: "flex",
         padding: "5px",
         flexDirection: { xs: "column", md: "row" },
+        overflow: "hidden", // Fix extra white space issue
       }}
     >
-      {/* Left Side */}
+      {!drawerOpen && (
+        <IconButton
+          onClick={() => setDrawerOpen(true)}
+          sx={{
+            position: "fixed",
+            top: "50%", // Center the button vertically
+            left: 0,
+            transform: "translateY(-50%)", // Adjust centering
+            zIndex: 2000,
+            backgroundColor: "white",
+            color: "#8169BF",
+            borderRadius: "50%",
+            boxShadow: 3,
+          }}
+        >
+          <ArrowForwardIosIcon /> {/* Right-facing arrow for expanding */}
+        </IconButton>
+      )}
+
+      {/* Left-side Drawer */}
       <Box
         sx={{
-          width: { xs: "100%", md: "25%" },
-          overflowY: "auto",
-          paddingRight: { md: "10px" },
-          paddingBottom: { xs: "10px", md: "0" },
+          width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
+          height: "calc(100vh - 128px)", // Respect header/footer
+          marginBottom: "64px", // Above footer
+          position: "relative", // Not fixed, part of the layout
+          overflowY: "auto", // Allow scrolling of drawer content
+          transition: "width 0.3s ease", // Smooth transition when opening/closing
+          paddingRight: drawerOpen ? { md: "10px" } : 0,
+          backgroundColor: "white",
+          borderRight: drawerOpen ? "1px solid #ccc" : "none", // Show border when open
         }}
       >
-        <Box mb={2}>
-          <TextField
-            label="Search Biosamples"
-            variant="outlined"
-            fullWidth
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              sx: {
-                backgroundColor: "rgba(129, 105, 191, 0.09)", // #8169BF with 9% opacity
-                borderRadius: "50px", // Circular shape
-                paddingLeft: "20px", // Adds some padding
-              },
-            }}
-            sx={{
-              marginTop: "5px", // Adds a 5px margin to the top to fix label alignment
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "#8169BF", // Set border color to match background
-                },
-                "&:hover fieldset": {
-                  borderColor: "#8169BF", // Set border color on hover
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#8169BF", // Set border color when focused
-                },
-              },
-            }}
-          />
-        </Box>
-        <List>
-          {filteredBiosamples.map((biosample, index) => (
-            <Accordion
-              key={index}
-              expanded={expandedAccordion === index}
-              onChange={() =>
-                setExpandedAccordion(
-                  expandedAccordion === index ? false : index
-                )
-              }
+        {drawerOpen && (
+          <Box>
+            <Box
+              sx={{
+                position: "sticky",
+                top: 0,
+                zIndex: 1100,
+                backgroundColor: "white",
+                padding: "16px",
+                borderBottom: "1px solid #ccc", // Divider between search bar and list
+                display: "flex",
+                alignItems: "center",
+              }}
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls={`panel${index}-content`}
-                id={`panel${index}-header`}
+              <TextField
+                label="Search Biosamples"
+                variant="outlined"
+                fullWidth
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  sx: {
+                    backgroundColor: "rgba(129, 105, 191, 0.09)",
+                    borderRadius: "50px",
+                    paddingLeft: "20px",
+                  },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": { borderColor: "#8169BF" },
+                  },
+                }}
+              />
+              <IconButton
+                onClick={() => setDrawerOpen(false)}
+                sx={{
+                  marginLeft: 2,
+                  backgroundColor: "#8169BF",
+                  color: "white",
+                }}
               >
-                <Typography style={{ fontWeight: "bold" }}>
-                  {biosample.biosample.name}
-                </Typography>
-                <Chip
-                  label={`${biosample.counts.total} exp`}
-                  style={{
-                    backgroundColor: "#8169BF",
-                    color: "white",
-                    marginLeft: "auto",
-                  }}
-                />
-              </AccordionSummary>
-              <AccordionDetails>
-                <List disablePadding>
-                  {biosample.datasets.map((dataset: Dataset, idx: number) =>
-                    dataset.replicated_peaks.map(
-                      (peak: ReplicatedPeaks, peakIdx: number) => (
-                        <ListItem
-                          key={`${idx}-${peakIdx}`}
-                          style={{
-                            paddingLeft: "30px",
-                            cursor: "pointer",
-                            backgroundColor:
-                              selectedPeak === peak.accession
-                                ? "#D3D3D3"
-                                : "transparent",
-                            fontWeight:
-                              selectedPeak === peak.accession
-                                ? "bold"
-                                : "normal",
-                          }}
-                          onClick={() =>
-                            handleAccessionClick(peak.accession, index)
-                          }
-                        >
-                          <ListItemText
-                            primary={`${dataset.lab.friendly_name} (${dataset.accession})`}
-                          />
-                        </ListItem>
-                      )
+                <CloseIcon />
+              </IconButton>
+            </Box>
+
+            <List sx={{ padding: "16px" }}>
+              {filteredBiosamples.map((biosample, index) => (
+                <Accordion
+                  key={index}
+                  expanded={expandedAccordion === index}
+                  onChange={() =>
+                    setExpandedAccordion(
+                      expandedAccordion === index ? false : index
                     )
-                  )}
-                </List>
-              </AccordionDetails>
-            </Accordion>
-          ))}
-        </List>
+                  }
+                >
+                  <AccordionSummary
+                    aria-controls={`panel${index}-content`}
+                    id={`panel${index}-header`}
+                  >
+                    <Typography style={{ fontWeight: "bold" }}>
+                      {biosample.biosample.name}
+                    </Typography>
+                    <Chip
+                      label={`${biosample.counts.total} exp`}
+                      style={{
+                        backgroundColor: "#8169BF",
+                        color: "white",
+                        marginLeft: "auto",
+                      }}
+                    />
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <List disablePadding>
+                      {biosample.datasets.map((dataset: Dataset, idx: number) =>
+                        dataset.replicated_peaks.map(
+                          (peak: ReplicatedPeaks, peakIdx: number) => (
+                            <ListItem
+                              key={`${idx}-${peakIdx}`}
+                              style={{
+                                paddingLeft: "30px",
+                                cursor: "pointer",
+                                backgroundColor:
+                                  selectedPeak === peak.accession
+                                    ? "#D3D3D3"
+                                    : "transparent",
+                                fontWeight:
+                                  selectedPeak === peak.accession
+                                    ? "bold"
+                                    : "normal",
+                              }}
+                              onClick={() =>
+                                handleAccessionClick(peak.accession, index)
+                              }
+                            >
+                              <ListItemText
+                                primary={`${dataset.lab.friendly_name} (${dataset.accession})`}
+                              />
+                            </ListItem>
+                          )
+                        )
+                      )}
+                    </List>
+                  </AccordionDetails>
+                </Accordion>
+              ))}
+            </List>
+          </Box>
+        )}
       </Box>
 
-      {/* Divider */}
-      <Box
-        sx={{
-          width: { xs: "100%", md: "1px" },
-          height: { xs: "1px", md: "auto" },
-          backgroundColor: "#ccc",
-          marginRight: { md: "10px" },
-          marginLeft: { md: "10px" },
-          marginY: { xs: "10px", md: "0" },
-        }}
-      />
-
-      {/* Right Side */}
+      {/* Right-side Content */}
       <Box
         sx={{
           flexGrow: 1,
-          overflowY: "auto",
-          paddingLeft: { md: "10px" },
+          marginLeft: drawerOpen ? { xs: 0 } : 0, // Adjust margin when drawer is open
+          transition: "margin-left 0.3s ease", // Smooth transition for content shift
+          padding: "16px",
+          overflowY: "auto", // Scrollable right-side content
         }}
       >
         {motifLoading && <CircularProgress />}
@@ -370,19 +414,17 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 ? rc(motif.pwm)
                 : motif.pwm;
 
-              // Determine if the motif should be greyed out
               const isGreyedOut =
                 poorPeakCentrality(motif) || poorPeakEnrichment(motif);
 
               return (
                 <Box key={motif.id} mb={4}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={8}>
-                      {/* Add indicators for poor peak centrality and enrichment */}
+                  <Grid container spacing={2} alignItems="center">
+                    <Grid item xs={12} md={6}>
                       {poorPeakCentrality(motif) && (
                         <Chip
-                          icon={<ErrorOutlineIcon />}
-                          label="poor peak centrality"
+                          icon={<HelpOutlineIcon />}
+                          label="Poor Peak Centrality"
                           sx={{
                             backgroundColor: "rgba(255, 165, 0, 0.1)",
                             color: "#FFA500",
@@ -395,8 +437,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                       )}
                       {poorPeakEnrichment(motif) && (
                         <Chip
-                          icon={<InfoIcon />}
-                          label="poor peak enrichment"
+                          icon={<HelpOutlineIcon />}
+                          label="Poor Peak Enrichment"
                           sx={{
                             backgroundColor: "rgba(75, 0, 130, 0.1)",
                             color: "#4B0082",
@@ -420,205 +462,25 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                           ref={(el: SVGSVGElement | null) =>
                             (svgRefs.current[index] = el)
                           }
-                          width={400}
-                          height={250}
+                          width={isMobile ? 300 : 400}
+                          height={isMobile ? 150 : 250}
                         />
                       </Box>
-
-                      {/* TOMTOMMessage component */}
-                      <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
-
-                      <Box display="flex" mt={2} gap={2}>
-                        <Button
-                          variant="contained"
-                          startIcon={<SaveAltIcon />}
-                          onClick={() => setIsDialogOpen(true)}
-                          sx={{
-                            borderRadius: "20px",
-                            backgroundColor: "#8169BF",
-                            color: "white",
-                          }}
-                        >
-                          Download
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          startIcon={<SwapHorizIcon />}
-                          onClick={() => handleReverseComplement(index)}
-                          sx={{
-                            borderRadius: "20px",
-                            borderColor: "#8169BF",
-                            color: "#8169BF",
-                            backgroundColor: "white",
-                            marginRight: 2,
-                          }}
-                        >
-                          Reverse Complement
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          startIcon={<PublicIcon />}
-                          sx={{
-                            borderColor: "#8169BF",
-                            color: "#8169BF",
-                            backgroundColor: "white",
-                            borderRadius: "24px",
-                            textTransform: "none",
-                            fontWeight: "medium",
-                            "&:hover": {
-                              backgroundColor: "white",
-                              borderColor: "#8169BF",
-                            },
-                          }}
-                        >
-                          Show Genomic Sites
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          startIcon={<VisibilityIcon />}
-                          sx={{
-                            borderColor: "#8169BF",
-                            color: "#8169BF",
-                            backgroundColor: "white",
-                            borderRadius: "24px",
-                            textTransform: "none",
-                            fontWeight: "medium",
-                            "&:hover": {
-                              backgroundColor: "white",
-                              borderColor: "#8169BF",
-                            },
-                          }}
-                          onClick={() => toggleShowQC(motif.id)} // Toggle QC visibility for this specific motif
-                        >
-                          {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
-                        </Button>
-                      </Box>
-
-                      {showQCStates[motif.id] && selectedPeak && (
-                        <Box mt={3}>
-                          <Grid
-                            container
-                            spacing={2}
-                            mt={3}
-                            justifyContent="space-between"
-                          >
-                            {/* Centrality Plot */}
-                            <Grid item xs={12} md={6}>
-                              <CentralityPlot
-                                peak_centrality={motif.peak_centrality}
-                                width={500}
-                                height={300}
-                              />
-                            </Grid>
-
-                            {/* Conditionally render ATACPlot */}
-                            {motif.atac_data &&
-                              Array.isArray(motif.atac_data) &&
-                              motif.atac_data.length > 0 && (
-                                <Grid item xs={12} md={6}>
-                                  <ATACPlot
-                                    name={motif.name}
-                                    accession={selectedPeak}
-                                    pwm={motifppm}
-                                  />
-                                </Grid>
-                              )}
-
-                            {/* Conservation Plot */}
-                            <Grid item xs={12} md={6}>
-                              <ConservationPlot
-                                name={motif.name}
-                                accession={selectedPeak}
-                                pwm={motifppm}
-                                width={500}
-                                height={300}
-                              />
-                            </Grid>
-                          </Grid>
-                        </Box>
-                      )}
-                      <Dialog
-                        open={isDialogOpen}
-                        onClose={() => setIsDialogOpen(false)}
-                        aria-labelledby="export-dialog-title"
-                      >
-                        <DialogTitle id="export-dialog-title">
-                          Download as
-                        </DialogTitle>
-                        <DialogContent>
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={exportMotif}
-                                onChange={(e) =>
-                                  setExportMotif(e.target.checked)
-                                }
-                                sx={{ color: "#8169BF" }}
-                              />
-                            }
-                            label="Motif (MEME)"
-                          />
-                          <FormControlLabel
-                            control={
-                              <Checkbox
-                                checked={exportLogo}
-                                onChange={(e) =>
-                                  setExportLogo(e.target.checked)
-                                }
-                                sx={{ color: "#8169BF" }}
-                              />
-                            }
-                            label="Logo"
-                          />
-                        </DialogContent>
-                        <DialogActions>
-                          <Button
-                            onClick={() => setIsDialogOpen(false)}
-                            sx={{ color: "#8169BF" }}
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={() =>
-                              handleDownload(
-                                motif.id,
-                                motifppm,
-                                svgRefs.current[index]
-                              )
-                            }
-                            sx={{
-                              borderRadius: "20px",
-                              backgroundColor: "#8169BF",
-                              color: "white",
-                            }}
-                          >
-                            Download
-                          </Button>
-                        </DialogActions>
-                      </Dialog>
                     </Grid>
-                    <Grid
-                      item
-                      xs={12}
-                      md={4}
-                      sx={{
-                        marginTop: "90px",
-                      }}
-                    >
+
+                    <Grid item xs={12} md={6}>
                       <Paper
                         elevation={3}
                         sx={{
                           padding: "16px",
-                          height: "auto",
-                          width: "100%",
-                          maxWidth: "350px",
                           textAlign: "center",
                           display: "flex",
-                          flexDirection: "column",
                           justifyContent: "center",
                           alignItems: "center",
                           margin: "0 auto",
+                          width: "60%",
                           backgroundColor: "white",
+                          borderRadius: "16px", // Adding rounded corners
                         }}
                       >
                         <Table>
@@ -689,6 +551,205 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                       </Paper>
                     </Grid>
                   </Grid>
+
+                  <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
+
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    mt={2}
+                    gap={2}
+                  >
+                    <Button
+                      variant="contained"
+                      startIcon={<SaveAltIcon />}
+                      sx={{
+                        borderRadius: "20px",
+                        backgroundColor: "#8169BF",
+                        color: "white",
+                        flex: 1,
+                        minWidth: "20%",
+                      }}
+                      onClick={() => setIsDialogOpen(true)}
+                    >
+                      Download
+                    </Button>
+
+                    <Button
+                      variant="outlined"
+                      startIcon={<SwapHorizIcon />}
+                      sx={{
+                        borderRadius: "20px",
+                        borderColor: "#8169BF",
+                        color: "#8169BF",
+                        backgroundColor: "white",
+                        flex: 1,
+                        minWidth: "20%",
+                      }}
+                      onClick={() => handleReverseComplement(index)}
+                    >
+                      Reverse Complement
+                    </Button>
+
+                    <Button
+                      variant="outlined"
+                      startIcon={<PublicIcon />}
+                      sx={{
+                        borderRadius: "20px",
+                        borderColor: "#8169BF",
+                        color: "#8169BF",
+                        backgroundColor: "white",
+                        flex: 1,
+                        minWidth: "20%",
+                      }}
+                    >
+                      Show Genomic Sites
+                    </Button>
+
+                    <Button
+                      variant="outlined"
+                      startIcon={<VisibilityIcon />}
+                      sx={{
+                        borderRadius: "20px",
+                        borderColor: "#8169BF",
+                        color: "#8169BF",
+                        backgroundColor: "white",
+                        flex: 1,
+                        minWidth: "20%",
+                      }}
+                      onClick={() => toggleShowQC(motif.id)}
+                    >
+                      {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
+                    </Button>
+                  </Box>
+
+                  {showQCStates[motif.id] && selectedPeak && (
+                    <Box mt={3}>
+                      <Grid container spacing={2} mt={3}>
+                        <Grid item xs={12} md={6}>
+                          <CentralityPlot
+                            peak_centrality={motif.peak_centrality}
+                            width={isMobile ? 300 : 500}
+                            height={isMobile ? 150 : 300}
+                          />
+                        </Grid>
+                        {motif.atac_data &&
+                          Array.isArray(motif.atac_data) &&
+                          motif.atac_data.length > 0 && (
+                            <Grid item xs={12} md={6}>
+                              <ATACPlot
+                                name={motif.name}
+                                accession={selectedPeak}
+                                pwm={motifppm}
+                              />
+                            </Grid>
+                          )}
+                        <Grid item xs={12} md={6}>
+                          <ConservationPlot
+                            name={motif.name}
+                            accession={selectedPeak}
+                            pwm={motifppm}
+                            width={isMobile ? 300 : 500}
+                            height={isMobile ? 150 : 300}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  )}
+
+                  <Dialog
+                    open={isDialogOpen}
+                    onClose={() => setIsDialogOpen(false)}
+                    aria-labelledby="export-dialog-title"
+                    slotProps={{
+                      backdrop: {
+                        sx: {
+                          backgroundColor: "rgba(255, 255, 255, 0.1)",
+                          backdropFilter: "blur(10px)",
+                        },
+                      },
+                    }}
+                  >
+                    <DialogTitle id="export-dialog-title">
+                      Download as
+                    </DialogTitle>
+                    <DialogContent>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={exportMotif}
+                            onChange={(e) => setExportMotif(e.target.checked)}
+                            sx={{ color: "#8169BF" }}
+                          />
+                        }
+                        label="Motif (MEME)"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={exportLogo}
+                            onChange={(e) => setExportLogo(e.target.checked)}
+                            sx={{ color: "#8169BF" }}
+                          />
+                        }
+                        label="Logo"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={exportPeakSites}
+                            onChange={(e) =>
+                              setExportPeakSites(e.target.checked)
+                            }
+                            sx={{ color: "#8169BF" }}
+                          />
+                        }
+                        label="Peak Sites"
+                      />
+                    </DialogContent>
+                    <DialogActions>
+                      <Button
+                        onClick={() => setIsDialogOpen(false)}
+                        sx={{ color: "#8169BF" }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (exportMotif) {
+                            handleDownload(
+                              motif.id,
+                              motifppm,
+                              svgRefs.current[index]
+                            );
+                          }
+                          if (exportPeakSites) {
+                            const speciesGenome =
+                              species === "Human" ? "hg38" : "mm10";
+                            const downloadUrl = `https://screen-beta-api.wenglab.org/factorbook_downloads/hq-occurrences/${selectedPeak}_${motif.name}.gz`;
+                            const link = document.createElement("a");
+                            link.href = downloadUrl;
+                            link.download = `${selectedPeak}_${motif.name}_${speciesGenome}.gz`;
+                            link.click();
+                          }
+                          if (exportLogo && svgRefs.current[index]) {
+                            downloadSVGElementAsSVG(
+                              { current: svgRefs.current[index] },
+                              `${motif.name}-logo.svg`
+                            );
+                          }
+                          setIsDialogOpen(false);
+                        }}
+                        sx={{
+                          borderRadius: "20px",
+                          backgroundColor: "#8169BF",
+                          color: "white",
+                        }}
+                      >
+                        Download
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                   <Divider style={{ margin: "20px 0" }} />
                 </Box>
               );

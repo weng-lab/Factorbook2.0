@@ -51,6 +51,10 @@ import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 
+// Add custom colors to Alphabet A and T
+DNAAlphabet[0].color = "#228b22";
+DNAAlphabet[3].color = "red";
+
 const colors: { [key: number]: string } = {
   1: "#FFA500",
   2: "#FF0000",

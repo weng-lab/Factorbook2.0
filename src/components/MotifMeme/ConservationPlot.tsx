@@ -5,7 +5,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Button, Box, Typography } from "@mui/material";
+import { Button, Box, Typography, IconButton } from "@mui/material";
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import { LinePath } from "@visx/shape";
 import { curveBasis } from "d3-shape";
 import { scaleLinear } from "@visx/scale";
@@ -33,7 +35,7 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
 }) => {
   const [data, setData] = useState<number[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [limit, setLimit] = useState(500); // Handles zoom level
+  const [limit, setLimit] = useState(500);
   const svgRef = useRef<SVGSVGElement>(null);
 
   const { showTooltip, hideTooltip, tooltipData, tooltipLeft, tooltipTop } =
@@ -51,7 +53,7 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
     )
       .then((x) => x.json())
       .then((x) => {
-        setData(x.slice(16)); // Adjust data accordingly if needed
+        setData(x.slice(16));
         setLoading(false);
       });
   }, [accession, name]);
@@ -68,9 +70,9 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
   const xScale = useMemo(
     () =>
       scaleLinear({
-        domain: [-limit, limit], // Adjusting zoom by setting x-axis domain based on zoom limit
+        domain: [-limit, limit],
         range: [0, width - 120],
-        clamp: true, // Ensures that the graph stays within bounds when zooming
+        clamp: true,
       }),
     [limit, width]
   );
@@ -80,42 +82,54 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
       scaleLinear({
         domain: [min, max * 1.2],
         range: [height - 80, 0],
-        clamp: true, // Ensures the y-values don't go out of bounds
+        clamp: true,
       }),
     [min, max, height]
   );
 
   const handleMouseOver = (event: React.MouseEvent<SVGRectElement>) => {
-    if (!data) return; // Prevents accessing length if data is null
+    if (!data) return;
 
     const { x } = localPoint(event) || { x: 0 };
     const svgRect = svgRef.current?.getBoundingClientRect();
-    const graphX = x - (svgRect?.left || 0) - 60; // Adjust for left margin
-    const xValue = xScale.invert(graphX); // Get the x-value from the graph scale
+    const graphX = x - (svgRect?.left || 0) - 60; // Account for margin
+    const xValue = xScale.invert(graphX);
 
-    const index = Math.floor(xValue + data.length / 2); // Find the index of data
+    const index = Math.floor(xValue + data.length / 2); // Get data index
 
     if (index >= 0 && index < data.length) {
-      const proximal = parseFloat(data[index].toFixed(2)); // Get proximal value
-      const distal = parseFloat(data[data.length - 1 - index].toFixed(2)); // Get distal value (reverse)
+      const proximal = parseFloat(data[index].toFixed(2));
+      const distal = parseFloat(data[data.length - 1 - index].toFixed(2));
 
       showTooltip({
         tooltipData: { xValue, proximal, distal },
-        tooltipLeft: graphX + 60, // Position tooltip correctly relative to graph
-        tooltipTop: yScale(proximal) + 30, // Ensure tooltip follows graph scale
+        tooltipLeft: graphX + 60,
+        tooltipTop: yScale(proximal) + 30, // Tooltip follows the y-axis scale
       });
     } else {
-      hideTooltip(); // Hide tooltip if out of bounds
+      hideTooltip(); // Hide tooltip when outside bounds
     }
   };
 
-  if (loading || !data) return <div>Loading...</div>; // Loading state
+  if (loading || !data) return <div>Loading...</div>;
 
   return (
     <Box position="relative">
-      <Typography variant="h6" align="center" gutterBottom>
-        Evolutionary Conservation: phyloP 100-way
-      </Typography>
+      {/* Centering the Typography inside a Box */}
+      <Box textAlign="center" mb={2}>
+        <Typography
+          variant="h6"
+          gutterBottom
+          noWrap
+          sx={{
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          Evolutionary Conservation: phyloP 100-way
+        </Typography>
+      </Box>
       <svg width={width} height={height} ref={svgRef}>
         <Group left={60} top={20}>
           <LinePath
@@ -173,7 +187,8 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
           </div>
         </TooltipWithBounds>
       )}
-      <Box display="flex" justifyContent="center" mt={1}>
+      {/* Align buttons next to each other under the graph */}
+      <Box display="flex" justifyContent="start" mt={1} ml={7}>
         <Button
           variant="contained"
           onClick={() => downloadSVG(svgRef, "conservation.svg")}
@@ -185,13 +200,12 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
         >
           Export SVG
         </Button>
-        <Button
-          onClick={() => setLimitS(Math.floor(limit / 2))}
-          sx={{ marginRight: 1 }}
-        >
-          +
-        </Button>
-        <Button onClick={() => setLimitS(Math.floor(limit * 2))}>-</Button>
+        <IconButton onClick={() => setLimitS(Math.floor(limit / 2))}>
+          <ZoomInIcon />
+        </IconButton>
+        <IconButton onClick={() => setLimitS(Math.floor(limit * 2))}>
+          <ZoomOutIcon />
+        </IconButton>
       </Box>
     </Box>
   );
