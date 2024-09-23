@@ -27,7 +27,6 @@ import EpigeneticProfile from "./EpigeneticProfile";
 
 const FactorDetailsPage = () => {
   const apiContext = useContext(ApiContext);
-
   const router = useRouter();
   const {
     species,
@@ -109,7 +108,7 @@ const FactorDetailsPage = () => {
       case "MotifEnrichmentSELEX":
         return <DeepLearnedSelexMotifs factor={factor} species={species} />;
       case "EpigeneticProfile":
-        return <EpigeneticProfile />;
+        return <EpigeneticProfile factor={factor} species={species} />;
       case "Search":
         return <Search />;
       default:
@@ -204,7 +203,11 @@ const FactorDetailsPage = () => {
             <Tab
               label={`Epigenetic Profile`}
               value="EpigeneticProfile"
+              component={Link}
               href={`/TranscriptionFactor/${species}/${factor}/EpigeneticProfile`}
+              sx={{
+                color: detail === "EpigeneticProfile" ? "#8169BF" : "inherit",
+              }}
             />
             <Tab
               label={`Search ${factor} peaks by region`}
