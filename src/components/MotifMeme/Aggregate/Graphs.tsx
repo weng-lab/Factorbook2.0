@@ -1,4 +1,4 @@
-import React, { RefObject, useMemo, useState } from "react";
+import React, { RefObject, useState } from "react";
 import { LinePath } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
@@ -25,7 +25,8 @@ interface GraphProps {
 
 interface TooltipData {
   x: number;
-  y: number;
+  yProximal: number;
+  yDistal: number;
 }
 
 export const Graph: React.FC<GraphProps> = ({
@@ -67,21 +68,24 @@ export const Graph: React.FC<GraphProps> = ({
     range: [height - margin.bottom, margin.top],
   });
 
-  const bisectDate = bisector((d: number) => d).left;
+  const bisectIndex = bisector((d: number, index: number) => index).left;
 
   const handleMouseMove = (
     event: React.MouseEvent<SVGRectElement, MouseEvent>
   ) => {
     const { x } = localPoint(event) || { x: 0 };
     const x0 = xScale.invert(x);
-    const index = bisectDate(proximal_values, x0, 1);
-    const y = proximal_values[index];
-    setTooltipData({ x: x0, y });
+    const index = bisectIndex(proximal_values, x0, 1);
+
+    const yProximal = proximal_values[index];
+    const yDistal = distal_values[index];
+
+    setTooltipData({ x: x0, yProximal, yDistal });
 
     showTooltip({
-      tooltipData: { x: x0, y },
+      tooltipData: { x: x0, yProximal, yDistal },
       tooltipLeft: xScale(x0),
-      tooltipTop: yScale(y),
+      tooltipTop: yScale(yProximal), // You can adjust to show whichever value you prefer
     });
   };
 
@@ -99,6 +103,7 @@ export const Graph: React.FC<GraphProps> = ({
               {title || dataset.target}
             </text>
           )}
+          {/* Proximal Values Line */}
           <LinePath
             data={proximal_values}
             x={(d, i) => xScale(i - proximal_values.length / 2)}
@@ -109,6 +114,7 @@ export const Graph: React.FC<GraphProps> = ({
             onMouseMove={handleMouseMove}
             onMouseLeave={hideTooltip}
           />
+          {/* Distal Values Line */}
           <LinePath
             data={distal_values}
             x={(d, i) => xScale(i - distal_values.length / 2)}
@@ -119,6 +125,7 @@ export const Graph: React.FC<GraphProps> = ({
             onMouseMove={handleMouseMove}
             onMouseLeave={hideTooltip}
           />
+          {/* X Axis */}
           <AxisBottom
             top={height - margin.bottom}
             scale={xScale}
@@ -127,6 +134,7 @@ export const Graph: React.FC<GraphProps> = ({
             stroke="#000"
             tickStroke="#000"
           />
+          {/* Y Axis */}
           <AxisLeft
             left={margin.left}
             scale={yScale}
@@ -137,6 +145,7 @@ export const Graph: React.FC<GraphProps> = ({
           />
         </Group>
       </svg>
+      {/* Tooltip */}
       {tooltipContent && (
         <Tooltip
           top={tooltipTop}
@@ -148,10 +157,10 @@ export const Graph: React.FC<GraphProps> = ({
           }}
         >
           <div>
-            <strong>{`x: ${tooltipContent.x}`}</strong>
+            <strong>{`Proximal: ${tooltipContent.yProximal}`}</strong>
           </div>
           <div>
-            <strong>{`y: ${tooltipContent.y}`}</strong>
+            <strong>{`Distal: ${tooltipContent.yDistal}`}</strong>
           </div>
         </Tooltip>
       )}

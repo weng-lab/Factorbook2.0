@@ -1,25 +1,32 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
+import React, { useState, useMemo } from "react";
 import { useQuery } from "@apollo/client";
-import { AGGREGATE_METADATA_QUERY } from "@/components/MotifMeme/Aggregate/Queries";
+import { useRouter } from "next/navigation";
+import {
+  AGGREGATE_METADATA_QUERY,
+  AGGREGATE_DATA_QUERY,
+} from "@/components/MotifMeme/Aggregate/Queries";
 import {
   CircularProgress,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  TextField,
   Box,
-  IconButton,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   Typography,
+  TextField,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import { useRouter, useParams } from "next/navigation"; // Import router and params
+import { LinePath } from "@visx/shape";
+import { scaleLinear, scaleBand } from "@visx/scale";
+import { Group } from "@visx/group";
+import { curveMonotoneX } from "@visx/curve";
+import { extent } from "d3-array";
 
+// Define types for the data
 interface Dataset {
   biosample: string;
   accession: string;
@@ -28,19 +35,26 @@ interface Dataset {
 interface EpigeneticProfileProps {
   species: string;
   factor: string;
+  accession?: string;
+}
+
+// Define a type for the histone data
+interface HistoneData {
+  distal_values: number[];
+  proximal_values: number[];
 }
 
 const EpigeneticProfile: React.FC<EpigeneticProfileProps> = ({
   species,
   factor,
+  accession: selectedAccession,
 }) => {
-  const [drawerOpen, setDrawerOpen] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const router = useRouter();
-  const { accession: selectedAccession } = useParams<{ accession: string }>(); // Capture the selected accession from the URL
 
   const assembly = species === "Human" ? "GRCh38" : "mm10";
 
+  // Query to get peak datasets
   const { data, loading, error } = useQuery(AGGREGATE_METADATA_QUERY, {
     variables: {
       assembly,
@@ -49,15 +63,50 @@ const EpigeneticProfile: React.FC<EpigeneticProfileProps> = ({
     },
   });
 
-  if (loading) return <CircularProgress />;
-  if (error) {
-    console.error("Error in GraphQL query:", error.message);
-    return <p>Error: {error.message}</p>;
+  // Query to get data for the selected accession
+  const {
+    data: aggregateData,
+    loading: aggregateLoading,
+    error: aggregateError,
+  } = useQuery(AGGREGATE_DATA_QUERY, {
+    variables: { accession: selectedAccession },
+    skip: !selectedAccession,
+  });
+
+  // Prepare the data for the graph
+  const histoneData: HistoneData[] =
+    aggregateData?.histone_aggregate_values || [];
+
+  // Memoized scales
+  const xScale = useMemo(() => {
+    return scaleBand<number>({
+      range: [0, 800], // Width of the chart
+      domain: histoneData.map((_, i) => i), // Use index as x-axis value
+      padding: 0.2,
+    });
+  }, [histoneData]);
+
+  const yScale = useMemo(() => {
+    return scaleLinear<number>({
+      range: [400, 0], // Height of the chart (inverted)
+      domain: extent(
+        histoneData.flatMap((d) => [...d.distal_values, ...d.proximal_values])
+      ) as [number, number], // Calculate the extent of values
+    });
+  }, [histoneData]);
+
+  // Don't conditionally render hooks, handle content conditionally
+  if (loading || aggregateLoading) return <CircularProgress />;
+  if (error || aggregateError) {
+    console.error(
+      "Error in GraphQL query:",
+      error?.message || aggregateError?.message
+    );
+    return <p>Error: {error?.message || aggregateError?.message}</p>;
   }
 
   const datasets: Dataset[] = data?.peakDataset?.datasets || [];
 
-  // Group datasets by biosample
   const groupedDatasets = datasets.reduce(
     (acc: { [key: string]: Dataset[] }, dataset: Dataset) => {
       const { biosample } = dataset;
@@ -70,17 +119,13 @@ const EpigeneticProfile: React.FC<EpigeneticProfileProps> = ({
     {}
   );
 
-  // Get sorted biosample keys
   const sortedBiosamples = Object.keys(groupedDatasets).sort((a, b) =>
     a.localeCompare(b)
   );
-
-  // Apply search filtering
   const filteredDatasets = sortedBiosamples.filter((biosample) =>
     biosample.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Handle accession selection and URL update
   const handleAccessionClick = (accession: string) => {
     router.push(
       `/TranscriptionFactor/${species}/${factor}/EpigeneticProfile/${accession}`
@@ -90,143 +135,136 @@ const EpigeneticProfile: React.FC<EpigeneticProfileProps> = ({
   return (
     <Box
       sx={{
-        height: "calc(100vh - 64px)", // Respect header/footer
+        height: "calc(100vh - 64px)",
         display: "flex",
-        padding: "5px",
+        padding: "10px",
         flexDirection: { xs: "column", md: "row" },
-        overflow: "hidden", // Fix extra white space issue
+        overflow: "hidden",
       }}
     >
-      {!drawerOpen && (
-        <IconButton
-          onClick={() => setDrawerOpen(true)}
-          sx={{
-            position: "fixed",
-            top: "50%", // Center the button vertically
-            left: 0,
-            transform: "translateY(-50%)", // Adjust centering
-            zIndex: 2000,
-            backgroundColor: "white",
-            color: "#8169BF",
-            borderRadius: "50%",
-            boxShadow: 3,
-          }}
-        >
-          <ArrowForwardIosIcon /> {/* Right-facing arrow for expanding */}
-        </IconButton>
-      )}
-
-      {/* Left-side Drawer */}
+      {/* Left Drawer */}
       <Box
         sx={{
-          width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
-          height: "calc(100vh - 128px)", // Respect header/footer
-          marginBottom: "64px", // Above footer
-          position: "relative", // Not fixed, part of the layout
-          overflowY: "auto", // Allow scrolling of drawer content
-          transition: "width 0.3s ease", // Smooth transition when opening/closing
-          paddingRight: drawerOpen ? { md: "10px" } : 0,
+          width: { xs: "100%", md: "25%" },
+          height: "calc(100vh - 128px)",
+          marginBottom: "64px",
+          paddingRight: { md: "10px" },
           backgroundColor: "white",
-          borderRight: drawerOpen ? "1px solid #ccc" : "none", // Show border when open
+          borderRight: "1px solid #ccc",
+          overflowY: "auto",
         }}
       >
-        {drawerOpen && (
-          <Box>
-            <Box
-              sx={{
-                position: "sticky",
-                top: 0,
-                zIndex: 1100,
-                backgroundColor: "white",
-                padding: "16px",
-                borderBottom: "1px solid #ccc", // Divider between search bar and list
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <TextField
-                label="Search Biosamples"
-                variant="outlined"
-                fullWidth
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                InputProps={{
-                  sx: {
-                    backgroundColor: "rgba(129, 105, 191, 0.09)",
-                    borderRadius: "50px",
-                    paddingLeft: "20px",
-                  },
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": { borderColor: "#8169BF" },
-                  },
-                }}
-              />
-              <IconButton
-                onClick={() => setDrawerOpen(false)}
-                sx={{
-                  marginLeft: 2,
-                  backgroundColor: "#8169BF",
-                  color: "white",
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-            </Box>
+        <Box
+          sx={{
+            position: "sticky",
+            top: 0,
+            zIndex: 1100,
+            backgroundColor: "white",
+            padding: "16px",
+            borderBottom: "1px solid #ccc",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <TextField
+            label="Search Biosamples"
+            variant="outlined"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              sx: {
+                backgroundColor: "rgba(129, 105, 191, 0.09)",
+                borderRadius: "50px",
+                paddingLeft: "20px",
+              },
+            }}
+          />
+        </Box>
 
-            <List>
-              {filteredDatasets.map((biosample, index) => (
-                <Accordion key={index}>
-                  <AccordionSummary>
-                    <Typography variant="h6">{biosample}</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {/* Render accessions under the biosample */}
-                    {groupedDatasets[biosample].map(
-                      (dataset: Dataset, idx: number) => (
-                        <ListItem
-                          button
-                          key={idx}
-                          onClick={() =>
-                            handleAccessionClick(dataset.accession)
-                          } // Call function to change URL
-                          selected={dataset.accession === selectedAccession} // Highlight the selected accession
-                        >
-                          <ListItemText primary={dataset.accession} />
-                        </ListItem>
-                      )
-                    )}
-                    <Divider />
-                  </AccordionDetails>
-                </Accordion>
-              ))}
-            </List>
-          </Box>
-        )}
+        <List>
+          {filteredDatasets.map((biosample, index) => (
+            <Accordion key={index}>
+              <AccordionSummary>
+                <Typography variant="h6">{biosample}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {groupedDatasets[biosample].map(
+                  (dataset: Dataset, idx: number) => (
+                    <ListItem
+                      button
+                      key={idx}
+                      onClick={() => handleAccessionClick(dataset.accession)}
+                      selected={dataset.accession === selectedAccession}
+                      sx={{
+                        padding: "10px 20px",
+                        backgroundColor:
+                          dataset.accession === selectedAccession
+                            ? "#f0f0f0"
+                            : "white",
+                        "&:hover": {
+                          backgroundColor: "#e0e0e0",
+                        },
+                        borderBottom: "1px solid #ddd",
+                      }}
+                    >
+                      <ListItemText primary={dataset.accession} />
+                    </ListItem>
+                  )
+                )}
+                <Divider />
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </List>
       </Box>
 
-      {/* Right-side Content */}
+      {/* Right Content - Plotting Graph */}
       <Box
         sx={{
           flexGrow: 1,
-          marginLeft: drawerOpen ? { xs: 0 } : 0, // Adjust margin when drawer is open
-          transition: "margin-left 0.3s ease", // Smooth transition for content shift
+          marginLeft: { xs: 0, md: "25px" },
           padding: "16px",
-          overflowY: "auto", // Scrollable right-side content
+          overflowY: "auto",
         }}
       >
-        <Typography variant="h4">
-          Epigenetic Profile for Accession: {selectedAccession}
-        </Typography>
-        {/* Render content based on selected accession */}
         {selectedAccession ? (
-          <Typography variant="body1">
-            Data for accession <strong>{selectedAccession}</strong> would be
-            rendered here.
-          </Typography>
+          <>
+            <Typography variant="h4" gutterBottom>
+              Epigenetic Profile for Accession: {selectedAccession}
+            </Typography>
+            <svg width={900} height={500}>
+              <Group top={50} left={50}>
+                {/* Line for Distal Values */}
+                {histoneData.map((d, i) => (
+                  <LinePath
+                    key={`distal-line-${i}`}
+                    data={d.distal_values}
+                    x={(value, idx) => xScale(idx) ?? 0}
+                    y={(value) => yScale(value)}
+                    stroke="#ff7f0e"
+                    strokeWidth={2}
+                    curve={curveMonotoneX}
+                  />
+                ))}
+
+                {/* Line for Proximal Values */}
+                {histoneData.map((p, i) => (
+                  <LinePath
+                    key={`proximal-line-${i}`}
+                    data={p.proximal_values}
+                    x={(value, idx) => xScale(idx) ?? 0}
+                    y={(value) => yScale(value)}
+                    stroke="#1f77b4"
+                    strokeWidth={2}
+                    curve={curveMonotoneX}
+                  />
+                ))}
+              </Group>
+            </svg>
+          </>
         ) : (
-          <Typography variant="body1">
+          <Typography variant="h4">
             Please select an accession to view its profile.
           </Typography>
         )}
