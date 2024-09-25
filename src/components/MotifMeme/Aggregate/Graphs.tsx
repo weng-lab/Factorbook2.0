@@ -9,6 +9,7 @@ import { bisector } from "d3-array";
 import { curveMonotoneX } from "d3-shape";
 import { MARK_COLORS } from "./marks";
 import { Box } from "@mui/material";
+import { Line } from "@visx/shape";
 
 interface GraphProps {
   proximal_values: number[];
@@ -26,7 +27,8 @@ interface GraphProps {
 
 interface TooltipData {
   x: number;
-  y: number;
+  proximal: number;
+  distal: number;
 }
 
 const Graph = forwardRef<SVGSVGElement, GraphProps>(
@@ -37,8 +39,8 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
       dataset,
       title,
       limit = 2000, // Set default limit if not provided
-      xlabel = "Position",
-      ylabel = "Signal",
+      xlabel = "distance from summit (bp)", // Correct axis label
+      ylabel = "fold change signal", // Correct axis label
       height = 300,
       yMax,
       padBottom = false,
@@ -46,8 +48,8 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
     },
     ref
   ) => {
-    const width = 300; // Reduced width
-    const margin = { top: 20, right: 20, bottom: 40, left: 50 };
+    const width = 400; // Adjust width
+    const margin = { top: 20, right: 20, bottom: 50, left: 60 }; // Increase bottom margin for x-axis label
 
     const [tooltipData, setTooltipData] = useState<TooltipData | null>(null);
 
@@ -61,7 +63,6 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
 
     const color = MARK_COLORS[dataset.target] || "#000000"; // Apply color based on target
 
-    // Fixed reference to limit
     const xScale = useMemo(
       () =>
         scaleLinear({
@@ -91,24 +92,32 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
       ]
     );
 
-    const bisectData = bisector((d: number) => d).left;
+    const bisectData = bisector((d: number, i: number) => i).center;
 
     const handleMouseMove = useCallback(
       (event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
         const { x } = localPoint(event) || { x: 0 };
         const x0 = xScale.invert(x);
-        const index = bisectData(proximal_values, x0, 1);
-        const y = proximal_values[index];
-        if (y !== undefined) {
-          setTooltipData({ x: x0, y });
+
+        // Get the index of the nearest data point
+        const index = Math.floor(
+          ((x0 + limit) / (2 * limit)) * proximal_values.length
+        );
+
+        if (index >= 0 && index < proximal_values.length) {
+          const proximal = proximal_values[index] ?? 0;
+          const distal = distal_values[index] ?? 0;
+
+          setTooltipData({ x: x0, proximal, distal });
+
           showTooltip({
-            tooltipData: { x: x0, y },
-            tooltipLeft: xScale(x0),
-            tooltipTop: yScale(y),
+            tooltipData: { x: x0, proximal, distal },
+            tooltipLeft: xScale(index - proximal_values.length / 2),
+            tooltipTop: yScale(proximal),
           });
         }
       },
-      [proximal_values, xScale, yScale, showTooltip, bisectData]
+      [proximal_values, distal_values, limit, xScale, yScale, showTooltip]
     );
 
     return (
@@ -126,6 +135,8 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
                 {title || dataset.target}
               </text>
             )}
+
+            {/* Proximal Line */}
             <LinePath
               data={proximal_values}
               x={(d, i) => xScale(i - proximal_values.length / 2)}
@@ -136,6 +147,8 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
               onMouseMove={handleMouseMove}
               onMouseLeave={hideTooltip}
             />
+
+            {/* Distal Line */}
             <LinePath
               data={distal_values}
               x={(d, i) => xScale(i - distal_values.length / 2)}
@@ -147,21 +160,37 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
               onMouseMove={handleMouseMove}
               onMouseLeave={hideTooltip}
             />
+
+            {/* Tooltip vertical line */}
+            {tooltipData && (
+              <Line
+                from={{ x: tooltipLeft, y: margin.top }}
+                to={{ x: tooltipLeft, y: height - margin.bottom }}
+                stroke="gray"
+                strokeWidth={1}
+                pointerEvents="none"
+              />
+            )}
+
+            {/* X and Y Axes */}
             <AxisBottom
               top={height - margin.bottom}
               scale={xScale}
               numTicks={5}
-              label={xlabel}
+              label={xlabel} // X-axis label
+              tickLabelProps={() => ({ fontSize: 12, textAnchor: "middle" })}
             />
             <AxisLeft
               left={margin.left}
               scale={yScale}
               numTicks={5}
-              label={ylabel}
+              label={ylabel} // Y-axis label
+              tickLabelProps={() => ({ fontSize: 12, textAnchor: "end" })}
             />
           </Group>
         </svg>
-        {tooltipContent && tooltipContent.y !== undefined && (
+
+        {tooltipContent && (
           <Tooltip
             top={tooltipTop}
             left={tooltipLeft}
@@ -172,10 +201,12 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
             }}
           >
             <div>
-              <strong>{`x: ${tooltipContent.x.toFixed(2)}`}</strong>
+              <strong>{`Proximal: ${tooltipContent.proximal.toFixed(
+                2
+              )}`}</strong>
             </div>
             <div>
-              <strong>{`y: ${tooltipContent.y.toFixed(2)}`}</strong>
+              <strong>{`Distal: ${tooltipContent.distal.toFixed(2)}`}</strong>
             </div>
           </Tooltip>
         )}

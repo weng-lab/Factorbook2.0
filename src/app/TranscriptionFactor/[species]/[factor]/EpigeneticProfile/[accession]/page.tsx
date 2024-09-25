@@ -44,8 +44,8 @@ const EpigeneticProfilePage = () => {
               proximal_values={histone.proximal_values || []} // Safely access data
               distal_values={histone.distal_values || []} // Safely access data
               dataset={{ target: accessionStr || "" }}
-              xlabel="Position"
-              ylabel="Signal"
+              xlabel="distance from summit (bp)"
+              ylabel="fold change signal"
               title={`Epigenetic Profile for Accession: ${accessionStr}`}
             />
           )
