@@ -1,21 +1,26 @@
 "use client";
 
-import React from "react";
-import { useParams } from "next/navigation";
+import React, { useMemo } from "react";
 import { useQuery } from "@apollo/client";
-import { CircularProgress, Box, Typography } from "@mui/material";
+import { useParams } from "next/navigation";
+import { CircularProgress, Typography, Box } from "@mui/material";
+
+import Layout from "@/components/MotifMeme/Aggregate/Layout";
+import Graph from "@/components/MotifMeme/Aggregate/Graphs";
 import { AGGREGATE_DATA_QUERY } from "@/components/MotifMeme/Aggregate/Queries";
-import { Graph } from "@/components/MotifMeme/Aggregate/Graphs";
 
-const EpigeneticProfilePage: React.FC = () => {
-  const { accession } = useParams(); // Get dynamic route params from the URL
+const EpigeneticProfilePage = () => {
+  const { species, factor, accession } = useParams();
 
-  // Use the AGGREGATE_DATA_QUERY to fetch the data for the selected accession
-  const { data, loading, error } = useQuery<{
-    histone_aggregate_values: any[];
-  }>(AGGREGATE_DATA_QUERY, {
-    variables: { accession },
-    skip: !accession, // Only fetch when accession is available
+  // Convert params to strings (to handle array types)
+  const speciesStr = Array.isArray(species) ? species[0] : species;
+  const factorStr = Array.isArray(factor) ? factor[0] : factor;
+  const accessionStr = Array.isArray(accession) ? accession[0] : accession;
+
+  // Fetch the aggregate data using the accession
+  const { data, loading, error } = useQuery(AGGREGATE_DATA_QUERY, {
+    variables: { accession: accessionStr },
+    skip: !accessionStr,
   });
 
   if (loading) return <CircularProgress />;
@@ -27,33 +32,28 @@ const EpigeneticProfilePage: React.FC = () => {
   const histoneData = data?.histone_aggregate_values || [];
 
   return (
-    <Box sx={{ padding: 3 }}>
-      <Typography variant="h4">
-        Epigenetic Profile for Accession: {accession}
-      </Typography>
-
-      {/* Render graph for each histone dataset */}
+    <Layout species={speciesStr} factor={factorStr}>
       {histoneData.length > 0 ? (
-        histoneData.map((histone, idx) => (
-          <Box key={idx} sx={{ marginBottom: 4 }}>
-            <Typography variant="h6" gutterBottom>
-              Histone Dataset Accession: {histone.histone_dataset_accession}
-            </Typography>
-
-            {/* Plot the graph using the Graph component */}
+        histoneData.map(
+          (
+            histone: { proximal_values: any; distal_values: any },
+            idx: React.Key | null | undefined
+          ) => (
             <Graph
-              proximal_values={histone.proximal_values}
-              distal_values={histone.distal_values}
-              dataset={{ target: histone.histone_dataset_accession }}
+              key={idx}
+              proximal_values={histone.proximal_values || []} // Safely access data
+              distal_values={histone.distal_values || []} // Safely access data
+              dataset={{ target: accessionStr || "" }}
               xlabel="Position"
-              ylabel="Value"
+              ylabel="Signal"
+              title={`Epigenetic Profile for Accession: ${accessionStr}`}
             />
-          </Box>
-        ))
+          )
+        )
       ) : (
         <Typography>No data found for this accession.</Typography>
       )}
-    </Box>
+    </Layout>
   );
 };
 

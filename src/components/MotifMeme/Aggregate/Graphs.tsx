@@ -1,4 +1,4 @@
-import React, { RefObject, useState } from "react";
+import React, { useMemo, useState, useCallback, forwardRef } from "react";
 import { LinePath } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
@@ -7,163 +7,181 @@ import { Tooltip, useTooltip, defaultStyles } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { bisector } from "d3-array";
 import { curveMonotoneX } from "d3-shape";
+import { MARK_COLORS } from "./marks";
+import { Box } from "@mui/material";
 
 interface GraphProps {
   proximal_values: number[];
   distal_values: number[];
   dataset: { target: string };
   title?: string;
-  limit?: number;
+  limit?: number; // Add limit as a prop
   xlabel?: string;
   ylabel?: string;
   height?: number;
   yMax?: number;
   padBottom?: boolean;
   hideTitle?: boolean;
-  svgRef?: RefObject<SVGSVGElement>;
 }
 
 interface TooltipData {
   x: number;
-  yProximal: number;
-  yDistal: number;
+  y: number;
 }
 
-export const Graph: React.FC<GraphProps> = ({
-  proximal_values,
-  distal_values,
-  dataset,
-  title,
-  limit = 2000,
-  xlabel,
-  ylabel,
-  height = 300,
-  yMax,
-  padBottom,
-  hideTitle,
-}) => {
-  const width = 400;
-  const margin = { top: 20, right: 20, bottom: 40, left: 40 };
-
-  const [tooltipData, setTooltipData] = useState<TooltipData | null>(null);
-
-  const {
-    showTooltip,
-    hideTooltip,
-    tooltipLeft,
-    tooltipTop,
-    tooltipData: tooltipContent,
-  } = useTooltip<TooltipData>();
-
-  const xScale = scaleLinear({
-    domain: [-(limit || 2000), limit || 2000],
-    range: [margin.left, width - margin.right],
-  });
-
-  const yScale = scaleLinear({
-    domain: [
-      padBottom ? Math.min(...proximal_values, ...distal_values) : 0,
-      yMax || Math.max(...proximal_values, ...distal_values),
-    ],
-    range: [height - margin.bottom, margin.top],
-  });
-
-  const bisectIndex = bisector((d: number, index: number) => index).left;
-
-  const handleMouseMove = (
-    event: React.MouseEvent<SVGRectElement, MouseEvent>
+const Graph = forwardRef<SVGSVGElement, GraphProps>(
+  (
+    {
+      proximal_values = [],
+      distal_values = [],
+      dataset,
+      title,
+      limit = 2000, // Set default limit if not provided
+      xlabel = "Position",
+      ylabel = "Signal",
+      height = 300,
+      yMax,
+      padBottom = false,
+      hideTitle = false,
+    },
+    ref
   ) => {
-    const { x } = localPoint(event) || { x: 0 };
-    const x0 = xScale.invert(x);
-    const index = bisectIndex(proximal_values, x0, 1);
+    const width = 300; // Reduced width
+    const margin = { top: 20, right: 20, bottom: 40, left: 50 };
 
-    const yProximal = proximal_values[index];
-    const yDistal = distal_values[index];
+    const [tooltipData, setTooltipData] = useState<TooltipData | null>(null);
 
-    setTooltipData({ x: x0, yProximal, yDistal });
+    const {
+      showTooltip,
+      hideTooltip,
+      tooltipLeft,
+      tooltipTop,
+      tooltipData: tooltipContent,
+    } = useTooltip<TooltipData>();
 
-    showTooltip({
-      tooltipData: { x: x0, yProximal, yDistal },
-      tooltipLeft: xScale(x0),
-      tooltipTop: yScale(yProximal), // You can adjust to show whichever value you prefer
-    });
-  };
+    const color = MARK_COLORS[dataset.target] || "#000000"; // Apply color based on target
 
-  return (
-    <div style={{ position: "relative" }}>
-      <svg width={width} height={height}>
-        <Group>
-          {!hideTitle && (
-            <text
-              x={width / 2}
-              y={margin.top}
-              textAnchor="middle"
-              fontSize={16}
-            >
-              {title || dataset.target}
-            </text>
-          )}
-          {/* Proximal Values Line */}
-          <LinePath
-            data={proximal_values}
-            x={(d, i) => xScale(i - proximal_values.length / 2)}
-            y={(d) => yScale(d)}
-            stroke="#000088"
-            strokeWidth={2}
-            curve={curveMonotoneX}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={hideTooltip}
-          />
-          {/* Distal Values Line */}
-          <LinePath
-            data={distal_values}
-            x={(d, i) => xScale(i - distal_values.length / 2)}
-            y={(d) => yScale(d)}
-            stroke="#FF0000"
-            strokeWidth={2}
-            curve={curveMonotoneX}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={hideTooltip}
-          />
-          {/* X Axis */}
-          <AxisBottom
-            top={height - margin.bottom}
-            scale={xScale}
-            numTicks={5}
-            label={xlabel}
-            stroke="#000"
-            tickStroke="#000"
-          />
-          {/* Y Axis */}
-          <AxisLeft
-            left={margin.left}
-            scale={yScale}
-            numTicks={5}
-            label={ylabel}
-            stroke="#000"
-            tickStroke="#000"
-          />
-        </Group>
-      </svg>
-      {/* Tooltip */}
-      {tooltipContent && (
-        <Tooltip
-          top={tooltipTop}
-          left={tooltipLeft}
-          style={{
-            ...defaultStyles,
-            backgroundColor: "rgba(0, 0, 0, 0.9)",
-            color: "white",
-          }}
-        >
-          <div>
-            <strong>{`Proximal: ${tooltipContent.yProximal}`}</strong>
-          </div>
-          <div>
-            <strong>{`Distal: ${tooltipContent.yDistal}`}</strong>
-          </div>
-        </Tooltip>
-      )}
-    </div>
-  );
-};
+    // Fixed reference to limit
+    const xScale = useMemo(
+      () =>
+        scaleLinear({
+          domain: [-(limit || 2000), limit || 2000],
+          range: [margin.left, width - margin.right],
+        }),
+      [limit, margin.left, margin.right, width]
+    );
+
+    const yScale = useMemo(
+      () =>
+        scaleLinear({
+          domain: [
+            padBottom ? Math.min(...proximal_values, ...distal_values) : 0,
+            yMax || Math.max(...proximal_values, ...distal_values),
+          ],
+          range: [height - margin.bottom, margin.top],
+        }),
+      [
+        proximal_values,
+        distal_values,
+        padBottom,
+        yMax,
+        height,
+        margin.bottom,
+        margin.top,
+      ]
+    );
+
+    const bisectData = bisector((d: number) => d).left;
+
+    const handleMouseMove = useCallback(
+      (event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
+        const { x } = localPoint(event) || { x: 0 };
+        const x0 = xScale.invert(x);
+        const index = bisectData(proximal_values, x0, 1);
+        const y = proximal_values[index];
+        if (y !== undefined) {
+          setTooltipData({ x: x0, y });
+          showTooltip({
+            tooltipData: { x: x0, y },
+            tooltipLeft: xScale(x0),
+            tooltipTop: yScale(y),
+          });
+        }
+      },
+      [proximal_values, xScale, yScale, showTooltip, bisectData]
+    );
+
+    return (
+      <Box style={{ position: "relative", marginBottom: "2em" }}>
+        <svg ref={ref} width={width} height={height}>
+          <Group>
+            {!hideTitle && (
+              <text
+                x={width / 2}
+                y={margin.top}
+                textAnchor="middle"
+                fontSize={16}
+                fontWeight="bold"
+              >
+                {title || dataset.target}
+              </text>
+            )}
+            <LinePath
+              data={proximal_values}
+              x={(d, i) => xScale(i - proximal_values.length / 2)}
+              y={(d) => yScale(d)}
+              stroke={color}
+              strokeWidth={2}
+              curve={curveMonotoneX}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={hideTooltip}
+            />
+            <LinePath
+              data={distal_values}
+              x={(d, i) => xScale(i - distal_values.length / 2)}
+              y={(d) => yScale(d)}
+              stroke={color}
+              strokeWidth={2}
+              opacity={0.6}
+              curve={curveMonotoneX}
+              onMouseMove={handleMouseMove}
+              onMouseLeave={hideTooltip}
+            />
+            <AxisBottom
+              top={height - margin.bottom}
+              scale={xScale}
+              numTicks={5}
+              label={xlabel}
+            />
+            <AxisLeft
+              left={margin.left}
+              scale={yScale}
+              numTicks={5}
+              label={ylabel}
+            />
+          </Group>
+        </svg>
+        {tooltipContent && tooltipContent.y !== undefined && (
+          <Tooltip
+            top={tooltipTop}
+            left={tooltipLeft}
+            style={{
+              ...defaultStyles,
+              backgroundColor: "rgba(0, 0, 0, 0.9)",
+              color: "white",
+            }}
+          >
+            <div>
+              <strong>{`x: ${tooltipContent.x.toFixed(2)}`}</strong>
+            </div>
+            <div>
+              <strong>{`y: ${tooltipContent.y.toFixed(2)}`}</strong>
+            </div>
+          </Tooltip>
+        )}
+      </Box>
+    );
+  }
+);
+
+export default Graph;
