@@ -1,56 +1,70 @@
-import React from "react";
+"use client";
+
+import React, { useMemo, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
-import { useParams } from "next/navigation";
-import { CircularProgress, Typography } from "@mui/material";
-import GraphSet from "@/components/MotifMeme/Aggregate/GraphSet";
+import { CircularProgress, Typography, Box } from "@mui/material";
 import Layout from "@/components/MotifMeme/Aggregate/Layout";
+import GraphSet from "@/components/MotifMeme/Aggregate/GraphSet";
 import {
   AGGREGATE_DATA_QUERY,
   HISTONE_METADATA_QUERY,
 } from "@/components/MotifMeme/Aggregate/Queries";
 
-const EpigeneticProfilePage = () => {
-  const { species, factor, accession } = useParams();
+interface EpigeneticProfileProps {
+  species: string;
+  factor: string;
+  accession?: string;
+}
+
+const EpigeneticProfile: React.FC<EpigeneticProfileProps> = ({
+  species,
+  factor,
+  accession,
+}) => {
+  const [metadata, setMetadata] = useState<any[]>([]); // To store metadata for target groupings
+  const [error, setError] = useState<string | null>(null);
 
   const speciesStr = Array.isArray(species) ? species[0] : species;
   const factorStr = Array.isArray(factor) ? factor[0] : factor;
   const accessionStr = Array.isArray(accession) ? accession[0] : accession;
 
-  // Fetch aggregate data
+  // Fetch aggregate data for the selected accession
   const {
     data: aggregateData,
-    loading: loadingAggregate,
-    error: errorAggregate,
+    loading: aggregateLoading,
+    error: aggregateError,
   } = useQuery(AGGREGATE_DATA_QUERY, {
     variables: { accession: accessionStr },
     skip: !accessionStr,
   });
 
-  // Fetch histone metadata
+  // Fetch histone metadata based on the selected accession
   const {
-    data: metadataData,
-    loading: loadingMetadata,
-    error: errorMetadata,
+    data: histoneMetadataData,
+    loading: histoneLoading,
+    error: histoneError,
   } = useQuery(HISTONE_METADATA_QUERY, {
-    variables: { accessions: accessionStr ? [accessionStr] : [] },
+    variables: { accessions: [accessionStr] }, // Ensure it's passed as an array
     skip: !accessionStr,
+    onCompleted: (data) => {
+      if (data && data.peakDataset && data.peakDataset.datasets.length > 0) {
+        setMetadata(data.peakDataset.datasets); // Set metadata for histone target grouping
+      } else {
+        setError("No histone metadata found for this accession");
+      }
+    },
   });
 
-  if (loadingAggregate || loadingMetadata) return <CircularProgress />;
-  if (errorAggregate || errorMetadata) {
+  if (aggregateLoading || histoneLoading) return <CircularProgress />;
+  if (aggregateError || histoneError || error) {
     console.error(
-      "GraphQL error:",
-      errorAggregate?.message || errorMetadata?.message
+      "GraphQL query error:",
+      aggregateError?.message || histoneError?.message
     );
-    return (
-      <Typography>
-        Error: {errorAggregate?.message || errorMetadata?.message}
-      </Typography>
-    );
+    return <p>Error: {aggregateError?.message || histoneError?.message}</p>;
   }
 
   const histoneData = aggregateData?.histone_aggregate_values || [];
-  const metadata = metadataData?.peakDataset?.datasets || [];
 
   return (
     <Layout species={speciesStr} factor={factorStr}>
@@ -63,4 +77,4 @@ const EpigeneticProfilePage = () => {
   );
 };
 
-export default EpigeneticProfilePage;
+export default EpigeneticProfile;

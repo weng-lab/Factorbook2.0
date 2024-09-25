@@ -15,7 +15,7 @@ interface GraphProps {
   distal_values: number[];
   dataset: { target: string };
   title?: string;
-  limit?: number; // Add limit as a prop
+  limit?: number;
   xlabel?: string;
   ylabel?: string;
   height?: number;

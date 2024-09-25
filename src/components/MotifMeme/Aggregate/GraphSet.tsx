@@ -7,24 +7,61 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Graph from "./Graphs";
-import { MARK_GROUPS, MARK_COLORS, MARK_TYPE_ORDER } from "./marks";
+import Graph from "./Graphs"; // Your graph component
+import { MARK_GROUPS, MARK_TYPE_ORDER } from "./marks";
 
-// Helper function to group data by mark types
-const groupByMarkTypes = (data: any[], metadata: any[]) => {
-  const groupedData: { [key: string]: any[] } = {};
-  for (const markType of MARK_TYPE_ORDER) {
-    groupedData[markType] = data.filter((entry) =>
-      MARK_GROUPS[markType].includes(
-        metadata.find((meta) => meta.accession === entry.accession)?.target
-      )
+// Define types for histone data and metadata
+interface HistoneData {
+  histone_dataset_accession: string;
+  proximal_values: number[];
+  distal_values: number[];
+}
+
+interface Metadata {
+  accession: string;
+  target: string;
+}
+
+// Define the types for props in CollapsibleGraphSet
+interface CollapsibleGraphSetProps {
+  title: string;
+  graphs: HistoneDataWithTarget[];
+}
+
+interface HistoneDataWithTarget extends HistoneData {
+  target: string;
+}
+
+// Helper function to group data by mark types using metadata
+const groupByMarkTypes = (
+  histoneData: HistoneData[],
+  metadata: Metadata[]
+): { [markType: string]: HistoneDataWithTarget[] } => {
+  const groupedData: { [markType: string]: HistoneDataWithTarget[] } = {};
+
+  metadata.forEach((meta) => {
+    const target = meta.target;
+    const markType = Object.keys(MARK_GROUPS).find((group) =>
+      MARK_GROUPS[group].includes(target)
     );
-  }
+
+    if (markType) {
+      const associatedData = histoneData.find(
+        (data) => data.histone_dataset_accession === meta.accession
+      );
+
+      if (associatedData) {
+        groupedData[markType] = groupedData[markType] || [];
+        groupedData[markType].push({ ...associatedData, target });
+      }
+    }
+  });
+
   return groupedData;
 };
 
-// Collapsible Graph Set component
-const CollapsibleGraphSet: React.FC<{ title: string; graphs: any[] }> = ({
+// Collapsible Graph Set component for rendering grouped graphs in collapsible sections
+const CollapsibleGraphSet: React.FC<CollapsibleGraphSetProps> = ({
   title,
   graphs,
 }) => {
@@ -35,13 +72,13 @@ const CollapsibleGraphSet: React.FC<{ title: string; graphs: any[] }> = ({
       </AccordionSummary>
       <AccordionDetails>
         <Box display="flex" flexWrap="wrap">
-          {graphs.map((graph, index) => (
-            <Box key={index} sx={{ width: "30%", padding: "10px" }}>
+          {graphs.map((graph, idx) => (
+            <Box key={idx} sx={{ width: "300px", padding: "10px" }}>
               <Graph
                 proximal_values={graph.proximal_values}
                 distal_values={graph.distal_values}
-                dataset={graph.dataset}
-                title={graph.dataset.target}
+                dataset={{ target: graph.target }}
+                title={graph.target}
               />
             </Box>
           ))}
@@ -52,18 +89,19 @@ const CollapsibleGraphSet: React.FC<{ title: string; graphs: any[] }> = ({
 };
 
 // Main GraphSet component to handle data grouping and rendering the accordions
-const GraphSet: React.FC<{ histoneData: any[]; metadata: any[] }> = ({
-  histoneData,
-  metadata,
-}) => {
-  // Group data by MARK_TYPE_ORDER
+interface GraphSetProps {
+  histoneData: HistoneData[];
+  metadata: Metadata[];
+}
+
+const GraphSet: React.FC<GraphSetProps> = ({ histoneData, metadata }) => {
   const groupedData = useMemo(
     () => groupByMarkTypes(histoneData, metadata),
     [histoneData, metadata]
   );
 
   return (
-    <Box sx={{ marginTop: "20px" }}>
+    <Box>
       {MARK_TYPE_ORDER.filter(
         (markType) => groupedData[markType]?.length > 0
       ).map((markType) => (
