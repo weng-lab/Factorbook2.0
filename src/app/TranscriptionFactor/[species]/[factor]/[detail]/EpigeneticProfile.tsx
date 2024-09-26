@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { CircularProgress, Typography, Box } from "@mui/material";
 import Layout from "@/components/MotifMeme/Aggregate/Layout";
@@ -19,9 +19,10 @@ const EpigeneticProfile: React.FC<EpigeneticProfileProps> = ({
   factor,
   accession,
 }) => {
-  const [metadata, setMetadata] = useState<any[]>([]); // To store metadata for target groupings
+  const [metadata, setMetadata] = useState<any[]>([]); // Store metadata for target groupings
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch the aggregate data (histone aggregate values)
   const {
     data: aggregateData,
     loading: aggregateLoading,
@@ -31,22 +32,31 @@ const EpigeneticProfile: React.FC<EpigeneticProfileProps> = ({
     skip: !accession,
   });
 
+  // Get the list of histone dataset accessions to pass to HISTONE_METADATA_QUERY
+  const histoneDatasetAccessions =
+    aggregateData?.histone_aggregate_values?.map(
+      (item: { histone_dataset_accession: string }) =>
+        item.histone_dataset_accession
+    ) || [];
+
+  // TODO Akshay to Fetch the histone metadata based on the dataset accessions
   const {
     data: histoneMetadataData,
     loading: histoneLoading,
     error: histoneError,
   } = useQuery(HISTONE_METADATA_QUERY, {
-    variables: { accessions: [accession] }, // Ensure it's passed as an array
-    skip: !accession,
+    variables: { accessions: histoneDatasetAccessions }, // Pass the dataset accessions
+    skip: histoneDatasetAccessions.length === 0, // Skip if there are no accessions
     onCompleted: (data) => {
       if (data && data.peakDataset && data.peakDataset.datasets.length > 0) {
         setMetadata(data.peakDataset.datasets); // Set metadata for histone target grouping
       } else {
-        setError("No histone metadata found for this accession");
+        setError("No histone metadata found for these accessions");
       }
     },
   });
 
+  // Handle loading and error states
   if (aggregateLoading || histoneLoading) return <CircularProgress />;
   if (aggregateError || histoneError || error) {
     return (

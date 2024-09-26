@@ -5,10 +5,18 @@ import {
   AccordionDetails,
   Box,
   Typography,
+  Grid,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Graph from "./Graphs"; // Adjust path accordingly
-import { MARK_GROUPS, MARK_TYPE_ORDER } from "./marks"; // Adjust path accordingly
+import Graph from "./Graphs";
+
+// Group order defined for histone marks
+const MARK_TYPE_ORDER = [
+  "Activating histone marks",
+  "Repressive histone marks",
+  "Transcriptional histone marks",
+  "Other histone marks",
+];
 
 // Define types for histone data and metadata
 interface HistoneData {
@@ -22,21 +30,22 @@ interface Metadata {
   target: string;
 }
 
-interface HistoneDataWithTarget extends HistoneData {
-  target: string;
-}
-
-// Group data by mark types using metadata
+// Group graphs by their metadata target
 const groupByMarkTypes = (
   histoneData: HistoneData[],
   metadata: Metadata[]
-): { [markType: string]: HistoneDataWithTarget[] } => {
-  const groupedData: { [markType: string]: HistoneDataWithTarget[] } = {};
+): { [markType: string]: HistoneData[] } => {
+  const groupedData: { [markType: string]: HistoneData[] } = {
+    "Activating histone marks": [],
+    "Repressive histone marks": [],
+    "Transcriptional histone marks": [],
+    "Other histone marks": [],
+  };
 
   metadata.forEach((meta) => {
     const target = meta.target;
-    const markType = Object.keys(MARK_GROUPS).find((group) =>
-      MARK_GROUPS[group].includes(target)
+    const markType = Object.keys(MARK_TYPE_ORDER).find((group) =>
+      MARK_TYPE_ORDER.includes(target)
     );
 
     if (markType) {
@@ -45,8 +54,7 @@ const groupByMarkTypes = (
       );
 
       if (associatedData) {
-        groupedData[markType] = groupedData[markType] || [];
-        groupedData[markType].push({ ...associatedData, target });
+        groupedData[markType].push(associatedData);
       }
     }
   });
@@ -67,25 +75,25 @@ const GraphSet: React.FC<GraphSetProps> = ({ histoneData, metadata }) => {
 
   return (
     <Box>
-      {MARK_TYPE_ORDER.filter(
-        (markType) => groupedData[markType]?.length > 0
-      ).map((markType) => (
+      {MARK_TYPE_ORDER.map((markType) => (
         <Accordion key={markType}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>{markType}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Box display="flex" flexWrap="wrap">
+            <Grid container spacing={2}>
               {groupedData[markType].map((graph, idx) => (
-                <Box key={idx} sx={{ width: "300px", padding: "10px" }}>
-                  <Graph
-                    proximal_values={graph.proximal_values}
-                    distal_values={graph.distal_values}
-                    dataset={{ target: graph.target }}
-                  />
-                </Box>
+                <Grid item xs={12} sm={6} md={4} key={idx}>
+                  <Box padding="10px">
+                    <Graph
+                      proximal_values={graph.proximal_values}
+                      distal_values={graph.distal_values}
+                      dataset={{ target: graph.histone_dataset_accession }}
+                    />
+                  </Box>
+                </Grid>
               ))}
-            </Box>
+            </Grid>
           </AccordionDetails>
         </Accordion>
       ))}
