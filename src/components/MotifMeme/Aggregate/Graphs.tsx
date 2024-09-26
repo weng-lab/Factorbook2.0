@@ -7,7 +7,7 @@ import { Tooltip, useTooltip, defaultStyles } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { bisector } from "d3-array";
 import { curveMonotoneX } from "d3-shape";
-import { MARK_COLORS } from "./marks";
+import { MARK_COLORS } from "./marks"; // Path to your marks.ts file
 import { Box } from "@mui/material";
 import { Line } from "@visx/shape";
 

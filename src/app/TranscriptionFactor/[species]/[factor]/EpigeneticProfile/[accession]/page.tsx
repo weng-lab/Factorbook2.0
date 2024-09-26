@@ -46,7 +46,7 @@ const EpigeneticProfilePage = () => {
               dataset={{ target: accessionStr || "" }}
               xlabel="distance from summit (bp)"
               ylabel="fold change signal"
-              title={`Epigenetic Profile for Accession: ${accessionStr}`}
+              //title={`Epigenetic Profile for Accession: ${accessionStr}`}
             />
           )
         )
