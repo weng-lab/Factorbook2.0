@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { CircularProgress, Button } from "@mui/material";
-import { Graph } from "./Aggregate/Graphs";
+import Graph from "./Aggregate/Graphs";
 import { downloadSVG } from "@/utilities/svgdata";
 
 const ATACPlot: React.FC<{
@@ -45,7 +45,6 @@ const ATACPlot: React.FC<{
         ylabel="ATAC-seq Signal"
         height={300}
         yMax={Math.max(...data) * 1.2}
-        svgRef={svgRef} // Pass the ref to the Graph component
       />
       <Button
         variant="contained"
