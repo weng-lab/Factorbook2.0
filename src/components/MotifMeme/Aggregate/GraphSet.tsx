@@ -6,6 +6,7 @@ import {
   Box,
   Typography,
   Grid,
+  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Graph from "./Graphs";
@@ -73,18 +74,39 @@ const GraphSet: React.FC<GraphSetProps> = ({ histoneData, metadata }) => {
     [histoneData, metadata]
   );
 
+  const exportAsSvg = () => {
+    // Logic to export all graphs as SVG
+    console.log("Exporting graphs as SVG...");
+  };
+
   return (
     <Box>
       {MARK_TYPE_ORDER.map((markType) => (
-        <Accordion key={markType}>
+        <Accordion
+          key={markType}
+          style={{
+            borderRadius: "10px", // Rounded corners for Accordion
+            overflow: "hidden",
+            marginBottom: "16px", // Add spacing between accordions
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)", // Light shadow to match Figma design
+          }}
+        >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography>{markType}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <Grid container spacing={2}>
+            <Grid container spacing={4}>
               {groupedData[markType].map((graph, idx) => (
                 <Grid item xs={12} sm={6} md={4} key={idx}>
-                  <Box padding="10px">
+                  <Box
+                    padding="10px"
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    style={{
+                      height: "100%", // Ensure full height for alignment
+                    }}
+                  >
                     <Graph
                       proximal_values={graph.proximal_values}
                       distal_values={graph.distal_values}
@@ -94,6 +116,27 @@ const GraphSet: React.FC<GraphSetProps> = ({ histoneData, metadata }) => {
                 </Grid>
               ))}
             </Grid>
+            {/* Add Export SVG Button */}
+            <Box
+              display="flex"
+              justifyContent="center"
+              marginTop="20px"
+              style={{ borderRadius: "20px" }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={exportAsSvg}
+                style={{
+                  backgroundColor: "#9E67F2",
+                  color: "white",
+                  padding: "10px 30px",
+                  borderRadius: "30px", // Round button
+                }}
+              >
+                Export plots as SVG
+              </Button>
+            </Box>
           </AccordionDetails>
         </Accordion>
       ))}

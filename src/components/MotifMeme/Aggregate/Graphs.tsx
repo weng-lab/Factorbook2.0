@@ -8,7 +8,7 @@ import { localPoint } from "@visx/event";
 import { bisector } from "d3-array";
 import { curveMonotoneX } from "d3-shape";
 import { MARK_COLORS } from "./marks"; // Path to your marks.ts file
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { Line } from "@visx/shape";
 
 interface GraphProps {
@@ -61,7 +61,8 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
       tooltipData: tooltipContent,
     } = useTooltip<TooltipData>();
 
-    const color = MARK_COLORS[dataset.target] || "#000000"; // Apply color based on target
+    // Get the color for the current target from MARK_COLORS
+    const color = MARK_COLORS[dataset.target] || "#000000"; // Default to black if target color is not found
 
     const xScale = useMemo(
       () =>
@@ -120,6 +121,11 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
       [proximal_values, distal_values, limit, xScale, yScale, showTooltip]
     );
 
+    const handleMouseLeave = useCallback(() => {
+      setTooltipData(null); // Hide tooltip data when the mouse leaves the graph
+      hideTooltip();
+    }, [hideTooltip]);
+
     return (
       <Box style={{ position: "relative", marginBottom: "2em" }}>
         <svg ref={ref} width={width} height={height}>
@@ -131,6 +137,7 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
                 textAnchor="middle"
                 fontSize={16}
                 fontWeight="bold"
+                style={{ paddingBottom: "30px" }} // Increased padding for title
               >
                 {title || dataset.target}
               </text>
@@ -141,11 +148,11 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
               data={proximal_values}
               x={(d, i) => xScale(i - proximal_values.length / 2)}
               y={(d) => yScale(d)}
-              stroke={color}
+              stroke={color} // Color based on MARK_COLORS
               strokeWidth={2}
               curve={curveMonotoneX}
               onMouseMove={handleMouseMove}
-              onMouseLeave={hideTooltip}
+              onMouseLeave={handleMouseLeave}
             />
 
             {/* Distal Line */}
@@ -153,12 +160,12 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
               data={distal_values}
               x={(d, i) => xScale(i - distal_values.length / 2)}
               y={(d) => yScale(d)}
-              stroke={color}
+              stroke={color} // Distal line uses the same color
               strokeWidth={2}
               opacity={0.6}
               curve={curveMonotoneX}
               onMouseMove={handleMouseMove}
-              onMouseLeave={hideTooltip}
+              onMouseLeave={handleMouseLeave}
             />
 
             {/* Tooltip vertical line */}
@@ -210,6 +217,31 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
             </div>
           </Tooltip>
         )}
+
+        {/* Legend */}
+        <Box
+          display="flex"
+          justifyContent="center"
+          marginTop="10px"
+          style={{ paddingBottom: "10px" }} // Add margin to the legend
+        >
+          <Box display="flex" alignItems="center" marginRight="20px">
+            <svg width="10" height="10">
+              <rect width="10" height="10" fill={color} />
+            </svg>
+            <Typography variant="body2" marginLeft="5px">
+              TSS-proximal
+            </Typography>
+          </Box>
+          <Box display="flex" alignItems="center">
+            <svg width="10" height="10">
+              <rect width="10" height="10" fill={color} opacity={0.6} />
+            </svg>
+            <Typography variant="body2" marginLeft="5px">
+              TSS-distal
+            </Typography>
+          </Box>
+        </Box>
       </Box>
     );
   }
