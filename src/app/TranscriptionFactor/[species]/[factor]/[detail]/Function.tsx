@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
@@ -114,6 +112,11 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
 
   const factorDetails = factorData?.factor[0];
   const imageUrl = getRCSBImageUrl(factorDetails?.pdbids);
+
+  // Get counts for experiments and biosamples
+  const experimentCount = datasetData?.peakDataset.datasets.length || 0;
+  const biosampleCount =
+    datasetData?.peakDataset.partitionByBiosample.length || 0;
 
   const references = [
     {
@@ -246,6 +249,9 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
           marginRight: "20px",
           width: "300px",
           minHeight: "calc(100vh - 80px)",
+          position: "sticky", // Make this element sticky
+          top: "0", // Set this to a proper top position depending on your layout
+          height: "fit-content", // Ensures the height of the sticky container adjusts
         }}
       >
         <Typography variant="h4" sx={{ color: "white", marginBottom: "20px" }}>
@@ -287,23 +293,33 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         <Box mt={2}>
           {datasetData && (
             <DataTable
+              tableTitle={`${experimentCount} experiments performed`}
               columns={datasetColumns(species)}
               rows={datasetData.peakDataset.datasets}
               searchable
               itemsPerPage={5}
               sortColumn={2}
               sortDescending
+              headerColor={{
+                backgroundColor: "#7151A1", // Set the background color of the table header
+                textColor: "#EDE7F6", // Set the text color of the table header
+              }}
             />
           )}
         </Box>
         <Box mt={2}>
           {datasetData && (
             <DataTable
+              tableTitle={`${biosampleCount} biosamples profiled`}
               columns={biosampleColumns(species)}
               rows={datasetData.peakDataset.partitionByBiosample}
               searchable
               itemsPerPage={4}
               sortColumn={0}
+              headerColor={{
+                backgroundColor: "#7151A1", // Set the background color of the table header
+                textColor: "#EDE7F6", // Set the text color of the table header
+              }}
             />
           )}
         </Box>
