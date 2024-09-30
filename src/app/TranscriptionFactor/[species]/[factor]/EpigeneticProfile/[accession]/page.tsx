@@ -135,16 +135,30 @@ const EpigeneticProfilePage = () => {
             <Typography>{type}</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            {typeGroups.get(type)?.map((group: any, idx: number) => (
-              <Graph
-                key={idx}
-                proximal_values={group.proximal_values}
-                distal_values={group.distal_values}
-                dataset={group.dataset}
-                xlabel="distance from summit (bp)"
-                ylabel="fold change signal"
-              />
-            ))}
+            {/* Adjusting the Flexbox to align graphs left with minimal gaps */}
+            <Box
+              display="flex"
+              flexDirection="row"
+              flexWrap="wrap"
+              justifyContent="flex-start" // Ensure all graphs are left-aligned
+              alignItems="flex-start" // Align vertically at the top
+              gap="7rem" // Reduced gap between graphs
+            >
+              {typeGroups.get(type)?.map((group: any, idx: number) => (
+                <Box key={idx} style={{ width: "300px", marginBottom: "20px" }}>
+                  {" "}
+                  {/* Adjust width for consistency */}
+                  <Graph
+                    key={idx}
+                    proximal_values={group.proximal_values}
+                    distal_values={group.distal_values}
+                    dataset={group.dataset}
+                    xlabel="distance from summit (bp)"
+                    ylabel="fold change signal"
+                  />
+                </Box>
+              ))}
+            </Box>
           </AccordionDetails>
         </Accordion>
       ))}
