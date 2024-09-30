@@ -39,7 +39,7 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
       distal_values = [],
       dataset,
       title,
-      limit = 2000, // Set default limit if not provided
+      limit = 2000,
       xlabel = "distance from summit (bp)", // Correct axis label
       ylabel = "fold change signal", // Correct axis label
       height = 300,
@@ -218,6 +218,27 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
             </div>
           </Tooltip>
         )}
+
+        {/* Legend Box */}
+        <Box display="flex" justifyContent="center" marginTop="10px">
+          <Box display="flex" alignItems="center" marginRight="20px">
+            <svg width="16" height="16">
+              <rect width="16" height="16" fill={color} />
+            </svg>
+            <Typography variant="body2" style={{ marginLeft: "8px" }}>
+              TSS - Proximal
+            </Typography>
+          </Box>
+
+          <Box display="flex" alignItems="center">
+            <svg width="16" height="16">
+              <rect width="16" height="16" fill={color} opacity={0.6} />
+            </svg>
+            <Typography variant="body2" style={{ marginLeft: "8px" }}>
+              TSS - Distal
+            </Typography>
+          </Box>
+        </Box>
       </Box>
     );
   }
