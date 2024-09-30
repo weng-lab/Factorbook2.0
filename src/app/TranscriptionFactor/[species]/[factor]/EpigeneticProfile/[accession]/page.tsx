@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import { useQuery } from "@apollo/client";
 import { useParams } from "next/navigation";
 import {
@@ -10,7 +10,6 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Layout from "@/components/MotifMeme/Aggregate/Layout";
@@ -25,7 +24,6 @@ import {
   MARK_TYPES,
   MARK_TYPE_ORDER,
 } from "@/components/MotifMeme/Aggregate/marks";
-import { downloadSVGElementAsSVG } from "@/utilities/svgdata";
 
 const EpigeneticProfilePage = () => {
   const { species, factor, accession } = useParams();
@@ -97,13 +95,6 @@ const EpigeneticProfilePage = () => {
     })
   );
 
-  const svgRefs = useRef<{
-    [markType: string]: React.RefObject<SVGSVGElement>[];
-  }>({});
-  MARK_TYPE_ORDER.forEach((type) => {
-    svgRefs.current[type] = [];
-  });
-
   return (
     <Layout species={speciesStr} factor={factorStr}>
       <Typography variant="h5" align="center" gutterBottom>
@@ -123,42 +114,17 @@ const EpigeneticProfilePage = () => {
               alignItems="flex-start"
               gap="7rem"
             >
-              {typeGroups.get(type)?.map((group: any, idx: number) => {
-                const graphRef = React.createRef<SVGSVGElement>();
-                svgRefs.current[type].push(graphRef);
-
-                return (
-                  <Box
-                    key={idx}
-                    style={{ width: "300px", marginBottom: "20px" }}
-                  >
-                    <Graph
-                      ref={graphRef}
-                      proximal_values={group.proximal_values}
-                      distal_values={group.distal_values}
-                      dataset={group.dataset}
-                      xlabel="distance from summit (bp)"
-                      ylabel="fold change signal"
-                    />
-                  </Box>
-                );
-              })}
-            </Box>
-
-            <Box display="flex" justifyContent="center" marginTop="20px">
-              <Button
-                variant="contained"
-                style={{ backgroundColor: "#9E67F2", color: "white" }}
-                onClick={() => {
-                  svgRefs.current[type].forEach((ref, idx) => {
-                    if (ref.current) {
-                      downloadSVGElementAsSVG(ref, `${type}-plot-${idx}.svg`);
-                    }
-                  });
-                }}
-              >
-                Export plots as SVG
-              </Button>
+              {typeGroups.get(type)?.map((group: any, idx: number) => (
+                <Box key={idx} style={{ width: "300px", marginBottom: "20px" }}>
+                  <Graph
+                    proximal_values={group.proximal_values}
+                    distal_values={group.distal_values}
+                    dataset={group.dataset}
+                    xlabel="distance from summit (bp)"
+                    ylabel="fold change signal"
+                  />
+                </Box>
+              ))}
             </Box>
           </AccordionDetails>
         </Accordion>
