@@ -71,7 +71,7 @@ const EpigeneticProfile: React.FC<EpigeneticProfileProps> = ({
       {histoneData.length > 0 && metadata.length > 0 ? (
         <GraphSet histoneData={histoneData} metadata={metadata} />
       ) : (
-        <Typography>No data found for this accession.</Typography>
+        <Typography>Select an accession to view its data.</Typography>
       )}
     </Layout>
   );

@@ -207,13 +207,21 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
               color: "white",
             }}
           >
-            <div>
-              <strong>{`Proximal: ${tooltipContent.proximal.toFixed(
-                2
-              )}`}</strong>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <svg width="10" height="10">
+                <rect width="10" height="10" fill={color} />
+              </svg>
+              <strong style={{ marginLeft: "5px" }}>
+                {`Proximal: ${tooltipContent.proximal.toFixed(2)}`}
+              </strong>
             </div>
-            <div>
-              <strong>{`Distal: ${tooltipContent.distal.toFixed(2)}`}</strong>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <svg width="10" height="10">
+                <rect width="10" height="10" fill={color} opacity={0.6} />
+              </svg>
+              <strong style={{ marginLeft: "5px" }}>
+                {`Distal: ${tooltipContent.distal.toFixed(2)}`}
+              </strong>
             </div>
           </Tooltip>
         )}
