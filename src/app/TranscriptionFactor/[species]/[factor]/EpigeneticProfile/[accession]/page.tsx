@@ -24,7 +24,7 @@ import {
   MARK_TYPE_ORDER,
 } from "@/components/MotifMeme/Aggregate/marks";
 import { useParams } from "next/navigation";
-import FactorTabs from "../../[detail]/FactorTabs";
+import FactorTabs from "./FactorTabs";
 
 const EpigeneticProfilePage = () => {
   const { species, factor, accession } = useParams();
