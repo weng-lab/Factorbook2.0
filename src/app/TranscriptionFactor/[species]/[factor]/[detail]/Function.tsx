@@ -249,9 +249,9 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
           marginRight: "20px",
           width: "300px",
           minHeight: "calc(100vh - 80px)",
-          position: "sticky", // Make this element sticky
-          top: "0", // Set this to a proper top position depending on your layout
-          height: "fit-content", // Ensures the height of the sticky container adjusts
+          position: "sticky", // To Make this element sticky
+          top: "0",
+          height: "fit-content",
         }}
       >
         <Typography variant="h4" sx={{ color: "white", marginBottom: "20px" }}>
@@ -301,8 +301,8 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
               sortColumn={2}
               sortDescending
               headerColor={{
-                backgroundColor: "#7151A1", // Set the background color of the table header
-                textColor: "#EDE7F6", // Set the text color of the table header
+                backgroundColor: "#7151A1",
+                textColor: "#EDE7F6",
               }}
             />
           )}
@@ -317,8 +317,8 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
               itemsPerPage={4}
               sortColumn={0}
               headerColor={{
-                backgroundColor: "#7151A1", // Set the background color of the table header
-                textColor: "#EDE7F6", // Set the text color of the table header
+                backgroundColor: "#7151A1",
+                textColor: "#EDE7F6",
               }}
             />
           )}
