@@ -7,7 +7,7 @@ import { Tooltip, useTooltip, defaultStyles } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { bisector } from "d3-array";
 import { curveMonotoneX } from "d3-shape";
-import { MARK_COLORS } from "./marks"; // Path to your marks.ts file
+import { MARK_COLORS } from "./marks";
 import { Box, Typography } from "@mui/material";
 import { Line } from "@visx/shape";
 
@@ -31,6 +31,7 @@ interface TooltipData {
   distal: number;
 }
 
+// The key change here is using forwardRef to pass the SVG ref from parent
 const Graph = forwardRef<SVGSVGElement, GraphProps>(
   (
     {
@@ -61,7 +62,6 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
       tooltipData: tooltipContent,
     } = useTooltip<TooltipData>();
 
-    // Get the color for the current target from MARK_COLORS
     const color = MARK_COLORS[dataset.target] || "#000000"; // Default to black if target color is not found
 
     const xScale = useMemo(
@@ -93,14 +93,11 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
       ]
     );
 
-    const bisectData = bisector((d: number, i: number) => i).center;
-
     const handleMouseMove = useCallback(
       (event: React.MouseEvent<SVGRectElement, MouseEvent>) => {
         const { x } = localPoint(event) || { x: 0 };
         const x0 = xScale.invert(x);
 
-        // Get the index of the nearest data point
         const index = Math.floor(
           ((x0 + limit) / (2 * limit)) * proximal_values.length
         );
@@ -122,7 +119,7 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
     );
 
     const handleMouseLeave = useCallback(() => {
-      setTooltipData(null); // Hide tooltip data when the mouse leaves the graph
+      setTooltipData(null);
       hideTooltip();
     }, [hideTooltip]);
 
@@ -133,7 +130,7 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
             {!hideTitle && (
               <text
                 x={width / 2}
-                y={margin.top - 5} // Increase y value for more space between title and graph
+                y={margin.top - 5}
                 textAnchor="middle"
                 fontSize={16}
                 fontWeight="bold"
@@ -143,24 +140,22 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
               </text>
             )}
 
-            {/* Proximal Line */}
             <LinePath
               data={proximal_values}
               x={(d, i) => xScale(i - proximal_values.length / 2)}
               y={(d) => yScale(d)}
-              stroke={color} // Color based on MARK_COLORS
+              stroke={color}
               strokeWidth={2}
               curve={curveMonotoneX}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
             />
 
-            {/* Distal Line */}
             <LinePath
               data={distal_values}
               x={(d, i) => xScale(i - distal_values.length / 2)}
               y={(d) => yScale(d)}
-              stroke={color} // Distal line uses the same color
+              stroke={color}
               strokeWidth={2}
               opacity={0.6}
               curve={curveMonotoneX}
@@ -168,7 +163,6 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
               onMouseLeave={handleMouseLeave}
             />
 
-            {/* Tooltip vertical line */}
             {tooltipData && (
               <Line
                 from={{ x: tooltipLeft, y: margin.top }}
@@ -179,19 +173,18 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
               />
             )}
 
-            {/* X and Y Axes */}
             <AxisBottom
               top={height - margin.bottom}
               scale={xScale}
               numTicks={5}
-              label={xlabel} // X-axis label
+              label={xlabel}
               tickLabelProps={() => ({ fontSize: 12, textAnchor: "middle" })}
             />
             <AxisLeft
               left={margin.left}
               scale={yScale}
               numTicks={5}
-              label={ylabel} // Y-axis label
+              label={ylabel}
               tickLabelProps={() => ({ fontSize: 12, textAnchor: "end" })}
             />
           </Group>
@@ -225,31 +218,6 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
             </div>
           </Tooltip>
         )}
-
-        {/* Legend */}
-        <Box
-          display="flex"
-          justifyContent="center"
-          marginTop="10px"
-          style={{ paddingBottom: "10px" }} // Add margin to the legend
-        >
-          <Box display="flex" alignItems="center" marginRight="20px">
-            <svg width="10" height="10">
-              <rect width="10" height="10" fill={color} />
-            </svg>
-            <Typography variant="body2" marginLeft="5px">
-              TSS-proximal
-            </Typography>
-          </Box>
-          <Box display="flex" alignItems="center">
-            <svg width="10" height="10">
-              <rect width="10" height="10" fill={color} opacity={0.6} />
-            </svg>
-            <Typography variant="body2" marginLeft="5px">
-              TSS-distal
-            </Typography>
-          </Box>
-        </Box>
       </Box>
     );
   }
