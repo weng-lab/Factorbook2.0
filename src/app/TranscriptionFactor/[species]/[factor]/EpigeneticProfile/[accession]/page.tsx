@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { useQuery } from "@apollo/client";
 import { useParams } from "next/navigation";
 import {
@@ -12,18 +12,17 @@ import {
   AccordionDetails,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
 import Layout from "@/components/MotifMeme/Aggregate/Layout";
 import Graph from "@/components/MotifMeme/Aggregate/Graphs";
 import {
   AGGREGATE_DATA_QUERY,
+  AGGREGATE_METADATA_QUERY,
   HISTONE_METADATA_QUERY,
 } from "@/components/MotifMeme/Aggregate/Queries";
 import { associateBy, groupBy } from "queryz";
 import {
   MARK_TYPES,
   MARK_TYPE_ORDER,
-  MARK_GROUPS,
 } from "@/components/MotifMeme/Aggregate/marks";
 
 const EpigeneticProfilePage = () => {
@@ -34,61 +33,80 @@ const EpigeneticProfilePage = () => {
   const factorStr = Array.isArray(factor) ? factor[0] : factor;
   const accessionStr = Array.isArray(accession) ? accession[0] : accession;
 
-  // Logging for debugging
-  console.log("species:", speciesStr);
-  console.log("factor:", factorStr);
-  console.log("accession:", accessionStr);
-
-  const { data, loading, error } = useQuery(AGGREGATE_DATA_QUERY, {
+  // Fetch the aggregate data
+  const {
+    data: aggregateData,
+    loading: aggregateLoading,
+    error: aggregateError,
+  } = useQuery(AGGREGATE_DATA_QUERY, {
     variables: { accession: accessionStr },
-    skip: !accessionStr,
-    onError: (error) => {
-      console.error("AGGREGATE_DATA_QUERY error:", error);
+    skip: !accessionStr, // Still skip if accession is not defined
+  });
+
+  // Fetch the metadata (biosample and others)
+  const {
+    data: metadataData,
+    loading: metadataLoading,
+    error: metadataError,
+  } = useQuery(AGGREGATE_METADATA_QUERY, {
+    variables: {
+      assembly: speciesStr === "Human" ? "GRCh38" : "mm10",
+      target: factorStr,
     },
   });
 
+  // Fetch the histone metadata once aggregate data is available
   const {
-    data: metadata,
-    loading: histoneMetadataLoading,
-    error: histoneMetadataError,
+    data: histoneData,
+    loading: histoneLoading,
+    error: histoneError,
   } = useQuery(HISTONE_METADATA_QUERY, {
     variables: {
-      accessions: data
-        ? data.histone_aggregate_values.map(
+      accessions: aggregateData
+        ? aggregateData.histone_aggregate_values.map(
             (x: any) => x.histone_dataset_accession
           )
         : [],
-      loading,
     },
-    skip: loading,
-    onError: (error) => {
-      console.error("HISTONE_METADATA_QUERY error:", error);
-    },
+    skip: !aggregateData, // Only fetch histone metadata if aggregate data is available
   });
 
-  if (
-    loading ||
-    histoneMetadataLoading ||
-    !metadata ||
-    (metadata && !metadata.peakDataset) ||
-    !data
-  )
-    return <CircularProgress />;
-  if (error || histoneMetadataError) {
-    console.error("GraphQL error:", error?.message);
-    return <p>Error: {error?.message}</p>;
+  // Combine loading states
+  const isLoading = aggregateLoading || metadataLoading || histoneLoading;
+  const hasError = aggregateError || metadataError || histoneError;
+
+  if (isLoading) return <CircularProgress />;
+  if (hasError) {
+    console.error(
+      "GraphQL error:",
+      aggregateError || metadataError || histoneError
+    );
+    return (
+      <p>
+        Error:{" "}
+        {aggregateError?.message ||
+          metadataError?.message ||
+          histoneError?.message}
+      </p>
+    );
   }
+
+  // Find the biosample associated with the current accession
+  const biosample =
+    metadataData?.peakDataset?.datasets?.find(
+      (dataset: any) => dataset.accession === accessionStr
+    )?.biosample || "Unknown Biosample";
 
   // Associate the values with accessions
   const values = associateBy(
-    data.histone_aggregate_values,
+    aggregateData.histone_aggregate_values,
     (x: any) => x.histone_dataset_accession,
     (x) => x
   );
 
   // Associate metadata for grouping
   const marks = associateBy(
-    metadata.peakDataset.datasets,
+    histoneData?.peakDataset?.datasets,
     (x: any) => x.target,
     (x) => x
   );
@@ -108,6 +126,9 @@ const EpigeneticProfilePage = () => {
   // Render Accordions for each MARK_TYPE_ORDER
   return (
     <Layout species={speciesStr} factor={factorStr}>
+      <Typography variant="h5" align="center" gutterBottom>
+        {`Histone modification profiles around ${factorStr} peaks in ${biosample}`}
+      </Typography>
       {MARK_TYPE_ORDER.filter((type) => typeGroups.get(type)).map((type) => (
         <Accordion key={type}>
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -117,8 +138,8 @@ const EpigeneticProfilePage = () => {
             {typeGroups.get(type)?.map((group: any, idx: number) => (
               <Graph
                 key={idx}
-                proximal_values={group.proximal_values} // Safely access data
-                distal_values={group.distal_values} // Safely access data
+                proximal_values={group.proximal_values}
+                distal_values={group.distal_values}
                 dataset={group.dataset}
                 xlabel="distance from summit (bp)"
                 ylabel="fold change signal"

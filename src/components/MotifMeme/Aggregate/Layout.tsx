@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Box,
   Typography,
@@ -22,6 +20,7 @@ import {
 import { useRouter, useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import { AGGREGATE_METADATA_QUERY } from "@/components/MotifMeme/Aggregate/Queries";
+import { debounce } from "lodash"; // Add lodash debounce function
 
 interface Dataset {
   biosample: string;
@@ -34,6 +33,7 @@ const Layout: React.FC<{
   children: React.ReactNode;
 }> = ({ species, factor, children }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>(""); // New state for debounced search
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [expandedBiosample, setExpandedBiosample] = useState<string | false>(
     false
@@ -65,11 +65,12 @@ const Layout: React.FC<{
     return Object.keys(groupedDatasets).sort((a, b) => a.localeCompare(b));
   }, [groupedDatasets]);
 
+  // Use debounced search term for filtering datasets
   const filteredDatasets = useMemo(() => {
     return sortedBiosamples.filter((biosample) =>
-      biosample.toLowerCase().includes(searchTerm.toLowerCase())
+      biosample.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
     );
-  }, [sortedBiosamples, searchTerm]);
+  }, [sortedBiosamples, debouncedSearchTerm]);
 
   useEffect(() => {
     if (currentAccession && expandedBiosample === false) {
@@ -88,6 +89,17 @@ const Layout: React.FC<{
     router.push(
       `/TranscriptionFactor/${species}/${factor}/EpigeneticProfile/${accession}`
     );
+  };
+
+  // Debounce search input to avoid immediate re-rendering on every keystroke
+  const debounceSearch = useCallback(
+    debounce((value) => setDebouncedSearchTerm(value), 300), // Debounce by 300ms
+    []
+  );
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    debounceSearch(e.target.value); // Trigger debounce on input change
   };
 
   if (loading) return <CircularProgress />;
@@ -153,7 +165,7 @@ const Layout: React.FC<{
                 variant="outlined"
                 fullWidth
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
                 InputProps={{
                   sx: {
                     backgroundColor: "rgba(129, 105, 191, 0.09)",
