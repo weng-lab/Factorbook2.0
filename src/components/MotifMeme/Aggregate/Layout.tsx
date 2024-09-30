@@ -20,7 +20,8 @@ import {
 import { useRouter, useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import { AGGREGATE_METADATA_QUERY } from "@/components/MotifMeme/Aggregate/Queries";
-import { debounce } from "lodash"; // Add lodash debounce function
+import { debounce } from "lodash";
+import { histoneBiosamplePartitions } from "./Utils";
 
 interface Dataset {
   biosample: string;
@@ -33,21 +34,30 @@ const Layout: React.FC<{
   children: React.ReactNode;
 }> = ({ species, factor, children }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>(""); // New state for debounced search
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [expandedBiosample, setExpandedBiosample] = useState<string | false>(
     false
   );
-  const router = useRouter();
-  const { accession: currentAccession } = useParams(); // Access current accession via params
+  const router = useRouter(); // For pushing URL updates
+  const { accession: currentAccession } = useParams(); // Current accession from URL
 
   const assembly = species === "Human" ? "GRCh38" : "mm10";
 
   const { data, loading, error } = useQuery(AGGREGATE_METADATA_QUERY, {
-    variables: { assembly, target: factor, replicated_peaks: true },
+    variables: { assembly, target: factor },
   });
 
-  const datasets: Dataset[] = data?.peakDataset?.datasets || [];
+  const datasets: Dataset[] = data
+    ? histoneBiosamplePartitions(data)
+        .list.map((ds: any) =>
+          ds.datasets.map((d: any) => ({
+            biosample: ds.biosample.name,
+            accession: d.accession,
+          }))
+        )
+        .flat()
+    : [];
 
   const groupedDatasets = useMemo(() => {
     return datasets.reduce(
@@ -65,7 +75,6 @@ const Layout: React.FC<{
     return Object.keys(groupedDatasets).sort((a, b) => a.localeCompare(b));
   }, [groupedDatasets]);
 
-  // Use debounced search term for filtering datasets
   const filteredDatasets = useMemo(() => {
     return sortedBiosamples.filter((biosample) =>
       biosample.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
@@ -85,21 +94,22 @@ const Layout: React.FC<{
     }
   }, [currentAccession, groupedDatasets, expandedBiosample]);
 
+  // Handle accession click and update route
   const handleAccessionClick = (accession: string) => {
+    // Update the route dynamically when an accession is clicked
     router.push(
       `/TranscriptionFactor/${species}/${factor}/EpigeneticProfile/${accession}`
     );
   };
 
-  // Debounce search input to avoid immediate re-rendering on every keystroke
   const debounceSearch = useCallback(
-    debounce((value) => setDebouncedSearchTerm(value), 300), // Debounce by 300ms
+    debounce((value) => setDebouncedSearchTerm(value), 300),
     []
   );
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-    debounceSearch(e.target.value); // Trigger debounce on input change
+    debounceSearch(e.target.value);
   };
 
   if (loading) return <CircularProgress />;
