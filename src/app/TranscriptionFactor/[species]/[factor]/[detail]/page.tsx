@@ -168,6 +168,7 @@ const FactorDetailsPage = () => {
               href={`/TranscriptionFactor/${species}/${factor}/Function`}
               sx={{
                 color: detail === "Function" ? "#8169BF" : "inherit",
+                textTransform: "capitalize",
               }}
             />
             <Tab
@@ -177,6 +178,7 @@ const FactorDetailsPage = () => {
               href={`/TranscriptionFactor/${species}/${factor}/Expression`}
               sx={{
                 color: detail === "Expression" ? "#8169BF" : "inherit",
+                textTransform: "capitalize",
               }}
             />
             <Tab
@@ -186,6 +188,7 @@ const FactorDetailsPage = () => {
               href={`/TranscriptionFactor/${species}/${factor}/MotifEnrichmentMEME`}
               sx={{
                 color: detail === "MotifEnrichmentMEME" ? "#8169BF" : "inherit",
+                textTransform: "capitalize",
               }}
             />
             {hasSelexData && (
@@ -197,6 +200,7 @@ const FactorDetailsPage = () => {
                 sx={{
                   color:
                     detail === "MotifEnrichmentSELEX" ? "#8169BF" : "inherit",
+                  textTransform: "capitalize",
                 }}
               />
             )}
@@ -207,6 +211,7 @@ const FactorDetailsPage = () => {
               href={`/TranscriptionFactor/${species}/${factor}/EpigeneticProfile`}
               sx={{
                 color: detail === "EpigeneticProfile" ? "#8169BF" : "inherit",
+                textTransform: "capitalize",
               }}
             />
             <Tab
@@ -216,6 +221,7 @@ const FactorDetailsPage = () => {
               href={`/TranscriptionFactor/${species}/${factor}/Search`}
               sx={{
                 color: detail === "Search" ? "#8169BF" : "inherit",
+                textTransform: "capitalize",
               }}
             />
           </Tabs>
