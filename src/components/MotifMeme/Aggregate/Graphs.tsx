@@ -133,7 +133,7 @@ const Graph = forwardRef<SVGSVGElement, GraphProps>(
             {!hideTitle && (
               <text
                 x={width / 2}
-                y={margin.top}
+                y={margin.top - 5} // Increase y value for more space between title and graph
                 textAnchor="middle"
                 fontSize={16}
                 fontWeight="bold"
