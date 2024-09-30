@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useQuery } from "@apollo/client";
-import { useParams } from "next/navigation";
 import {
   CircularProgress,
   Typography,
@@ -24,6 +23,8 @@ import {
   MARK_TYPES,
   MARK_TYPE_ORDER,
 } from "@/components/MotifMeme/Aggregate/marks";
+import { useParams } from "next/navigation";
+import FactorTabs from "../../[detail]/FactorTabs";
 
 const EpigeneticProfilePage = () => {
   const { species, factor, accession } = useParams();
@@ -97,6 +98,16 @@ const EpigeneticProfilePage = () => {
 
   return (
     <Layout species={speciesStr} factor={factorStr}>
+      {/* Add FactorTabs here */}
+      <Box mb={2}>
+        <FactorTabs
+          species={speciesStr}
+          factor={factorStr}
+          detail="EpigeneticProfile"
+          hasSelexData={true}
+        />
+      </Box>
+
       <Typography variant="h5" align="center" gutterBottom>
         {`Histone modification profiles around ${factorStr} peaks in ${biosample}`}
       </Typography>
