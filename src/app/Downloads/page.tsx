@@ -21,13 +21,13 @@ const DownloadPage: React.FC = () => {
       link: "/downloads/tf-motif-catalog",
     },
     {
-      title: "TF Motif Catalog",
+      title: "Genomic Motif Sites",
       description:
         "Motif sites identified by scanning ChIP-seq peaks and candidate cis-regulatory elements with FIMO. There are approximately 6 million motif sites in ChIP-seq peaks and 7 million motif sites in candidate regulatory elements after merging overlapping motif sites.",
       link: "/downloads/tf-motif-catalog-2",
     },
     {
-      title: "TF Motif Catalog",
+      title: "Heritability Models",
       description:
         "Motifs discovered using MEME on ChIP-seq experiments and the ZMotif neural network on HT-SELEX experiments. The catalog contains more than 6,000 motifs for each (with some redundancy).",
       link: "/downloads/tf-motif-catalog-3",

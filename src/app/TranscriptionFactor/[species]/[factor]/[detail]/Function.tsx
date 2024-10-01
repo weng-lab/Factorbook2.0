@@ -262,7 +262,11 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
             <img
               src={imageUrl}
               alt={factorDetails?.name}
-              style={{ width: "200px", marginBottom: "20px" }}
+              style={{
+                width: "200px",
+                marginBottom: "20px",
+                borderRadius: "15px",
+              }}
             />
             <IconButton
               onClick={() => setImageVisible(!imageVisible)}
