@@ -1,9 +1,11 @@
 import { BiosamplePartitionedDatasetCollection } from '../../components/Types';
 
 export type CtDetailProps = {
-    celltype: string;
-    species: string;
-};
+  species: string;
+  celltype: string;
+  hideFactorCounts?: boolean;  // Optional prop
+  row?: any; 
+}
 
 export type CellTypeDescription = {
     ct_image_url?: string;
