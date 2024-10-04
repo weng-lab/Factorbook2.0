@@ -16,37 +16,29 @@ import {
   Grid,
   useMediaQuery,
   ListItemButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
   Close as CloseIcon,
   Home as HomeIcon,
   MenuBook as MenuBookIcon,
-  ExpandLess,
-  ExpandMore,
+  ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import styles from "./Topbar.module.css";
 
+// Define the navigation items
 const navItems = [
   { title: "Home", href: "/", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
   {
     title: "Portals",
-    icon: <ExpandMore sx={{ color: "#8169BF" }} />,
     subItems: [
-      {
-        title: "Human Transcription Factors",
-        href: "/TranscriptionFactor/Human",
-      },
-      {
-        title: "Mouse Transcription Factors",
-        href: "/TranscriptionFactor/Mouse",
-      },
-      { title: "Motif Site Catalog", href: "/MotifsCatalog" },
-      {
-        title: "Annotate Variants & Trait Heritability",
-        href: "/AnnotationsVariants",
-      },
+      { text: "TFs in Humans", href: "/TranscriptionFactor/Human" },
+      { text: "TFs in Mouse", href: "/TranscriptionFactor/Mouse" },
+      { text: "Motif Catalog", href: "/MotifsCatalog" },
+      { text: "Annotations", href: "/AnnotationsVariants" },
     ],
   },
   {
@@ -59,7 +51,8 @@ const navItems = [
 
 const Topbar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [portalsOpen, setPortalsOpen] = React.useState(true);
+  const [portalsAnchorEl, setPortalsAnchorEl] =
+    React.useState<null | HTMLElement>(null); // State for portals dropdown
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -68,8 +61,14 @@ const Topbar: React.FC = () => {
     setMobileOpen((prevState) => !prevState);
   };
 
-  const handlePortalsClick = () => {
-    setPortalsOpen(!portalsOpen);
+  // Function to handle the opening of the portals menu
+  const handlePortalsClick = (event: React.MouseEvent<HTMLElement>) => {
+    setPortalsAnchorEl(event.currentTarget);
+  };
+
+  // Function to handle the closing of the portals menu
+  const handlePortalsClose = () => {
+    setPortalsAnchorEl(null);
   };
 
   const drawer = (
@@ -133,20 +132,25 @@ const Topbar: React.FC = () => {
               <>
                 <ListItemButton onClick={handlePortalsClick}>
                   <ListItemText primary={item.title} />
-                  {portalsOpen ? <ExpandLess /> : <ExpandMore />}
+                  <ExpandMoreIcon sx={{ color: "#8169BF" }} />
                 </ListItemButton>
-                <Collapse in={portalsOpen} timeout="auto" unmountOnExit>
+                <Collapse
+                  in={Boolean(portalsAnchorEl)}
+                  timeout="auto"
+                  unmountOnExit
+                >
                   <List component="div" disablePadding>
                     {item.subItems.map((subItem) => (
-                      <React.Fragment key={subItem.title}>
-                        <ListItemButton component="a" href={subItem.href}>
-                          <ListItemText
-                            primary={subItem.title}
-                            sx={{ paddingLeft: "16px" }}
-                          />
-                        </ListItemButton>
-                        <Divider sx={{ margin: "0 16px" }} />
-                      </React.Fragment>
+                      <ListItemButton
+                        key={subItem.text}
+                        component="a"
+                        href={subItem.href}
+                      >
+                        <ListItemText
+                          primary={subItem.text}
+                          sx={{ paddingLeft: "16px" }}
+                        />
+                      </ListItemButton>
                     ))}
                   </List>
                 </Collapse>
@@ -288,25 +292,69 @@ const Topbar: React.FC = () => {
                     width: "100%",
                   }}
                 >
-                  {navItems.map((item) => (
-                    <Button
-                      key={item.title}
-                      href={item.href}
-                      className={styles.navItem}
-                      sx={{
-                        fontSize: "15px",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "26px", // 173.333%
-                        letterSpacing: "0.46px",
-                        color: "var(--primary-mainText, #6750A4)",
-                        fontFeatureSettings: "'clig' off, 'liga' off",
-                        marginLeft: "16px",
-                      }}
-                    >
-                      {item.title}
-                    </Button>
-                  ))}
+                  {navItems.map((item) =>
+                    item.subItems ? (
+                      <React.Fragment key={item.title}>
+                        <Button
+                          aria-controls={
+                            portalsAnchorEl ? "portals-menu" : undefined
+                          }
+                          aria-haspopup="true"
+                          aria-expanded={portalsAnchorEl ? "true" : undefined}
+                          onClick={handlePortalsClick}
+                          endIcon={<ExpandMoreIcon />}
+                          sx={{
+                            fontSize: "15px",
+                            fontStyle: "normal",
+                            fontWeight: 700,
+                            lineHeight: "26px", // 173.333%
+                            letterSpacing: "0.46px",
+                            color: "var(--primary-mainText, #6750A4)",
+                            fontFeatureSettings: "'clig' off, 'liga' off",
+                            marginLeft: "16px",
+                          }}
+                        >
+                          {item.title}
+                        </Button>
+                        <Menu
+                          id="portals-menu"
+                          anchorEl={portalsAnchorEl}
+                          open={Boolean(portalsAnchorEl)}
+                          onClose={handlePortalsClose}
+                          MenuListProps={{
+                            "aria-labelledby": "portals-button",
+                          }}
+                        >
+                          {item.subItems.map((subItem) => (
+                            <MenuItem
+                              key={subItem.text}
+                              component="a"
+                              href={subItem.href}
+                            >
+                              {subItem.text}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </React.Fragment>
+                    ) : (
+                      <Button
+                        key={item.title}
+                        href={item.href}
+                        sx={{
+                          fontSize: "15px",
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          lineHeight: "26px", // 173.333%
+                          letterSpacing: "0.46px",
+                          color: "var(--primary-mainText, #6750A4)",
+                          fontFeatureSettings: "'clig' off, 'liga' off",
+                          marginLeft: "16px",
+                        }}
+                      >
+                        {item.title}
+                      </Button>
+                    )
+                  )}
                 </Box>
               </Grid>
             </>

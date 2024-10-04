@@ -27,7 +27,6 @@ import EpigeneticProfile from "./EpigeneticProfile";
 
 const FactorDetailsPage = () => {
   const apiContext = useContext(ApiContext);
-
   const router = useRouter();
   const {
     species,
@@ -109,7 +108,7 @@ const FactorDetailsPage = () => {
       case "MotifEnrichmentSELEX":
         return <DeepLearnedSelexMotifs factor={factor} species={species} />;
       case "EpigeneticProfile":
-        return <EpigeneticProfile />;
+        return <EpigeneticProfile factor={factor} species={species} />;
       case "Search":
         return <Search />;
       default:
@@ -169,6 +168,7 @@ const FactorDetailsPage = () => {
               href={`/TranscriptionFactor/${species}/${factor}/Function`}
               sx={{
                 color: detail === "Function" ? "#8169BF" : "inherit",
+                textTransform: "capitalize",
               }}
             />
             <Tab
@@ -178,6 +178,7 @@ const FactorDetailsPage = () => {
               href={`/TranscriptionFactor/${species}/${factor}/Expression`}
               sx={{
                 color: detail === "Expression" ? "#8169BF" : "inherit",
+                textTransform: "capitalize",
               }}
             />
             <Tab
@@ -187,6 +188,7 @@ const FactorDetailsPage = () => {
               href={`/TranscriptionFactor/${species}/${factor}/MotifEnrichmentMEME`}
               sx={{
                 color: detail === "MotifEnrichmentMEME" ? "#8169BF" : "inherit",
+                textTransform: "capitalize",
               }}
             />
             {hasSelexData && (
@@ -198,13 +200,19 @@ const FactorDetailsPage = () => {
                 sx={{
                   color:
                     detail === "MotifEnrichmentSELEX" ? "#8169BF" : "inherit",
+                  textTransform: "capitalize",
                 }}
               />
             )}
             <Tab
               label={`Epigenetic Profile`}
               value="EpigeneticProfile"
+              component={Link}
               href={`/TranscriptionFactor/${species}/${factor}/EpigeneticProfile`}
+              sx={{
+                color: detail === "EpigeneticProfile" ? "#8169BF" : "inherit",
+                textTransform: "capitalize",
+              }}
             />
             <Tab
               label={`Search ${factor} peaks by region`}
@@ -213,6 +221,7 @@ const FactorDetailsPage = () => {
               href={`/TranscriptionFactor/${species}/${factor}/Search`}
               sx={{
                 color: detail === "Search" ? "#8169BF" : "inherit",
+                textTransform: "capitalize",
               }}
             />
           </Tabs>
