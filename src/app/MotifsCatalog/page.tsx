@@ -33,7 +33,6 @@ const LargeTextField = styled(TextField)({
   },
 });
 
-
 // Custom styled box for file upload
 const UploadBox = styled(Box)({
   border: "2px dashed #8169BF",
@@ -67,7 +66,7 @@ const CustomButton = styled(Button)({
 const MotifsSiteCatlog = () => {
   const [value, setValue] = React.useState(0);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
-  const [val, setVal] = React.useState<String | null >(null);
+  const [val, setVal] = React.useState<String | null>(null);
   const [isDragging, setIsDragging] = React.useState(false);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -130,122 +129,121 @@ const MotifsSiteCatlog = () => {
         >
           <Tab label="Motif Search" />
           <Tab label="MEME Motif UMAP" />
-          <Tab label="HT SELEX Motif UMAP" />          
+          <Tab label="HT SELEX Motif UMAP" />
           <Tab label="Downloads" />
         </Tabs>
       </Box>
       {value === 1 && (
-        <MotifUMAP key="meme" title="meme" url="/human-meme-umap.json.gz"/>
+        <MotifUMAP key="meme" title="meme" url="/human-meme-umap.json.gz" />
       )}
       {value === 2 && (
         <MotifUMAP key="selex" title="selex" url="/ht-selex-umap.json.gz" />
       )}
       {value === 0 && (
-        
-          <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>          
-            <Typography variant="h6" gutterBottom>
-              Enter a consensus sequence or regex:
-            </Typography>
-            <StyledBox>
-            <LargeTextField placeholder="enter sequence or regex" onChange={(e)=>{           
-  
-              setVal(e.target.value)
-             }}/> <Button
-                variant="contained"
-                sx={{
-                  margin: "auto",
+        <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+          <Typography variant="h6" gutterBottom>
+            Enter a consensus sequence or regex:
+          </Typography>
+          <StyledBox>
+            <LargeTextField
+              placeholder="enter sequence or regex"
+              onChange={(e) => {
+                setVal(e.target.value);
+              }}
+            />{" "}
+            <Button
+              variant="contained"
+              sx={{
+                margin: "auto",
+                backgroundColor: "#8169BF",
+                borderRadius: "24px",
+                textTransform: "none",
+                fontWeight: "medium",
+                color: "#FFFFFF",
+                "&:focus, &:hover, &:active": {
                   backgroundColor: "#8169BF",
-                  borderRadius: "24px",
-                  textTransform: "none",
-                  fontWeight: "medium",
-                  color: "#FFFFFF",
-                  "&:focus, &:hover, &:active": {
-                    backgroundColor: "#8169BF",
-                  },
-                }}
-                onClick={()=>{
-                  window.open(`/MotifsCatalog/human/${val}`, "_self")
-                  
-                }}
-                
-                
-              >
-                Search
-              </Button>
-              <Typography variant="body2" sx={{ mt: 0 }}>
-                Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
-              </Typography>
-            </StyledBox>
-            <Typography variant="h6" gutterBottom color="primary">
-              You could also upload MEME files here
-            </Typography>
-            <UploadBox
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              sx={{ backgroundColor: isDragging ? "#e0d4f7" : "#F3E8FF" }}
+                },
+              }}
+              onClick={() => {
+                window.open(`/MotifsCatalog/human/${val}`, "_self");
+              }}
             >
-              <DriveFolderUploadIcon fontSize="large" />
-              <Typography variant="body1" sx={{ mt: 2 }}>
-                Drag and drop MEME files here
-                <br />
-                or
-              </Typography>
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                <input
-                  type="file"
-                  id="file-input"
-                  hidden
-                  onChange={handleFileChange}
-                />
-                <label htmlFor="file-input">
-                  <Button
-                    variant="contained"
-                    component="span"
-                    sx={{
-                      display: "block",
-                      padding: "8px 16px",
-                      backgroundColor: "#8169BF",
-                      borderRadius: "24px",
-                      textTransform: "none",
-                      fontWeight: "medium",
-                      color: "#FFFFFF",
-                      "&:focus, &:hover, &:active": {
-                        backgroundColor: "#8169BF",
-                      },
-                    }}
-                  >
-                    Browse Computer
-                  </Button>
-                </label>
-              </Box>
-              {selectedFile && (
-                <Typography variant="body2" sx={{ mt: 2 }}>
-                  Selected file: {selectedFile.name}
-                </Typography>
-              )}
-            </UploadBox>
+              Search
+            </Button>
+            <Typography variant="body2" sx={{ mt: 0 }}>
+              Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
+            </Typography>
+          </StyledBox>
+          <Typography variant="h6" gutterBottom color="primary">
+            You could also upload MEME files here
+          </Typography>
+          <UploadBox
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            sx={{ backgroundColor: isDragging ? "#e0d4f7" : "#F3E8FF" }}
+          >
+            <DriveFolderUploadIcon fontSize="large" />
+            <Typography variant="body1" sx={{ mt: 2 }}>
+              Drag and drop MEME files here
+              <br />
+              or
+            </Typography>
             <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-              <Button
-                variant="contained"
-                sx={{
-                  margin: "auto",
-                  backgroundColor: "#8169BF",
-                  borderRadius: "24px",
-                  textTransform: "none",
-                  fontWeight: "medium",
-                  color: "#FFFFFF",
-                  "&:focus, &:hover, &:active": {
+              <input
+                type="file"
+                id="file-input"
+                hidden
+                onChange={handleFileChange}
+              />
+              <label htmlFor="file-input">
+                <Button
+                  variant="contained"
+                  component="span"
+                  sx={{
+                    display: "block",
+                    padding: "8px 16px",
                     backgroundColor: "#8169BF",
-                  },
-                }}
-                onClick={handleFileUpload}
-                disabled={!selectedFile}
-              >
-                Upload File
-              </Button>
+                    borderRadius: "24px",
+                    textTransform: "none",
+                    fontWeight: "medium",
+                    color: "#FFFFFF",
+                    "&:focus, &:hover, &:active": {
+                      backgroundColor: "#8169BF",
+                    },
+                  }}
+                >
+                  Browse Computer
+                </Button>
+              </label>
             </Box>
+            {selectedFile && (
+              <Typography variant="body2" sx={{ mt: 2 }}>
+                Selected file: {selectedFile.name}
+              </Typography>
+            )}
+          </UploadBox>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+            <Button
+              variant="contained"
+              sx={{
+                margin: "auto",
+                backgroundColor: "#8169BF",
+                borderRadius: "24px",
+                textTransform: "none",
+                fontWeight: "medium",
+                color: "#FFFFFF",
+                "&:focus, &:hover, &:active": {
+                  backgroundColor: "#8169BF",
+                },
+              }}
+              onClick={handleFileUpload}
+              disabled={!selectedFile}
+            >
+              Upload File
+            </Button>
           </Box>
+        </Box>
       )}
       {value === 3 && (
         <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
