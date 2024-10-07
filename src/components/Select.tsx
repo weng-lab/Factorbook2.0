@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 import {
   Box,
   Typography,
@@ -66,25 +67,18 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
             },
             "& .MuiInputLabel-outlined": {
               transform: "translate(14px, 10px) scale(1)",
-              color: "gray",
-              "&.Mui-focused": {
-                color: "#8169BF", // Label color when focused
-              },
             },
             "& .MuiInputLabel-shrink": {
               transform: "translate(14px, -6px) scale(0.75)",
             },
             "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: "rgba(0, 0, 0, 0.23)", // Default border color
+              borderColor: "rgba(0, 0, 0, 0.23)",
             },
             "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#8169BF", // Border color on hover
+              borderColor: "rgba(0, 0, 0, 0.87)",
             },
             "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "#8169BF", // Border color when focused
-            },
-            "&.Mui-focused .MuiInputLabel-outlined": {
-              color: "#8169BF", // Label color when focused
+              borderColor: "rgba(0, 0, 0, 0.87)",
             },
           }}
         >
@@ -100,10 +94,7 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
               display: "flex",
               alignItems: "center",
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "gray",
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#8169BF", // Border color when focused
+                borderRadius: "24px",
               },
               "& .MuiSelect-icon": {
                 right: "14px",
