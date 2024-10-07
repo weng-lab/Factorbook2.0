@@ -41,6 +41,7 @@ type TfDetailsProps = {
   hideCellTypeCounts?: boolean;
   row: TargetPartitionedDatasetCollection;
   factor: string;
+  ct?: string;
 };
 
 interface LinkWrapperProps {
@@ -64,6 +65,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
   hideCellTypeCounts,
   row,
   factor,
+  ct
 }) => {
   const [rows, setRows] = useState<FactorRow[]>([]);
 
@@ -97,7 +99,21 @@ const TfDetails: React.FC<TfDetailsProps> = ({
     loading: tfLoading,
     error: tfError,
   } = useQuery<TFInfoQueryResponse>(TF_INFO_QUERY, {
-    variables: {
+    variables: ct  ?  {
+      processed_assembly: assembly,
+      replicated_peaks: true,
+      biosample: ct,
+      include_investigatedas: [
+        "cofactor",
+        "chromatin remodeler",
+        "RNA polymerase complex",
+        "DNA replication",
+        "DNA repair",
+        "cohesin",
+        "transcription factor",
+      ],
+      exclude_investigatedas: ["recombinant protein"],
+    } : {
       processed_assembly: assembly,
       replicated_peaks: true,
       include_investigatedas: [
@@ -286,6 +302,14 @@ const TfDetails: React.FC<TfDetailsProps> = ({
           itemsPerPage={5}
           sortColumn={1}
           searchable={true}
+          tableTitle={ct ? `${rows.length} factors profiled`: ``}
+          headerColor={ct ? {
+            backgroundColor: '#7151A1',
+            textColor: '#EDE7F6'
+          }: {
+             backgroundColor: '#FFFFFF',
+            textColor: '#inherit'
+          }}
         />
       </Box>
     </Container>

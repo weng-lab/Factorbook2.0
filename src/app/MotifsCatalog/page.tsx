@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import TranscriptionFactors from "@/components/TranscriptionFactors";
-import Searchbar from "@/components/Searchbar";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -12,6 +11,27 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import { TextField } from "@mui/material";
+import MotifUMAP from "@/components/MotifSearch/UMap";
+
+const LargeTextField = styled(TextField)({
+  minWidth: "700px",
+  "& .MuiInputBase-root": {
+    height: "32px",
+  },
+  "& .MuiOutlinedInput-root": {
+    backgroundColor: "#EDE7F6",
+    height: "40px",
+    borderRadius: "24px",
+    paddingLeft: "5px",
+    "&:hover fieldset": {
+      borderColor: "#673AB7",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#673AB7",
+    },
+  },
+});
 
 // Custom styled box for file upload
 const UploadBox = styled(Box)({
@@ -46,6 +66,7 @@ const CustomButton = styled(Button)({
 const MotifsSiteCatlog = () => {
   const [value, setValue] = React.useState(0);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const [val, setVal] = React.useState<String | null>(null);
   const [isDragging, setIsDragging] = React.useState(false);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -106,20 +127,50 @@ const MotifsSiteCatlog = () => {
           variant="fullWidth"
           centered
         >
+          <Tab label="Motif Search" />
           <Tab label="MEME Motif UMAP" />
           <Tab label="HT SELEX Motif UMAP" />
-          <Tab label="Motif Search" />
           <Tab label="Downloads" />
         </Tabs>
       </Box>
+      {value === 1 && (
+        <MotifUMAP key="meme" title="meme" url="/human-meme-umap.json.gz" />
+      )}
       {value === 2 && (
+        <MotifUMAP key="selex" title="selex" url="/ht-selex-umap.json.gz" />
+      )}
+      {value === 0 && (
         <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
           <Typography variant="h6" gutterBottom>
             Enter a consensus sequence or regex:
           </Typography>
           <StyledBox>
-            <Searchbar placeholder="" helperText="" />
-            <Typography variant="body2" sx={{ mt: -2 }}>
+            <LargeTextField
+              placeholder="enter sequence or regex"
+              onChange={(e) => {
+                setVal(e.target.value);
+              }}
+            />{" "}
+            <Button
+              variant="contained"
+              sx={{
+                margin: "auto",
+                backgroundColor: "#8169BF",
+                borderRadius: "24px",
+                textTransform: "none",
+                fontWeight: "medium",
+                color: "#FFFFFF",
+                "&:focus, &:hover, &:active": {
+                  backgroundColor: "#8169BF",
+                },
+              }}
+              onClick={() => {
+                window.open(`/MotifsCatalog/human/${val}`, "_self");
+              }}
+            >
+              Search
+            </Button>
+            <Typography variant="body2" sx={{ mt: 0 }}>
               Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
             </Typography>
           </StyledBox>

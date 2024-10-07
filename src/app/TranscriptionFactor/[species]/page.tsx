@@ -69,10 +69,10 @@ const TranscriptionFactorsPage: React.FC = () => {
   }
 
   const { header, content, image } = contentMap[type];
-
+  const assembly: string = type ==="Human" ? "GRCh38" : "mm10";
   return (
     <>
-      <TranscriptionFactors header={header} content={content} image={image} />
+      <TranscriptionFactors tf header={header} content={content} image={image} assembly={assembly} />
       <TranscriptionTabs species={type} />
     </>
   );

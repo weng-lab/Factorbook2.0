@@ -35,8 +35,8 @@ const navItems = [
   {
     title: "Portals",
     subItems: [
-      { text: "TFs in Humans", href: "/TranscriptionFactor/Human" },
-      { text: "TFs in Mouse", href: "/TranscriptionFactor/Mouse" },
+      { text: "Transcription Factors  in Humans", href: "/TranscriptionFactor/Human" },
+      { text: "Transcription Factors in Mouse", href: "/TranscriptionFactor/Mouse" },
       { text: "Motif Catalog", href: "/MotifsCatalog" },
       { text: "Annotations", href: "/AnnotationsVariants" },
     ],

@@ -3,16 +3,20 @@
 import * as React from "react";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import Searchbar from "@/components/Searchbar";
+import TFSearchBar from "@/components/TFSearchBar";
 
 const TranscriptionFactors = ({
   header,
   content,
   image,
+  tf,
+  assembly
 }: {
   header: string;
   content: string;
   image: string;
+  tf?: boolean;
+  assembly?: string;
 }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -110,10 +114,9 @@ const TranscriptionFactors = ({
               >
                 {content}
               </Typography>
-              <Searchbar
-                placeholder="What are you searching for today?"
-                helperText=""
-              />
+              {tf ? <TFSearchBar                
+                assembly={assembly || "GRCh38"}
+              />: <></>}
             </Grid2>
             <Grid2
               xs={12}
