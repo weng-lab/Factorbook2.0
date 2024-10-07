@@ -25,6 +25,7 @@ import TFSearchbar from "@/components/TFSearchBar";
 import SnpSearchBar from "@/components/SnpSearchBar";
 import MotifSearchbar from "@/components/MotifSearchbar";
 
+
 const Homepage = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -33,12 +34,11 @@ const Homepage = () => {
 
   const [imageSrc, setImageSrc] = React.useState<string>("/Face.png");
   const [selectedValue, setSelectedValue] = React.useState<string>("");
-  const [selectedPortal, setSelectedPortal] = React.useState<string>(
-    "Human Transcription Factors"
-  );
+  const [selectedPortal, setSelectedPortal] = React.useState<string>("Human Transcription Factors");
   const handleChange = (event: SelectChangeEvent) => {
     setSelectedPortal(event.target.value);
   };
+
 
   const handleSelectChange = (event: SelectChangeEvent<unknown>) => {
     const value = event.target.value as string;
@@ -220,72 +220,40 @@ const Homepage = () => {
               ml: isSmallScreen ? 2 : 0,
             }}
           >
-            <FormControl variant="standard">
-              <InputLabel
-                id="search-portal"
-                sx={{
-                  color: "gray",
-                  "&.Mui-focused": { color: "#8169BF" }, // This is for labels when focused
-                }}
-              >
-                Search
-              </InputLabel>
-              <Select
-                value={selectedPortal}
-                variant="standard"
-                IconComponent={ArrowDropDownIcon}
-                sx={{
-                  ":before": { borderBottomColor: "gray" },
-                  ":after": { borderBottomColor: "#8169BF" }, // The underline when focused
-                  "&:focus, &:hover, &:active": {
-                    borderBottomColor: "#8169BF",
-                  }, // For outline on focus/hover/active
-                  color: "gray",
-                  "&:not(.Mui-disabled):hover::before": {
-                    borderBottomColor: "#8169BF", // underline when hovered and not disabled
+           <FormControl variant="standard" >
+              <InputLabel id="search-portal" sx={{color: "gray"}}>Search</InputLabel>
+              <Select value={selectedPortal} variant="standard" IconComponent={ArrowDropDownIcon} sx={{
+                ':before': { borderBottomColor: 'gray' },
+                ':after': { borderBottomColor: 'gray' },
+            '&:focus, &:hover, &:active': { borderBottomColor: 'gray' },
+                color: "gray",               
+                  
+                  '&:not(.Mui-disabled):hover::before': {
+                    borderBottomColor: 'gray',
                   },
-                  "& .MuiSvgIcon-root": {
-                    color: "gray",
-                  },
-                }}
-                onChange={handleChange}
-              >
-                <MenuItem value={"Human Transcription Factors"}>
-                  Human Transcription Factors
-                </MenuItem>
-                <MenuItem value={"Mouse Transcription Factors"}>
-                  Mouse Transcription Factors
-                </MenuItem>
-                <MenuItem value={"Motif Site Catalog"}>
-                  Motif Site Catalog
-                </MenuItem>
-                <MenuItem value={"Annotate Variants"}>
-                  Annotate Variants
-                </MenuItem>
+                 
+                '& .MuiSvgIcon-root': {
+                  color: 'gray'
+                },
+              }} onChange={handleChange}>
+                <MenuItem value={"Human Transcription Factors"}>Human Transcription Factors</MenuItem>
+                <MenuItem value={"Mouse Transcription Factors"}>Mouse Transcription Factors</MenuItem>
+                <MenuItem value={"Motif Site Catalog"}>Motif Site Catalog</MenuItem>
+                <MenuItem value={"Annotate Variants"}>Annotate Variants</MenuItem>
               </Select>
             </FormControl>
-            <Box
-              sx={{
+            <Box sx={{
                 padding: "9px 9px 8px 10px",
                 marginLeft: "-10px",
-                width: "550px",
-              }}
-            >
-              {selectedPortal === "Human Transcription Factors" ||
-              selectedPortal === "Mouse Transcription Factors" ? (
-                <TFSearchbar
-                  assembly={
-                    selectedPortal === "Human Transcription Factors"
-                      ? "GRCh38"
-                      : "mm10"
-                  }
-                />
-              ) : selectedPortal === "Annotate Variants" ? (
-                <SnpSearchBar />
-              ) : (
-                <MotifSearchbar />
-              )}
-            </Box>
+                width: "550px"
+              }}> 
+            {(selectedPortal === "Human Transcription Factors" || selectedPortal === "Mouse Transcription Factors") ?               
+                <TFSearchbar                  
+                  assembly={selectedPortal === "Human Transcription Factors" ? "GRCh38" : "mm10"}
+                />                
+              : selectedPortal === "Annotate Variants"  ?   <SnpSearchBar/>    :            
+              <MotifSearchbar/>}
+              </Box>
           </Box>
         </Box>
         {!isSmallScreen && (
