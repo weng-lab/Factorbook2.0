@@ -120,7 +120,8 @@ const Footer: React.FC = () => (
         />
       </Box>
     </Box>
-    <Divider sx={{ bgcolor: "neutral.500", my: 4, width: "100%" }} />
+    {/* Divider with some margin on both sides (mx) */}
+    <Divider sx={{ bgcolor: "white", my: 4, mx: 3, width: "auto" }} />
     <Box
       display="flex"
       justifyContent="space-between"
