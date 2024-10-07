@@ -2,6 +2,11 @@
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#8169BF', // Define the primary color as purple
+    },
+  },
   typography: {
     fontFamily: 'Helvetica Neue',
   },
@@ -17,15 +22,14 @@ const theme = createTheme({
     MuiTableHead: {
       styleOverrides: {
         root: {
-          backgroundColor: '#7151A1',
-          color: '#EDE7F6',
+          color: '#000000', // Set header text color to black
         },
       },
     },
     MuiTableCell: {
       styleOverrides: {
         head: {
-          color: '#EDE7F6',
+          color: '#000000', // Ensure header text remains black
           fontWeight: 'bold',
         },
         body: {

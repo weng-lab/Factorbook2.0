@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import {
   Box,
@@ -15,11 +14,9 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
-import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
 import PortalPanel from "@/components/PortalPanel";
-import { gql } from "../types/gql";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import TFSearchbar from "@/components/TFSearchBar";
 import SnpSearchBar from "@/components/SnpSearchBar";
@@ -36,6 +33,7 @@ const Homepage = () => {
   const [selectedPortal, setSelectedPortal] = React.useState<string>(
     "Human Transcription Factors"
   );
+
   const handleChange = (event: SelectChangeEvent) => {
     setSelectedPortal(event.target.value);
   };
@@ -57,16 +55,6 @@ const Homepage = () => {
       router.push(`/TranscriptionFactor/${capitalizedValue}`);
     }
   };
-
-  /**
-   * @todo Remove this once any other query is typed. This is a useless query needed to prevent build errors with graphql-code-generator
-   */
-  const QUERY = gql(`
-    query LDSC($study: [String]){
-      iCRELdrQuery(study: $study) {
-        snps
-      }
-    }`);
 
   return (
     <>
@@ -225,7 +213,7 @@ const Homepage = () => {
                 id="search-portal"
                 sx={{
                   color: "gray",
-                  "&.Mui-focused": { color: "#8169BF" }, // Label turns purple when  focused
+                  "&.Mui-focused": { color: theme.palette.primary.main },
                 }}
               >
                 Search
@@ -236,13 +224,13 @@ const Homepage = () => {
                 IconComponent={ArrowDropDownIcon}
                 sx={{
                   ":before": { borderBottomColor: "gray" },
-                  ":after": { borderBottomColor: "#8169BF" }, // purple underline when focused
+                  ":after": { borderBottomColor: theme.palette.primary.main },
                   "&:focus, &:hover, &:active": {
-                    borderBottomColor: "#8169BF",
-                  }, // #8169BF outline on focus/hover/active
+                    borderBottomColor: theme.palette.primary.main,
+                  },
                   color: "gray",
                   "&:not(.Mui-disabled):hover::before": {
-                    borderBottomColor: "#8169BF", // #8169BF underline when hovered and not disabled
+                    borderBottomColor: theme.palette.primary.main,
                   },
                   "& .MuiSvgIcon-root": {
                     color: "gray",
