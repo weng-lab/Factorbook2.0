@@ -8,6 +8,10 @@ import {
   Typography,
   useMediaQuery,
   SelectChangeEvent,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
@@ -16,6 +20,11 @@ import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
 import PortalPanel from "@/components/PortalPanel";
 import { gql } from "../types/gql";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import TFSearchbar from "@/components/TFSearchBar";
+import SnpSearchBar from "@/components/SnpSearchBar";
+import MotifSearchbar from "@/components/MotifSearchbar";
+
 
 const Homepage = () => {
   const theme = useTheme();
@@ -25,6 +34,11 @@ const Homepage = () => {
 
   const [imageSrc, setImageSrc] = React.useState<string>("/Face.png");
   const [selectedValue, setSelectedValue] = React.useState<string>("");
+  const [selectedPortal, setSelectedPortal] = React.useState<string>("Human Transcription Factors");
+  const handleChange = (event: SelectChangeEvent) => {
+    setSelectedPortal(event.target.value);
+  };
+
 
   const handleSelectChange = (event: SelectChangeEvent<unknown>) => {
     const value = event.target.value as string;
@@ -202,14 +216,44 @@ const Homepage = () => {
               gap: 1,
               alignSelf: "stretch",
               mt: 4,
-              width: isSmallScreen ? "100%" : "670px",
+              width: isSmallScreen ? "100%" : "550px",
               ml: isSmallScreen ? 2 : 0,
             }}
           >
-            <Searchbar
-              placeholder="What are you searching for today?"
-              helperText=""
-            />
+           <FormControl variant="standard" >
+              <InputLabel id="search-portal" sx={{color: "gray"}}>Search</InputLabel>
+              <Select value={selectedPortal} variant="standard" IconComponent={ArrowDropDownIcon} sx={{
+                ':before': { borderBottomColor: 'gray' },
+                ':after': { borderBottomColor: 'gray' },
+            '&:focus, &:hover, &:active': { borderBottomColor: 'gray' },
+                color: "gray",               
+                  
+                  '&:not(.Mui-disabled):hover::before': {
+                    borderBottomColor: 'gray',
+                  },
+                 
+                '& .MuiSvgIcon-root': {
+                  color: 'gray'
+                },
+              }} onChange={handleChange}>
+                <MenuItem value={"Human Transcription Factors"}>Human Transcription Factors</MenuItem>
+                <MenuItem value={"Mouse Transcription Factors"}>Mouse Transcription Factors</MenuItem>
+                <MenuItem value={"Motif Site Catalog"}>Motif Site Catalog</MenuItem>
+                <MenuItem value={"Annotate Variants"}>Annotate Variants</MenuItem>
+              </Select>
+            </FormControl>
+            <Box sx={{
+                padding: "9px 9px 8px 10px",
+                marginLeft: "-10px",
+                width: "550px"
+              }}> 
+            {(selectedPortal === "Human Transcription Factors" || selectedPortal === "Mouse Transcription Factors") ?               
+                <TFSearchbar                  
+                  assembly={selectedPortal === "Human Transcription Factors" ? "GRCh38" : "mm10"}
+                />                
+              : selectedPortal === "Annotate Variants"  ?   <SnpSearchBar/>    :            
+              <MotifSearchbar/>}
+              </Box>
           </Box>
         </Box>
         {!isSmallScreen && (
