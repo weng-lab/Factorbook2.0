@@ -212,8 +212,8 @@ const Homepage = () => {
               <InputLabel
                 id="search-portal"
                 sx={{
-                  color: "gray",
-                  "&.Mui-focused": { color: theme.palette.primary.main },
+                  color: "white", // Default color of the label
+                  "&.Mui-focused": { color: theme.palette.primary.main }, // Color when focused
                 }}
               >
                 Search
@@ -222,13 +222,25 @@ const Homepage = () => {
                 value={selectedPortal}
                 variant="standard"
                 IconComponent={ArrowDropDownIcon}
+                onChange={handleChange}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor:
+                        "var(--material-theme-ref-neutral-neutral17, #2A2A2D)", // Dropdown background color
+                      "& .MuiMenuItem-root": {
+                        color: "white", // Text color of the dropdown options
+                      },
+                    },
+                  },
+                }}
                 sx={{
                   ":before": { borderBottomColor: "gray" },
                   ":after": { borderBottomColor: theme.palette.primary.main },
                   "&:focus, &:hover, &:active": {
                     borderBottomColor: theme.palette.primary.main,
                   },
-                  color: "gray",
+                  color: "white", // Text color for the selected value
                   "&:not(.Mui-disabled):hover::before": {
                     borderBottomColor: theme.palette.primary.main,
                   },
@@ -236,7 +248,6 @@ const Homepage = () => {
                     color: "gray",
                   },
                 }}
-                onChange={handleChange}
               >
                 <MenuItem value={"Human Transcription Factors"}>
                   Human Transcription Factors
@@ -252,6 +263,7 @@ const Homepage = () => {
                 </MenuItem>
               </Select>
             </FormControl>
+
             <Box
               sx={{
                 padding: "9px 9px 8px 10px",
