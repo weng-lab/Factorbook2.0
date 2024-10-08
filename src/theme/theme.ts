@@ -1,10 +1,30 @@
 'use client';
 import { createTheme } from '@mui/material/styles';
 
+declare module '@mui/material/styles/createPalette' {
+  interface Palette {
+    gray: Palette['primary'];
+    link: Palette['primary'];
+  }
+  interface PaletteOptions {
+    gray?: PaletteOptions['primary'];
+    link?: PaletteOptions['primary'];
+  }
+}
+
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#8169BF', // Define the primary color as purple
+      main: '#8169BF',  // Primary purple color
+    },
+    secondary: {
+      main: '#673AB7',  // Secondary purple color
+    },
+    gray: {
+      main: '#EDE7F6',  // Light gray used for backgrounds
+    },
+    link: {
+      main: 'purple',   // Link color
     },
   },
   typography: {
