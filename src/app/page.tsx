@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import dynamic from "next/dynamic";
 import Image from "next/image";
 import {
   Box,
@@ -15,16 +14,13 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
-import Searchbar from "@/components/Searchbar";
 import Header from "@/components/Header";
 import SelectComponent from "@/components/Select";
 import PortalPanel from "@/components/PortalPanel";
-import { gql } from "../types/gql";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import TFSearchbar from "@/components/TFSearchBar";
 import SnpSearchBar from "@/components/SnpSearchBar";
 import MotifSearchbar from "@/components/MotifSearchbar";
-
 
 const Homepage = () => {
   const theme = useTheme();
@@ -34,11 +30,13 @@ const Homepage = () => {
 
   const [imageSrc, setImageSrc] = React.useState<string>("/Face.png");
   const [selectedValue, setSelectedValue] = React.useState<string>("");
-  const [selectedPortal, setSelectedPortal] = React.useState<string>("Human Transcription Factors");
+  const [selectedPortal, setSelectedPortal] = React.useState<string>(
+    "Human Transcription Factors"
+  );
+
   const handleChange = (event: SelectChangeEvent) => {
     setSelectedPortal(event.target.value);
   };
-
 
   const handleSelectChange = (event: SelectChangeEvent<unknown>) => {
     const value = event.target.value as string;
@@ -57,16 +55,6 @@ const Homepage = () => {
       router.push(`/TranscriptionFactor/${capitalizedValue}`);
     }
   };
-
-  /**
-   * @todo Remove this once any other query is typed. This is a useless query needed to prevent build errors with graphql-code-generator
-   */
-  const QUERY = gql(`
-    query LDSC($study: [String]){
-      iCRELdrQuery(study: $study) {
-        snps
-      }
-    }`);
 
   return (
     <>
@@ -220,40 +208,84 @@ const Homepage = () => {
               ml: isSmallScreen ? 2 : 0,
             }}
           >
-           <FormControl variant="standard" >
-              <InputLabel id="search-portal" sx={{color: "gray"}}>Search</InputLabel>
-              <Select value={selectedPortal} variant="standard" IconComponent={ArrowDropDownIcon} sx={{
-                ':before': { borderBottomColor: 'gray' },
-                ':after': { borderBottomColor: 'gray' },
-            '&:focus, &:hover, &:active': { borderBottomColor: 'gray' },
-                color: "gray",               
-                  
-                  '&:not(.Mui-disabled):hover::before': {
-                    borderBottomColor: 'gray',
+            <FormControl variant="standard">
+              <InputLabel
+                id="search-portal"
+                sx={{
+                  color: "white", // Default color of the label
+                  "&.Mui-focused": { color: theme.palette.primary.main }, // Color when focused
+                }}
+              >
+                Search
+              </InputLabel>
+              <Select
+                value={selectedPortal}
+                variant="standard"
+                IconComponent={ArrowDropDownIcon}
+                onChange={handleChange}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      bgcolor:
+                        "var(--material-theme-ref-neutral-neutral17, #2A2A2D)", // Dropdown background color
+                      "& .MuiMenuItem-root": {
+                        color: "white", // Text color of the dropdown options
+                      },
+                    },
                   },
-                 
-                '& .MuiSvgIcon-root': {
-                  color: 'gray'
-                },
-              }} onChange={handleChange}>
-                <MenuItem value={"Human Transcription Factors"}>Human Transcription Factors</MenuItem>
-                <MenuItem value={"Mouse Transcription Factors"}>Mouse Transcription Factors</MenuItem>
-                <MenuItem value={"Motif Site Catalog"}>Motif Site Catalog</MenuItem>
-                <MenuItem value={"Annotate Variants"}>Annotate Variants</MenuItem>
+                }}
+                sx={{
+                  ":before": { borderBottomColor: "gray" },
+                  ":after": { borderBottomColor: theme.palette.primary.main },
+                  "&:focus, &:hover, &:active": {
+                    borderBottomColor: theme.palette.primary.main,
+                  },
+                  color: "white", // Text color for the selected value
+                  "&:not(.Mui-disabled):hover::before": {
+                    borderBottomColor: theme.palette.primary.main,
+                  },
+                  "& .MuiSvgIcon-root": {
+                    color: "gray",
+                  },
+                }}
+              >
+                <MenuItem value={"Human Transcription Factors"}>
+                  Human Transcription Factors
+                </MenuItem>
+                <MenuItem value={"Mouse Transcription Factors"}>
+                  Mouse Transcription Factors
+                </MenuItem>
+                <MenuItem value={"Motif Site Catalog"}>
+                  Motif Site Catalog
+                </MenuItem>
+                <MenuItem value={"Annotate Variants"}>
+                  Annotate Variants
+                </MenuItem>
               </Select>
             </FormControl>
-            <Box sx={{
+
+            <Box
+              sx={{
                 padding: "9px 9px 8px 10px",
                 marginLeft: "-10px",
-                width: "550px"
-              }}> 
-            {(selectedPortal === "Human Transcription Factors" || selectedPortal === "Mouse Transcription Factors") ?               
-                <TFSearchbar                  
-                  assembly={selectedPortal === "Human Transcription Factors" ? "GRCh38" : "mm10"}
-                />                
-              : selectedPortal === "Annotate Variants"  ?   <SnpSearchBar/>    :            
-              <MotifSearchbar/>}
-              </Box>
+                width: "550px",
+              }}
+            >
+              {selectedPortal === "Human Transcription Factors" ||
+              selectedPortal === "Mouse Transcription Factors" ? (
+                <TFSearchbar
+                  assembly={
+                    selectedPortal === "Human Transcription Factors"
+                      ? "GRCh38"
+                      : "mm10"
+                  }
+                />
+              ) : selectedPortal === "Annotate Variants" ? (
+                <SnpSearchBar />
+              ) : (
+                <MotifSearchbar />
+              )}
+            </Box>
           </Box>
         </Box>
         {!isSmallScreen && (

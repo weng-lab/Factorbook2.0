@@ -1,7 +1,32 @@
 'use client';
 import { createTheme } from '@mui/material/styles';
 
+declare module '@mui/material/styles/createPalette' {
+  interface Palette {
+    gray: Palette['primary'];
+    link: Palette['primary'];
+  }
+  interface PaletteOptions {
+    gray?: PaletteOptions['primary'];
+    link?: PaletteOptions['primary'];
+  }
+}
+
 const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#8169BF',  // Primary purple color
+    },
+    secondary: {
+      main: '#673AB7',  // Secondary purple color
+    },
+    gray: {
+      main: '#EDE7F6',  // Light gray used for backgrounds
+    },
+    link: {
+      main: 'purple',   // Link color
+    },
+  },
   typography: {
     fontFamily: 'Helvetica Neue',
   },
@@ -17,15 +42,14 @@ const theme = createTheme({
     MuiTableHead: {
       styleOverrides: {
         root: {
-          backgroundColor: '#7151A1',
-          color: '#EDE7F6',
+          color: '#000000', // Set header text color to black
         },
       },
     },
     MuiTableCell: {
       styleOverrides: {
         head: {
-          color: '#EDE7F6',
+          color: '#000000', // Ensure header text remains black
           fontWeight: 'bold',
         },
         body: {

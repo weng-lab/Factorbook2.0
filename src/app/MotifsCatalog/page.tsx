@@ -11,10 +11,10 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import { styled } from "@mui/material/styles";
 import Button from "@mui/material/Button";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { TextField } from "@mui/material";
+import { TextField, useTheme } from "@mui/material";
 import MotifUMAP from "@/components/MotifSearch/UMap";
 
-const LargeTextField = styled(TextField)({
+const LargeTextField = styled(TextField)(({ theme }) => ({
   minWidth: "700px",
   "& .MuiInputBase-root": {
     height: "32px",
@@ -25,17 +25,16 @@ const LargeTextField = styled(TextField)({
     borderRadius: "24px",
     paddingLeft: "5px",
     "&:hover fieldset": {
-      borderColor: "#673AB7",
+      borderColor: theme.palette.primary.main,
     },
     "&.Mui-focused fieldset": {
-      borderColor: "#673AB7",
+      borderColor: theme.palette.primary.main,
     },
   },
-});
+}));
 
-// Custom styled box for file upload
-const UploadBox = styled(Box)({
-  border: "2px dashed #8169BF",
+const UploadBox = styled(Box)(({ theme }) => ({
+  border: `2px dashed ${theme.palette.primary.main}`,
   borderRadius: "8px",
   backgroundColor: "#F3E8FF",
   padding: "32px",
@@ -43,7 +42,7 @@ const UploadBox = styled(Box)({
   color: "#5A5A5A",
   marginTop: "20px",
   position: "relative",
-});
+}));
 
 const StyledBox = styled(Box)({
   "& .MuiOutlinedInput-root": {
@@ -51,19 +50,20 @@ const StyledBox = styled(Box)({
   },
 });
 
-const CustomButton = styled(Button)({
+const CustomButton = styled(Button)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
   marginBottom: "8px",
-  backgroundColor: "#8169BF",
+  backgroundColor: theme.palette.primary.main,
   textTransform: "none",
   "&:focus, &:hover, &:active": {
-    backgroundColor: "#8169BF",
+    backgroundColor: theme.palette.primary.main,
   },
-});
+}));
 
 const MotifsSiteCatlog = () => {
+  const theme = useTheme();
   const [value, setValue] = React.useState(0);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [val, setVal] = React.useState<String | null>(null);
@@ -155,13 +155,13 @@ const MotifsSiteCatlog = () => {
               variant="contained"
               sx={{
                 margin: "auto",
-                backgroundColor: "#8169BF",
+                backgroundColor: theme.palette.primary.main,
                 borderRadius: "24px",
                 textTransform: "none",
                 fontWeight: "medium",
                 color: "#FFFFFF",
                 "&:focus, &:hover, &:active": {
-                  backgroundColor: "#8169BF",
+                  backgroundColor: theme.palette.primary.main,
                 },
               }}
               onClick={() => {
@@ -203,13 +203,13 @@ const MotifsSiteCatlog = () => {
                   sx={{
                     display: "block",
                     padding: "8px 16px",
-                    backgroundColor: "#8169BF",
+                    backgroundColor: theme.palette.primary.main,
                     borderRadius: "24px",
                     textTransform: "none",
                     fontWeight: "medium",
                     color: "#FFFFFF",
                     "&:focus, &:hover, &:active": {
-                      backgroundColor: "#8169BF",
+                      backgroundColor: theme.palette.primary.main,
                     },
                   }}
                 >
@@ -228,13 +228,13 @@ const MotifsSiteCatlog = () => {
               variant="contained"
               sx={{
                 margin: "auto",
-                backgroundColor: "#8169BF",
+                backgroundColor: theme.palette.primary.main,
                 borderRadius: "24px",
                 textTransform: "none",
                 fontWeight: "medium",
                 color: "#FFFFFF",
                 "&:focus, &:hover, &:active": {
-                  backgroundColor: "#8169BF",
+                  backgroundColor: theme.palette.primary.main,
                 },
               }}
               onClick={handleFileUpload}
