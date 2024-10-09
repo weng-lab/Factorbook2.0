@@ -162,7 +162,6 @@ const ViolinPlot: React.FC<ViolinPlotProps> = (props) => {
         range={props.domain}
       />
       {keys.map((x, i) => {
-        
         return (
           <React.Fragment key={`${x}_${i}`}>
             <Violin
@@ -230,7 +229,8 @@ const ViolinPlot: React.FC<ViolinPlotProps> = (props) => {
               ? -0.75
               : 1.75) *
               props.width) /
-            length + (keys.indexOf(props.mousedOver.outer)*(props.width / length))
+              length +
+            keys.indexOf(props.mousedOver.outer) * (props.width / length)
           }
           y={props.height * 0.1}
           fill="#eeeeee"
