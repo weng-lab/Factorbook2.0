@@ -2,11 +2,12 @@ import gql from 'graphql-tag';
 
 
 export const GENE_EXPRESSION_QUERY = gql`
-    query geneexpression($assembly: String!, $gene_id: [String], $assay_term_name: [String]) {
-        gene_dataset(assay_term_name: $assay_term_name) {
+    query geneexpression($assembly: String!, $accessions: [String], $gene_id: [String]) {
+        gene_dataset(accession: $accessions) {
             biosample
             tissue
             biosample_type
+            assay_term_name
             accession
             gene_quantification_files(assembly: $assembly) {
                 accession
