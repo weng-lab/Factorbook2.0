@@ -162,7 +162,7 @@ const ViolinPlot: React.FC<ViolinPlotProps> = (props) => {
         range={props.domain}
       />
       {keys.map((x, i) => {
-        console.log(x, [...props.data.get(x)!.values()]);
+        
         return (
           <React.Fragment key={`${x}_${i}`}>
             <Violin
@@ -171,7 +171,6 @@ const ViolinPlot: React.FC<ViolinPlotProps> = (props) => {
               width={props.width / length}
               height={props.height / 2}
               x={((i + 2) * props.width) / length}
-              fill={props.colors.get(x) || props.fill}
               key={i}
               mousedOver={
                 props.mousedOver && props.mousedOver.outer === x
@@ -231,7 +230,7 @@ const ViolinPlot: React.FC<ViolinPlotProps> = (props) => {
               ? -0.75
               : 1.75) *
               props.width) /
-            length
+            length + (keys.indexOf(props.mousedOver.outer)*(props.width / length))
           }
           y={props.height * 0.1}
           fill="#eeeeee"

@@ -100,7 +100,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   
   const onSearchChange = async (value: string, tfAassignment: any) => {
     setOptions([]);
-    console.log(tfAassignment,"tfAassignment")
+    
     const response = await fetch(Config.API.GraphqlAPI, {
       method: "POST",
       body: JSON.stringify({

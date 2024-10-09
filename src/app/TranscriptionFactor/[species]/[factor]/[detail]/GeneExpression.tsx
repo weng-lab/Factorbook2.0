@@ -22,17 +22,19 @@ import {
   downloadTSV,
   downloadSVG,
   spacedColors,
+  tissueColors 
 } from "@/components/tf/geneexpression/utils";
 import ViolinPlot from "./violin/violin";
 import StyledButton from "@/components/StyledButton";
 import { groupBy } from "queryz";
 
+
 const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
-  const [polyA, setPolyA] = useState(false);
+  
+  const [value, setValue] = useState(0);
   const { data, loading } = useGeneExpressionData(
     props.assembly,
-    formatFactorName(props.gene_name, props.assembly),
-    polyA ? "polyA plus RNA-seq" : "total RNA-seq"
+    formatFactorName(props.gene_name, props.assembly)
   );
   const [mousedOver, setMousedOver] = useState<ViolinPlotMousedOverState>({
     inner: null,
@@ -41,12 +43,17 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const biosampleTypes = new Set(
     data?.gene_dataset.map((x) => x.biosample_type) || []
   );
-  const [biosampleType, setBiosampleType] = useState(2);
+
+  const assayTermNames = new Set(
+    data?.gene_dataset.map((x) => x.assay_term_name) || []
+  );
+
+  console.log(assayTermNames,"assayTermNames", data?.gene_dataset.filter(g=>g.assay_term_name===[...assayTermNames][value]))
+  const [biosampleType, setBiosampleType] = useState(0);
   const sortedBiosampleTypes = useMemo(
     () =>
       [...biosampleTypes]
-        .sort()
-        .filter((x) => x !== "in vitro differentiated cells"),
+        .sort(),
     [biosampleTypes]
   );
   const ref = useRef<SVGSVGElement>(null);
@@ -54,13 +61,13 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const grouped = useMemo(
     () =>
       groupBy(
-        data?.gene_dataset.filter(
+        data?.gene_dataset.filter(g=>g.assay_term_name===[...assayTermNames][value]).filter(
           (x) => x.gene_quantification_files.length > 0
         ) || [],
         (x) => x.biosample_type,
         (x) => x
       ),
-    [data]
+    [data,value]
   );
   const subGrouped = useMemo(
     () =>
@@ -83,11 +90,13 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
             subGrouped
               .get(x)!
               .flatMap((x) => x.gene_quantification_files)
-              .filter((x) => x.quantifications[0]?.tpm !== undefined).length > 2
+              .filter((x) => x.quantifications[0]?.tpm !== undefined).length > 0
         )
         .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())),
     [subGrouped]
   );
+  
+  
   const toPlot = useMemo(
     () =>
       new Map(
@@ -117,6 +126,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     [sortedKeys, subGrouped]
   );
 
+  
   const domain: [number, number] = useMemo(() => {
     const values = [...toPlot.values()].flatMap((x) => x.get("all")!);
     return [Math.log10(0.01), Math.max(...values, 4.5)];
@@ -126,6 +136,13 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     return (28 + (keys < 27 ? 27 : keys)) * 200;
   }, [toPlot]);
   const color = useCallback(spacedColors(sortedKeys.length), [sortedKeys]);
+ 
+  const tissueCol = new Map(sortedKeys.map((x, i) =>
+    {
+      const tissue = subGrouped.get(x)![0]["tissue"] 
+      return [x,   sortedBiosampleTypes[biosampleType] === "tissue" ? tissueColors[tissue] ?? tissueColors.missing :  color(i)] 
+  }
+  ))
   const download = useCallback(() => {
     downloadTSV(
       "cell type\ttissue ontology\tbiosample type\texperiment accession\tfile accession\tTPM\n" +
@@ -147,8 +164,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     );
   }, [props.gene_name, data]);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: boolean) => {
-    setPolyA(newValue);
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
   };
 
   return loading ? (
@@ -156,16 +173,20 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   ) : (
     <Box sx={{ width: "100%" }}>
       <AppBar position="static" color="default">
-        <Tabs
-          value={polyA}
+        {<Tabs
+          value={value}
           onChange={handleTabChange}
           indicatorColor="primary"
           textColor="primary"
           variant="fullWidth"
+
         >
-          <Tab label="Poly-A enriched" value={true} />
-          <Tab label="Total RNA-seq" value={false} />
-        </Tabs>
+        {[...assayTermNames].map(a=>{
+          return <Tab label={a} />
+        })}
+          
+          
+        </Tabs>}
       </AppBar>
       <Box sx={{ marginTop: "1em" }}>
         <Grid container>
@@ -180,20 +201,50 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                   onClick={() => setBiosampleType(i)}
                   selected={i === biosampleType}
                 >
-                  {t}s
+                  {t}{t !== "in vitro differentiated cells" && "s"}
                 </MenuItem>
               ))}
             </Paper>
+            {toPlot.size > 0  && <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: { xs: "center", sm: "flex-start" },
+                  gap: "0.5em",
+                  marginLeft: { xs: "0", sm: "-0.1em" },
+                  marginTop: "1.5em"
+                  
+                }}
+              >
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  text={`Download all ${
+                    [...assayTermNames][value]
+                  } expression data for ${props.gene_name}`}
+                  href="#"
+                  onClick={download}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  text="Export plot as SVG"
+                  href="#"
+                  onClick={() =>
+                    ref.current &&
+                    downloadSVG(ref, `${props.gene_name}-gene-expression.svg`)
+                  }
+                />
+              </Box>}
           </Grid>
-          <Grid item xs={12} sm={9}>
+          <Grid item sm={0.5}></Grid>
+          <Grid item xs={12} sm={8.5}>
             <Paper sx={{ boxShadow: "none" }}>
               <Typography
                 variant="h5"
-                sx={{ marginLeft: { xs: "0", sm: "5em" }, marginTop: "1em" }}
+                sx={{ marginLeft: { xs: "0", sm: "3em" }, marginTop: "1em" }}
               >
                 {props.gene_name} expression in{" "}
-                {sortedBiosampleTypes[biosampleType]}s: RNA-seq
+                {sortedBiosampleTypes[biosampleType]}{sortedBiosampleTypes[biosampleType] !== "in vitro differentiated cells" && "s"}: RNA-seq
               </Typography>
+              <br/>
               {toPlot.size > 0 ? (
                 <svg
                   viewBox={`0 0 ${width} ${width / 2}`}
@@ -205,7 +256,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                     title="log10 TPM"
                     width={width}
                     height={width / 2}
-                    colors={new Map(sortedKeys.map((x, i) => [x, color(i)]))}
+                    colors={tissueCol}
                     domain={domain}
                     tKeys={28}
                     onViolinMousedOut={() =>
@@ -220,9 +271,10 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                   sx={{
                     marginLeft: { xs: "0", sm: "6.5em" },
                     width: "70%",
-                    padding: "1em",
+                    padding: "0.5em",
                   }}
                 >
+                  
                   <Typography variant="body1" color="error">
                     There is no expression data available for the assay and
                     biosample combination you have selected. Please use the
@@ -231,33 +283,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                   </Typography>
                 </Paper>
               )}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: { xs: "center", sm: "flex-start" },
-                  gap: "0.5em",
-                  marginLeft: { xs: "0", sm: "5em" },
-                  marginTop: "-0.5em",
-                }}
-              >
-                <StyledButton
-                  startIcon={<SaveAltIcon />}
-                  text={`Download all ${
-                    polyA ? "poly-A enriched" : "total RNA-seq"
-                  } expression data for ${props.gene_name}`}
-                  href="#"
-                  onClick={download}
-                />
-                <StyledButton
-                  startIcon={<SaveAltIcon />}
-                  text="Export plot as SVG"
-                  href="#"
-                  onClick={() =>
-                    ref.current &&
-                    downloadSVG(ref, `${props.gene_name}-gene-expression.svg`)
-                  }
-                />
-              </Box>
+              
             </Paper>
           </Grid>
         </Grid>
