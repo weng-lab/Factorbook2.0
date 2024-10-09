@@ -6,7 +6,7 @@ import { Dialog, DialogTitle, DialogContent, Typography } from "@mui/material";
 import { readBed } from "./bedreader";
 import { GenomicRange } from "@/app/AnnotationsVariants/types";
 
-export type FileMergerProps = {
+type FileMergerProps = {
   files: FileList | File[];
   onComplete: (regions: GenomicRange[]) => void;
 };
@@ -40,14 +40,15 @@ type FileMergerState = {
   index: number;
 };
 
-export const FileMerger: React.FC<FileMergerProps> = ({
+export const FileMerger: React.FC<Omit<FileMergerProps, "onComplete">> = ({
   files,
-  onComplete,
 }) => {
   const [state, setState] = useState<FileMergerState>({
     regions: [],
     index: 0,
   });
+
+  const [merged, setMerged] = useState<GenomicRange[]>([]);
 
   const nextFile = (newRegions: GenomicRange[]): void => {
     setState((prevState) => ({
@@ -59,7 +60,8 @@ export const FileMerger: React.FC<FileMergerProps> = ({
   const mergeFiles = () => {
     if (!files || files.length === 0) return;
     if (state.index === files.length) {
-      onComplete(mergeRegions(state.regions));
+      const mergedRegions = mergeRegions(state.regions);
+      setMerged(mergedRegions);
       setState({ regions: state.regions, index: -1 });
     } else if (state.index > -1) {
       readBed(files[state.index], nextFile, () => nextFile([]));
@@ -78,6 +80,11 @@ export const FileMerger: React.FC<FileMergerProps> = ({
           {files.length - state.index} file(s) remaining...
         </Typography>
       </DialogContent>
+      {merged.length > 0 && (
+        <DialogContent>
+          <Typography>Merged {merged.length} genomic regions.</Typography>
+        </DialogContent>
+      )}
     </Dialog>
   ) : null;
 };
