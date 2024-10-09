@@ -48,7 +48,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     data?.gene_dataset.map((x) => x.assay_term_name) || []
   );
 
-  console.log(assayTermNames,"assayTermNames", data?.gene_dataset.filter(g=>g.assay_term_name===[...assayTermNames][value]))
+  
   const [biosampleType, setBiosampleType] = useState(0);
   const sortedBiosampleTypes = useMemo(
     () =>
