@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Box, Typography, Button, Tabs, Tab } from "@mui/material";
+import { Box, Typography, Button, Tabs, Tab, TextField } from "@mui/material";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import { styled } from "@mui/material/styles";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
@@ -25,7 +25,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  marginBottom: "8px",
+  marginBottom: "16px", // Increased margin bottom for spacing
   backgroundColor: theme.palette.primary.main,
   textTransform: "none",
   "&:focus, &:hover, &:active": {
@@ -33,11 +33,44 @@ const CustomButton = styled(Button)(({ theme }) => ({
   },
 }));
 
+const LargeTextField = styled(TextField)(({ theme }) => ({
+  minWidth: "700px",
+  "& .MuiInputBase-root": {
+    height: "32px",
+  },
+  "& .MuiOutlinedInput-root": {
+    backgroundColor: "#EDE7F6",
+    height: "40px",
+    borderRadius: "24px",
+    paddingLeft: "5px",
+    "&:hover fieldset": {
+      borderColor: theme.palette.primary.main,
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: theme.palette.primary.main,
+    },
+  },
+  // Fix for autofill dropdown styling
+  "&:-webkit-autofill": {
+    "-webkit-box-shadow": `0 0 0 1000px #EDE7F6 inset`, // Background color fix for autofill
+    "-webkit-text-fill-color": "#000000", // Ensure text color remains consistent
+    "font-family": theme.typography.fontFamily, // Ensure the font remains consistent
+    transition: "background-color 5000s ease-in-out 0s", // Prevent autofill from flashing
+  },
+}));
+
+const StyledBox = styled(Box)({
+  "& .MuiOutlinedInput-root": {
+    backgroundColor: "#EDE7F6",
+  },
+});
+
 const MotifsCatalogPage = () => {
   const [value, setValue] = React.useState(0);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null); // For file uploads
   const [isDragging, setIsDragging] = React.useState(false); // Drag & drop state
   const [errorFiles, setErrorFiles] = React.useState<File[]>([]); // Files with error
+  const [val, setVal] = React.useState<string | null>(null); // State for search input
 
   // Handle Tab change
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -115,6 +148,41 @@ const MotifsCatalogPage = () => {
 
       {value === 0 && (
         <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+          {/* Search Bar Section */}
+          <Typography variant="h6" gutterBottom>
+            Enter a consensus sequence or regex:
+          </Typography>
+          <StyledBox>
+            <LargeTextField
+              placeholder="enter sequence or regex"
+              onChange={(e) => setVal(e.target.value)}
+            />
+            <Button
+              variant="contained"
+              sx={{
+                margin: "auto",
+                backgroundColor: "#8169BF",
+                borderRadius: "24px",
+                textTransform: "none",
+                fontWeight: "medium",
+                color: "#FFFFFF",
+                "&:focus, &:hover, &:active": {
+                  backgroundColor: "#7151A1",
+                },
+              }}
+              onClick={() => {
+                if (val) {
+                  window.open(`/MotifsCatalog/human/${val}`, "_self");
+                }
+              }}
+            >
+              Search
+            </Button>
+            <Typography variant="body2" sx={{ mt: 0 }}>
+              Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
+            </Typography>
+          </StyledBox>
+
           {/* File Upload Section */}
           <Typography variant="h6" gutterBottom color="primary">
             You could also upload MEME files here
@@ -170,7 +238,7 @@ const MotifsCatalogPage = () => {
           </UploadBox>
 
           {/* Upload Button */}
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <Button
               variant="contained"
               sx={{
