@@ -12,6 +12,16 @@ export type GenomicRange = {
     end?: number;
 };
 
+export type ParsedMotifFile = {
+    file: File;
+    motifs?: ParsedMotif[];
+    error?: any;
+};
+
+export type ParsedMotif = {
+    pwm: number[][];
+    name: string;
+};
 
 export type SNPAutocompleteSearchBoxProps = {
     onSearchEnter: (snp: string) => void;

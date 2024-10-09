@@ -31,6 +31,7 @@ const theme = createTheme({
     fontFamily: 'Helvetica Neue',
   },
   components: {
+    // Customize Table styles
     MuiTable: {
       styleOverrides: {
         root: {
