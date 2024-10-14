@@ -7,7 +7,7 @@ import { styled } from "@mui/material/styles";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import MotifUMAP from "@/components/MotifSearch/UMap";
-import ErrorMessage from "./upload/errormessage"; // Import the error message component
+import ErrorMessage from "./upload/errormessage";
 
 // Styling for text fields and upload areas
 const UploadBox = styled(Box)(({ theme }) => ({
@@ -238,7 +238,8 @@ const MotifsCatalogPage = () => {
           </UploadBox>
 
           {/* Upload Button */}
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 6 }}>
+            {/* Added marginBottom of 6 to create extra space */}
             <Button
               variant="contained"
               sx={{
