@@ -1,9 +1,18 @@
 "use client";
 
 import * as React from "react";
-import { Box, Typography, Button, Tabs, Tab, TextField } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Tabs,
+  Tab,
+  TextField,
+  useMediaQuery,
+  Theme,
+} from "@mui/material";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
-import { styled } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
 import MotifUMAP from "@/components/MotifSearch/UMap";
@@ -25,7 +34,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  marginBottom: "16px", // Increased margin bottom for spacing
+  marginBottom: "16px",
   backgroundColor: theme.palette.primary.main,
   textTransform: "none",
   "&:focus, &:hover, &:active": {
@@ -52,10 +61,10 @@ const LargeTextField = styled(TextField)(({ theme }) => ({
   },
   // Fix for autofill dropdown styling
   "&:-webkit-autofill": {
-    "-webkit-box-shadow": `0 0 0 1000px #EDE7F6 inset`, // Background color fix for autofill
-    "-webkit-text-fill-color": "#000000", // Ensure text color remains consistent
-    "font-family": theme.typography.fontFamily, // Ensure the font remains consistent
-    transition: "background-color 5000s ease-in-out 0s", // Prevent autofill from flashing
+    "-webkit-box-shadow": `0 0 0 1000px #EDE7F6 inset`,
+    "-webkit-text-fill-color": "#000000",
+    "font-family": theme.typography.fontFamily,
+    transition: "background-color 5000s ease-in-out 0s",
   },
 }));
 
@@ -66,13 +75,16 @@ const StyledBox = styled(Box)({
 });
 
 const MotifsCatalogPage = () => {
-  const [value, setValue] = React.useState(0);
-  const [selectedFile, setSelectedFile] = React.useState<File | null>(null); // For file uploads
-  const [isDragging, setIsDragging] = React.useState(false); // Drag & drop state
-  const [errorFiles, setErrorFiles] = React.useState<File[]>([]); // Files with error
-  const [val, setVal] = React.useState<string | null>(null); // State for search input
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Target mobile screens
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md")); // Target tablet screens
 
-  // Handle Tab change
+  const [value, setValue] = React.useState(0);
+  const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [errorFiles, setErrorFiles] = React.useState<File[]>([]);
+  const [val, setVal] = React.useState<string | null>(null);
+
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -99,7 +111,7 @@ const MotifsCatalogPage = () => {
   const handleFileUpload = () => {
     if (selectedFile) {
       const fileName = selectedFile.name;
-      const motifName = fileName.replace(".meme", ""); // Remove .meme extension
+      const motifName = fileName.replace(".meme", "");
       const redirectUrl = `/MotifsCatalog/human/${motifName}`;
 
       // Redirect to the motif URL based on the uploaded file name
@@ -147,8 +159,7 @@ const MotifsCatalogPage = () => {
       </Box>
 
       {value === 0 && (
-        <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
-          {/* Search Bar Section */}
+        <Box sx={{ mt: 4, mx: "auto", maxWidth: isMobile ? "90%" : "800px" }}>
           <Typography variant="h6" gutterBottom>
             Enter a consensus sequence or regex:
           </Typography>
@@ -156,6 +167,9 @@ const MotifsCatalogPage = () => {
             <LargeTextField
               placeholder="enter sequence or regex"
               onChange={(e) => setVal(e.target.value)}
+              sx={{
+                minWidth: isMobile ? "100%" : "700px",
+              }}
             />
             <Button
               variant="contained"
@@ -166,9 +180,7 @@ const MotifsCatalogPage = () => {
                 textTransform: "none",
                 fontWeight: "medium",
                 color: "#FFFFFF",
-                "&:focus, &:hover, &:active": {
-                  backgroundColor: "#7151A1",
-                },
+                mt: isMobile ? 2 : 0,
               }}
               onClick={() => {
                 if (val) {
@@ -183,7 +195,6 @@ const MotifsCatalogPage = () => {
             </Typography>
           </StyledBox>
 
-          {/* File Upload Section */}
           <Typography variant="h6" gutterBottom color="primary">
             You could also upload MEME files here
           </Typography>
@@ -239,7 +250,6 @@ const MotifsCatalogPage = () => {
 
           {/* Upload Button */}
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 6 }}>
-            {/* Added marginBottom of 6 to create extra space */}
             <Button
               variant="contained"
               sx={{
@@ -248,9 +258,6 @@ const MotifsCatalogPage = () => {
                 textTransform: "none",
                 fontWeight: "medium",
                 color: "#FFFFFF",
-                "&:focus, &:hover, &:active": {
-                  backgroundColor: "#7151A1",
-                },
               }}
               onClick={handleFileUpload}
               disabled={!selectedFile}
@@ -270,9 +277,9 @@ const MotifsCatalogPage = () => {
       )}
 
       {value === 3 && (
-        <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+        <Box sx={{ mt: 4, mx: "auto", maxWidth: isMobile ? "90%" : "800px" }}>
           <Grid2 container spacing={4}>
-            <Grid2 xs={6}>
+            <Grid2 xs={12} sm={6}>
               <Typography variant="h6" gutterBottom>
                 MEME ChIP-seq Catalog
               </Typography>
@@ -296,7 +303,7 @@ const MotifsCatalogPage = () => {
                 Download metadata in TSV Format
               </CustomButton>
             </Grid2>
-            <Grid2 xs={6}>
+            <Grid2 xs={12} sm={6}>
               <Typography variant="h6" gutterBottom>
                 HT-SELEX Catalog
               </Typography>

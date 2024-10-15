@@ -5,11 +5,13 @@ import { TOMTOMMessage } from "../MotifMeme/TOMTOMMessage";
 import { ApiContext } from "../../ApiContext";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
-import { Grid, Divider } from "@mui/material";
+import { Grid, Divider, useMediaQuery, useTheme } from "@mui/material";
 import { MotifResultProps } from "./types";
 
+// Set custom DNA alphabet colors
 DNAAlphabet[0].color = "#228b22";
 DNAAlphabet[3].color = "red";
+
 export const DATASET_QUERY = gql`
   query Experiment($peak_accession: String) {
     peakDataset(replicated_peak_accession: $peak_accession) {
@@ -39,6 +41,11 @@ const MotifResult: React.FC<MotifResultProps> = ({
     },
   });
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+  // Calculate overlap and offsets
   const offset = alignment.offset;
   const overlapStart = Math.min(
     offset < 0 ? query.length : query.length + offset,
@@ -52,10 +59,22 @@ const MotifResult: React.FC<MotifResultProps> = ({
       : Math.max(alignment.motif.pwm.length, query.length + offset);
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={5}>
+    <Grid
+      container
+      spacing={isMobile ? 1 : 2}
+      direction={isMobile ? "column" : "row"}
+    >
+      {/* SVG Visualization */}
+      <Grid
+        item
+        xs={12}
+        md={5}
+        sx={{
+          textAlign: isMobile ? "center" : "left",
+        }}
+      >
         <svg
-          style={{ width: "75%" }}
+          style={{ width: isMobile ? "100%" : "75%" }}
           viewBox={`0 0 ${totalLength * 75 + 300} 580`}
         >
           <g transform="translate(0,445)">
@@ -65,7 +84,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
             <g transform="translate(300)">
               <RawLogo
                 values={query}
-                glyphWidth={75}
+                glyphWidth={isMobile ? 50 : 75}
                 stackHeight={200}
                 alphabet={DNAAlphabet}
               />
@@ -75,7 +94,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
             <g transform="translate(300)">
               <RawLogo
                 values={alignment.motif.pwm}
-                glyphWidth={75}
+                glyphWidth={isMobile ? 50 : 75}
                 stackHeight={200}
                 alphabet={DNAAlphabet}
               />
@@ -99,7 +118,16 @@ const MotifResult: React.FC<MotifResultProps> = ({
           />
         </svg>
       </Grid>
-      <Grid item xs={3}>
+
+      {/* Dataset information */}
+      <Grid
+        item
+        xs={12}
+        md={3}
+        sx={{
+          textAlign: isMobile ? "center" : "left",
+        }}
+      >
         {data?.peakDataset?.datasets?.[0] && (
           <>
             <Link
@@ -133,10 +161,13 @@ const MotifResult: React.FC<MotifResultProps> = ({
           </>
         )}
       </Grid>
-      <Grid item xs={4}>
+
+      {/* TOMTOM Match information */}
+      <Grid item xs={12} md={4}>
         <TOMTOMMessage tomtomMatch={tomtom_match} />
       </Grid>
     </Grid>
   );
 };
+
 export default MotifResult;

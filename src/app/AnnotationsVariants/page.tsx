@@ -27,7 +27,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
 import { POPULATIONS, SUBPOPULATIONS } from "./const";
 import styled from "@emotion/styled";
-import { Autocomplete, FormControl, Select } from "@mui/material";
+import {
+  Autocomplete,
+  FormControl,
+  Select,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 
 type Snp = {
   id: string;
@@ -105,6 +111,10 @@ const PurpleFormControl = styled(FormControl)({
 });
 
 const AnnotationsVariants = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
   const [value, setValue] = useState(0);
   const params = useParams();
 
@@ -182,7 +192,9 @@ const AnnotationsVariants = () => {
   const handleSelectionChange = (prev: boolean) => {
     setSelected(!prev);
   };
-  const annotationsContent = ` Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Often identified in genome-wide association studies, these variants can disrupt gene regulatory networks, leading to varied phenotypic effects or predispositions to diseases. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants.`;
+
+  const annotationsContent = `Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Often identified in genome-wide association studies, these variants can disrupt gene regulatory networks, leading to varied phenotypic effects or predispositions to diseases. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants.`;
+
   const str: string = selected
     ? "/AnnotationsVariants/GRCh38/" +
       snpValue +
@@ -193,6 +205,7 @@ const AnnotationsVariants = () => {
       "/" +
       rSquaredThreshold
     : "/AnnotationsVariants/GRCh38/" + snpValue;
+
   return (
     <>
       <TranscriptionFactors
@@ -214,14 +227,22 @@ const AnnotationsVariants = () => {
           <Tab label="Quantify Trait Heritability" />
         </Tabs>
       </Box>
+
       {id === "" || id === undefined
         ? value === 0 && (
-            <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+            <Box
+              sx={{
+                mt: 4,
+                mx: "auto",
+                maxWidth: "800px",
+                padding: isMobile ? 2 : isTablet ? 3 : 4,
+              }}
+            >
               <Typography variant="h6" gutterBottom>
                 Annotate a variant of interest using peaks and motif sites
               </Typography>
               <StyledBox>
-                <Stack direction="row" spacing={2}>
+                <Stack direction={isMobile ? "column" : "row"} spacing={2}>
                   <PurpleFormControl fullWidth variant="outlined">
                     <PurpleAutocomplete
                       options={options}
@@ -405,7 +426,15 @@ const AnnotationsVariants = () => {
         : null}
 
       {value === 1 && (
-        <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+        <Box
+          sx={{
+            mt: 4,
+            mx: "auto",
+            maxWidth: "800px",
+            padding: isMobile ? 2 : isTablet ? 3 : 4,
+            mb: 8, // Add margin at the bottom for extra space
+          }}
+        >
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
             Partitioned LD Score Regression
           </Typography>

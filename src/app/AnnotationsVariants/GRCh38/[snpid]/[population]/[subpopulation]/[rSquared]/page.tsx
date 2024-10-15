@@ -13,6 +13,8 @@ import {
   Link,
   CircularProgress,
   Grid,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import PeakIntersectionView from "../../../PeakIntersection";
 import MotifIntersectionView from "../../../MotifIntersection";
@@ -23,6 +25,10 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import { chainFileFetch } from "../../../chainFileFetch";
 
 const AnnotationDetailLD = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
   const [loadingChains, setLoadingChains] = useState(false);
   const [chainFile, setChainFile] = useState<ChainFile | undefined>(undefined);
 
@@ -82,10 +88,17 @@ const AnnotationDetailLD = () => {
   }
 
   return (
-    <Box sx={{ padding: 4 }}>
-      <Typography variant="h4">Annotations for {snpid}</Typography>
+    <Box sx={{ padding: isMobile ? 2 : isTablet ? 3 : 4 }}>
+      <Typography variant={isMobile ? "h5" : "h4"}>
+        Annotations for {snpid}
+      </Typography>
 
-      <Grid container alignItems="center" justifyContent="space-between">
+      <Grid
+        container
+        alignItems="center"
+        justifyContent="space-between"
+        sx={{ marginTop: isMobile ? 1 : 2 }}
+      >
         <Grid item>
           <Breadcrumbs
             aria-label="breadcrumb"
@@ -118,17 +131,14 @@ const AnnotationDetailLD = () => {
             variant="contained"
             color="secondary"
             sx={{
-              width: "220px",
+              width: isMobile ? "160px" : "220px",
               height: "41px",
               padding: "8px 24px",
               borderRadius: "24px",
               backgroundColor: "#8169BF",
               color: "white",
-              fontFeatureSettings: "'clig' off, 'liga' off",
-              fontSize: "15px",
-              fontStyle: "normal",
+              fontSize: isMobile ? "13px" : "15px",
               fontWeight: 500,
-              letterSpacing: "0.46px",
               textTransform: "none",
               "&:hover": {
                 backgroundColor: "#7151A1",
@@ -141,26 +151,24 @@ const AnnotationDetailLD = () => {
         </Grid>
       </Grid>
 
-      <Divider sx={{ my: 4 }} />
+      <Divider sx={{ my: isMobile ? 2 : 4 }} />
 
-      <Grid container spacing={2} alignItems="center">
+      <Grid container spacing={isMobile ? 1 : 2} alignItems="center">
         <Grid item>
-          <Typography variant="h6">Select an annotation:</Typography>
+          <Typography variant={isMobile ? "body1" : "h6"}>
+            Select an annotation:
+          </Typography>
         </Grid>
         <Grid item>
           <Select
             value={annotationType}
             onChange={(e) => setAnnotationType(e.target.value)}
             sx={{
-              width: "230px",
+              width: isMobile ? "160px" : "230px",
               height: "41px",
               padding: "8px 24px",
               borderRadius: "24px",
-
-              fontFeatureSettings: "'clig' off, 'liga' off",
               fontFamily: "Helvetica Neue",
-
-              letterSpacing: "0.46px",
               textTransform: "none",
             }}
           >
