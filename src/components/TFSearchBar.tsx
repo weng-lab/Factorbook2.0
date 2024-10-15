@@ -28,30 +28,36 @@ interface TFSearchBarProps {
   assembly: string;
 }
 
-const StyledAutocomplete = styled(Autocomplete)({
+// Custom styled Autocomplete with theme-based border and focus colors
+const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "white", // Default border color when not focused
+    },
     "&:hover fieldset": {
-      borderColor: "gray",
+      borderColor: "white", // Hover border color when not focused
     },
     "&.Mui-focused fieldset": {
-      borderColor: "gray",
+      borderColor: theme.palette.primary.main, // Border color on focus (primary color)
+      borderWidth: 2, // Thicker border when focused
     },
   },
   "& .MuiAutocomplete-endAdornment": {
-    color: "gray",
+    color: "white", // Dropdown arrow icon color when not focused
   },
-});
+}));
 
-const StyledFormControl = styled(FormControl)({
+// Custom styled FormControl with theme-based focus color
+const StyledFormControl = styled(FormControl)(({ theme }) => ({
   "& .MuiInputLabel-root.Mui-focused": {
-    color: "gray",
+    color: theme.palette.primary.main, // Label color when focused
   },
-});
+}));
 
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
 const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
-  const theme = useTheme(); // Get the theme object
+  const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
@@ -62,6 +68,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   const [tfA, setTFA] = useState<Map<string, any> | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Fetch and inflate the data from the gzipped JSON file
   useEffect(() => {
     if (!loading) {
       fetch("/tf-assignments.json.gz")
@@ -82,6 +89,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
     }
   }, [loading]);
 
+  // Handle changes in the search bar with debouncing
   const onSearchChange = async (value: string, tfAassignment: any) => {
     setOptions([]);
     const response = await fetch(Config.API.GraphqlAPI, {
@@ -154,6 +162,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
     }
   };
 
+  // Debouncing the search input change
   const debounceFn = useCallback(debounce(onSearchChange, 300), []);
 
   return (
@@ -175,8 +184,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 );
               }
             }}
-            popupIcon={<ArrowDropDown sx={{ color: "gray" }} />}
-            clearIcon={<ClearIcon sx={{ color: "gray" }} />}
+            popupIcon={<ArrowDropDown sx={{ color: "white" }} />} // Arrow icon white when not focused
+            clearIcon={<ClearIcon sx={{ color: "white" }} />} // Clear icon white when not focused
             sx={{
               "& .MuiOutlinedInput-root": {
                 height: "40px",
@@ -184,10 +193,13 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 paddingLeft: "12px",
               },
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "gray",
+                borderColor: "white", // White border when not focused
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: theme.palette.primary.main, // Primary border when focused
               },
               "& .MuiInputBase-input::placeholder": {
-                color: "gray",
+                color: "gray", // Placeholder color
                 opacity: 1,
               },
             }}
@@ -210,7 +222,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                   ...params.InputProps,
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "gray" }} />
+                      <SearchIcon sx={{ color: "white" }} />{" "}
+                      {/* Search icon white when not focused */}
                     </InputAdornment>
                   ),
                   style: { textAlign: "center", color: "gray" },

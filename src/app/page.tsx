@@ -229,24 +229,34 @@ const Homepage = () => {
                       bgcolor:
                         "var(--material-theme-ref-neutral-neutral17, #2A2A2D)", // Dropdown background color
                       "& .MuiMenuItem-root": {
-                        color: "white", // Text color of the dropdown options
+                        color: "black", // Text color of dropdown options
+                        backgroundColor: "white", // Background color for the dropdown items
+                        "&:hover": {
+                          backgroundColor: theme.palette.grey[200], // Slightly different hover effect
+                        },
                       },
                     },
                   },
                 }}
                 sx={{
-                  ":before": { borderBottomColor: "white" }, // Default border color when not focused
-                  ":after": { borderBottomColor: theme.palette.primary.main }, // Border color when focused
+                  ":before": {
+                    borderBottomColor: "white", // Default border color when not focused
+                  },
+                  ":after": {
+                    borderBottomColor: theme.palette.primary.main, // Border color when focused (primary color)
+                  },
                   "&:focus, &:hover, &:active": {
-                    borderBottomColor: theme.palette.primary.main, // Border color when focused, hovered, or active
+                    borderBottomColor: theme.palette.primary.main, // Border color when focused, hovered, or active (primary color)
                   },
                   color: "white", // Text color for the selected value
                   "&:not(.Mui-disabled):hover::before": {
-                    borderBottomColor: theme.palette.primary.main, // Border color when hovered
+                    borderBottomColor: "white", // Border color when hovered
                   },
                   "& .MuiSvgIcon-root": {
                     color: "white", // Change arrow icon color to white
                   },
+                  minWidth: "200px", // Optional: set minimum width to ensure consistency
+                  minHeight: "40px", // Optional: set minimum height to maintain original size
                 }}
               >
                 <MenuItem value={"Human Transcription Factors"}>
