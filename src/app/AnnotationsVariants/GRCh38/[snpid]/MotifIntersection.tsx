@@ -16,6 +16,8 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import {
   MotifIntersectionMergerProps,
@@ -60,6 +62,9 @@ const MotifIntersectionMerger: React.FC<MotifIntersectionMergerProps> = (
 ) => {
   const [progress, setProgress] = useState(0);
   const context = useContext(ApiContext);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   if (!context) {
     console.error("ApiContext is undefined");
@@ -104,12 +109,18 @@ const MotifIntersectionMerger: React.FC<MotifIntersectionMergerProps> = (
   }, [props.snps, next]);
 
   return (
-    <Box>
-      <Typography variant="h6">
+    <Box sx={{ padding: isMobile ? 2 : isTablet ? 3 : 4 }}>
+      <Typography variant={isMobile ? "h6" : "h5"}>
         Searching for intersecting TF motifs...
       </Typography>
 
-      <Box sx={{ position: "relative", display: "inline-flex" }}>
+      <Box
+        sx={{
+          position: "relative",
+          display: "inline-flex",
+          marginTop: isMobile ? 2 : 3,
+        }}
+      >
         <CircularProgress
           variant="determinate"
           value={(progress * 100.0) / props.snps.length}
@@ -250,6 +261,10 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
   const [page, setPage] = useState(0);
   const [val, setVal] = useState<String>("meme");
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
   const groupedSNPs = useMemo(() => {
     const grouped = groupBy(results || [], (x) => x.snp?.id || "");
     return props.snps.map((snp) => ({
@@ -303,7 +318,7 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
       assembly={props.assembly}
     />
   ) : (
-    <Box>
+    <Box sx={{ padding: isMobile ? 2 : isTablet ? 3 : 4 }}>
       <FormControl component="fieldset">
         <RadioGroup
           aria-label="annotation type"
@@ -332,12 +347,13 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
           background: "var(--info-hover, #8389E00A)",
           border: "1px solid var(--info-outlinedBorder, #8389E080)",
           height: "38px",
+          marginTop: isMobile ? 1 : 2,
         }}
       >
         <Typography
           variant="caption"
           sx={{
-            fontSize: "13px",
+            fontSize: isMobile ? "11px" : "13px",
           }}
         >
           Searched {props.snps.length} SNPs, of which{" "}
@@ -355,18 +371,12 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
         variant="fullWidth"
         sx={{
           "& .MuiTab-root": {
-            fontSize: "16px",
+            fontSize: isMobile ? "14px" : "16px",
           },
         }}
       >
-        <Tab
-          sx={{ textTransform: "none", fontSize: "16px" }}
-          label="Summary View"
-        />
-        <Tab
-          sx={{ textTransform: "none", fontSize: "16px" }}
-          label="Complete List"
-        />
+        <Tab sx={{ textTransform: "none" }} label="Summary View" />
+        <Tab sx={{ textTransform: "none" }} label="Complete List" />
       </Tabs>
 
       <Box mt={2}>
@@ -375,7 +385,7 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
             key="summary"
             columns={MOTIF_TABLE_COLUMNS}
             rows={groupedSNPs}
-            itemsPerPage={7}
+            itemsPerPage={isMobile ? 5 : 7}
             sortColumn={2}
             searchable
           />
@@ -383,7 +393,7 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
           <DataTable          
             columns={completeViewTableColumns}
             rows={filteredResults}
-            itemsPerPage={5}
+            itemsPerPage={isMobile ? 3 : 5}
             searchable
           />
         )}

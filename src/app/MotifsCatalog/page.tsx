@@ -1,18 +1,46 @@
 "use client";
 
 import * as React from "react";
-import TranscriptionFactors from "@/components/TranscriptionFactors";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import {
+  Box,
+  Typography,
+  Button,
+  Tabs,
+  Tab,
+  TextField,
+  useMediaQuery,
+  Theme,
+} from "@mui/material";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
+import { styled, useTheme } from "@mui/material/styles";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import { styled } from "@mui/material/styles";
-import Button from "@mui/material/Button";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { TextField, useTheme } from "@mui/material";
 import MotifUMAP from "@/components/MotifSearch/UMap";
+import ErrorMessage from "./upload/errormessage";
+
+// Styling for text fields and upload areas
+const UploadBox = styled(Box)(({ theme }) => ({
+  border: `2px dashed ${theme.palette.primary.main}`,
+  borderRadius: "8px",
+  backgroundColor: "#F3E8FF",
+  padding: "32px",
+  textAlign: "center",
+  color: "#5A5A5A",
+  marginTop: "20px",
+  position: "relative",
+}));
+
+const CustomButton = styled(Button)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  marginBottom: "16px",
+  backgroundColor: theme.palette.primary.main,
+  textTransform: "none",
+  "&:focus, &:hover, &:active": {
+    backgroundColor: theme.palette.primary.main,
+  },
+}));
 
 const LargeTextField = styled(TextField)(({ theme }) => ({
   minWidth: "700px",
@@ -31,17 +59,13 @@ const LargeTextField = styled(TextField)(({ theme }) => ({
       borderColor: theme.palette.primary.main,
     },
   },
-}));
-
-const UploadBox = styled(Box)(({ theme }) => ({
-  border: `2px dashed ${theme.palette.primary.main}`,
-  borderRadius: "8px",
-  backgroundColor: "#F3E8FF",
-  padding: "32px",
-  textAlign: "center",
-  color: "#5A5A5A",
-  marginTop: "20px",
-  position: "relative",
+  // Fix for autofill dropdown styling
+  "&:-webkit-autofill": {
+    "-webkit-box-shadow": `0 0 0 1000px #EDE7F6 inset`,
+    "-webkit-text-fill-color": "#000000",
+    "font-family": theme.typography.fontFamily,
+    transition: "background-color 5000s ease-in-out 0s",
+  },
 }));
 
 const StyledBox = styled(Box)({
@@ -50,41 +74,63 @@ const StyledBox = styled(Box)({
   },
 });
 
-const CustomButton = styled(Button)(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  marginBottom: "8px",
-  backgroundColor: theme.palette.primary.main,
-  textTransform: "none",
-  "&:focus, &:hover, &:active": {
-    backgroundColor: theme.palette.primary.main,
-  },
-}));
-
-const MotifsSiteCatlog = () => {
+const MotifsCatalogPage = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Target mobile screens
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md")); // Target tablet screens
+
   const [value, setValue] = React.useState(0);
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
-  const [val, setVal] = React.useState<String | null>(null);
   const [isDragging, setIsDragging] = React.useState(false);
+  const [errorFiles, setErrorFiles] = React.useState<File[]>([]);
+  const [val, setVal] = React.useState<string | null>(null);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
+  // File upload handlers
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
+    const file = event.target.files?.[0];
+    if (file) {
+      validateFile(file);
+    }
+  };
+
+  // Validate file type: only allow `.meme` files
+  const validateFile = (file: File) => {
+    if (file.name.endsWith(".meme")) {
+      setSelectedFile(file); // Valid file, process it
+      setErrorFiles([]); // Clear previous errors
+    } else {
+      setSelectedFile(null); // Invalid file, don't set it
+      setErrorFiles([file]); // Set the invalid file for error display
     }
   };
 
   const handleFileUpload = () => {
     if (selectedFile) {
-      console.log("Uploading file:", selectedFile.name);
+      const fileName = selectedFile.name;
+      const motifName = fileName.replace(".meme", "");
+
+      // Replace spaces in the motif name
+      const sanitizedMotifName = motifName.replace(/\s+/g, "");
+
+      // This is the actual redirection URL used for fetching or loading the motif
+      const redirectUrl = `/MotifsCatalog/Human/${sanitizedMotifName}`;
+
+      // This is the URL that will be shown in the browser's address bar
+      const displayUrl = `/FileUpload/${sanitizedMotifName}`;
+
+      // Use history.pushState to change the URL in the address bar without a full page reload
+      window.history.pushState({}, "", displayUrl);
+
+      // Redirect to the motif URL based on the sanitized file name
+      window.location.href = redirectUrl;
     }
   };
 
+  // Drag & Drop Handlers
   const handleDragOver = (event: React.DragEvent) => {
     event.preventDefault();
     setIsDragging(true);
@@ -98,25 +144,14 @@ const MotifsSiteCatlog = () => {
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     setIsDragging(false);
-    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-      setSelectedFile(event.dataTransfer.files[0]);
-      event.dataTransfer.clearData();
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      validateFile(file);
     }
   };
 
-  const motifsContent = `
-  Sequence motifs of transcription factors (TFs) are logos, matrices, or more complex mathematical models of specific, short DNA sequences that TFs recognize and bind to, effectively serving as molecular addresses that guide these regulatory proteins to their target sites in the genome. 
-  These motif sites, typically ranging from 6 to 20 base pairs, are essential for the precise regulation of gene expression. The binding of a TF to its motif sites can either activate or repress the transcription of adjacent genes, depending on the nature of the TF and the context of the site.
-  The diversity and specificity of these motifs underlie the complexity of gene regulation, with different TFs having distinct motifs that correspond to their unique roles in cellular processes.
-  `;
-
   return (
     <>
-      <TranscriptionFactors
-        header="Motifs Site Catlog"
-        content={motifsContent}
-        image="/IllustrationsNew.png"
-      />
       <Box sx={{ width: "100%", bgcolor: "background.paper", mt: 4 }}>
         <Tabs
           value={value}
@@ -133,39 +168,35 @@ const MotifsSiteCatlog = () => {
           <Tab label="Downloads" />
         </Tabs>
       </Box>
-      {value === 1 && (
-        <MotifUMAP key="meme" title="meme" url="/human-meme-umap.json.gz" />
-      )}
-      {value === 2 && (
-        <MotifUMAP key="selex" title="selex" url="/ht-selex-umap.json.gz" />
-      )}
+
       {value === 0 && (
-        <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+        <Box sx={{ mt: 4, mx: "auto", maxWidth: isMobile ? "90%" : "800px" }}>
           <Typography variant="h6" gutterBottom>
             Enter a consensus sequence or regex:
           </Typography>
           <StyledBox>
             <LargeTextField
               placeholder="enter sequence or regex"
-              onChange={(e) => {
-                setVal(e.target.value);
+              onChange={(e) => setVal(e.target.value)}
+              sx={{
+                minWidth: isMobile ? "100%" : "700px",
               }}
-            />{" "}
+            />
             <Button
               variant="contained"
               sx={{
                 margin: "auto",
-                backgroundColor: theme.palette.primary.main,
+                backgroundColor: "#8169BF",
                 borderRadius: "24px",
                 textTransform: "none",
                 fontWeight: "medium",
                 color: "#FFFFFF",
-                "&:focus, &:hover, &:active": {
-                  backgroundColor: theme.palette.primary.main,
-                },
+                mt: isMobile ? 2 : 0,
               }}
               onClick={() => {
-                window.open(`/MotifsCatalog/human/${val}`, "_self");
+                if (val) {
+                  window.open(`/MotifsCatalog/Human/${val}`, "_self");
+                }
               }}
             >
               Search
@@ -174,9 +205,14 @@ const MotifsSiteCatlog = () => {
               Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
             </Typography>
           </StyledBox>
+
           <Typography variant="h6" gutterBottom color="primary">
             You could also upload MEME files here
           </Typography>
+
+          {/* Error Message if wrong files are uploaded */}
+          <ErrorMessage files={errorFiles.map((file) => ({ file }))} />
+
           <UploadBox
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -201,15 +237,14 @@ const MotifsSiteCatlog = () => {
                   variant="contained"
                   component="span"
                   sx={{
-                    display: "block",
                     padding: "8px 16px",
-                    backgroundColor: theme.palette.primary.main,
+                    backgroundColor: "#8169BF",
                     borderRadius: "24px",
                     textTransform: "none",
                     fontWeight: "medium",
                     color: "#FFFFFF",
                     "&:focus, &:hover, &:active": {
-                      backgroundColor: theme.palette.primary.main,
+                      backgroundColor: "#7151A1",
                     },
                   }}
                 >
@@ -223,19 +258,17 @@ const MotifsSiteCatlog = () => {
               </Typography>
             )}
           </UploadBox>
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+
+          {/* Upload Button */}
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 4, mb: 6 }}>
             <Button
               variant="contained"
               sx={{
-                margin: "auto",
-                backgroundColor: theme.palette.primary.main,
+                backgroundColor: "#8169BF",
                 borderRadius: "24px",
                 textTransform: "none",
                 fontWeight: "medium",
                 color: "#FFFFFF",
-                "&:focus, &:hover, &:active": {
-                  backgroundColor: theme.palette.primary.main,
-                },
               }}
               onClick={handleFileUpload}
               disabled={!selectedFile}
@@ -245,10 +278,19 @@ const MotifsSiteCatlog = () => {
           </Box>
         </Box>
       )}
+
+      {value === 1 && (
+        <MotifUMAP key="meme" title="meme" url="/human-meme-umap.json.gz" />
+      )}
+
+      {value === 2 && (
+        <MotifUMAP key="selex" title="selex" url="/ht-selex-umap.json.gz" />
+      )}
+
       {value === 3 && (
-        <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+        <Box sx={{ mt: 4, mx: "auto", maxWidth: isMobile ? "90%" : "800px" }}>
           <Grid2 container spacing={4}>
-            <Grid2 xs={6}>
+            <Grid2 xs={12} sm={6}>
               <Typography variant="h6" gutterBottom>
                 MEME ChIP-seq Catalog
               </Typography>
@@ -272,7 +314,7 @@ const MotifsSiteCatlog = () => {
                 Download metadata in TSV Format
               </CustomButton>
             </Grid2>
-            <Grid2 xs={6}>
+            <Grid2 xs={12} sm={6}>
               <Typography variant="h6" gutterBottom>
                 HT-SELEX Catalog
               </Typography>
@@ -296,4 +338,4 @@ const MotifsSiteCatlog = () => {
   );
 };
 
-export default MotifsSiteCatlog;
+export default MotifsCatalogPage;

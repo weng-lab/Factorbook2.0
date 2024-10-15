@@ -235,17 +235,17 @@ const Homepage = () => {
                   },
                 }}
                 sx={{
-                  ":before": { borderBottomColor: "gray" },
-                  ":after": { borderBottomColor: theme.palette.primary.main },
+                  ":before": { borderBottomColor: "white" }, // Default border color when not focused
+                  ":after": { borderBottomColor: theme.palette.primary.main }, // Border color when focused
                   "&:focus, &:hover, &:active": {
-                    borderBottomColor: theme.palette.primary.main,
+                    borderBottomColor: theme.palette.primary.main, // Border color when focused, hovered, or active
                   },
                   color: "white", // Text color for the selected value
                   "&:not(.Mui-disabled):hover::before": {
-                    borderBottomColor: theme.palette.primary.main,
+                    borderBottomColor: theme.palette.primary.main, // Border color when hovered
                   },
                   "& .MuiSvgIcon-root": {
-                    color: "gray",
+                    color: "white", // Change arrow icon color to white
                   },
                 }}
               >

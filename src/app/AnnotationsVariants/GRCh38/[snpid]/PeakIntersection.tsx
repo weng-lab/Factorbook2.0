@@ -1,5 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Box, Typography, Tabs, Tab, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Tabs,
+  Tab,
+  CircularProgress,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { PEAK_QUERY } from "../../queries";
 import { useApolloClient } from "@apollo/client";
 import { groupBy } from "lodash";
@@ -121,6 +129,8 @@ const PeakIntersectionMerger: React.FC<PeakIntersectionMergerProps> = (
 ) => {
   const [progress, setProgress] = useState(0);
   const client = useApolloClient();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const next = useCallback(
     (i: number, results: PeakWithSNP[]) => {
@@ -159,12 +169,12 @@ const PeakIntersectionMerger: React.FC<PeakIntersectionMergerProps> = (
   }, [props.snps, next]);
 
   return (
-    <Box>
-      <Typography variant="h6">
+    <Box sx={{ padding: isMobile ? 2 : 4 }}>
+      <Typography variant={isMobile ? "h6" : "h5"}>
         Searching for intersecting ChIP-seq peaks...
       </Typography>
 
-      <Box sx={{ position: "relative", display: "inline-flex" }}>
+      <Box sx={{ position: "relative", display: "inline-flex", marginTop: 2 }}>
         <CircularProgress
           variant="determinate"
           value={(progress * 100.0) / props.snps.length}
@@ -200,6 +210,9 @@ const PeakIntersection: React.FC<IntersectionViewProps> = (props) => {
   const [results, setResults] = useState<PeakWithSNP[] | null>(null);
   const [page, setPage] = useState(0);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const groupedSNPs = useMemo(() => {
     const grouped = groupBy(results || [], (x) => x.snp.id);
     return props.snps.map((snp) => ({
@@ -217,7 +230,7 @@ const PeakIntersection: React.FC<IntersectionViewProps> = (props) => {
       assembly={props.assembly}
     />
   ) : (
-    <Box>
+    <Box sx={{ padding: isMobile ? 2 : 4 }}>
       <Box
         sx={{
           borderColor: "#8389E0",
@@ -231,7 +244,7 @@ const PeakIntersection: React.FC<IntersectionViewProps> = (props) => {
         <Typography
           variant="caption"
           sx={{
-            fontSize: "13px",
+            fontSize: isMobile ? "11px" : "13px",
             fontFamily: "Helvetica Neue",
             marginLeft: "3px",
           }}
@@ -241,6 +254,7 @@ const PeakIntersection: React.FC<IntersectionViewProps> = (props) => {
           one ENCODE TF ChIP-seq peak.
         </Typography>
       </Box>
+
       <Tabs
         value={page}
         onChange={(_, newValue) => setPage(newValue)}
@@ -250,18 +264,13 @@ const PeakIntersection: React.FC<IntersectionViewProps> = (props) => {
         variant="fullWidth"
         sx={{
           "& .MuiTab-root": {
+            fontSize: isMobile ? "14px" : "16px",
             fontFamily: "Helvetica Neue",
           },
         }}
       >
-        <Tab
-          sx={{ textTransform: "none", fontSize: "16px" }}
-          label="Summary View"
-        />
-        <Tab
-          sx={{ textTransform: "none", fontSize: "16px" }}
-          label="Complete List"
-        />
+        <Tab sx={{ textTransform: "none" }} label="Summary View" />
+        <Tab sx={{ textTransform: "none" }} label="Complete List" />
       </Tabs>
 
       <Box mt={2}>
@@ -270,7 +279,7 @@ const PeakIntersection: React.FC<IntersectionViewProps> = (props) => {
             key="summary"
             columns={PEAK_TABLE_COLUMNS}
             rows={groupedSNPs}
-            itemsPerPage={10}
+            itemsPerPage={isMobile ? 5 : 10}
             searchable
           />
         ) : (
@@ -278,7 +287,7 @@ const PeakIntersection: React.FC<IntersectionViewProps> = (props) => {
             key="complete"
             columns={COMPLETE_PEAK_TABLE_COLUMNS}
             rows={results}
-            itemsPerPage={10}
+            itemsPerPage={isMobile ? 5 : 10}
             searchable
           />
         )}

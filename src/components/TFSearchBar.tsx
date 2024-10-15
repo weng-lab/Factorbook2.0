@@ -10,16 +10,18 @@ import {
   TextField,
   Button,
   InputAdornment,
+  useTheme,
+  useMediaQuery,
+  Autocomplete,
+  FormControl,
+  styled,
+  Stack,
 } from "@mui/material";
-import { Autocomplete, FormControl } from "@mui/material";
-import styled from "@emotion/styled";
-import Stack from "@mui/material/Stack";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Config from "../../config.json";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
 import ClearIcon from "@mui/icons-material/Clear";
-
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 
 interface TFSearchBarProps {
@@ -46,32 +48,20 @@ const StyledFormControl = styled(FormControl)({
   },
 });
 
-const TF_AUTOCOMPLETE_QUERY = `
-query Datasets($q: String, $assembly: String, $limit: Int) {
-  counts: targets(target_prefix: $q, processed_assembly: $assembly, replicated_peaks: true, exclude_investigatedas: ["recombinant protein"], include_investigatedas: ["cofactor", "chromatin remodeler", "RNA polymerase complex", "DNA replication", "DNA repair", "cohesin", "transcription factor"], limit: $limit) {
-    name
-    datasets {
-      counts {
-        total
-        biosamples
-        __typename
-      }
-      __typename
-    }
-    __typename
-  }
-}
-`;
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
 const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
+  const theme = useTheme(); // Get the theme object
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
   const [snpValue, setSnpValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
-
   const [options, setOptions] = useState([]);
   const [snpids, setSnpIds] = useState<any[]>([]);
   const [tfA, setTFA] = useState<Map<string, any> | null>(null);
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     if (!loading) {
       fetch("/tf-assignments.json.gz")
@@ -94,11 +84,32 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
 
   const onSearchChange = async (value: string, tfAassignment: any) => {
     setOptions([]);
-
     const response = await fetch(Config.API.GraphqlAPI, {
       method: "POST",
       body: JSON.stringify({
-        query: TF_AUTOCOMPLETE_QUERY,
+        query: `
+          query Datasets($q: String, $assembly: String, $limit: Int) {
+            counts: targets(
+              target_prefix: $q,
+              processed_assembly: $assembly,
+              replicated_peaks: true,
+              exclude_investigatedas: ["recombinant protein"],
+              include_investigatedas: ["cofactor", "chromatin remodeler", "RNA polymerase complex", "DNA replication", "DNA repair", "cohesin", "transcription factor"],
+              limit: $limit
+            ) {
+              name
+              datasets {
+                counts {
+                  total
+                  biosamples
+                  __typename
+                }
+                __typename
+              }
+              __typename
+            }
+          }
+        `,
         variables: {
           assembly: assembly,
           q: value,
@@ -143,11 +154,11 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
     }
   };
 
-  //console.log(snpids,"snpids")
-  const debounceFn = useCallback(debounce(onSearchChange, 1), []);
+  const debounceFn = useCallback(debounce(onSearchChange, 300), []);
+
   return (
     <Box>
-      <Stack direction="row" spacing={2}>
+      <Stack direction={isMobile ? "column" : "row"} spacing={2}>
         <StyledFormControl fullWidth variant="outlined">
           <StyledAutocomplete
             options={options}
@@ -197,7 +208,6 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 fullWidth
                 InputProps={{
                   ...params.InputProps,
-
                   startAdornment: (
                     <InputAdornment position="start">
                       <SearchIcon sx={{ color: "gray" }} />
@@ -221,7 +231,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                       </Box>
                       {selectedSnp && (
                         <Typography variant="body2" color="text.secondary">
-                          {`${selectedSnp.label} ${selectedSnp.total} experiments,${selectedSnp.biosamples} cell types`}
+                          {`${selectedSnp.label} ${selectedSnp.total} experiments, ${selectedSnp.biosamples} cell types`}
                         </Typography>
                       )}
                     </Grid2>
@@ -235,7 +245,6 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
         <Button
           variant="contained"
           color="secondary"
-          //  onClick={handleSubmit}
           sx={{
             width: "125px",
             height: "41px",
@@ -265,6 +274,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
           Search
         </Button>
       </Stack>
+
       <Box sx={{ marginLeft: "10px" }}>
         <Typography variant="caption" sx={{ color: "gray" }}>
           Example: CTCF, ATF3
