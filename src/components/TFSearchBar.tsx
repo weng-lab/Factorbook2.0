@@ -189,7 +189,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
               }
               setInputValue(newInputValue);
             }}
-            noOptionsText="Example: CTCF, APOE"
+            noOptionsText="Example: CTCF"
             renderInput={(params) => (
               <TextField
                 {...params}

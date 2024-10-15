@@ -16,7 +16,7 @@ import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
 import { FactorQueryResponse } from "@/components/CellType/types";
 import FunctionTab from "./Function";
 import MotifEnrichmentMEME from "@/components/MotifMeme/MotifEnrichmentMEME";
-import Search from "./Search";
+import PeakSearch from "./PeakSearch";
 import Link from "next/link";
 import DeepLearnedSelexMotifs from "./MotifEnrichmentSELEX";
 import { ApiContext } from "@/ApiContext";
@@ -109,8 +109,8 @@ const FactorDetailsPage = () => {
         return <DeepLearnedSelexMotifs factor={factor} species={species} />;
       case "EpigeneticProfile":
         return <EpigeneticProfile factor={factor} species={species} />;
-      case "Search":
-        return <Search />;
+      case "PeakSearch":
+        return <PeakSearch />;
       default:
         return (
           <FunctionTab
@@ -218,7 +218,7 @@ const FactorDetailsPage = () => {
               label={`Search ${factor} peaks by region`}
               value="Search"
               component={Link}
-              href={`/TranscriptionFactor/${species}/${factor}/Search`}
+              href={`/TranscriptionFactor/${species}/${factor}/PeakSearch`}
               sx={{
                 color: detail === "Search" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
