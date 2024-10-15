@@ -31,6 +31,59 @@ function hslToRgb(h: number, s: number, l: number): [ number, number, number ] {
     return [ Math.round(r * 255), Math.round(g * 255), Math.round(b * 255) ];
 }
 
+
+export const tissueColors: { [key: string]: string} = {
+    liver: "#aabb66",
+    nerve: "#fdd800",
+    skin: "#6f74b6",
+    muscle: "#aba8d4",
+    "large intestine": "#ca9855",
+    pancreas: "#995724",
+    epithelium: "#dd7e6b",
+    bone: "#a2c4c9",
+    lung: "#a4cd39",
+    eye: "#d5a6bd",
+    "adrenal gland": "#5eba47",
+    uterus: "#c878b2",
+    "spinal cord": "#ebe71b",
+    spleen: "#778955",
+    thyroid: "#186833",
+    "small intestine": "#565624",
+    prostate: "#dddddd",
+    "urinary bladder": "#a91d22",
+    kidney: "#74cac1",
+    blood: "#dd4297",
+    "bone marrow": "#ea9999",
+    embryo: "#93c47d",
+    penis: "#144a9f",
+    esophagus: "#8b7257",
+    nose: "#b5834f",
+    stomach: "#ffdd99",
+    "connective tissue": "#aca8d3",
+    vagina: "#ef5898",
+    gallbladder: "#674ea7",
+    adipose: "#f26822",
+    placenta: "#7bcb54",
+    limb: "#5f58ed",
+    "blood vessel": "#ee2124",
+    brain: "#ebe71b",
+    heart: "#652c90",
+    breast: "#4ac2c5",
+    ovary: "#e1aed0",
+    intestine: "#565624",
+    trachea: "#c27ba0",
+    thymus: "#8e7cc3",
+    testis: "#aaabab",
+    NA: "#000000",
+    //Added as fallback
+    missing: "#000000",
+    //Sample Types
+    "cell line": "#4964c6",
+    "primary cell": "#e4973f",
+    "in vitro differentiated cells": "#852795",
+    tissue: "#bf4a27",
+    organoid: "#eec54d",
+  }
 export function spacedColors(n: number, s: number = 50, l: number = 50): (i: number) => string {
     return i => {
         const [ r, g, b ] = hslToRgb(((i * (360 / (n || 1))) % 360) / 360, s / 100, l / 100);

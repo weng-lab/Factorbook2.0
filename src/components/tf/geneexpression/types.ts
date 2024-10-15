@@ -8,6 +8,7 @@ export type GeneExpressionQueryResponse = {
         accession: string;
         biosample: string;
         biosample_type: string;
+        assay_term_name: string;
         tissue: string;
         gene_quantification_files: {
             accession: string;

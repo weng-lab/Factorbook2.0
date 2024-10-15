@@ -1,5 +1,61 @@
 import gql from 'graphql-tag';
 
+export const PEAK_QUERY = gql`
+    query peaksrange(
+        $experiment_accession: String
+        $file_accession: String
+        $target: String
+        $biosample: String
+        $range: [ChromosomeRangeInput]!
+        $assembly: String!
+        $limit: Int
+        $offset: Int
+        $orderby: Boolean
+    ) {
+        peaksrange(
+            experiment_accession: $experiment_accession
+            target: $target
+            biosample: $biosample
+            file_accession: $file_accession
+            range: $range
+            assembly: $assembly
+            limit: $limit
+            offset: $offset
+            orderby: $orderby
+        ) {
+            data
+            error {
+                message
+                errortype
+            }
+        }
+    }
+`;
+
+
+export const MOTIFS_QUERY = gql`
+    query motifsInPeak($genomic_region: [GenomicRegionInput!]!) {
+        meme_occurrences(genomic_region: $genomic_region) {
+            peaks_accession
+            consensus_regex
+            q_value
+            genomic_region {
+                chromosome
+                start
+                end
+            }
+            motif {
+                id
+                pwm
+                flank_z_score
+                flank_p_value
+                shuffled_z_score
+                shuffled_p_value
+            }
+        }
+    }
+`;
+
 
 export const DEEP_LEARNED_MOTIF_OCCURRENCES_QUERY = gql`
     query DeepLearnedMotifPeakOccurrences($genomic_region: [GenomicRegionInput!]!, $tf: String) {
@@ -76,6 +132,16 @@ export const DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY = gql`
             tf
             assay
             protein_type
+        }
+    }
+`;
+
+export const TOMTOM_MATCH_QUERY = gql`
+    query tomtomMatches($peaks_accessions: [String!]!, $ids: [String!]!) {
+        target_motifs(peaks_accessions: $peaks_accessions, motif_id: $ids) {
+            target_id
+            e_value
+            jaspar_name
         }
     }
 `;

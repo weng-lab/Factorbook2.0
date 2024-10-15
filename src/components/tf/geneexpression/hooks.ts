@@ -6,7 +6,7 @@ import { useQuery } from '@apollo/client';
 import { GENE_EXPRESSION_QUERY, GENE_ID_QUERY } from './Queries';
 import { GeneExpressionQueryResponse, GeneIdQueryResponse } from './types';
 
-export function useGeneExpressionData(assembly: string, gene_name: string, assay_term_name: string) {
+export function useGeneExpressionData(assembly: string, gene_name: string) {
     const apiContext = useContext(ApiContext);
 
     if (!apiContext || !apiContext.client) {
@@ -27,10 +27,9 @@ export function useGeneExpressionData(assembly: string, gene_name: string, assay
 
     return useQuery<GeneExpressionQueryResponse>(GENE_EXPRESSION_QUERY, {
         client,
-        variables: assay_term_name==="total RNA-seq" ? {
+        variables:  {
             gene_id: geneId,
             assembly,
-            assay_term_name,
             accessions: assembly.toLowerCase() === "grch38" ?  [
                 "ENCSR828TEI",
                 "ENCSR919QJT",
@@ -418,11 +417,6 @@ export function useGeneExpressionData(assembly: string, gene_name: string, assay
                 "ENCSR992WBR",
                 "ENCSR996TVY"
               ]
-        } :  {
-            gene_id: geneId,
-            assembly,
-            assay_term_name
-         
         },
         skip: loading || !data || !geneId,
     });

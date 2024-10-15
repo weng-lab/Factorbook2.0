@@ -1,5 +1,62 @@
 import { BiosamplePartitionedDatasetCollection, GenomicRange } from "@/components/Types"
-import { TOMTOMMatch } from "@/components/Shared/types";
+
+
+export type PeakQueryResponse = {
+    peaksrange: {
+        data: PeakResult[];
+        error?: {
+            message?: string;
+            errortype?: string;
+        };
+    };
+  };
+  
+  export type PeakResult = {
+    chrom: string;
+    chrom_start: number;
+    chrom_end: number;
+    target: string;
+    biosample: string;
+    q_value: number;
+    p_value?: number;
+    experiment_accession?: string;
+    file_accession: string;
+  };
+type TOMTOMMatch = {
+    e_value: number;
+    jaspar_name?: string | null;
+    target_id: string;
+  };
+  
+  
+  export type TomtomMatchQueryData = {
+      target_motifs: TOMTOMMatch[];
+  };
+
+export type MotifQueryDataOccurrence = {
+    peaks_accession: string;
+    consensus_regex: string;
+    q_value: number;
+    genomic_region: {
+        chromosome: string;
+        start: number;
+        end: number;
+    };
+    motif: MotifQueryDataOccurrenceMotif;
+};
+
+export type MotifQueryDataOccurrenceMotif = {
+    id: string;
+    pwm: number[][];
+    flank_z_score: number;
+    flank_p_value: number;
+    shuffled_z_score: number;
+    shuffled_p_value: number;
+};
+
+export type MotifQueryData = {
+    meme_occurrences: MotifQueryDataOccurrence[];
+};
 
 export type CentralityPlotProps = {
     peak_centrality: { [key: string]: number };

@@ -20,11 +20,51 @@ import Config from "../../config.json";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
 import ClearIcon from "@mui/icons-material/Clear";
+import ClearIcon from "@mui/icons-material/Clear";
+
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 
 interface TFSearchBarProps {
   assembly: string;
 }
+
+const StyledAutocomplete = styled(Autocomplete)({
+  "& .MuiOutlinedInput-root": {
+    "&:hover fieldset": {
+      borderColor: "gray",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "gray",
+    },
+  },
+  "& .MuiAutocomplete-endAdornment": {
+    color: "gray",
+  },
+});
+
+const StyledFormControl = styled(FormControl)({
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "gray",
+  },
+});
+
+const TF_AUTOCOMPLETE_QUERY = `
+query Datasets($q: String, $assembly: String, $limit: Int) {
+  counts: targets(target_prefix: $q, processed_assembly: $assembly, replicated_peaks: true, exclude_investigatedas: ["recombinant protein"], include_investigatedas: ["cofactor", "chromatin remodeler", "RNA polymerase complex", "DNA replication", "DNA repair", "cohesin", "transcription factor"], limit: $limit) {
+    name
+    datasets {
+      counts {
+        total
+        biosamples
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+}
+`;
+const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
 const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   const theme = useTheme(); // Get the theme object
@@ -97,9 +137,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
 
       const snp = tfSuggestion.map(
         (g: {
-          datasets: {
-            counts: { total: number; biosamples: number };
-          };
+          datasets: { counts: { total: number; biosamples: number } };
           name: string;
         }) => {
           return {
@@ -112,6 +150,10 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                     tfAassignment.get(g.name!)["TF assessment"] as string
                   ).includes("Likely")
                 ? "Likely sequence-specific TF - "
+                : SEQUENCE_SPECIFIC.has(
+                    tfAassignment.get(g.name!)["TF assessment"]
+                  )
+                ? "Sequence-specific TF - "
                 : "Non-sequence-specific factor - ",
             name: g.name,
           };
@@ -130,8 +172,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   return (
     <Box>
       <Stack direction="row" spacing={2}>
-        <FormControl fullWidth variant="outlined">
-          <Autocomplete
+        <StyledFormControl fullWidth variant="outlined">
+          <StyledAutocomplete
             options={options}
             onKeyDown={(event: any) => {
               if (event.key === "Enter" && snpValue) {
@@ -146,27 +188,20 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 );
               }
             }}
-            popupIcon={
-              <ArrowDropDown sx={{ color: theme.palette.gray.main }} />
-            }
-            clearIcon={<ClearIcon sx={{ color: theme.palette.gray.main }} />}
+            popupIcon={<ArrowDropDown sx={{ color: "gray" }} />}
+            clearIcon={<ClearIcon sx={{ color: "gray" }} />}
             sx={{
               "& .MuiOutlinedInput-root": {
                 height: "40px",
                 borderRadius: "24px",
-                backgroundColor: "#FFFFFF", // White background when not focused
-                "&:hover fieldset": {
-                  borderColor: theme.palette.primary.main, // Purple border on hover
-                },
-                "&.Mui-focused": {
-                  backgroundColor: theme.palette.gray.main, // Light purple background on focus
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: theme.palette.primary.main, // Purple border on focus
-                },
+                paddingLeft: "12px",
+              },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "gray",
               },
               "& .MuiInputBase-input::placeholder": {
-                color: theme.palette.primary.main, // Set placeholder color to primary color
+                color: "gray",
+                opacity: 1,
               },
             }}
             value={snpValue && formatFactorName(snpValue, assembly)}
@@ -178,7 +213,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
               }
               setInputValue(newInputValue);
             }}
-            noOptionsText="Example: CTCF, APOE"
+            noOptionsText="Example: CTCF"
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -186,15 +221,16 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 fullWidth
                 InputProps={{
                   ...params.InputProps,
+
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon sx={{ color: theme.palette.primary.main }} />
+                      <SearchIcon sx={{ color: "gray" }} />
                     </InputAdornment>
                   ),
-                  style: {
-                    textAlign: "center",
-                    color: theme.palette.primary.main,
-                  },
+                  style: { textAlign: "center", color: "gray" },
+                }}
+                InputLabelProps={{
+                  style: { textAlign: "center", width: "100%", color: "gray" },
                 }}
               />
             )}
@@ -209,7 +245,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                       </Box>
                       {selectedSnp && (
                         <Typography variant="body2" color="text.secondary">
-                          {`${selectedSnp.label} ${selectedSnp.total} experiments, ${selectedSnp.biosamples} cell types`}
+                          {`${selectedSnp.label} ${selectedSnp.total} experiments,${selectedSnp.biosamples} cell types`}
                         </Typography>
                       )}
                     </Grid2>
@@ -218,21 +254,28 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
               );
             }}
           />
-        </FormControl>
+        </StyledFormControl>
 
         <Button
           variant="contained"
           color="secondary"
+          //  onClick={handleSubmit}
           sx={{
             width: "125px",
             height: "41px",
             padding: "8px 24px",
             borderRadius: "24px",
-            backgroundColor: theme.palette.primary.main, // Use theme primary color
+            backgroundColor: "#8169BF",
             color: "white",
+            fontFeatureSettings: "'clig' off, 'liga' off",
+            fontSize: "15px",
+            fontStyle: "normal",
+            fontWeight: 500,
+            lineHeight: "26px",
+            letterSpacing: "0.46px",
             textTransform: "none",
             "&:hover": {
-              backgroundColor: theme.palette.secondary.main, // Use theme secondary color for hover
+              backgroundColor: "#7151A1",
             },
           }}
           href={
@@ -247,7 +290,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
         </Button>
       </Stack>
       <Box sx={{ marginLeft: "10px" }}>
-        <Typography variant="caption" sx={{ color: theme.palette.gray.main }}>
+        <Typography variant="caption" sx={{ color: "gray" }}>
           Example: CTCF, ATF3
         </Typography>
       </Box>

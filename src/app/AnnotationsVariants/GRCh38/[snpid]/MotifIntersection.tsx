@@ -390,7 +390,7 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
             searchable
           />
         ) : (
-          <DataTable
+          <DataTable          
             columns={completeViewTableColumns}
             rows={filteredResults}
             itemsPerPage={isMobile ? 3 : 5}
