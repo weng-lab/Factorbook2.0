@@ -218,7 +218,7 @@ const FactorDetailsPage = () => {
               label={`Search ${factor} peaks by region`}
               value="Search"
               component={Link}
-              href={`/TranscriptionFactor/${species}/${factor}/Search`}
+              href={`/TranscriptionFactor/${species}/${factor}/PeakSearch`}
               sx={{
                 color: detail === "Search" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
