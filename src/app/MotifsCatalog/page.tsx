@@ -112,9 +112,20 @@ const MotifsCatalogPage = () => {
     if (selectedFile) {
       const fileName = selectedFile.name;
       const motifName = fileName.replace(".meme", "");
-      const redirectUrl = `/MotifsCatalog/human/${motifName}`;
 
-      // Redirect to the motif URL based on the uploaded file name
+      // Replace spaces in the motif name
+      const sanitizedMotifName = motifName.replace(/\s+/g, "");
+
+      // This is the actual redirection URL used for fetching or loading the motif
+      const redirectUrl = `/MotifsCatalog/Human/${sanitizedMotifName}`;
+
+      // This is the URL that will be shown in the browser's address bar
+      const displayUrl = `/FileUpload/${sanitizedMotifName}`;
+
+      // Use history.pushState to change the URL in the address bar without a full page reload
+      window.history.pushState({}, "", displayUrl);
+
+      // Redirect to the motif URL based on the sanitized file name
       window.location.href = redirectUrl;
     }
   };
@@ -184,7 +195,7 @@ const MotifsCatalogPage = () => {
               }}
               onClick={() => {
                 if (val) {
-                  window.open(`/MotifsCatalog/human/${val}`, "_self");
+                  window.open(`/MotifsCatalog/Human/${val}`, "_self");
                 }
               }}
             >
