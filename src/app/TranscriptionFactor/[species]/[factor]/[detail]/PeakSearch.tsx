@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, SetStateAction, useMemo } from "react";
-import { Pagination, PaginationItem } from "@mui/material";
+import { Grid, Pagination, PaginationItem, Divider } from "@mui/material";
 import { Box, Typography, Button, styled, useTheme, TextField, Link, Modal } from "@mui/material";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import { useQuery } from "@apollo/client";
@@ -14,7 +14,7 @@ import {
 import { useMotifsInPeak } from "./hooks";
 import { MotifQueryDataOccurrence, MotifQueryDataOccurrenceMotif, PeakQueryResponse, PeakResult, TomtomMatchQueryData } from "./types";
 import { PEAK_QUERY,  TOMTOM_MATCH_QUERY } from "./Queries";
-
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 const style = {
   position: 'absolute',
   top: '50%',
@@ -387,18 +387,20 @@ const MotifsModal: React.FC<MotifsModalProps> = ({
   return (
       <Modal open={open} onClose={() => setOpen(false)}>
         <>
-          <Typography variant="h6">
+          <Box sx={style}>
+          <Typography variant="h4">
               Motifs found in {chromosome}:{peakStart.toLocaleString()}-{peakEnd.toLocaleString()}
           </Typography>
-          
-          <Box sx={style}>
+          <br/>
               <div style={{ display: 'flex', justifyContent: 'center' }}>{peakView}</div>
+              <br/>
               {motifs && (
                   <DataTable
+                      searchable
                       columns={MOTIFS_COLS}
                       rows={motifs}
                       sortColumn={1}
-                      key={"sebvibeGFVE"+page}
+                      key={"tfpeaks"+page}
                       hidePageMenu
                       sortDescending
                       itemsPerPage={pageSize}
@@ -409,7 +411,7 @@ const MotifsModal: React.FC<MotifsModalProps> = ({
               <br/>
               {motifs  && (
         <Pagination
-          sx={{ marginLeft: "450px" }}
+          sx={{ alignItems: 'center', marginLeft: "250px" }}
           renderItem={(item) => (
             <PaginationItem
               sx={{
@@ -437,7 +439,7 @@ const MotifsModal: React.FC<MotifsModalProps> = ({
 
 
 
-const Search: React.FC = () => {
+const PeakSearch: React.FC = () => {
   const theme = useTheme();
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -496,21 +498,58 @@ const { data: peaksData, loading, error } = useQuery<PeakQueryResponse>(PEAK_QUE
         skip: formattedRegions.length === 0
     });
 
-  console.log("peaksData",peaksData)
+  
   return (
     <Box
       sx={{
-        width: "100%",
+      
         bgcolor: "background.paper",
         mt: 4,
-        mx: "auto",
-        maxWidth: "800px",
-      }}
+        
+        }}
     >
-      <Typography variant="h6" gutterBottom>
-        Searching ENCODE ChIP-seq peaks for {factor}
+      {<>
+        <Grid container alignItems="center" justifyContent="space-between">
+           <Grid item>
+           <Typography variant="h4" >
+        {peaksData && peaksData.peaksrange.data   ?  `Showing ${factor} ChIP-seq peaks in ${value}` : `Searching ENCODE ChIP-seq peaks for ${factor}`} 
       </Typography>
+           </Grid>
+            <Grid item>
+              <Button
+                onClick={() => {
+                 setRegions([])
+                }}
+                variant="contained"
+                color="secondary"
+                sx={{
+                  width: "220px",
+                  height: "41px",
+                  padding: "8px 24px",
+                  borderRadius: "24px",
+                  backgroundColor: "#8169BF",
+                  color: "white",
+                  fontFeatureSettings: "'clig' off, 'liga' off",
+                  fontSize: "15px",
+                  fontStyle: "normal",
+                  fontWeight: 500,
+                  letterSpacing: "0.46px",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: "#7151A1",
+                  },
+                }}
+              >
+                <NavigateBeforeIcon />
+                Perform New Search
+              </Button>
+            </Grid>
+          </Grid>
+
+          <Divider sx={{ my: 4 }} />
+      </>}
       {regions.length==0 && <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+          <br/>
           <Typography variant="h6" gutterBottom>
           {`Enter genomic coordinates (${species.toLowerCase() ==="human" ? "GRCh38" : "mm10"}):`}
           </Typography>
@@ -554,16 +593,17 @@ const { data: peaksData, loading, error } = useQuery<PeakQueryResponse>(PEAK_QUE
             </Button>
             <br/>
             
-            <Typography variant="body2">
+            <Typography variant="body2" sx={{marginLeft: "8px"}}>
               example: chr1:100,000,000-100,101,000
             </Typography>
           </StyledSearchBox>
       </Box>}
-      {peaksData && peaksData.peaksrange.data &&  <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}><DataTable
+      {peaksData && peaksData.peaksrange.data &&  <Box sx={{ mx: "auto", alignItems: 'center', maxWidth: "1000px"}}><DataTable
             key="tfpeaks"
             columns={PEAKS_COLUMNS()}
             rows={peaksData.peaksrange.data}
             itemsPerPage={10}
+            sortColumn={1}
             searchable
             tableTitle={`${peaksData.peaksrange.data.length} ${factor} peaks matched your input:`}
           />
@@ -647,4 +687,4 @@ const { data: peaksData, loading, error } = useQuery<PeakQueryResponse>(PEAK_QUE
   );
 };
 
-export default Search;
+export default PeakSearch;
