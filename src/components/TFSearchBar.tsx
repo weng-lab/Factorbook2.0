@@ -28,29 +28,27 @@ interface TFSearchBarProps {
   assembly: string;
 }
 
-// Custom styled Autocomplete with theme-based border and focus colors
 const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "white", // Default border color when not focused
+      borderColor: "white",
     },
     "&:hover fieldset": {
-      borderColor: "white", // Hover border color when not focused
+      borderColor: "white",
     },
     "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.main, // Border color on focus (primary color)
-      borderWidth: 2, // Thicker border when focused
+      borderColor: theme.palette.primary.main,
+      borderWidth: 2,
     },
   },
   "& .MuiAutocomplete-endAdornment": {
-    color: "white", // Dropdown arrow icon color when not focused
+    color: "white",
   },
 }));
 
-// Custom styled FormControl with theme-based focus color
 const StyledFormControl = styled(FormControl)(({ theme }) => ({
   "& .MuiInputLabel-root.Mui-focused": {
-    color: theme.palette.primary.main, // Label color when focused
+    color: theme.palette.primary.main,
   },
 }));
 
@@ -61,14 +59,13 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
-  const [snpValue, setSnpValue] = useState(null);
-  const [inputValue, setInputValue] = useState("");
-  const [options, setOptions] = useState([]);
+  const [snpValue, setSnpValue] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState<string>("");
+  const [options, setOptions] = useState<string[]>([]);
   const [snpids, setSnpIds] = useState<any[]>([]);
   const [tfA, setTFA] = useState<Map<string, any> | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Fetch and inflate the data from the gzipped JSON file
   useEffect(() => {
     if (!loading) {
       fetch("/tf-assignments.json.gz")
@@ -89,7 +86,6 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
     }
   }, [loading]);
 
-  // Handle changes in the search bar with debouncing
   const onSearchChange = async (value: string, tfAassignment: any) => {
     setOptions([]);
     const response = await fetch(Config.API.GraphqlAPI, {
@@ -162,7 +158,6 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
     }
   };
 
-  // Debouncing the search input change
   const debounceFn = useCallback(debounce(onSearchChange, 300), []);
 
   return (
@@ -171,21 +166,21 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
         <StyledFormControl fullWidth variant="outlined">
           <StyledAutocomplete
             options={options}
-            onKeyDown={(event: any) => {
+            onKeyDown={(event) => {
               if (event.key === "Enter" && snpValue) {
                 event.preventDefault();
                 window.open(
                   snpValue
-                    ? `/TranscriptionFactor/${
+                    ? `/transcriptionfactor/${
                         assembly === "GRCh38" ? "human" : "mouse"
-                      }/${snpValue}/Function`
+                      }/${snpValue.toLowerCase()}/function`
                     : "",
                   "_self"
                 );
               }
             }}
-            popupIcon={<ArrowDropDown sx={{ color: "white" }} />} // Arrow icon white when not focused
-            clearIcon={<ClearIcon sx={{ color: "white" }} />} // Clear icon white when not focused
+            popupIcon={<ArrowDropDown sx={{ color: "white" }} />}
+            clearIcon={<ClearIcon sx={{ color: "white" }} />}
             sx={{
               "& .MuiOutlinedInput-root": {
                 height: "40px",
@@ -193,23 +188,27 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 paddingLeft: "12px",
               },
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "white", // White border when not focused
+                borderColor: "white",
               },
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: theme.palette.primary.main, // Primary border when focused
+                borderColor: theme.palette.primary.main,
               },
               "& .MuiInputBase-input::placeholder": {
-                color: "gray", // Placeholder color
+                color: "gray",
                 opacity: 1,
               },
             }}
             value={snpValue && formatFactorName(snpValue, assembly)}
-            onChange={(_, newValue: any) => setSnpValue(newValue)}
+            onChange={(
+              event: React.SyntheticEvent,
+              newValue: unknown,
+              reason: any
+            ) => {
+              setSnpValue(newValue as string | null); // Type casting 'unknown' to 'string | null'
+            }}
             inputValue={inputValue}
-            onInputChange={(_, newInputValue) => {
-              if (newInputValue) {
-                debounceFn(newInputValue, tfA);
-              }
+            onInputChange={(_: React.SyntheticEvent, newInputValue: string) => {
+              debounceFn(newInputValue, tfA);
               setInputValue(newInputValue);
             }}
             noOptionsText="Example: CTCF"
@@ -222,8 +221,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                   ...params.InputProps,
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "white" }} />{" "}
-                      {/* Search icon white when not focused */}
+                      <SearchIcon sx={{ color: "white" }} />
                     </InputAdornment>
                   ),
                   style: { textAlign: "center", color: "white" },
@@ -278,9 +276,9 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
           }}
           href={
             snpValue
-              ? `/TranscriptionFactor/${
+              ? `/transcriptionfactor/${
                   assembly === "GRCh38" ? "human" : "mouse"
-                }/${snpValue}/Function`
+                }/${snpValue.toLowerCase()}/function`
               : ""
           }
         >

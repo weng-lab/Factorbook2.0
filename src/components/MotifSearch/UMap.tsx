@@ -97,9 +97,9 @@ const COLUMNS = (title: string) => {
       render: (x: MMotif) => (
         <Link
           style={{ color: "#8169BF" }}
-          href={`/TranscriptionFactor/Human/${
-            x.factor.split("phospho")[0]
-          }/Function`}
+          href={`/transcriptionfactor/human/${x.factor
+            .split("phospho")[0]
+            .toLowerCase()}/function`}
           rel="noopener noreferrer"
           target="_blank"
         >
@@ -115,7 +115,7 @@ const COLUMNS = (title: string) => {
         return (
           <Link
             style={{ color: "#8169BF" }}
-            href={`https://www.encodeproject.org/experiments/${x.accession}`}
+            href={`https://www.encodeproject.org/experiments/${x.accession.toLowerCase()}`}
             rel="noopener noreferrer"
             target="_blank"
           >

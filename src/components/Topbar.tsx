@@ -36,12 +36,12 @@ const navItems = [
     title: "Portals",
     subItems: [
       {
-        text: "Transcription Factors  in Humans",
+        text: "Transcription Factors in Humans",
         href: "/transcriptionfactor/human",
       },
       {
         text: "Transcription Factors in Mouse",
-        href: "/TranscriptionFactor/Mouse",
+        href: "/transcriptionfactor/mouse",
       },
       { text: "Motif Catalog", href: "/motifscatalog" },
       { text: "Annotations", href: "/annotationsvariants" },
@@ -150,7 +150,7 @@ const Topbar: React.FC = () => {
                       <ListItemButton
                         key={subItem.text}
                         component="a"
-                        href={subItem.href}
+                        href={subItem.href.toLowerCase()} // Lowercase URL
                       >
                         <ListItemText
                           primary={subItem.text}
@@ -162,7 +162,7 @@ const Topbar: React.FC = () => {
                 </Collapse>
               </>
             ) : (
-              <ListItemButton component="a" href={item.href}>
+              <ListItemButton component="a" href={item.href.toLowerCase()}>
                 <ListItemText primary={item.title} />
                 {item.icon && (
                   <Box
@@ -335,7 +335,7 @@ const Topbar: React.FC = () => {
                             <MenuItem
                               key={subItem.text}
                               component="a"
-                              href={subItem.href}
+                              href={subItem.href.toLowerCase()} // Lowercase URLs
                             >
                               {subItem.text}
                             </MenuItem>
@@ -345,7 +345,7 @@ const Topbar: React.FC = () => {
                     ) : (
                       <Button
                         key={item.title}
-                        href={item.href}
+                        href={item.href.toLowerCase()} // Lowercase URL
                         sx={{
                           fontSize: "15px",
                           fontStyle: "normal",

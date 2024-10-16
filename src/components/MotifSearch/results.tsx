@@ -134,7 +134,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
               style={{ color: "#8169BF" }}
               rel="noopener noreferrer"
               target="_blank"
-              href={`/TranscriptionFactor/Human/${data.peakDataset.datasets[0].target}/Function`}
+              href={`/transcriptionfactor/human/${data.peakDataset.datasets[0].target.toLowerCase()}/function`}
             >
               <strong>{data.peakDataset.datasets[0].target}</strong>
             </Link>{" "}
@@ -143,7 +143,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
               style={{ color: "#8169BF" }}
               rel="noopener noreferrer"
               target="_blank"
-              href={`/CellType/Human/${data.peakDataset.datasets[0].biosample}`}
+              href={`/celltype/human/${data.peakDataset.datasets[0].biosample.toLowerCase()}`}
             >
               <strong>{data.peakDataset.datasets[0].biosample}</strong>
             </Link>
@@ -154,7 +154,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
               style={{ color: "#8169BF" }}
               rel="noopener noreferrer"
               target="_blank"
-              href={`/experiment/${data.peakDataset.datasets[0].accession}`}
+              href={`/experiment/${data.peakDataset.datasets[0].accession.toLowerCase()}`}
             >
               {data.peakDataset.datasets[0].accession}
             </Link>
