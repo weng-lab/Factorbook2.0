@@ -2,9 +2,9 @@ import React from "react";
 import { GetServerSideProps } from "next";
 import { ParsedUrlQuery } from "querystring";
 import { getClient } from ".../../../lib/client";
-import { MOTIF_QUERY } from "@/components/MotifMeme/Queries";
-import MotifEnrichmentMEME from "@/components/MotifMeme/MotifEnrichmentMEME";
-import { MotifResponse } from "@/components/MotifMeme/Types";
+import { MOTIF_QUERY } from "@/components/motifmeme/queries";
+import MotifEnrichmentMEME from "@/components/motifmeme/motifenrichmentmeme";
+import { MotifResponse } from "@/components/motifmeme/types";
 
 interface Params extends ParsedUrlQuery {
   peakAccession: string;
@@ -45,12 +45,7 @@ const MotifPage: React.FC<MotifPageProps> = ({
   factor,
   initialMotifData,
 }) => {
-  return (
-    <MotifEnrichmentMEME
-      factor={factor}
-      species={species}
-    />
-  );
+  return <MotifEnrichmentMEME factor={factor} species={species} />;
 };
 
 export default MotifPage;

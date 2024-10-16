@@ -1,2 +1,2 @@
-import GeneExpressionPage from "@/app/TranscriptionFactor/[species]/[factor]/[detail]/GeneExpression";
+import GeneExpressionPage from "@/app/transcriptionfactor/[species]/[factor]/[detail]/geneexpression";
 export { GeneExpressionPage };

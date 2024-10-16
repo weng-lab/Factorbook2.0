@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import Summary from "./Summary";
+import Summary from "./summary";
 
 const CellTypePage: React.FC = () => {
   const router = useRouter();

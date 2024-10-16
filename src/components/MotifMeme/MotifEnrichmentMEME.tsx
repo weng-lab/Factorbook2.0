@@ -39,22 +39,22 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
-import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/MotifMeme/Queries";
+import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/motifmeme/queries";
 import {
   DataResponse,
   Dataset,
   MotifResponse,
   ReplicatedPeaks,
-} from "@/components/MotifMeme/Types";
+} from "@/components/motifmeme/types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 import { DNALogo, DNAAlphabet } from "logojs-react";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
-import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
-import CentralityPlot from "./CenrtralityPlot";
-import ATACPlot from "./ATACPlot";
-import ConservationPlot from "./ConservationPlot";
-import { TOMTOMMessage } from "./TOMTOMMessage";
+import { meme, MMotif } from "@/components/motifsearch/motifutil";
+import CentralityPlot from "./centralityplot";
+import ATACPlot from "./atacplot";
+import ConservationPlot from "./conservationplot";
+import { TOMTOMMessage } from "./tomtommessage";
 
 // Helper function to convert numbers to scientific notation
 export function toScientificNotationElement(

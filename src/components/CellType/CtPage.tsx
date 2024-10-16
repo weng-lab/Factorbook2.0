@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Box, Container } from "@mui/material";
-import Summary from "./Summary";
+import Summary from "./summary";
 
 const CtPage: React.FC<{ species: string }> = ({ species }) => {
   const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";

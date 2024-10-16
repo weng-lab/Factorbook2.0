@@ -4,10 +4,10 @@ import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 
 const TranscriptionFactors = dynamic(
-  () => import("@/components/TranscriptionFactors")
+  () => import("@/components/transcriptionfactors")
 );
 const TranscriptionTabs = dynamic(
-  () => import("@/components/TranscriptionTabs")
+  () => import("@/components/transcriptiontabs")
 );
 
 type ContentType = "Human" | "Mouse";
@@ -69,10 +69,16 @@ const TranscriptionFactorsPage: React.FC = () => {
   }
 
   const { header, content, image } = contentMap[type];
-  const assembly: string = type ==="Human" ? "GRCh38" : "mm10";
+  const assembly: string = type === "Human" ? "GRCh38" : "mm10";
   return (
     <>
-      <TranscriptionFactors tf header={header} content={content} image={image} assembly={assembly} />
+      <TranscriptionFactors
+        tf
+        header={header}
+        content={content}
+        image={image}
+        assembly={assembly}
+      />
       <TranscriptionTabs species={type} />
     </>
   );

@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"; // For the tick mark
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline"; // For no match
-import { TOMTOMMessageProps } from "./Types"; // Assuming TOMTOMMessageProps is properly defined
+import { TOMTOMMessageProps } from "./types"; // Assuming TOMTOMMessageProps is properly defined
 
 export const TOMTOMMessage: React.FC<TOMTOMMessageProps> = ({
   tomtomMatch,

@@ -3,14 +3,14 @@
 import * as React from "react";
 import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
-import TFSearchBar from "@/components/TFSearchBar";
+import TFSearchBar from "@/components/tfsearchbar";
 
 const TranscriptionFactors = ({
   header,
   content,
   image,
   tf,
-  assembly
+  assembly,
 }: {
   header: string;
   content: string;
@@ -114,9 +114,7 @@ const TranscriptionFactors = ({
               >
                 {content}
               </Typography>
-              {tf ? <TFSearchBar                
-                assembly={assembly || "GRCh38"}
-              />: <></>}
+              {tf ? <TFSearchBar assembly={assembly || "GRCh38"} /> : <></>}
             </Grid2>
             <Grid2
               xs={12}

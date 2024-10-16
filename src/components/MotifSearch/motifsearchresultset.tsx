@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from "react";
-import { ApiContext } from "../../ApiContext";
+import { ApiContext } from "../../apicontext";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 import { Divider, Box, useMediaQuery, useTheme } from "@mui/material";
 import MotifResult from "./results";
-import { logLikelihood } from "./MotifUtil";
+import { logLikelihood } from "./motifutil";
 
 const MOTIFS_PER_PAGE = 3;
 

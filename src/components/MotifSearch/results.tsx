@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { RawLogo, DNAAlphabet } from "logojs-react";
 import Link from "next/link";
-import { TOMTOMMessage } from "../MotifMeme/TOMTOMMessage";
-import { ApiContext } from "../../ApiContext";
+import { TOMTOMMessage } from "../motifmeme/tomtommessage";
+import { ApiContext } from "../../apicontext";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 import { Grid, Divider, useMediaQuery, useTheme } from "@mui/material";
@@ -134,7 +134,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
               style={{ color: "#8169BF" }}
               rel="noopener noreferrer"
               target="_blank"
-              href={`/TranscriptionFactor/human/${data.peakDataset.datasets[0].target}/function`}
+              href={`/TranscriptionFactor/Human/${data.peakDataset.datasets[0].target}/Function`}
             >
               <strong>{data.peakDataset.datasets[0].target}</strong>
             </Link>{" "}
@@ -143,7 +143,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
               style={{ color: "#8169BF" }}
               rel="noopener noreferrer"
               target="_blank"
-              href={`/CellType/human/${data.peakDataset.datasets[0].biosample}`}
+              href={`/CellType/Human/${data.peakDataset.datasets[0].biosample}`}
             >
               <strong>{data.peakDataset.datasets[0].biosample}</strong>
             </Link>

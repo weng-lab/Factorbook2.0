@@ -3,12 +3,12 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { CircularProgress, Typography, Box } from "@mui/material";
-import Layout from "@/components/MotifMeme/Aggregate/Layout";
-import GraphSet from "@/components/MotifMeme/Aggregate/GraphSet";
+import Layout from "@/components/motifmeme/aggregate/layout";
+import GraphSet from "@/components/motifmeme/aggregate/graphset";
 import {
   AGGREGATE_DATA_QUERY,
   HISTONE_METADATA_QUERY,
-} from "@/components/MotifMeme/Aggregate/Queries";
+} from "@/components/motifmeme/aggregate/queries";
 
 interface EpigeneticProfileProps {
   species: string;

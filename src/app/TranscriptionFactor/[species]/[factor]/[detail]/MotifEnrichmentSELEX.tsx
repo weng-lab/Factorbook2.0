@@ -30,7 +30,7 @@ import {
   useTheme,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid2 for MUI v2
-import { ApiContext } from "@/ApiContext";
+import { ApiContext } from "@/apicontext";
 import { Logo, DNAAlphabet } from "logojs-react";
 import { scaleLinear, scaleBand } from "@visx/scale";
 import { Group } from "@visx/group";
@@ -42,13 +42,13 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import {
   DEEP_LEARNED_MOTIFS_SELEX_QUERY,
   DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
-} from "./Queries";
+} from "./queries";
 import {
   DeepLearnedSELEXMotifsQueryResponse,
   DeepLearnedSELEXMotifsMetadataQueryResponse,
 } from "./types";
 import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
-import { meme, MMotif } from "@/components/MotifSearch/MotifUtil";
+import { meme, MMotif } from "@/components/motifsearch/motifutil";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 
 // Add custom colors to Alphabet A and T

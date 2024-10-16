@@ -35,10 +35,16 @@ const navItems = [
   {
     title: "Portals",
     subItems: [
-      { text: "Transcription Factors  in Humans", href: "/TranscriptionFactor/Human" },
-      { text: "Transcription Factors in Mouse", href: "/TranscriptionFactor/Mouse" },
-      { text: "Motif Catalog", href: "/MotifsCatalog" },
-      { text: "Annotations", href: "/AnnotationsVariants" },
+      {
+        text: "Transcription Factors  in Humans",
+        href: "/transcriptionfactor/human",
+      },
+      {
+        text: "Transcription Factors in Mouse",
+        href: "/TranscriptionFactor/Mouse",
+      },
+      { text: "Motif Catalog", href: "/motifscatalog" },
+      { text: "Annotations", href: "/annotationsvariants" },
     ],
   },
   {
@@ -46,7 +52,7 @@ const navItems = [
     href: "#",
     icon: <MenuBookIcon sx={{ color: "#8169BF" }} />,
   },
-  { title: "Download", href: "/Downloads" },
+  { title: "Download", href: "/downloads" },
 ];
 
 const Topbar: React.FC = () => {

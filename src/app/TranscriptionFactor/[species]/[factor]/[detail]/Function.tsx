@@ -13,21 +13,21 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import {
   FACTOR_DESCRIPTION_QUERY,
   DATASETS_QUERY,
-} from "@/components/tf/Query";
+} from "@/components/tf/query";
 import {
   FactorQueryResponse,
   DatasetQueryResponse,
   FunctionPageProps,
-} from "@/components/CellType/types";
-import { getRCSBImageUrl } from "@/components/tf/Functions";
-import ReferenceSection from "@/components/Container";
-import ContentCard from "@/components/ContentCard";
+} from "@/components/celltype/types";
+import { getRCSBImageUrl } from "@/components/tf/functions";
+import ReferenceSection from "@/components/container";
+import ContentCard from "@/components/contentcard";
 import {
   DataTable,
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
-import CtDetails from "@/components/CellType/CtDetails";
-import { BiosamplePartitionedDatasetCollection } from "@/components/Types";
+import CtDetails from "@/components/celltype/ctdetails";
+import { BiosamplePartitionedDatasetCollection } from "@/components/types";
 
 /** Utility to check if a description has biological information */
 const looksBiological = (value: string): boolean => {

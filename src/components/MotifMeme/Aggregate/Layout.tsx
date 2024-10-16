@@ -19,9 +19,9 @@ import {
 } from "@mui/icons-material";
 import { useRouter, useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
-import { AGGREGATE_METADATA_QUERY } from "@/components/MotifMeme/Aggregate/Queries";
+import { AGGREGATE_METADATA_QUERY } from "@/components/motifmeme/aggregate/queries";
 import { debounce } from "lodash";
-import { histoneBiosamplePartitions } from "./Utils";
+import { histoneBiosamplePartitions } from "./utils";
 
 interface Dataset {
   biosample: string;

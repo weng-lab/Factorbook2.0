@@ -14,13 +14,13 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
-import SelectComponent from "@/components/Select";
-import PortalPanel from "@/components/PortalPanel";
+import Header from "@/components/header";
+import SelectComponent from "@/components/select";
+import PortalPanel from "@/components/portalpanel";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import TFSearchbar from "@/components/TFSearchBar";
-import SnpSearchBar from "@/components/SnpSearchBar";
-import MotifSearchbar from "@/components/MotifSearchbar";
+import TFSearchbar from "@/components/tfsearchbar";
+import SnpSearchBar from "@/components/snpsearchbar";
+import MotifSearchbar from "@/components/motifsearchbar";
 
 const Homepage = () => {
   const theme = useTheme();
@@ -52,7 +52,7 @@ const Homepage = () => {
     if (selectedValue) {
       const capitalizedValue =
         selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1);
-      router.push(`/TranscriptionFactor/${capitalizedValue}`);
+      router.push(`/transcriptionfactor/${capitalizedValue}`);
     }
   };
 
@@ -232,7 +232,7 @@ const Homepage = () => {
                         color: "black", // Text color of dropdown options
                         backgroundColor: "white", // Background color for the dropdown items
                         "&:hover": {
-                          backgroundColor: theme.palette.grey[200], // Slightly different hover effect
+                          backgroundColor: theme.palette.gray.main, // Slightly different hover effect
                         },
                       },
                     },
@@ -337,21 +337,21 @@ const Homepage = () => {
 
       <PortalPanel
         title="Motif Site Catalog"
-        description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
+        description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences..."
         imageSrc="/IllustrationsNew.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
-        buttonHref="/MotifsCatalog"
+        buttonHref="/motifscatalog"
         reverse={true}
       />
 
       <PortalPanel
         title="Annotate Variants"
-        description="Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants."
+        description="Genetic variants in regulatory elements of the human genome play a critical role in influencing traits..."
         imageSrc="/Human.png"
         imageAlt="Annotate Variants"
         buttonText="Explore Annotations"
-        buttonHref="/AnnotationsVariants"
+        buttonHref="/annotationsvariants"
         reverse={false}
       />
     </>

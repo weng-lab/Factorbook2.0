@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { useQuery, QueryResult } from '@apollo/client';
-import { ApiContext } from '@/ApiContext';
+import { ApiContext } from '@/apicontext';
 import {
     AggregateMetadataQueryResponse,
     AggregateDataQueryResponse,
@@ -13,7 +13,7 @@ import {
     AGGREGATE_DATA_QUERY,
     HISTONE_METADATA_QUERY,
     FOOTPRINT_AGGREGATE_QUERY,
-} from './Queries';
+} from './queries';
 
 function useApiClient() {
     const context = useContext(ApiContext);

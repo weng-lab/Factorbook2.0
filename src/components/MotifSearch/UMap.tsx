@@ -20,7 +20,7 @@ import { DNALogo } from "logojs-react";
 import { downloadSVG } from "@/components/tf/geneexpression/utils";
 
 import { downloadData } from "@/utilities/svgdata";
-import { MMotif, pwmArray, meme, rc, lower5, upper5, range } from "./MotifUtil";
+import { MMotif, pwmArray, meme, rc, lower5, upper5, range } from "./motifutil";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import Link from "next/link";

@@ -15,7 +15,7 @@ import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import { styled, useTheme } from "@mui/material/styles";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import MotifUMAP from "@/components/MotifSearch/UMap";
+import MotifUMAP from "@/components/motifsearch/umap";
 import ErrorMessage from "./upload/errormessage";
 
 // Styling for text fields and upload areas
@@ -302,14 +302,14 @@ const MotifsCatalogPage = () => {
               <CustomButton
                 variant="contained"
                 startIcon={<SaveAltIcon />}
-                href="/MotifsCatalog/factorbook_chipseq_meme_motifs.tsv"
+                href="/motifscatalog/factorbook_chipseq_meme_motifs.tsv"
               >
                 Download motifs in MEME Format
               </CustomButton>
               <CustomButton
                 variant="contained"
                 startIcon={<SaveAltIcon />}
-                href="/MotifsCatalog/complete-factorbook-catalog.meme.gz"
+                href="/motifscatalog/complete-factorbook-catalog.meme.gz"
               >
                 Download metadata in TSV Format
               </CustomButton>
@@ -326,7 +326,7 @@ const MotifsCatalogPage = () => {
               <CustomButton
                 variant="contained"
                 startIcon={<SaveAltIcon />}
-                href="/MotifsCatalog/all-selex-motifs.meme.gz"
+                href="/motifscatalog/all-selex-motifs.meme.gz"
               >
                 Download motifs in MEME Format
               </CustomButton>

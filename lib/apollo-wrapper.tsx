@@ -8,7 +8,7 @@ import {
   ApolloClient as ApolloClientNext,
 } from "@apollo/experimental-nextjs-app-support";
 import { ReactNode } from "react";
-import { ApiContext, ApiContextType } from "@/ApiContext";
+import { ApiContext, ApiContextType } from "@/apicontext";
 import Config from "../config.json";
 
 function makeClient(): ApolloClientNext<NormalizedCacheObject> {

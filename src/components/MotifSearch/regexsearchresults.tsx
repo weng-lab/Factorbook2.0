@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { MotifSearchResultSet } from "./motifsearchresultset";
-import { regexToPWM } from "./MotifUtil";
+import { regexToPWM } from "./motifutil";
 import {
   Pagination,
   PaginationItem,

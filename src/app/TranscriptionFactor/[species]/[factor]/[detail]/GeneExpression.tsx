@@ -25,7 +25,7 @@ import {
   tissueColors,
 } from "@/components/tf/geneexpression/utils";
 import ViolinPlot from "./violin/violin";
-import StyledButton from "@/components/StyledButton";
+import StyledButton from "@/components/styledbutton";
 import { groupBy } from "queryz";
 
 const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {

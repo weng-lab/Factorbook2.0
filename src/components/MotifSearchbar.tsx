@@ -1,7 +1,6 @@
 "use client";
 
-import { debounce } from "lodash";
-import React, { useState, useCallback } from "react";
+import React from "react";
 
 import SearchIcon from "@mui/icons-material/Search";
 import {
@@ -12,21 +11,15 @@ import {
   InputAdornment,
 } from "@mui/material";
 
-
 import Stack from "@mui/material/Stack";
-import Config from "../../config.json";
-
 
 const MotifSearchbar: React.FC = () => {
-  
-  const [val, setVal] = React.useState<String | null >(null);
-  
-  
+  const [val, setVal] = React.useState<String | null>(null);
+
   return (
     <Box>
-                <Stack direction="row" spacing={2}>
-                  
-                  <TextField
+      <Stack direction="row" spacing={2}>
+        <TextField
           variant="outlined"
           placeholder={"enter sequence or regex"}
           fullWidth
@@ -47,10 +40,9 @@ const MotifSearchbar: React.FC = () => {
               color: "gray", // Placeholder color
             },
           }}
-          onChange={(e)=>{           
-
-            setVal(e.target.value)
-           }}
+          onChange={(e) => {
+            setVal(e.target.value);
+          }}
           sx={{
             "& .MuiOutlinedInput-root": {
               height: "40px",
@@ -69,45 +61,44 @@ const MotifSearchbar: React.FC = () => {
             "& .MuiInputBase-input::placeholder": {
               color: "gray", // Placeholder color
               opacity: 1, // Ensure placeholder text is fully opaque
-            }
+            },
           }}
         />
-         <Button
-                    variant="contained"
-                    color="secondary"
-                  //  onClick={handleSubmit}
-                  onClick={()=>{
-                    window.open(`/MotifsCatalog/human/${val}`, "_self")
-                    
-                  }}
-                    sx={{
-                      width: "100px",
-                      height: "41px",
-                      padding: "8px 24px",
-                      borderRadius: "24px",
-                      backgroundColor: "#8169BF",
-                      color: "white",
-                      fontFeatureSettings: "'clig' off, 'liga' off",
-                      fontSize: "15px",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      lineHeight: "26px",
-                      letterSpacing: "0.46px",
-                      textTransform: "none",
-                      "&:hover": {
-                        backgroundColor: "#7151A1",
-                      },
-                    }}
-                   // href={snpValue ? str : ""}
-                  >
-                    Search
-                  </Button>
-                </Stack>
-                <Box sx={{ marginLeft: "10px" }}>
-                  <Typography variant="caption" sx={{ color: "gray" }}>
-                  Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
-                  </Typography>
-                </Box>
+        <Button
+          variant="contained"
+          color="secondary"
+          //  onClick={handleSubmit}
+          onClick={() => {
+            window.open(`/MotifsCatalog/Human/${val}`, "_self");
+          }}
+          sx={{
+            width: "100px",
+            height: "41px",
+            padding: "8px 24px",
+            borderRadius: "24px",
+            backgroundColor: "#8169BF",
+            color: "white",
+            fontFeatureSettings: "'clig' off, 'liga' off",
+            fontSize: "15px",
+            fontStyle: "normal",
+            fontWeight: 500,
+            lineHeight: "26px",
+            letterSpacing: "0.46px",
+            textTransform: "none",
+            "&:hover": {
+              backgroundColor: "#7151A1",
+            },
+          }}
+          // href={snpValue ? str : ""}
+        >
+          Search
+        </Button>
+      </Stack>
+      <Box sx={{ marginLeft: "10px" }}>
+        <Typography variant="caption" sx={{ color: "gray" }}>
+          Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
+        </Typography>
+      </Box>
     </Box>
   );
 };

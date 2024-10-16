@@ -226,10 +226,10 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                       {/* Search icon white when not focused */}
                     </InputAdornment>
                   ),
-                  style: { textAlign: "center", color: "gray" },
+                  style: { textAlign: "center", color: "white" },
                 }}
                 InputLabelProps={{
-                  style: { textAlign: "center", width: "100%", color: "gray" },
+                  style: { textAlign: "center", width: "100%", color: "white" },
                 }}
               />
             )}

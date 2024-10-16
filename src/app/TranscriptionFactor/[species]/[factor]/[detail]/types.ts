@@ -1,4 +1,4 @@
-import { BiosamplePartitionedDatasetCollection, GenomicRange } from "@/components/Types"
+import { BiosamplePartitionedDatasetCollection, GenomicRange } from "@/components/types"
 
 
 export type PeakQueryResponse = {

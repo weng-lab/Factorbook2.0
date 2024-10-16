@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback } from "react";
-import TranscriptionFactors from "@/components/TranscriptionFactors";
+import TranscriptionFactors from "@/components/transcriptionfactors";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
@@ -196,7 +196,7 @@ const AnnotationsVariants = () => {
   const annotationsContent = `Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Often identified in genome-wide association studies, these variants can disrupt gene regulatory networks, leading to varied phenotypic effects or predispositions to diseases. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants.`;
 
   const str: string = selected
-    ? "/AnnotationsVariants/GRCh38/" +
+    ? "/annotationsvariants/GRCh38/" +
       snpValue +
       "/" +
       population +
@@ -204,7 +204,7 @@ const AnnotationsVariants = () => {
       subpopulation +
       "/" +
       rSquaredThreshold
-    : "/AnnotationsVariants/GRCh38/" + snpValue;
+    : "/annotationsvariants/GRCh38/" + snpValue;
 
   return (
     <>

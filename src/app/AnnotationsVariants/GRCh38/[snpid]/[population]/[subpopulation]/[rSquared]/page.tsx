@@ -16,13 +16,13 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import PeakIntersectionView from "../../../PeakIntersection";
-import MotifIntersectionView from "../../../MotifIntersection";
+import PeakIntersectionView from "../../../peakintersection";
+import MotifIntersectionView from "../../../motifintersection";
 import { useSNPData } from "../../../../../hooks";
 import { ChainFile } from "liftover";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
-import { chainFileFetch } from "../../../chainFileFetch";
+import { chainFileFetch } from "../../../chainfilefetch";
 
 const AnnotationDetailLD = () => {
   const theme = useTheme();

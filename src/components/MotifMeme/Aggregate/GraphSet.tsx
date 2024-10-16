@@ -9,7 +9,7 @@ import {
   Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Graph from "./Graphs";
+import Graph from "./graphs";
 
 // Group order defined for histone marks
 const MARK_TYPE_ORDER = [

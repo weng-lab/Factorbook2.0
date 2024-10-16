@@ -1,5 +1,5 @@
 import React from 'react';
-import { BiosamplePartitionedDatasetCollection } from "@/components/Types";
+import { BiosamplePartitionedDatasetCollection } from "@/components/types";
 
 export interface AggregateMetadataQueryResponse {
     dnase_aggregate_values: {

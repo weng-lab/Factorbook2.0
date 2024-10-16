@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ApiContext } from "@/ApiContext";
+import { ApiContext } from "@/apicontext";
 import { Container, Box, CircularProgress, Typography } from "@mui/material";
 import {
   DataTable,
@@ -8,7 +8,7 @@ import {
 import { SummaryProps } from "./types";
 
 import { useTFInfo } from "./hooks";
-import CtDetails from "./CtDetails";
+import CtDetails from "./ctdetails";
 import Link from "next/link";
 
 interface LinkWrapperProps {

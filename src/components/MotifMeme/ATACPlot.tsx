@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { CircularProgress, Button } from "@mui/material";
-import Graph from "./Aggregate/Graphs";
+import Graph from "./aggregate/graphs";
 import { downloadSVG } from "@/utilities/svgdata";
 
 const ATACPlot: React.FC<{

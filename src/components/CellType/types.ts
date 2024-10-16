@@ -1,4 +1,4 @@
-import { BiosamplePartitionedDatasetCollection } from '../../components/Types';
+import { BiosamplePartitionedDatasetCollection } from '../types';
 
 export type CtDetailProps = {
   species: string;

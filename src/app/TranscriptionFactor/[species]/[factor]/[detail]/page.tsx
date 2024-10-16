@@ -12,18 +12,18 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
-import { FactorQueryResponse } from "@/components/CellType/types";
-import FunctionTab from "./Function";
-import MotifEnrichmentMEME from "@/components/MotifMeme/MotifEnrichmentMEME";
-import PeakSearch from "./PeakSearch";
+import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/query";
+import { FactorQueryResponse } from "@/components/celltype/types";
+import FunctionTab from "./function";
+import MotifEnrichmentMEME from "@/components/motifmeme/motifenrichmentmeme";
+import PeakSearch from "./peaksearch";
 import Link from "next/link";
-import DeepLearnedSelexMotifs from "./MotifEnrichmentSELEX";
-import { ApiContext } from "@/ApiContext";
-import GeneExpressionPage from "./GeneExpression";
-import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./Queries";
+import DeepLearnedSelexMotifs from "./motifenrichmentselex";
+import { ApiContext } from "@/apicontext";
+import GeneExpressionPage from "./geneexpression";
+import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./queries";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
-import EpigeneticProfile from "./EpigeneticProfile";
+import EpigeneticProfile from "./epigeneticprofile";
 
 const FactorDetailsPage = () => {
   const apiContext = useContext(ApiContext);
@@ -31,7 +31,7 @@ const FactorDetailsPage = () => {
   const {
     species,
     factor,
-    detail = "Function",
+    detail = "function",
   } = useParams<{
     species: string;
     factor: string;
@@ -44,7 +44,7 @@ const FactorDetailsPage = () => {
     FACTOR_DESCRIPTION_QUERY,
     {
       variables: {
-        assembly: species === "Human" ? "GRCh38" : "mm10",
+        assembly: species === "human" ? "GRCh38" : "mm10",
         name: [factor],
       },
     }
@@ -78,11 +78,11 @@ const FactorDetailsPage = () => {
 
   const renderTabContent = () => {
     switch (detail) {
-      case "Function":
+      case "function":
         return (
           <FunctionTab
             factor={factor}
-            assembly={species === "Human" ? "GRCh38" : "mm10"}
+            assembly={species === "human" ? "GRCh38" : "mm10"}
             datasets={{
               peakDataset: {
                 datasets: [],
@@ -96,26 +96,26 @@ const FactorDetailsPage = () => {
             datasetsLoading={false}
           />
         );
-      case "Expression":
+      case "expression":
         return (
           <GeneExpressionPage
             gene_name={factor}
             assembly={species.toLowerCase() === "human" ? "GRCh38" : "mm10"}
           />
         );
-      case "MotifEnrichmentMEME":
+      case "motifenrichmentmeme":
         return <MotifEnrichmentMEME factor={factor} species={species} />;
-      case "MotifEnrichmentSELEX":
+      case "motifenrichmentselex":
         return <DeepLearnedSelexMotifs factor={factor} species={species} />;
-      case "EpigeneticProfile":
+      case "epigeneticprofile":
         return <EpigeneticProfile factor={factor} species={species} />;
-      case "PeakSearch":
+      case "peaksearch":
         return <PeakSearch />;
       default:
         return (
           <FunctionTab
             factor={factor}
-            assembly={species === "Human" ? "GRCh38" : "mm10"}
+            assembly={species === "human" ? "GRCh38" : "mm10"}
             datasets={{
               peakDataset: {
                 datasets: [],
@@ -145,7 +145,7 @@ const FactorDetailsPage = () => {
       <Box style={{ flex: 1 }}>
         <Box mb={2}>
           <Link href="/">Homepage</Link> &gt;{" "}
-          <Link href={`/TranscriptionFactor/${species}`}>
+          <Link href={`/transcriptionfactor/${species}`}>
             Transcription Factor
           </Link>{" "}
           &gt; <Typography component="span">{factor}</Typography>
@@ -163,64 +163,64 @@ const FactorDetailsPage = () => {
           >
             <Tab
               label="Function"
-              value="Function"
+              value="function"
               component={Link}
-              href={`/TranscriptionFactor/${species}/${factor}/Function`}
+              href={`/transcriptionfactor/${species}/${factor}/function`}
               sx={{
-                color: detail === "Function" ? "#8169BF" : "inherit",
+                color: detail === "function" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
               }}
             />
             <Tab
               label="Expression (RNA-seq)"
-              value="Expression"
+              value="expression"
               component={Link}
-              href={`/TranscriptionFactor/${species}/${factor}/Expression`}
+              href={`/transcriptionfactor/${species}/${factor}/expression`}
               sx={{
-                color: detail === "Expression" ? "#8169BF" : "inherit",
+                color: detail === "expression" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
               }}
             />
             <Tab
               label="Motif Enrichment (MEME, ChIP-seq)"
-              value="MotifEnrichmentMEME"
+              value="motifenrichmentmeme"
               component={Link}
-              href={`/TranscriptionFactor/${species}/${factor}/MotifEnrichmentMEME`}
+              href={`/transcriptionfactor/${species}/${factor}/motifenrichmentmeme`}
               sx={{
-                color: detail === "MotifEnrichmentMEME" ? "#8169BF" : "inherit",
+                color: detail === "motifenrichmentmeme" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
               }}
             />
             {hasSelexData && (
               <Tab
                 label="Motif Enrichment (SELEX)"
-                value="MotifEnrichmentSELEX"
+                value="motifenrichmentselex"
                 component={Link}
-                href={`/TranscriptionFactor/${species}/${factor}/MotifEnrichmentSELEX`}
+                href={`/transcriptionfactor/${species}/${factor}/motifenrichmentselex`}
                 sx={{
                   color:
-                    detail === "MotifEnrichmentSELEX" ? "#8169BF" : "inherit",
+                    detail === "motifenrichmentselex" ? "#8169BF" : "inherit",
                   textTransform: "capitalize",
                 }}
               />
             )}
             <Tab
               label={`Epigenetic Profile`}
-              value="EpigeneticProfile"
+              value="epigeneticprofile"
               component={Link}
-              href={`/TranscriptionFactor/${species}/${factor}/EpigeneticProfile`}
+              href={`/transcriptionfactor/${species}/${factor}/epigeneticprofile`}
               sx={{
-                color: detail === "EpigeneticProfile" ? "#8169BF" : "inherit",
+                color: detail === "epigeneticprofile" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
               }}
             />
             <Tab
               label={`Search ${factor} peaks by region`}
-              value="Search"
+              value="search"
               component={Link}
-              href={`/TranscriptionFactor/${species}/${factor}/PeakSearch`}
+              href={`/transcriptionfactor/${species}/${factor}/peaksearch`}
               sx={{
-                color: detail === "Search" ? "#8169BF" : "inherit",
+                color: detail === "search" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
               }}
             />

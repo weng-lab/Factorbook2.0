@@ -1,4 +1,4 @@
-import { GenomicRange } from "../Types";
+import { GenomicRange } from "../types";
 
 export type ReplicatedPeaks = {
   accession: string;

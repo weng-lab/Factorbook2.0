@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import MotifUMAP from "@/components/MotifSearch/UMap";
+import MotifUMAP from "@/components/motifsearch/umap";
 import React from "react";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import RegexSearchResults from "@/components/MotifSearch/regexsearchresults";
+import RegexSearchResults from "@/components/motifsearch/regexsearchresults";
 
 const CustomButton = styled(Button)(({ theme }) => ({
   display: "flex",
@@ -100,7 +100,7 @@ const MotifDetails = () => {
                 <Link
                   color="inherit"
                   underline="hover"
-                  onClick={() => window.open(`/MotifsCatalog`, "_self")}
+                  onClick={() => window.open(`/motifscatalog`, "_self")}
                 >
                   Motif Catalog
                 </Link>
@@ -110,7 +110,7 @@ const MotifDetails = () => {
             <Grid item>
               <Button
                 onClick={() => {
-                  window.open(`/MotifsCatalog`, "_self");
+                  window.open(`/motifscatalog`, "_self");
                 }}
                 variant="contained"
                 color="secondary"
@@ -158,14 +158,14 @@ const MotifDetails = () => {
               <CustomButton
                 variant="contained"
                 startIcon={<SaveAltIcon />}
-                href="/MotifsCatalog/factorbook_chipseq_meme_motifs.tsv"
+                href="/motifscatalog/factorbook_chipseq_meme_motifs.tsv"
               >
                 Download motifs in MEME Format
               </CustomButton>
               <CustomButton
                 variant="contained"
                 startIcon={<SaveAltIcon />}
-                href="/MotifsCatalog/complete-factorbook-catalog.meme.gz"
+                href="/motifscatalog/complete-factorbook-catalog.meme.gz"
               >
                 Download metadata in TSV Format
               </CustomButton>
@@ -182,7 +182,7 @@ const MotifDetails = () => {
               <CustomButton
                 variant="contained"
                 startIcon={<SaveAltIcon />}
-                href="/MotifsCatalog/all-selex-motifs.meme.gz"
+                href="/motifscatalog/all-selex-motifs.meme.gz"
               >
                 Download motifs in MEME Format
               </CustomButton>

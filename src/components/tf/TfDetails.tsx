@@ -10,17 +10,17 @@ import {
   IconButton,
 } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import { TF_INFO_QUERY, FACTOR_DESCRIPTION_QUERY } from "@/components/tf/Query";
+import { TF_INFO_QUERY, FACTOR_DESCRIPTION_QUERY } from "@/components/tf/query";
 import {
   TFInfoQueryResponse,
   FactorQueryResponse,
   TargetPartitionedDatasetCollection,
-} from "@/components/CellType/types";
+} from "@/components/celltype/types";
 import {
   DataTable,
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
-import { getRCSBImageUrl } from "@/components/tf/Functions";
+import { getRCSBImageUrl } from "@/components/tf/functions";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
 import Link from "next/link";
@@ -65,7 +65,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
   hideCellTypeCounts,
   row,
   factor,
-  ct
+  ct,
 }) => {
   const [rows, setRows] = useState<FactorRow[]>([]);
 
@@ -99,34 +99,36 @@ const TfDetails: React.FC<TfDetailsProps> = ({
     loading: tfLoading,
     error: tfError,
   } = useQuery<TFInfoQueryResponse>(TF_INFO_QUERY, {
-    variables: ct  ?  {
-      processed_assembly: assembly,
-      replicated_peaks: true,
-      biosample: ct,
-      include_investigatedas: [
-        "cofactor",
-        "chromatin remodeler",
-        "RNA polymerase complex",
-        "DNA replication",
-        "DNA repair",
-        "cohesin",
-        "transcription factor",
-      ],
-      exclude_investigatedas: ["recombinant protein"],
-    } : {
-      processed_assembly: assembly,
-      replicated_peaks: true,
-      include_investigatedas: [
-        "cofactor",
-        "chromatin remodeler",
-        "RNA polymerase complex",
-        "DNA replication",
-        "DNA repair",
-        "cohesin",
-        "transcription factor",
-      ],
-      exclude_investigatedas: ["recombinant protein"],
-    },
+    variables: ct
+      ? {
+          processed_assembly: assembly,
+          replicated_peaks: true,
+          biosample: ct,
+          include_investigatedas: [
+            "cofactor",
+            "chromatin remodeler",
+            "RNA polymerase complex",
+            "DNA replication",
+            "DNA repair",
+            "cohesin",
+            "transcription factor",
+          ],
+          exclude_investigatedas: ["recombinant protein"],
+        }
+      : {
+          processed_assembly: assembly,
+          replicated_peaks: true,
+          include_investigatedas: [
+            "cofactor",
+            "chromatin remodeler",
+            "RNA polymerase complex",
+            "DNA replication",
+            "DNA repair",
+            "cohesin",
+            "transcription factor",
+          ],
+          exclude_investigatedas: ["recombinant protein"],
+        },
   });
 
   const {
@@ -302,14 +304,18 @@ const TfDetails: React.FC<TfDetailsProps> = ({
           itemsPerPage={5}
           sortColumn={1}
           searchable={true}
-          tableTitle={ct ? `${rows.length} factors profiled`: ``}
-          headerColor={ct ? {
-            backgroundColor: '#7151A1',
-            textColor: '#EDE7F6'
-          }: {
-             backgroundColor: '#FFFFFF',
-            textColor: '#inherit'
-          }}
+          tableTitle={ct ? `${rows.length} factors profiled` : ``}
+          headerColor={
+            ct
+              ? {
+                  backgroundColor: "#7151A1",
+                  textColor: "#EDE7F6",
+                }
+              : {
+                  backgroundColor: "#FFFFFF",
+                  textColor: "#inherit",
+                }
+          }
         />
       </Box>
     </Container>

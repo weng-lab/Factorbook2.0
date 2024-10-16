@@ -34,8 +34,8 @@ import {
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
 import { MOTIF_QUERY, RDHS_OCCU_QUERY } from "../../queries";
-import { ApiContext } from "../../../../ApiContext";
-import AnnotatedLogo from "./AnnotatedLogo";
+import { ApiContext } from "../../../../apicontext";
+import AnnotatedLogo from "./annotatedlogo";
 
 const usePrevious = (value: String) => {
   const ref = useRef<String>();
@@ -390,7 +390,7 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
             searchable
           />
         ) : (
-          <DataTable          
+          <DataTable
             columns={completeViewTableColumns}
             rows={filteredResults}
             itemsPerPage={isMobile ? 3 : 5}

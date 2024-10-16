@@ -1,14 +1,14 @@
 "use client";
-import ReferenceSection from "@/components/Container";
+import ReferenceSection from "@/components/container";
 import React from "react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import { CellTypeDescription, DatasetQueryResponse } from "./types";
 import { CELLTYPE_DESCRIPTION_QUERY, DATASET_QUERY } from "./queries";
 import dynamic from "next/dynamic";
-import ContentCard from "@/components/ContentCard";
+import ContentCard from "@/components/contentcard";
 import { Box, Typography, Card, CardContent, Link } from "@mui/material";
-const TfDetails = dynamic(() => import("@/components/tf/TfDetails"));
+const TfDetails = dynamic(() => import("@/components/tf/tfdetails"));
 
 const includeTargetTypes = [
   "cofactor",

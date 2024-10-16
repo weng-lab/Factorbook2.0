@@ -11,20 +11,20 @@ import {
   AccordionDetails,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Layout from "@/components/MotifMeme/Aggregate/Layout";
-import Graph from "@/components/MotifMeme/Aggregate/Graphs";
+import Layout from "@/components/motifmeme/aggregate/layout";
+import Graph from "@/components/motifmeme/aggregate/graphs";
 import {
   AGGREGATE_DATA_QUERY,
   AGGREGATE_METADATA_QUERY,
   HISTONE_METADATA_QUERY,
-} from "@/components/MotifMeme/Aggregate/Queries";
+} from "@/components/motifmeme/aggregate/queries";
 import { associateBy, groupBy } from "queryz";
 import {
   MARK_TYPES,
   MARK_TYPE_ORDER,
-} from "@/components/MotifMeme/Aggregate/marks";
+} from "@/components/motifmeme/aggregate/marks";
 import { useParams } from "next/navigation";
-import FactorTabs from "./FactorTabs";
+import FactorTabs from "./factortabs";
 
 const EpigeneticProfilePage = () => {
   const { species, factor, accession } = useParams();
