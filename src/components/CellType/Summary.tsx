@@ -18,7 +18,7 @@ interface LinkWrapperProps {
 
 const LinkWrapper: React.FC<LinkWrapperProps> = ({ url, children }) => (
   <Link
-    href={url}
+    href={url.toLowerCase()}
     target="_blank"
     rel="noopener noreferrer"
     style={{ textDecoration: "none", color: "inherit" }}
@@ -47,14 +47,13 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species }) => {
         biosample: { name: string };
         counts: { total: number; targets: number };
       }) => (
-        <LinkWrapper url={`/CellType/${species}/${row.biosample.name}`}>
+        <LinkWrapper url={`/Celltype/${species}/${row.biosample.name}`}>
           <Box>
             <Typography variant="h6" style={{ fontWeight: "bold" }}>
               {row.biosample.name}
             </Typography>
             <br />
             {row.counts.total + " Experiments"}
-
             <br />
             {row.counts.targets + " Factors"}
           </Box>
@@ -66,7 +65,7 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species }) => {
       header: "Description",
       value: (row: { biosample: { name: string } }) => row.biosample.name,
       render: (row: { biosample: { name: string } }) => (
-        <LinkWrapper url={`/CellType/${species}/${row.biosample.name}`}>
+        <LinkWrapper url={`/Celltype/${species}/${row.biosample.name}`}>
           <CtDetails species={species} celltype={row.biosample.name} />
         </LinkWrapper>
       ),

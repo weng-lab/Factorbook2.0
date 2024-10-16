@@ -36,10 +36,11 @@ function f(coordinates: GenomicRange): {
   };
 }
 
+// Modified to ensure lowercase URLs
 const tfRoute = (species?: string, factor?: string, details?: string): string =>
-  `/TranscriptionFactor${species ? `/${species}` : ""}${
-    species && factor ? `/${factor}` : ""
-  }${species && factor && details ? `/${details}` : ""}/Function`;
+  `/transcriptionfactor${species ? `/${species.toLowerCase()}` : ""}${
+    species && factor ? `/${factor.toLowerCase()}` : ""
+  }${species && factor && details ? `/${details.toLowerCase()}` : ""}/function`;
 
 const PEAK_TABLE_COLUMNS: DataTableColumn<SNPWithPeakCount>[] = [
   {

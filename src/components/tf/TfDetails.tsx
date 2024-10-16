@@ -51,7 +51,7 @@ interface LinkWrapperProps {
 
 const LinkWrapper: React.FC<LinkWrapperProps> = ({ url, children }) => (
   <Link
-    href={url}
+    href={url.toLowerCase()}
     target="_blank"
     rel="noopener noreferrer"
     style={{ textDecoration: "none", color: "inherit" }}
@@ -193,7 +193,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       render: (row: FactorRow) =>
         row.image ? (
           <LinkWrapper
-            url={`/TranscriptionFactor/${species}/${row.name}/Function`}
+            url={`/transcriptionfactor/${species}/${row.name}/function`}
           >
             <img
               src={row.image}
@@ -216,7 +216,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       header: "Details",
       render: (row: FactorRow) => (
         <LinkWrapper
-          url={`/TranscriptionFactor/${species}/${row.name}/Function`}
+          url={`/transcriptionfactor/${species}/${row.name}/function`}
         >
           <Box style={{ minWidth: "150px" }}>
             <Typography variant="h6" style={{ fontWeight: "bold" }}>
@@ -251,7 +251,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       header: "Description",
       render: (row: FactorRow) => (
         <LinkWrapper
-          url={`/TranscriptionFactor/${species}/${row.name}/Function`}
+          url={`/transcriptionfactor/${species}/${row.name}/function`}
         >
           <Box
             display="flex"
