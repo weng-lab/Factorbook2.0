@@ -10,7 +10,7 @@ import {
   CardContent,
 } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import StyledButton from "@/components/styledbutton";
+import StyledButton from "../../components/styledbutton";
 
 const DownloadPage: React.FC = () => {
   const downloadCards = [
