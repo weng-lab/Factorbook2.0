@@ -34,7 +34,7 @@ import {
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
 import { MOTIF_QUERY, RDHS_OCCU_QUERY } from "../../queries";
-import { ApiContext } from "../../../../apicontext";
+import { ApiContext } from "@/apicontext";
 import AnnotatedLogo from "./annotatedlogo";
 
 const usePrevious = (value: String) => {

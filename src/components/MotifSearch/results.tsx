@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { RawLogo, DNAAlphabet } from "logojs-react";
 import Link from "next/link";
 import { TOMTOMMessage } from "../motifmeme/tomtommessage";
-import { ApiContext } from "../../apicontext";
+import { ApiContext } from "@/apicontext";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 import { Grid, Divider, useMediaQuery, useTheme } from "@mui/material";

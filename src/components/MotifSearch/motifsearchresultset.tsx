@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { ApiContext } from "../../apicontext";
+import { ApiContext } from "@/apicontext";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 import { Divider, Box, useMediaQuery, useTheme } from "@mui/material";
