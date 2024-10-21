@@ -8,7 +8,7 @@ import GraphSet from "@/components/motifmeme/aggregate/graphset";
 import {
   AGGREGATE_DATA_QUERY,
   HISTONE_METADATA_QUERY,
-} from "@/components/motifmeme/Aggregate/queries";
+} from "@/components/motifmeme/aggregate/queries";
 
 interface EpigeneticProfileProps {
   species: string;
