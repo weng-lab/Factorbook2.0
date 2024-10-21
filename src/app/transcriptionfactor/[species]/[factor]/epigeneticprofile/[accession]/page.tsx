@@ -17,12 +17,12 @@ import {
   AGGREGATE_DATA_QUERY,
   AGGREGATE_METADATA_QUERY,
   HISTONE_METADATA_QUERY,
-} from "@/components/motifmeme/aggregate/queries";
+} from "@/components/motifmeme/Aggregate/queries";
 import { associateBy, groupBy } from "queryz";
 import {
   MARK_TYPES,
   MARK_TYPE_ORDER,
-} from "@/components/motifmeme/aggregate/marks";
+} from "@/components/motifmeme/Aggregate/marks";
 import { useParams } from "next/navigation";
 import FactorTabs from "./factortabs";
 
