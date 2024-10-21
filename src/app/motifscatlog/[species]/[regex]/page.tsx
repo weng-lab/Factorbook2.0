@@ -158,14 +158,14 @@ const MotifDetails = () => {
               <CustomButton
                 variant="contained"
                 startIcon={<SaveAltIcon />}
-                href="/MotifsCatalog/factorbook_chipseq_meme_motifs.tsv"
+                href="/motifscatalog/factorbook_chipseq_meme_motifs.tsv"
               >
                 Download motifs in MEME Format
               </CustomButton>
               <CustomButton
                 variant="contained"
                 startIcon={<SaveAltIcon />}
-                href="/MotifsCatalog/complete-factorbook-catalog.meme.gz"
+                href="/motifscatalog/complete-factorbook-catalog.meme.gz"
               >
                 Download metadata in TSV Format
               </CustomButton>
@@ -182,7 +182,7 @@ const MotifDetails = () => {
               <CustomButton
                 variant="contained"
                 startIcon={<SaveAltIcon />}
-                href="/MotifsCatalog/all-selex-motifs.meme.gz"
+                href="/motifscatalog/all-selex-motifs.meme.gz"
               >
                 Download motifs in MEME Format
               </CustomButton>

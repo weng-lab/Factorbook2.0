@@ -97,7 +97,7 @@ const COLUMNS = (title: string) => {
       render: (x: MMotif) => (
         <Link
           style={{ color: "#8169BF" }}
-          href={`/TranscriptionFactor/Human/${
+          href={`/transcriptionfactor/human/${
             x.factor.split("phospho")[0]
           }/Function`}
           rel="noopener noreferrer"

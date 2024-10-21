@@ -214,7 +214,7 @@ const SnpSearchbar: React.FC = () => {
                         backgroundColor: "#7151A1",
                       },
                     }}
-                   href={snpValue ? `/AnnotationsVariants/GRCh38/${snpValue}`: ""}
+                   href={snpValue ? `/annotationsvariants/GRCh38/${snpValue}`: ""}
                   >
                     Search
                   </Button>
