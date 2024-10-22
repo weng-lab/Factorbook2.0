@@ -100,7 +100,7 @@ const MotifDetails = () => {
                 <Link
                   color="inherit"
                   underline="hover"
-                  onClick={() => window.open(`/MotifsCatalog`, "_self")}
+                  onClick={() => window.open(`/motifscatalog`, "_self")}
                 >
                   Motif Catalog
                 </Link>
@@ -110,7 +110,7 @@ const MotifDetails = () => {
             <Grid item>
               <Button
                 onClick={() => {
-                  window.open(`/MotifsCatalog`, "_self");
+                  window.open(`/motifscatalog`, "_self");
                 }}
                 variant="contained"
                 color="secondary"

@@ -77,7 +77,7 @@ const MotifSearchbar: React.FC = () => {
                     color="secondary"
                   //  onClick={handleSubmit}
                   onClick={()=>{
-                    window.open(`/MotifsCatalog/human/${val}`, "_self")
+                    window.open(`/motifscatalog/human/${val}`, "_self")
                     
                   }}
                     sx={{
