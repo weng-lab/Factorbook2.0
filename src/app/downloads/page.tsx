@@ -6,15 +6,16 @@ import {
   Box,
   Typography,
   Grid,
-  Card,
-  CardContent,
-  Tabs,
-  Tab,
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Tabs,
+  Tab,
+  CardContent,
+  Card,
 } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import InfoIcon from "@mui/icons-material/Info";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
@@ -102,7 +103,6 @@ const DownloadPage: React.FC = () => {
           <Tab label="TF Motif Catalog" {...a11yProps(0)} />
           <Tab label="Genomic Motif Sites" {...a11yProps(1)} />
           <Tab label="Heritability Models" {...a11yProps(2)} />
-          <Tab label="Temporary Downloads" {...a11yProps(3)} />
         </Tabs>
       </Box>
 
@@ -220,31 +220,80 @@ const DownloadPage: React.FC = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Box sx={{ mb: 2 }}>
-              <Typography variant="body2" gutterBottom>
-                This catalog contains sets of MEME motifs from ChIP-seq datasets
-                identified within ChIP-seq peaks using FIMO.
-              </Typography>
+              {/* Message Box with ReportProblemIcon */}
+              <Box
+                sx={{
+                  backgroundColor: "#FFF7E6",
+                  borderRadius: 2,
+                  padding: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  my: 3,
+                  color: "#663C00",
+                }}
+              >
+                <ReportProblemIcon sx={{ mr: 1 }} />
+                <Typography variant="body2" sx={{ color: "#663C00" }}>
+                  This catalog contains sites of MEME motifs from ChIP-seq
+                  datasets identified within ChIP-seq peaks using FIMO.{" "}
+                  <a href="#">See here</a> for a list of cell types in which
+                  these ChIP-seq peaks were identified. Regulatory motif sites
+                  in cell types biologically distinct from well-profiled cell
+                  types might not be contained in this catalog!
+                </Typography>
+              </Box>
 
               {/* Buttons */}
+              <Typography variant="body1" gutterBottom>
+                DOWNLOAD MERGED MOTIF SITES
+              </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
                   <StyledButton
-                    startIcon={<InfoIcon />}
+                    startIcon={<SaveAltIcon />}
                     href="/downloads/merged-motif-sites-lenient"
                     text="Lenient Set"
                   />
                 </Grid>
                 <Grid item xs={12} sm={4}>
                   <StyledButton
-                    startIcon={<InfoIcon />}
+                    startIcon={<SaveAltIcon />}
                     href="/downloads/merged-motif-sites-moderate"
                     text="Moderate Set"
                   />
                 </Grid>
                 <Grid item xs={12} sm={4}>
                   <StyledButton
-                    startIcon={<InfoIcon />}
+                    startIcon={<SaveAltIcon />}
                     href="/downloads/merged-motif-sites-stringent"
+                    text="Stringent Set"
+                  />
+                </Grid>
+              </Grid>
+
+              {/* Download all motif sites */}
+              <Typography variant="body1" gutterBottom sx={{ mt: 4 }}>
+                DOWNLOAD ALL MOTIF SITES
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}>
+                  <StyledButton
+                    startIcon={<SaveAltIcon />}
+                    href="/downloads/all-motif-sites-lenient"
+                    text="Lenient Set"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <StyledButton
+                    startIcon={<SaveAltIcon />}
+                    href="/downloads/all-motif-sites-moderate"
+                    text="Moderate Set"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <StyledButton
+                    startIcon={<SaveAltIcon />}
+                    href="/downloads/all-motif-sites-stringent"
                     text="Stringent Set"
                   />
                 </Grid>
@@ -272,32 +321,78 @@ const DownloadPage: React.FC = () => {
           </AccordionSummary>
           <AccordionDetails>
             <Box sx={{ mb: 2 }}>
-              <Typography variant="body2" gutterBottom>
-                This catalog contains sets of MEME motifs and HT-SELEX motifs
-                identified within rDHSs from the ENCODE Registry of cCREs using
-                FIMO.
-              </Typography>
+              {/* Message Box with ReportProblemIcon */}
+              <Box
+                sx={{
+                  backgroundColor: "#FFF7E6",
+                  borderRadius: 2,
+                  padding: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  my: 3,
+                  color: "#663C00",
+                }}
+              >
+                <ReportProblemIcon sx={{ mr: 1 }} />
+                <Typography variant="body2" sx={{ color: "#663C00" }}>
+                  This catalog contains sites of MEME motifs and HT-SELEX motifs
+                  identified within rDHSs from the ENCODE Registry of cCREs
+                  using FIMO. <a href="#">Click here</a> for more information on
+                  the Registry of cCREs.
+                </Typography>
+              </Box>
 
               {/* Buttons */}
+              <Typography variant="body1" gutterBottom>
+                DOWNLOAD MERGED MOTIF SITES
+              </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
                   <StyledButton
-                    startIcon={<InfoIcon />}
+                    startIcon={<SaveAltIcon />}
                     href="/downloads/rdhs-motif-sites-lenient"
+                    text="MEME: Lenient Set"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <StyledButton
+                    startIcon={<SaveAltIcon />}
+                    href="/downloads/rdhs-motif-sites-moderate"
+                    text="MEME: Moderate Set"
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <StyledButton
+                    startIcon={<SaveAltIcon />}
+                    href="/downloads/rdhs-motif-sites-stringent"
+                    text="MEME: Stringent Set"
+                  />
+                </Grid>
+              </Grid>
+
+              {/* Download all motif sites */}
+              <Typography variant="body1" gutterBottom sx={{ mt: 4 }}>
+                DOWNLOAD ALL MOTIF SITES
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}>
+                  <StyledButton
+                    startIcon={<SaveAltIcon />}
+                    href="/downloads/all-rdhs-motif-sites-lenient"
                     text="Lenient Set"
                   />
                 </Grid>
                 <Grid item xs={12} sm={4}>
                   <StyledButton
-                    startIcon={<InfoIcon />}
-                    href="/downloads/rdhs-motif-sites-moderate"
+                    startIcon={<SaveAltIcon />}
+                    href="/downloads/all-rdhs-motif-sites-moderate"
                     text="Moderate Set"
                   />
                 </Grid>
                 <Grid item xs={12} sm={4}>
                   <StyledButton
-                    startIcon={<InfoIcon />}
-                    href="/downloads/rdhs-motif-sites-stringent"
+                    startIcon={<SaveAltIcon />}
+                    href="/downloads/all-rdhs-motif-sites-stringent"
                     text="Stringent Set"
                   />
                 </Grid>
@@ -307,45 +402,153 @@ const DownloadPage: React.FC = () => {
         </Accordion>
       </TabPanel>
 
+      {/* Heritability Models Tab */}
       <TabPanel value={value} index={2}>
-        <Typography variant="h6">Heritability Models</Typography>
-        <Typography>
-          Motifs discovered using MEME on ChIP-seq experiments and the ZMotif
-          neural network on HT-SELEX experiments.
+        <Typography variant="h4" component="h1" gutterBottom>
+          Partitioned LD Score Regression
         </Typography>
-      </TabPanel>
+        <Typography variant="subtitle1" gutterBottom>
+          Quantify heritability enrichment in TF peaks and motif sites
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Download Partitioned LD Score Regression models for quantifying trait
+          and disease heritability enrichment within TF ChIP-seq peaks or TF
+          motif sites.
+        </Typography>
 
-      <TabPanel value={value} index={3}>
-        {/* Download cards from DownloadPage */}
-        <Grid container spacing={4}>
-          {downloadCards.map((card, index) => (
-            <Grid item xs={12} md={4} key={index}>
-              <Card
-                sx={{
-                  backgroundColor: "#333",
-                  color: "#fff",
-                  borderRadius: 2,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  height: "100%",
-                }}
-              >
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h5" component="div" gutterBottom>
-                    {card.title}
+        {/* Accordion - Getting Started */}
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6">Getting Started</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body1" gutterBottom>
+              Quantifying heritability enrichment takes ~5 minutes on a standard
+              laptop. We recommend running this workflow using our provided
+              Docker image. Click for detailed instructions.
+            </Typography>
+            <ol>
+              <li>
+                <a
+                  href="https://docs.docker.com/get-docker/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Install Docker
+                </a>
+              </li>
+              <li>
+                Run the following command to partition heritability for motif
+                sites in ChIP-seq peaks from seven ENCODE cell lines:
+              </li>
+            </ol>
+            <Box
+              component="pre"
+              sx={{
+                backgroundColor: "#f3f3f3",
+                padding: 2,
+                borderRadius: 2,
+                overflowX: "auto",
+              }}
+            >
+              docker run \<br />
+              &nbsp;&nbsp;--volume /path/to/inputs:/input \<br />
+              &nbsp;&nbsp;ghcr.io/weng-lab/ldr/ldr:latest \<br />
+              &nbsp;&nbsp;python3 -m ldr.h2 \<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;--ld-scores <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;http://gcp.wenglab.org/ldr-models/seven-cell-type-motifs.tar.gz
+              \<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;--ld-prefix annotations \<br />
+              &nbsp;&nbsp;&nbsp;&nbsp;--summary-statistics <br />
+              &nbsp;&nbsp;&nbsp;&nbsp;/input/summary-stats.txt &gt;
+              partitioned-heritability.txt
+            </Box>
+            <Typography variant="body2" gutterBottom>
+              To quantify heritability for a different subset of peaks or motif
+              sites, simply sub a different URL for the ld-scores parameter. You
+              can find URLs for each model in the <strong>View Models</strong>{" "}
+              section below.
+            </Typography>
+            <Typography variant="body2">
+              Output will be located at{" "}
+              <Box component="pre" display="inline">
+                /path/to/outputs/partitioned-heritability.txt
+              </Box>{" "}
+              when the command finishes.
+            </Typography>
+          </AccordionDetails>
+        </Accordion>
+
+        {/* Accordion - View and Download Models */}
+        <Accordion>
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6">View and Download Models</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <Typography variant="body1" gutterBottom>
+              Select an annotation to quantify heritability:
+            </Typography>
+            <Grid container spacing={4}>
+              {/* TF ChIP-seq Peaks Card */}
+              <Grid item xs={12} md={6}>
+                <Box
+                  sx={{
+                    backgroundColor: "#333",
+                    color: "#fff",
+                    padding: 3,
+                    borderRadius: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    height: "100%",
+                  }}
+                >
+                  <Typography variant="h6" gutterBottom>
+                    TF ChIP-seq Peaks
                   </Typography>
-                  <Typography variant="body2" color="white" paragraph>
-                    {card.description}
+                  <Typography variant="body2" gutterBottom>
+                    Quantify heritability enrichment within TF peaks identified
+                    from ChIP-seq experiments in one of five well-profiled
+                    ENCODE cell lines.
                   </Typography>
-                </CardContent>
-                <Box textAlign="center" p={2}>
-                  <StyledButton text="Go to Downloads" href={card.link} />
+                  <StyledButton
+                    text="View Models (5)"
+                    href="/downloads/ld-score-tf-chip-seq-peaks"
+                  />
                 </Box>
-              </Card>
+              </Grid>
+
+              {/* Motif Sites in TF ChIP-seq Peaks Card */}
+              <Grid item xs={12} md={6}>
+                <Box
+                  sx={{
+                    backgroundColor: "#333",
+                    color: "#fff",
+                    padding: 3,
+                    borderRadius: 2,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    height: "100%",
+                  }}
+                >
+                  <Typography variant="h6" gutterBottom>
+                    Motif Sites in TF ChIP-seq Peaks
+                  </Typography>
+                  <Typography variant="body2" gutterBottom>
+                    Quantify heritability enrichment within TF motif sites
+                    identified in peaks from ChIP-seq experiments in one of five
+                    well-profiled ENCODE cell lines.
+                  </Typography>
+                  <StyledButton
+                    text="View Models (2)"
+                    href="/downloads/ld-score-tf-motif-sites"
+                  />
+                </Box>
+              </Grid>
             </Grid>
-          ))}
-        </Grid>
+          </AccordionDetails>
+        </Accordion>
       </TabPanel>
     </Container>
   );
