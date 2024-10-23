@@ -53,8 +53,11 @@ function a11yProps(index: number) {
 
 const DownloadPage: React.FC = () => {
   const [value, setValue] = React.useState(0);
-  const isMobile = window.innerWidth <= 600; // To handle responsive design
-  const [expanded, setExpanded] = React.useState<string | false>(false);
+  const isMobile = window.innerWidth <= 600;
+  const [expandedAccordions, setExpandedAccordions] = React.useState({
+    panel1: true,
+    panel2: true,
+  });
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -62,29 +65,11 @@ const DownloadPage: React.FC = () => {
 
   const handleAccordionChange =
     (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpanded(isExpanded ? panel : false);
+      setExpandedAccordions((prevState) => ({
+        ...prevState,
+        [panel]: isExpanded,
+      }));
     };
-
-  const downloadCards = [
-    {
-      title: "TF Motif Catalog",
-      description:
-        "Motifs discovered using MEME on ChIP-seq experiments and the ZMotif neural network on HT-SELEX experiments. The catalog contains more than 6,000 motifs for each (with some redundancy).",
-      link: "/downloads/tf-motif-catalog",
-    },
-    {
-      title: "Genomic Motif Sites",
-      description:
-        "Motif sites identified by scanning ChIP-seq peaks and candidate cis-regulatory elements with FIMO. There are approximately 6 million motif sites in ChIP-seq peaks and 7 million motif sites in candidate regulatory elements after merging overlapping motif sites.",
-      link: "/downloads/tf-motif-catalog-2",
-    },
-    {
-      title: "Heritability Models",
-      description:
-        "Motifs discovered using MEME on ChIP-seq experiments and the ZMotif neural network on HT-SELEX experiments. The catalog contains more than 6,000 motifs for each (with some redundancy).",
-      link: "/downloads/tf-motif-catalog-3",
-    },
-  ];
 
   return (
     <Container sx={{ mb: 4 }}>
@@ -110,7 +95,12 @@ const DownloadPage: React.FC = () => {
       <TabPanel value={value} index={0}>
         <Box sx={{ mt: 4, mx: "auto", maxWidth: isMobile ? "90%" : "800px" }}>
           {/* Title */}
-          <Typography variant="h4" component="h1" gutterBottom>
+          <Typography
+            variant="h4"
+            component="h1"
+            fontWeight={"bold"}
+            gutterBottom
+          >
             TF Motif Catalog
           </Typography>
 
@@ -129,17 +119,17 @@ const DownloadPage: React.FC = () => {
               <Typography variant="body2" gutterBottom>
                 6,069 Motifs
                 <br />
-                733 Transcription Factors{" "}
+                733 Transcription Factors
               </Typography>
               <StyledButton
                 startIcon={<SaveAltIcon />}
-                href="/motifscatalog/factorbook_chipseq_meme_motifs.tsv"
+                href="/motifscatlog/factorbook_chipseq_meme_motifs.tsv"
                 text="Download motifs in MEME Format"
               />
               <Box sx={{ marginTop: 2 }}>
                 <StyledButton
                   startIcon={<SaveAltIcon />}
-                  href="/motifscatalog/complete-factorbook-catalog.meme.gz"
+                  href="/motifscatlog/complete-factorbook-catalog.meme.gz"
                   text="Download metadata in TSV Format"
                 />
               </Box>
@@ -155,7 +145,7 @@ const DownloadPage: React.FC = () => {
               </Typography>
               <StyledButton
                 startIcon={<SaveAltIcon />}
-                href="/motifscatalog/all-selex-motifs.meme.gz"
+                href="/motifscatlog/all-selex-motifs.meme.gz"
                 text="Download motifs in MEME Format"
               />
             </Grid2>
@@ -165,7 +155,12 @@ const DownloadPage: React.FC = () => {
 
       {/* Genomic Motif Sites Tab */}
       <TabPanel value={value} index={1}>
-        <Typography variant="h4" component="h1" gutterBottom>
+        <Typography
+          variant="h4"
+          component="h1"
+          fontWeight={"bold"}
+          gutterBottom
+        >
           Factorbook Human Motif Site Catalog
         </Typography>
 
@@ -203,12 +198,16 @@ const DownloadPage: React.FC = () => {
 
         {/* Accordion for ChIP-seq Peak Motif Site Catalog */}
         <Accordion
-          expanded={expanded === "panel1"}
+          expanded={expandedAccordions.panel1}
           onChange={handleAccordionChange("panel1")}
         >
           <AccordionSummary
             expandIcon={
-              expanded === "panel1" ? <ExpandLessIcon /> : <ExpandMoreIcon />
+              expandedAccordions.panel1 ? (
+                <ExpandLessIcon />
+              ) : (
+                <ExpandMoreIcon />
+              )
             }
             aria-controls="panel1-content"
             id="panel1-header"
@@ -219,97 +218,99 @@ const DownloadPage: React.FC = () => {
             <InfoIcon sx={{ ml: 1 }} />
           </AccordionSummary>
           <AccordionDetails>
-            <Box sx={{ mb: 2 }}>
-              {/* Message Box with ReportProblemIcon */}
-              <Box
-                sx={{
-                  backgroundColor: "#FFF7E6",
-                  borderRadius: 2,
-                  padding: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  my: 3,
-                  color: "#663C00",
-                }}
-              >
-                <ReportProblemIcon sx={{ mr: 1 }} />
-                <Typography variant="body2" sx={{ color: "#663C00" }}>
-                  This catalog contains sites of MEME motifs from ChIP-seq
-                  datasets identified within ChIP-seq peaks using FIMO.{" "}
-                  <a href="#">See here</a> for a list of cell types in which
-                  these ChIP-seq peaks were identified. Regulatory motif sites
-                  in cell types biologically distinct from well-profiled cell
-                  types might not be contained in this catalog!
-                </Typography>
-              </Box>
-
-              {/* Buttons */}
-              <Typography variant="body1" gutterBottom>
-                DOWNLOAD MERGED MOTIF SITES
+            {/* Message Box with ReportProblemIcon */}
+            <Box
+              sx={{
+                backgroundColor: "#FFF7E6",
+                borderRadius: 2,
+                padding: 2,
+                display: "flex",
+                alignItems: "center",
+                my: 3,
+                color: "#663C00",
+              }}
+            >
+              <ReportProblemIcon sx={{ mr: 1 }} />
+              <Typography variant="body2" sx={{ color: "#663C00" }}>
+                This catalog contains sites of MEME motifs from ChIP-seq
+                datasets identified within ChIP-seq peaks using FIMO.{" "}
+                <a href="#">See here</a> for a list of cell types in which these
+                ChIP-seq peaks were identified. Regulatory motif sites in cell
+                types biologically distinct from well-profiled cell types might
+                not be contained in this catalog!
               </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/merged-motif-sites-lenient"
-                    text="Lenient Set"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/merged-motif-sites-moderate"
-                    text="Moderate Set"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/merged-motif-sites-stringent"
-                    text="Stringent Set"
-                  />
-                </Grid>
-              </Grid>
-
-              {/* Download all motif sites */}
-              <Typography variant="body1" gutterBottom sx={{ mt: 4 }}>
-                DOWNLOAD ALL MOTIF SITES
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/all-motif-sites-lenient"
-                    text="Lenient Set"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/all-motif-sites-moderate"
-                    text="Moderate Set"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/all-motif-sites-stringent"
-                    text="Stringent Set"
-                  />
-                </Grid>
-              </Grid>
             </Box>
+
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ textTransform: "uppercase" }}
+                >
+                  Download merged motif sites
+                </Typography>
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.merged.bed.gz"
+                  text="Lenient set - FIMO p-value < 10^-4 (46 MB)"
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.merged.bed.gz"
+                  text="Moderate set - FIMO p-value < 10^-5 (45 MB)"
+                  sx={{ mt: 2 }}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.merged.bed.gz"
+                  text="Stringent set - FIMO p-value < 10^-6 (44 MB)"
+                  sx={{ mt: 2 }}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ textTransform: "uppercase" }}
+                >
+                  Download all motif sites
+                </Typography>
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.bed.gz"
+                  text="Lenient set - FIMO p-value < 10^-4 (758 MB)"
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.bed.gz"
+                  text="Moderate set - FIMO p-value < 10^-5 (684 MB)"
+                  sx={{ mt: 2 }}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.bed.gz"
+                  text="Stringent set - FIMO p-value < 10^-6 (653 MB)"
+                  sx={{ mt: 2 }}
+                />
+              </Grid>
+            </Grid>
           </AccordionDetails>
         </Accordion>
 
         {/* Accordion for rDHS Motif Site Catalog */}
         <Accordion
-          expanded={expanded === "panel2"}
+          expanded={expandedAccordions.panel2}
           onChange={handleAccordionChange("panel2")}
         >
           <AccordionSummary
             expandIcon={
-              expanded === "panel2" ? <ExpandLessIcon /> : <ExpandMoreIcon />
+              expandedAccordions.panel2 ? (
+                <ExpandLessIcon />
+              ) : (
+                <ExpandMoreIcon />
+              )
             }
             aria-controls="panel2-content"
             id="panel2-header"
@@ -320,91 +321,94 @@ const DownloadPage: React.FC = () => {
             <InfoIcon sx={{ ml: 1 }} />
           </AccordionSummary>
           <AccordionDetails>
-            <Box sx={{ mb: 2 }}>
-              {/* Message Box with ReportProblemIcon */}
-              <Box
-                sx={{
-                  backgroundColor: "#FFF7E6",
-                  borderRadius: 2,
-                  padding: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  my: 3,
-                  color: "#663C00",
-                }}
-              >
-                <ReportProblemIcon sx={{ mr: 1 }} />
-                <Typography variant="body2" sx={{ color: "#663C00" }}>
-                  This catalog contains sites of MEME motifs and HT-SELEX motifs
-                  identified within rDHSs from the ENCODE Registry of cCREs
-                  using FIMO. <a href="#">Click here</a> for more information on
-                  the Registry of cCREs.
-                </Typography>
-              </Box>
-
-              {/* Buttons */}
-              <Typography variant="body1" gutterBottom>
-                DOWNLOAD MERGED MOTIF SITES
+            {/* Message Box with ReportProblemIcon */}
+            <Box
+              sx={{
+                backgroundColor: "#FFF7E6",
+                borderRadius: 2,
+                padding: 2,
+                display: "flex",
+                alignItems: "center",
+                my: 3,
+                color: "#663C00",
+              }}
+            >
+              <ReportProblemIcon sx={{ mr: 1 }} />
+              <Typography variant="body2" sx={{ color: "#663C00" }}>
+                This catalog contains sites of MEME motifs and HT-SELEX motifs
+                identified within rDHSs from the ENCODE Registry of cCREs using
+                FIMO. <a href="#">Click here</a> for more information on the
+                Registry of cCREs.
               </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/rdhs-motif-sites-lenient"
-                    text="MEME: Lenient Set"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/rdhs-motif-sites-moderate"
-                    text="MEME: Moderate Set"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/rdhs-motif-sites-stringent"
-                    text="MEME: Stringent Set"
-                  />
-                </Grid>
-              </Grid>
-
-              {/* Download all motif sites */}
-              <Typography variant="body1" gutterBottom sx={{ mt: 4 }}>
-                DOWNLOAD ALL MOTIF SITES
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/all-rdhs-motif-sites-lenient"
-                    text="Lenient Set"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/all-rdhs-motif-sites-moderate"
-                    text="Moderate Set"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledButton
-                    startIcon={<SaveAltIcon />}
-                    href="/downloads/all-rdhs-motif-sites-stringent"
-                    text="Stringent Set"
-                  />
-                </Grid>
-              </Grid>
             </Box>
+
+            <Grid container spacing={4}>
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ textTransform: "uppercase" }}
+                >
+                  Download merged motif sites
+                </Typography>
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.merged.bed.gz"
+                  text="MEME: Lenient set - FIMO p-value < 10^-6 (47 MB)"
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.merged.bed.gz"
+                  text="MEME: Moderate set - FIMO p-value < 10^-7 (19 MB)"
+                  sx={{ mt: 2 }}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.merged.bed.gz"
+                  text="MEME: Stringent set - FIMO p-value < 10^-8 (11 MB)"
+                  sx={{ mt: 2 }}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{ textTransform: "uppercase" }}
+                >
+                  Download all motif sites
+                </Typography>
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.bed.gz"
+                  text="Lenient set - FIMO p-value < 10^-6 (2.9 GB)"
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.bed.gz"
+                  text="Moderate set - FIMO p-value < 10^-7 (1.5 GB)"
+                  sx={{ mt: 2 }}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
+                  text="Stringent set - FIMO p-value < 10^-8 (885 MB)"
+                  sx={{ mt: 2 }}
+                />
+              </Grid>
+            </Grid>
           </AccordionDetails>
         </Accordion>
       </TabPanel>
 
       {/* Heritability Models Tab */}
       <TabPanel value={value} index={2}>
-        <Typography variant="h4" component="h1" gutterBottom>
+        <Typography
+          variant="h4"
+          component="h1"
+          fontWeight={"bold"}
+          gutterBottom
+        >
           Partitioned LD Score Regression
         </Typography>
         <Typography variant="subtitle1" gutterBottom>
@@ -513,7 +517,7 @@ const DownloadPage: React.FC = () => {
                   </Typography>
                   <StyledButton
                     text="View Models (5)"
-                    href="/downloads/ld-score-tf-chip-seq-peaks"
+                    href="https://factorbook.org/partitioned-ldr/hg38/peak-models"
                   />
                 </Box>
               </Grid>
@@ -542,7 +546,7 @@ const DownloadPage: React.FC = () => {
                   </Typography>
                   <StyledButton
                     text="View Models (2)"
-                    href="/downloads/ld-score-tf-motif-sites"
+                    href="https://factorbook.org/partitioned-ldr/hg38/peak-motif-models"
                   />
                 </Box>
               </Grid>
