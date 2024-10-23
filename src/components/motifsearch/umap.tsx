@@ -9,8 +9,9 @@ import {
   Alert,
   useMediaQuery,
   useTheme,
+  Stack
 } from "@mui/material";
-import { Chart, Scatter } from "jubilant-carnival";
+//import { Chart, Scatter } from "jubilant-carnival";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import {
   DataTable,
@@ -25,6 +26,8 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import Link from "next/link";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { ParentSize } from '@visx/responsive';
+import { Chart } from './scatterplot'
 
 const colors = {
   1: "#FFA500",
@@ -134,7 +137,11 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
 
   const [data, setData] = useState<MMotif[]>([]);
   const [selection, setSelection] = useState<MMotif[]>([]);
-
+  const [selectMode, setSelectMode] = useState<"select" | "pan">("select")
+  const [zoom, setZoom] = useState({ scaleX: 1, scaleY: 1 });
+  const [showMiniMap, setShowMiniMap] = useState(false);
+  const graphContainerRef = useRef(null);
+  const graphRef = useRef(null);
   useEffect(() => {
     fetch(props.url)
       .then((x) => x.blob())
@@ -154,29 +161,52 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
     [data]
   );
 
-  const domain = useMemo(
-    () =>
-      points.length === 0
-        ? { x: { start: 0, end: 1 }, y: { start: 0, end: 1 } }
-        : {
-            x: {
-              start: lower5(Math.min(...points.map((x) => x.x)) * 1.1),
-              end: upper5(Math.max(...points.map((x) => x.x)) * 1.1),
-            },
-            y: {
-              start: lower5(Math.min(...points.map((x) => x.y)) * 1.1),
-              end: upper5(Math.max(...points.map((x) => x.y)) * 1.1),
-            },
-          },
-    [points]
-  );
+  const map = useMemo(() => {
+    return {
+        show: showMiniMap,
+        position: {
+            right: 50,
+            bottom: 50, 
+        },
+        ref: graphContainerRef
+    };
+  }, [showMiniMap]);
 
-  const uref = useRef<SVGSVGElement>(null);
+  const umapLoading = data.length === 0
+
+  const scatterData = useMemo(() => {
+    if (!data) return [];
+   
+    return data.map((x) => {
+      return {
+        x: x.coordinates[0],
+        y: x.coordinates[1],
+        r: 2,
+        color: x.color,
+        opacity: 1,
+        metaData: {
+          accession: x.accession,
+          dbd: x.dbd,
+          factor: x.factor,
+          pwm: x.pwm,
+          e: x.e,
+          sites: x.sites
+
+        }
+      };
+    });
+  }, [data]);
+  const handleSelectionChange = (selectedPoints: any) => {
+    console.log(selectedPoints)
+    
+  };
+
+  
 
   return data.length === 0 ? (
     <CircularProgress />
   ) : (
-    <Box sx={{ padding: isMobile ? 2 : isTablet ? 3 : 4 }}>
+    <>
       <br />
       <Alert
         icon={
@@ -214,78 +244,70 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
         </Typography>
       </Alert>
       <br />
-      <Grid container spacing={isMobile ? 1 : 2}>
-        <Grid item xs={12} md={6} sx={{ textAlign: "center" }}>
-          <Chart
-            marginFraction={0.12}
-            innerSize={
-              isMobile
-                ? { width: 300, height: 300 }
-                : isTablet
-                ? { width: 600, height: 600 }
-                : { width: 1100, height: 900 }
-            }
-            domain={domain}
-            xAxisProps={{
-              ticks: range(domain.x.start, domain.x.end, 5),
-              title: "UMAP-1",
-            }}
-            yAxisProps={{
-              ticks: range(domain.y.start, domain.y.end, 5),
-              title: "UMAP-2",
-            }}
-            scatterData={[points]}
-            plotAreaProps={{
-              freeformSelection: true,
-              onFreeformSelectionEnd: (_, i) =>
-                setSelection(i[0].map((x) => data[x])),
-            }}
-            ref={uref}
-          >
-            <Scatter data={points} />
-          </Chart>
-          <Button
-            variant="contained"
-            startIcon={<SaveAltIcon />}
-            onClick={() => downloadSVG(uref, "umap.svg")}
-            sx={{
-              borderRadius: "20px",
-              backgroundColor: "#8169BF",
-              color: "white",
-              marginTop: isMobile ? 2 : 4,
-            }}
-          >
-            Export Plot as SVG
-          </Button>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <DataTable
-            columns={COLUMNS(props.title)}
-            rows={selection}
-            emptyText="Shift, click, and drag on the UMAP to make a selection"
-            itemsPerPage={isMobile ? 3 : 5}
-            sortColumn={1}
-            tableTitle="Motifs"
-          />
-          {selection.length > 0 && (
-            <Button
-              variant="contained"
-              sx={{
-                borderRadius: "20px",
-                backgroundColor: "#8169BF",
-                color: "white",
-                marginTop: isMobile ? 2 : 4,
-              }}
-              onClick={() =>
-                downloadData(meme(selection), "motif-collection.meme")
-              }
-            >
-              Download these motifs
-            </Button>
-          )}
-        </Grid>
-      </Grid>
-    </Box>
+      <Stack sx={{paddingX:15}}>
+      <Grid mt={2} container spacing={2}>
+        <Grid item>
+            <Stack direction="row" spacing={5}>
+                <ParentSize>
+                  {({ width, height }) => {
+                    const squareSize = Math.min(width, height);
+                    return (
+                      <Stack overflow={"hidden"} padding={1} sx={{ border: '2px solid', borderColor: 'grey.400', borderRadius: '8px', height: '57vh', position: 'relative' }} ref={graphContainerRef}>
+                        
+                        <Stack justifyContent="center" alignItems="center" direction="row" sx={{ position: "relative", maxHeight: height }}>
+                          <Box sx={{ width: squareSize, height: squareSize }} ref={graphRef}>
+                            <Chart
+                              width={squareSize - 25}
+                              height={squareSize - 25}
+                              pointData={scatterData}
+                              loading={umapLoading}
+                              selectionType={selectMode}
+                              onSelectionChange={handleSelectionChange}
+                              zoomScale={zoom}
+                              miniMap={map}
+                              leftAxisLable="UMAP-2"
+                              bottomAxisLabel="UMAP-1"
+                            />
+                          </Box>
+                        </Stack>
+                        
+                      </Stack>
+                    )}
+                  }
+                </ParentSize>
+              
+                <DataTable
+                  columns={COLUMNS(props.title)}
+                  rows={selection}
+                  emptyText="Shift, click, and drag on the UMAP to make a selection"
+                  itemsPerPage={isMobile ? 3 : 5}
+                  sortColumn={1}
+                  tableTitle="Motifs"
+                />
+                {selection.length > 0 && (
+                  <Button
+                    variant="contained"
+                    sx={{
+                      borderRadius: "20px",
+                      backgroundColor: "#8169BF",
+                      color: "white",
+                      marginTop: isMobile ? 2 : 4,
+                    }}
+                    onClick={() =>
+                      downloadData(meme(selection), "motif-collection.meme")
+                    }
+                  >
+                    Download these motifs
+                  </Button>
+                )}
+            
+            
+
+          </Stack>
+    </Grid>
+    </Grid>
+    </Stack>
+    </>
   );
 };
 
