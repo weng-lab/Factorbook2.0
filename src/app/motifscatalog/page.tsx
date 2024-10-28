@@ -170,7 +170,15 @@ const MotifsCatalogPage = () => {
       </Box>
 
       {value === 0 && (
-        <Box sx={{ mt: 4, mx: "auto", maxWidth: isMobile ? "90%" : "800px" }}>
+        <Box
+          sx={{
+            mt: 4,
+            mx: "auto",
+            pt: 11,
+            pb: 10,
+            maxWidth: isMobile ? "90%" : "800px",
+          }}
+        >
           <Typography variant="h6" gutterBottom>
             Enter a consensus sequence or regex:
           </Typography>
@@ -288,7 +296,15 @@ const MotifsCatalogPage = () => {
       )}
 
       {value === 3 && (
-        <Box sx={{ mt: 4, mx: "auto", maxWidth: isMobile ? "90%" : "800px" }}>
+        <Box
+          sx={{
+            mt: 4,
+            mx: "auto",
+            pt: 16,
+            pb: 43,
+            maxWidth: isMobile ? "90%" : "800px",
+          }}
+        >
           <Grid2 container spacing={4}>
             <Grid2 xs={12} sm={6}>
               <Typography variant="h6" gutterBottom>
