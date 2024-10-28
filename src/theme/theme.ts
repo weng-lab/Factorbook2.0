@@ -5,10 +5,12 @@ declare module '@mui/material/styles/createPalette' {
   interface Palette {
     gray: Palette['primary'];
     link: Palette['primary'];
+    black: Palette['primary'];
   }
   interface PaletteOptions {
     gray?: PaletteOptions['primary'];
     link?: PaletteOptions['primary'];
+    black?: PaletteOptions['primary'];
   }
 }
 
@@ -25,6 +27,9 @@ const theme = createTheme({
     },
     link: {
       main: 'purple',   // Link color
+    },
+    black: {
+      main: '#000000',  // Black used in text (like headers)
     },
   },
   typography: {

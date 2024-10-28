@@ -50,9 +50,7 @@ const Homepage = () => {
 
   const handleGoClick = () => {
     if (selectedValue) {
-      const capitalizedValue =
-        selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1);
-      router.push(`/transcriptionfactor/${capitalizedValue}`);
+      router.push(`/transcriptionfactor/${selectedValue}`);
     }
   };
 
@@ -337,7 +335,7 @@ const Homepage = () => {
 
       <PortalPanel
         title="Motif Site Catalog"
-        description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences..."
+        description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
         imageSrc="/IllustrationsNew.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
@@ -347,7 +345,7 @@ const Homepage = () => {
 
       <PortalPanel
         title="Annotate Variants"
-        description="Genetic variants in regulatory elements of the human genome play a critical role in influencing traits..."
+        description="Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants."
         imageSrc="/Human.png"
         imageAlt="Annotate Variants"
         buttonText="Explore Annotations"
