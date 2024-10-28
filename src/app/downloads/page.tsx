@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import React, { useState } from "react";
 import {
   Container,
   Box,
@@ -58,6 +58,7 @@ const DownloadPage: React.FC = () => {
     panel1: true,
     panel2: true,
   });
+  const [accordionOpen, setAccordionOpen] = useState(true);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -93,7 +94,14 @@ const DownloadPage: React.FC = () => {
 
       {/* Tab Content */}
       <TabPanel value={value} index={0}>
-        <Box sx={{ mt: 4, mx: "auto", maxWidth: isMobile ? "90%" : "800px" }}>
+        <Box
+          sx={{
+            mt: 4,
+            mx: "auto",
+            pb: 16,
+            maxWidth: isMobile ? "90%" : "800px",
+          }}
+        >
           {/* Title */}
           <Typography
             variant="h4"
@@ -403,156 +411,166 @@ const DownloadPage: React.FC = () => {
 
       {/* Heritability Models Tab */}
       <TabPanel value={value} index={2}>
-        <Typography
-          variant="h4"
-          component="h1"
-          fontWeight={"bold"}
-          gutterBottom
+        <Box
+          sx={{
+            mb: accordionOpen ? 0 : 13,
+            mt: accordionOpen ? 0 : 6,
+          }}
         >
-          Partitioned LD Score Regression
-        </Typography>
-        <Typography variant="subtitle1" gutterBottom>
-          Quantify heritability enrichment in TF peaks and motif sites
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          Download Partitioned LD Score Regression models for quantifying trait
-          and disease heritability enrichment within TF ChIP-seq peaks or TF
-          motif sites.
-        </Typography>
+          <Typography
+            variant="h4"
+            component="h1"
+            fontWeight={"bold"}
+            gutterBottom
+          >
+            Partitioned LD Score Regression
+          </Typography>
+          <Typography variant="subtitle1" gutterBottom>
+            Quantify heritability enrichment in TF peaks and motif sites
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            Download Partitioned LD Score Regression models for quantifying
+            trait and disease heritability enrichment within TF ChIP-seq peaks
+            or TF motif sites.
+          </Typography>
 
-        {/* Accordion - Getting Started */}
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="h6">Getting Started</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography variant="body1" gutterBottom>
-              Quantifying heritability enrichment takes ~5 minutes on a standard
-              laptop. We recommend running this workflow using our provided
-              Docker image. Click for detailed instructions.
-            </Typography>
-            <ol>
-              <li>
-                <a
-                  href="https://docs.docker.com/get-docker/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Install Docker
-                </a>
-              </li>
-              <li>
-                Run the following command to partition heritability for motif
-                sites in ChIP-seq peaks from seven ENCODE cell lines:
-              </li>
-            </ol>
-            <Box
-              component="pre"
-              sx={{
-                backgroundColor: "#f3f3f3",
-                padding: 2,
-                borderRadius: 2,
-                overflowX: "auto",
-              }}
-            >
-              docker run \<br />
-              &nbsp;&nbsp;--volume /path/to/inputs:/input \<br />
-              &nbsp;&nbsp;ghcr.io/weng-lab/ldr/ldr:latest \<br />
-              &nbsp;&nbsp;python3 -m ldr.h2 \<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;--ld-scores <br />
-              &nbsp;&nbsp;&nbsp;&nbsp;http://gcp.wenglab.org/ldr-models/seven-cell-type-motifs.tar.gz
-              \<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;--ld-prefix annotations \<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;--summary-statistics <br />
-              &nbsp;&nbsp;&nbsp;&nbsp;/input/summary-stats.txt &gt;
-              partitioned-heritability.txt
-            </Box>
-            <Typography variant="body2" gutterBottom>
-              To quantify heritability for a different subset of peaks or motif
-              sites, simply sub a different URL for the ld-scores parameter. You
-              can find URLs for each model in the <strong>View Models</strong>{" "}
-              section below.
-            </Typography>
-            <Typography variant="body2">
-              Output will be located at{" "}
-              <Box component="pre" display="inline">
-                /path/to/outputs/partitioned-heritability.txt
-              </Box>{" "}
-              when the command finishes.
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
+          {/* Accordion - Getting Started */}
+          <Accordion
+            defaultExpanded
+            onChange={(event, isExpanded) => setAccordionOpen(isExpanded)}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6">Getting Started</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body1" gutterBottom>
+                Quantifying heritability enrichment takes ~5 minutes on a
+                standard laptop. We recommend running this workflow using our
+                provided Docker image. Click for detailed instructions.
+              </Typography>
+              <ol>
+                <li>
+                  <a
+                    href="https://docs.docker.com/get-docker/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Install Docker
+                  </a>
+                </li>
+                <li>
+                  Run the following command to partition heritability for motif
+                  sites in ChIP-seq peaks from seven ENCODE cell lines:
+                </li>
+              </ol>
+              <Box
+                component="pre"
+                sx={{
+                  backgroundColor: "#f3f3f3",
+                  padding: 2,
+                  borderRadius: 2,
+                  overflowX: "auto",
+                }}
+              >
+                docker run \<br />
+                &nbsp;&nbsp;--volume /path/to/inputs:/input \<br />
+                &nbsp;&nbsp;ghcr.io/weng-lab/ldr/ldr:latest \<br />
+                &nbsp;&nbsp;python3 -m ldr.h2 \<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;--ld-scores <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;http://gcp.wenglab.org/ldr-models/seven-cell-type-motifs.tar.gz
+                \<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;--ld-prefix annotations \<br />
+                &nbsp;&nbsp;&nbsp;&nbsp;--summary-statistics <br />
+                &nbsp;&nbsp;&nbsp;&nbsp;/input/summary-stats.txt &gt;
+                partitioned-heritability.txt
+              </Box>
+              <Typography variant="body2" gutterBottom>
+                To quantify heritability for a different subset of peaks or
+                motif sites, simply sub a different URL for the ld-scores
+                parameter. You can find URLs for each model in the{" "}
+                <strong>View Models</strong> section below.
+              </Typography>
+              <Typography variant="body2">
+                Output will be located at{" "}
+                <Box component="pre" display="inline">
+                  /path/to/outputs/partitioned-heritability.txt
+                </Box>{" "}
+                when the command finishes.
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
 
-        {/* Accordion - View and Download Models */}
-        <Accordion>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography variant="h6">View and Download Models</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography variant="body1" gutterBottom>
-              Select an annotation to quantify heritability:
-            </Typography>
-            <Grid container spacing={4}>
-              {/* TF ChIP-seq Peaks Card */}
-              <Grid item xs={12} md={6}>
-                <Box
-                  sx={{
-                    backgroundColor: "#333",
-                    color: "#fff",
-                    padding: 3,
-                    borderRadius: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    height: "100%",
-                  }}
-                >
-                  <Typography variant="h6" gutterBottom>
-                    TF ChIP-seq Peaks
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
-                    Quantify heritability enrichment within TF peaks identified
-                    from ChIP-seq experiments in one of five well-profiled
-                    ENCODE cell lines.
-                  </Typography>
-                  <StyledButton
-                    text="View Models (5)"
-                    href="https://factorbook.org/partitioned-ldr/hg38/peak-models"
-                  />
-                </Box>
+          {/* Accordion - View and Download Models */}
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6">View and Download Models</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography variant="body1" gutterBottom>
+                Select an annotation to quantify heritability:
+              </Typography>
+              <Grid container spacing={4}>
+                {/* TF ChIP-seq Peaks Card */}
+                <Grid item xs={12} md={6}>
+                  <Box
+                    sx={{
+                      backgroundColor: "#333",
+                      color: "#fff",
+                      padding: 3,
+                      borderRadius: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      height: "100%",
+                    }}
+                  >
+                    <Typography variant="h6" gutterBottom>
+                      TF ChIP-seq Peaks
+                    </Typography>
+                    <Typography variant="body2" gutterBottom>
+                      Quantify heritability enrichment within TF peaks
+                      identified from ChIP-seq experiments in one of five
+                      well-profiled ENCODE cell lines.
+                    </Typography>
+                    <StyledButton
+                      text="View Models (5)"
+                      href="https://factorbook.org/partitioned-ldr/hg38/peak-models"
+                    />
+                  </Box>
+                </Grid>
+
+                {/* Motif Sites in TF ChIP-seq Peaks Card */}
+                <Grid item xs={12} md={6}>
+                  <Box
+                    sx={{
+                      backgroundColor: "#333",
+                      color: "#fff",
+                      padding: 3,
+                      borderRadius: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      height: "100%",
+                    }}
+                  >
+                    <Typography variant="h6" gutterBottom>
+                      Motif Sites in TF ChIP-seq Peaks
+                    </Typography>
+                    <Typography variant="body2" gutterBottom>
+                      Quantify heritability enrichment within TF motif sites
+                      identified in peaks from ChIP-seq experiments in one of
+                      five well-profiled ENCODE cell lines.
+                    </Typography>
+                    <StyledButton
+                      text="View Models (2)"
+                      href="https://factorbook.org/partitioned-ldr/hg38/peak-motif-models"
+                    />
+                  </Box>
+                </Grid>
               </Grid>
-
-              {/* Motif Sites in TF ChIP-seq Peaks Card */}
-              <Grid item xs={12} md={6}>
-                <Box
-                  sx={{
-                    backgroundColor: "#333",
-                    color: "#fff",
-                    padding: 3,
-                    borderRadius: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    height: "100%",
-                  }}
-                >
-                  <Typography variant="h6" gutterBottom>
-                    Motif Sites in TF ChIP-seq Peaks
-                  </Typography>
-                  <Typography variant="body2" gutterBottom>
-                    Quantify heritability enrichment within TF motif sites
-                    identified in peaks from ChIP-seq experiments in one of five
-                    well-profiled ENCODE cell lines.
-                  </Typography>
-                  <StyledButton
-                    text="View Models (2)"
-                    href="https://factorbook.org/partitioned-ldr/hg38/peak-motif-models"
-                  />
-                </Box>
-              </Grid>
-            </Grid>
-          </AccordionDetails>
-        </Accordion>
+            </AccordionDetails>
+          </Accordion>
+        </Box>
       </TabPanel>
     </Container>
   );
