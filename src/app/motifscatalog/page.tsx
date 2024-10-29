@@ -174,8 +174,8 @@ const MotifsCatalogPage = () => {
           sx={{
             mt: 4,
             mx: "auto",
-            pt: 11,
-            pb: 10,
+            pt: 3,
+            pb: 3,
             maxWidth: isMobile ? "90%" : "800px",
           }}
         >
@@ -300,8 +300,8 @@ const MotifsCatalogPage = () => {
           sx={{
             mt: 4,
             mx: "auto",
-            pt: 16,
-            pb: 43,
+            pt: 16.5,
+            pb: 26,
             maxWidth: isMobile ? "90%" : "800px",
           }}
         >
