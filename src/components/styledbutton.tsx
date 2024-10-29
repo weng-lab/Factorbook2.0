@@ -1,11 +1,12 @@
 "use client";
 
-import React, { forwardRef } from "react";
-import { Button, SxProps, Theme } from "@mui/material";
+import React, { forwardRef, ReactNode } from "react";
+import { Button, SxProps, Theme, Box, Typography } from "@mui/material";
 import Link from "next/link";
 
 interface StyledButtonProps {
-  text: string;
+  text: string; // Keep as string for backward compatibility
+  secondaryText?: ReactNode; // New optional prop for additional text
   href: string;
   display?: string;
   sx?: SxProps<Theme>;
@@ -14,7 +15,18 @@ interface StyledButtonProps {
 }
 
 const StyledButton = forwardRef<HTMLButtonElement, StyledButtonProps>(
-  ({ text, href, display = "block", sx = {}, onClick, startIcon }, ref) => {
+  (
+    {
+      text,
+      secondaryText,
+      href,
+      display = "block",
+      sx = {},
+      onClick,
+      startIcon,
+    },
+    ref
+  ) => {
     return (
       <Link href={href} passHref>
         <Button
@@ -28,33 +40,47 @@ const StyledButton = forwardRef<HTMLButtonElement, StyledButtonProps>(
             textTransform: "none",
             fontWeight: "medium",
             color: "#FFFFFF",
-            justifyContent: "center", // Center align the content of the button
-            alignItems: "center", // Align items in the center
-            width: "100%", // Full width for the button
-            maxWidth: "400px", // Maximum width for larger screens
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            maxWidth: "400px",
             "& .MuiButton-startIcon": {
-              marginRight: "8px", // Ensure there is space between the icon and the text
-              marginLeft: "-4px", // Adjust left margin to align the icon properly
+              marginRight: "8px",
+              marginLeft: "-4px",
             },
             "&:focus, &:hover, &:active": {
               backgroundColor: "#8169BF",
             },
-            // Media query for tablets
             "@media (max-width: 768px)": {
-              maxWidth: "300px", // Adjust max width for tablets
-              padding: "8px 12px", // Adjust padding for smaller screens
+              maxWidth: "300px",
+              padding: "8px 12px",
             },
-            // Media query for phones
             "@media (max-width: 480px)": {
-              maxWidth: "100%", // Use full width on small screens
-              padding: "8px 10px", // Adjust padding for smaller screens
+              maxWidth: "100%",
+              padding: "8px 10px",
             },
             ...sx,
           }}
           onClick={onClick}
           startIcon={startIcon}
         >
-          {text}
+          {/* Main Text with Icon on the same line */}
+          <Box component="span" sx={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="body1" component="span" sx={{ mr: 1 }}>
+              {text}
+            </Typography>
+          </Box>
+
+          {/* Secondary text (optional), displayed on a new line */}
+          {secondaryText && (
+            <Typography
+              variant="body2"
+              component="div"
+              sx={{ mt: 1, width: "100%" }}
+            >
+              {secondaryText}
+            </Typography>
+          )}
         </Button>
       </Link>
     );

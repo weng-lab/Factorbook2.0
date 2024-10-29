@@ -51,6 +51,14 @@ function a11yProps(index: number) {
   };
 }
 
+function formatSuperscript(text: string) {
+  // Replace '^' with <sup> tag for numbers following it
+  return text.replace(/(\^-?\d+)/g, (match: string | any[]) => {
+    const exponent = match.slice(1); // Extract exponent part after '^'
+    return `<sup>${exponent}</sup>`; // Return formatted HTML string
+  });
+}
+
 const DownloadPage: React.FC = () => {
   const [value, setValue] = React.useState(0);
   const isMobile = window.innerWidth <= 600;
@@ -261,18 +269,43 @@ const DownloadPage: React.FC = () => {
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.merged.bed.gz"
-                  text="Lenient set - FIMO p-value < 10^-4 (46 MB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "Lenient set - FIMO p-value < 10^-4 (46 MB)"
+                        ),
+                      }}
+                    />
+                  }
                 />
+
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.merged.bed.gz"
-                  text="Moderate set - FIMO p-value < 10^-5 (45 MB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "Moderate set - FIMO p-value < 10^-5 (45 MB)"
+                        ),
+                      }}
+                    />
+                  }
                   sx={{ mt: 2 }}
                 />
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.merged.bed.gz"
-                  text="Stringent set - FIMO p-value < 10^-6 (44 MB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "Stringent set - FIMO p-value < 10^-6 (44 MB)"
+                        ),
+                      }}
+                    />
+                  }
                   sx={{ mt: 2 }}
                 />
               </Grid>
@@ -288,18 +321,42 @@ const DownloadPage: React.FC = () => {
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.bed.gz"
-                  text="Lenient set - FIMO p-value < 10^-4 (758 MB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "Lenient set - FIMO p-value < 10^-4 (758 MB)"
+                        ),
+                      }}
+                    />
+                  }
                 />
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.bed.gz"
-                  text="Moderate set - FIMO p-value < 10^-5 (684 MB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "Moderate set - FIMO p-value < 10^-5 (684 MB)"
+                        ),
+                      }}
+                    />
+                  }
                   sx={{ mt: 2 }}
                 />
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.bed.gz"
-                  text="Stringent set - FIMO p-value < 10^-6 (653 MB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "Stringent set - FIMO p-value < 10^-6 (653 MB)"
+                        ),
+                      }}
+                    />
+                  }
                   sx={{ mt: 2 }}
                 />
               </Grid>
@@ -362,18 +419,84 @@ const DownloadPage: React.FC = () => {
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.merged.bed.gz"
-                  text="MEME: Lenient set - FIMO p-value < 10^-6 (47 MB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "MEME: Lenient set - FIMO p-value < 10^-6 (47 MB)"
+                        ),
+                      }}
+                    />
+                  }
                 />
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.merged.bed.gz"
-                  text="MEME: Moderate set - FIMO p-value < 10^-7 (19 MB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "MEME: Moderate set - FIMO p-value < 10^-7 (19 MB)"
+                        ),
+                      }}
+                    />
+                  }
                   sx={{ mt: 2 }}
                 />
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.merged.bed.gz"
-                  text="MEME: Stringent set - FIMO p-value < 10^-8 (11 MB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "MEME: Stringent set - FIMO p-value < 10^-8 (11 MB)"
+                        ),
+                      }}
+                    />
+                  }
+                  sx={{ mt: 2 }}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-5.merged.bed.gz"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "HT-SELEX: Lenient set FIMO p-value &lt;10^-5 (57 MB)"
+                        ),
+                      }}
+                    />
+                  }
+                  sx={{ mt: 2 }}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="ttps://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-6.merged.bed.gz"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "HT-SELEX: Moderate set FIMO p-value &lt;10^-6 (12 MB)"
+                        ),
+                      }}
+                    />
+                  }
+                  sx={{ mt: 2 }}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-7.merged.bed.gz"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "HT-SELEX: Stringent set FIMO p-value &lt;10^-7 (2 MB)"
+                        ),
+                      }}
+                    />
+                  }
                   sx={{ mt: 2 }}
                 />
               </Grid>
@@ -389,18 +512,84 @@ const DownloadPage: React.FC = () => {
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.bed.gz"
-                  text="Lenient set - FIMO p-value < 10^-6 (2.9 GB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "Lenient set - FIMO p-value < 10^-6 (2.9 GB)"
+                        ),
+                      }}
+                    />
+                  }
                 />
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.bed.gz"
-                  text="Moderate set - FIMO p-value < 10^-7 (1.5 GB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "Moderate set - FIMO p-value < 10^-7 (1.5 GB)"
+                        ),
+                      }}
+                    />
+                  }
                   sx={{ mt: 2 }}
                 />
                 <StyledButton
                   startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
-                  text="Stringent set - FIMO p-value < 10^-8 (885 MB)"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "Stringent set - FIMO p-value < 10^-8 (885 MB)"
+                        ),
+                      }}
+                    />
+                  }
+                  sx={{ mt: 2 }}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "HT-SELEX: Lenient set FIMO p-value &lt;10^-5"
+                        ),
+                      }}
+                    />
+                  }
+                  sx={{ mt: 2 }}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "HT-SELEX: Moderate set FIMO p-value &lt;10^-6"
+                        ),
+                      }}
+                    />
+                  }
+                  sx={{ mt: 2 }}
+                />
+                <StyledButton
+                  startIcon={<SaveAltIcon />}
+                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
+                  text={
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: formatSuperscript(
+                          "HT-SELEX: Stringent set FIMO p-value &lt;10^-7"
+                        ),
+                      }}
+                    />
+                  }
                   sx={{ mt: 2 }}
                 />
               </Grid>
