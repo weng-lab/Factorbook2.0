@@ -5,7 +5,7 @@ import { Button, SxProps, Theme, Box, Typography } from "@mui/material";
 import Link from "next/link";
 
 interface StyledButtonProps {
-  text: string; // Keep as string for backward compatibility
+  text: ReactNode;
   secondaryText?: ReactNode; // New optional prop for additional text
   href: string;
   display?: string;
@@ -64,23 +64,32 @@ const StyledButton = forwardRef<HTMLButtonElement, StyledButtonProps>(
           onClick={onClick}
           startIcon={startIcon}
         >
-          {/* Main Text with Icon on the same line */}
-          <Box component="span" sx={{ display: "flex", alignItems: "center" }}>
-            <Typography variant="body1" component="span" sx={{ mr: 1 }}>
-              {text}
-            </Typography>
-          </Box>
-
-          {/* Secondary text (optional), displayed on a new line */}
-          {secondaryText && (
-            <Typography
-              variant="body2"
-              component="div"
-              sx={{ mt: 1, width: "100%" }}
+          {/* Main Text with Icon on the same line, centered */}
+          <Box component="div" sx={{ textAlign: "center", width: "100%" }}>
+            <Box
+              component="span"
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              {secondaryText}
-            </Typography>
-          )}
+              <Typography variant="body1" component="span" sx={{ mr: 1 }}>
+                {text}
+              </Typography>
+            </Box>
+
+            {/* Secondary text (optional), displayed on a new line */}
+            {secondaryText && (
+              <Typography
+                variant="body2"
+                component="div"
+                sx={{ mt: 1, width: "100%", textAlign: "center" }}
+              >
+                {secondaryText}
+              </Typography>
+            )}
+          </Box>
         </Button>
       </Link>
     );

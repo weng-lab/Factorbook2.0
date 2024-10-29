@@ -138,32 +138,50 @@ const DownloadPage: React.FC = () => {
                 733 Transcription Factors
               </Typography>
               <StyledButton
-                startIcon={<SaveAltIcon />}
                 href="/motifscatlog/factorbook_chipseq_meme_motifs.tsv"
-                text="Download motifs in MEME Format"
+                text={
+                  <>
+                    <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                    <strong>Download motifs in MEME Format</strong>
+                  </>
+                }
+                secondaryText="1 MB"
               />
+
               <Box sx={{ marginTop: 2 }}>
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="/motifscatlog/complete-factorbook-catalog.meme.gz"
-                  text="Download metadata in TSV Format"
+                  text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Download metadata in TSV Format</strong>
+                    </>
+                  }
+                  secondaryText="2.9 MB"
                 />
               </Box>
-            </Grid2>
-            <Grid2 xs={12} sm={6}>
-              <Typography variant="h6" gutterBottom>
-                HT-SELEX Catalog
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                6,700 Motifs
-                <br />
-                631 TFs
-              </Typography>
-              <StyledButton
-                startIcon={<SaveAltIcon />}
-                href="/motifscatlog/all-selex-motifs.meme.gz"
-                text="Download motifs in MEME Format"
-              />
+
+              <Grid2 xs={12} sm={6}>
+                <Typography variant="h6" gutterBottom>
+                  HT-SELEX Catalog
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  6,700 Motifs
+                  <br />
+                  631 TFs
+                </Typography>
+
+                <StyledButton
+                  href="/motifscatlog/all-selex-motifs.meme.gz"
+                  text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Download motifs in MEME Format</strong>
+                    </>
+                  }
+                  secondaryText="1 MB"
+                />
+              </Grid2>
             </Grid2>
           </Grid2>
         </Box>
@@ -267,41 +285,56 @@ const DownloadPage: React.FC = () => {
                   Download merged motif sites
                 </Typography>
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.merged.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Lenient set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
                         __html: formatSuperscript(
-                          "Lenient set - FIMO p-value < 10^-4 (46 MB)"
+                          "FIMO p-value < 10^-4 (46 MB)"
                         ),
                       }}
                     />
                   }
                 />
-
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.merged.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Moderate set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
                         __html: formatSuperscript(
-                          "Moderate set - FIMO p-value < 10^-5 (45 MB)"
+                          "FIMO p-value < 10^-5 (45 MB)"
                         ),
                       }}
                     />
                   }
                   sx={{ mt: 2 }}
                 />
+
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.merged.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Stringent set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
                         __html: formatSuperscript(
-                          "Stringent set - FIMO p-value < 10^-6 (44 MB)"
+                          "FIMO p-value < 10^-6 (44 MB)"
                         ),
                       }}
                     />
@@ -318,41 +351,59 @@ const DownloadPage: React.FC = () => {
                 >
                   Download all motif sites
                 </Typography>
+
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Lenient set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
                         __html: formatSuperscript(
-                          "Lenient set - FIMO p-value < 10^-4 (758 MB)"
+                          "FIMO p-value < 10^-4 (758 MB)"
                         ),
                       }}
                     />
                   }
                 />
+
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Moderate set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
                         __html: formatSuperscript(
-                          "Moderate set - FIMO p-value < 10^-5 (684 MB)"
+                          "FIMO p-value < 10^-5 (684 MB)"
                         ),
                       }}
                     />
                   }
                   sx={{ mt: 2 }}
                 />
+
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Stringent set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
                         __html: formatSuperscript(
-                          "Stringent set - FIMO p-value < 10^-6 (653 MB)"
+                          "FIMO p-value < 10^-6 (653 MB)"
                         ),
                       }}
                     />
@@ -416,89 +467,126 @@ const DownloadPage: React.FC = () => {
                 >
                   Download merged motif sites
                 </Typography>
-                <StyledButton
-                  startIcon={<SaveAltIcon />}
-                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.merged.bed.gz"
-                  text={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "MEME: Lenient set - FIMO p-value < 10^-6 (47 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                />
-                <StyledButton
-                  startIcon={<SaveAltIcon />}
-                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.merged.bed.gz"
-                  text={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "MEME: Moderate set - FIMO p-value < 10^-7 (19 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-                <StyledButton
-                  startIcon={<SaveAltIcon />}
-                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.merged.bed.gz"
-                  text={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "MEME: Stringent set - FIMO p-value < 10^-8 (11 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-                <StyledButton
-                  startIcon={<SaveAltIcon />}
-                  href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-5.merged.bed.gz"
-                  text={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "HT-SELEX: Lenient set FIMO p-value &lt;10^-5 (57 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-                <StyledButton
-                  startIcon={<SaveAltIcon />}
-                  href="ttps://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-6.merged.bed.gz"
-                  text={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "HT-SELEX: Moderate set FIMO p-value &lt;10^-6 (12 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-                <StyledButton
-                  startIcon={<SaveAltIcon />}
-                  href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-7.merged.bed.gz"
-                  text={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "HT-SELEX: Stringent set FIMO p-value &lt;10^-7 (2 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
+                <>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.merged.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>MEME: Lenient set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-6 (47 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                  />
+
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.merged.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>MEME: Moderate set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-7 (19 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                    sx={{ mt: 2 }}
+                  />
+
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.merged.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>MEME: Stringent set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-8 (11 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                    sx={{ mt: 2 }}
+                  />
+
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-5.merged.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>HT-SELEX: Lenient set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-5 (57 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                    sx={{ mt: 2 }}
+                  />
+
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-6.merged.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>HT-SELEX: Moderate set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-6 (12 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                    sx={{ mt: 2 }}
+                  />
+
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-7.merged.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>HT-SELEX: Stringent set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-7 (2 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                    sx={{ mt: 2 }}
+                  />
+                </>
               </Grid>
 
               <Grid item xs={12} md={6}>
@@ -510,83 +598,112 @@ const DownloadPage: React.FC = () => {
                   Download all motif sites
                 </Typography>
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Lenient set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
                         __html: formatSuperscript(
-                          "Lenient set - FIMO p-value < 10^-6 (2.9 GB)"
+                          "FIMO p-value < 10^-6 (2.9 GB)"
                         ),
                       }}
                     />
                   }
                 />
+
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Moderate set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
                         __html: formatSuperscript(
-                          "Moderate set - FIMO p-value < 10^-7 (1.5 GB)"
+                          "FIMO p-value < 10^-7 (1.5 GB)"
                         ),
                       }}
                     />
                   }
                   sx={{ mt: 2 }}
                 />
+
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Stringent set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
                         __html: formatSuperscript(
-                          "Stringent set - FIMO p-value < 10^-8 (885 MB)"
+                          "FIMO p-value < 10^-8 (885 MB)"
                         ),
                       }}
                     />
                   }
                   sx={{ mt: 2 }}
                 />
+
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>HT-SELEX: Lenient set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "HT-SELEX: Lenient set FIMO p-value &lt;10^-5"
-                        ),
+                        __html: formatSuperscript("FIMO p-value < 10^-5"),
                       }}
                     />
                   }
                   sx={{ mt: 2 }}
                 />
+
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>HT-SELEX: Moderate set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "HT-SELEX: Moderate set FIMO p-value &lt;10^-6"
-                        ),
+                        __html: formatSuperscript("FIMO p-value < 10^-6"),
                       }}
                     />
                   }
                   sx={{ mt: 2 }}
                 />
+
                 <StyledButton
-                  startIcon={<SaveAltIcon />}
                   href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
                   text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>HT-SELEX: Stringent set</strong>
+                    </>
+                  }
+                  secondaryText={
                     <span
                       dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "HT-SELEX: Stringent set FIMO p-value &lt;10^-7"
-                        ),
+                        __html: formatSuperscript("FIMO p-value < 10^-7"),
                       }}
                     />
                   }
