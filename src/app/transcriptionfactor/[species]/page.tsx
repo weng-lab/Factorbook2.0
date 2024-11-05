@@ -10,7 +10,7 @@ const TranscriptionTabs = dynamic(
   () => import("@/components/transcriptiontabs")
 );
 
-type ContentType = "Human" | "Mouse";
+type ContentType = "human" | "mouse";
 
 const TranscriptionFactorsPage: React.FC = () => {
   const pathname = usePathname();
@@ -20,7 +20,7 @@ const TranscriptionFactorsPage: React.FC = () => {
     ContentType,
     { header: string; content: string; image: string }
   > = {
-    Human: {
+    human: {
       header: "Human Transcription Factors",
       content: `
         Transcription factors (TFs) are regulatory proteins in the
@@ -41,7 +41,7 @@ const TranscriptionFactorsPage: React.FC = () => {
       `,
       image: "/Face.png",
     },
-    Mouse: {
+    mouse: {
       header: "Mouse Transcription Factors",
       content: `
         Transcription factors (TFs) are regulatory proteins in the
@@ -69,7 +69,7 @@ const TranscriptionFactorsPage: React.FC = () => {
   }
 
   const { header, content, image } = contentMap[type];
-  const assembly: string = type === "Human" ? "GRCh38" : "mm10";
+  const assembly: string = type === "human" ? "GRCh38" : "mm10";
   return (
     <>
       <TranscriptionFactors
