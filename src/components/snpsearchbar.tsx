@@ -114,7 +114,7 @@ const SnpSearchbar: React.FC = () => {
                       onKeyDown={(event: any) => {
                         if (event.key === "Enter" && snpValue) {
                           event.preventDefault();
-                          window.open(snpValue ? `/AnnotationsVariants/GRCh38/${snpValue}`: "", "_self")
+                          window.open(snpValue ? `/annotationsvariants/GRCh38/${snpValue}`: "", "_self")
                         }
                       }}
                       popupIcon={<ArrowDropDown sx={{ color: "gray"}} />}

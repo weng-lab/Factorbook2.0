@@ -117,10 +117,10 @@ const MotifsCatalogPage = () => {
       const sanitizedMotifName = motifName.replace(/\s+/g, "");
 
       // This is the actual redirection URL used for fetching or loading the motif
-      const redirectUrl = `/MotifsCatalog/Human/${sanitizedMotifName}`;
+      const redirectUrl = `/motifscatalog/human/${sanitizedMotifName}`;
 
       // This is the URL that will be shown in the browser's address bar
-      const displayUrl = `/FileUpload/${sanitizedMotifName}`;
+      const displayUrl = `/fileupload/${sanitizedMotifName}`;
 
       // Use history.pushState to change the URL in the address bar without a full page reload
       window.history.pushState({}, "", displayUrl);
@@ -203,7 +203,7 @@ const MotifsCatalogPage = () => {
               }}
               onClick={() => {
                 if (val) {
-                  window.open(`/MotifsCatalog/Human/${val}`, "_self");
+                  window.open(`/motifscatalog/human/${val}`, "_self");
                 }
               }}
             >

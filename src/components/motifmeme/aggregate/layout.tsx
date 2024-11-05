@@ -98,7 +98,7 @@ const Layout: React.FC<{
   const handleAccessionClick = (accession: string) => {
     // Update the route dynamically when an accession is clicked
     router.push(
-      `/TranscriptionFactor/${species}/${factor}/EpigeneticProfile/${accession}`
+      `/transcriptionfactor/${species}/${factor}/epigeneticprofile/${accession}`
     );
   };
 

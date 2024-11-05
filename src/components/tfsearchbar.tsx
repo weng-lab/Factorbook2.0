@@ -176,9 +176,9 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 event.preventDefault();
                 window.open(
                   snpValue
-                    ? `/TranscriptionFactor/${
+                    ? `/transcriptionfactor/${
                         assembly === "GRCh38" ? "human" : "mouse"
-                      }/${snpValue}/Function`
+                      }/${snpValue}/function`
                     : "",
                   "_self"
                 );
@@ -278,9 +278,9 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
           }}
           href={
             snpValue
-              ? `/TranscriptionFactor/${
+              ? `/transcriptionfactor/${
                   assembly === "GRCh38" ? "human" : "mouse"
-                }/${snpValue}/Function`
+                }/${snpValue}/function`
               : ""
           }
         >

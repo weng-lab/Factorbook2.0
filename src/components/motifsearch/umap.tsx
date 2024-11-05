@@ -99,7 +99,7 @@ const COLUMNS = (title: string) => {
           style={{ color: "#8169BF" }}
           href={`/transcriptionfactor/human/${
             x.factor.split("phospho")[0]
-          }/Function`}
+          }/function`}
           rel="noopener noreferrer"
           target="_blank"
         >
