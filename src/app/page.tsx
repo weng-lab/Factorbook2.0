@@ -14,13 +14,13 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { useRouter } from "next/navigation";
-import Header from "@/components/Header";
-import SelectComponent from "@/components/Select";
-import PortalPanel from "@/components/PortalPanel";
+import Header from "@/components/header";
+import SelectComponent from "@/components/select";
+import PortalPanel from "@/components/portalpanel";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import TFSearchbar from "@/components/TFSearchBar";
-import SnpSearchBar from "@/components/SnpSearchBar";
-import MotifSearchbar from "@/components/MotifSearchbar";
+import TFSearchbar from "@/components/tfsearchbar";
+import SnpSearchBar from "@/components/snpsearchbar";
+import MotifSearchbar from "@/components/motifsearchbar";
 
 const Homepage = () => {
   const theme = useTheme();
@@ -50,9 +50,7 @@ const Homepage = () => {
 
   const handleGoClick = () => {
     if (selectedValue) {
-      const capitalizedValue =
-        selectedValue.charAt(0).toUpperCase() + selectedValue.slice(1);
-      router.push(`/TranscriptionFactor/${capitalizedValue}`);
+      router.push(`/transcriptionfactor/${selectedValue}`);
     }
   };
 
@@ -232,7 +230,7 @@ const Homepage = () => {
                         color: "black", // Text color of dropdown options
                         backgroundColor: "white", // Background color for the dropdown items
                         "&:hover": {
-                          backgroundColor: theme.palette.grey[200], // Slightly different hover effect
+                          backgroundColor: theme.palette.gray.main, // Slightly different hover effect
                         },
                       },
                     },
@@ -341,7 +339,7 @@ const Homepage = () => {
         imageSrc="/IllustrationsNew.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
-        buttonHref="/MotifsCatalog"
+        buttonHref="/motifscatalog"
         reverse={true}
       />
 
@@ -351,7 +349,7 @@ const Homepage = () => {
         imageSrc="/Human.png"
         imageAlt="Annotate Variants"
         buttonText="Explore Annotations"
-        buttonHref="/AnnotationsVariants"
+        buttonHref="/annotationsvariants"
         reverse={false}
       />
     </>

@@ -1,9 +1,9 @@
 "use client";
 
-import { ApiContext } from "@/ApiContext";
+import { ApiContext } from "@/apicontext";
 import { useContext } from 'react';
 import { useQuery } from '@apollo/client';
-import { GENE_EXPRESSION_QUERY, GENE_ID_QUERY } from './Queries';
+import { GENE_EXPRESSION_QUERY, GENE_ID_QUERY } from './queries';
 import { GeneExpressionQueryResponse, GeneIdQueryResponse } from './types';
 
 export function useGeneExpressionData(assembly: string, gene_name: string) {

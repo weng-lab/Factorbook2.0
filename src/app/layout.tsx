@@ -3,14 +3,14 @@
 import "./globals.css";
 import dynamic from "next/dynamic";
 import { ReactNode } from "react";
-import Topbar from "@/components/Topbar";
-import Footer from "@/components/Footer";
+import Topbar from "@/components/topbar";
+import Footer from "@/components/footer";
 import { ApolloWrapper } from "../../lib/apollo-wrapper";
-import { ApiContext, apiContextValue } from "@/ApiContext";
-import { AppProvider } from "@/AppContext";
+import { ApiContext, apiContextValue } from "@/apicontext";
+import { AppProvider } from "@/appcontext";
 
 const ClientThemeProvider = dynamic(
-  () => import("../components/ClientThemeProvider"),
+  () => import("../components/clientthemeprovider"),
   { ssr: false }
 );
 
