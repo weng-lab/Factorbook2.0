@@ -35,96 +35,13 @@ const looksBiological = (value: string): boolean => {
   return v.includes("gene") || v.includes("protein");
 };
 
-/** Columns for the experiment DataTable */
-const datasetColumns = (species: string): DataTableColumn<any>[] => [
-  {
-    header: "Experiment Accession",
-    value: (row) => row.accession,
-    render: (row) => (
-      <a href={`/experiment/${row.accession}`}>{row.accession}</a>
-    ),
-  },
-  {
-    header: "Cell Type",
-    value: (row) => row.biosample,
-    render: (row) => (
-      <a href={`/celltype/${species}/${row.biosample}`}>{row.biosample}</a>
-    ),
-  },
-  {
-    header: "Date Released",
-    value: (row) => row.released,
-    render: (row) => {
-      const d = new Date(row.released);
-      return `${d.toLocaleString("default", {
-        month: "short",
-      })} ${d.getFullYear()}`;
-    },
-  },
-  {
-    header: "Lab",
-    value: (row) => row.lab.friendly_name,
-  },
-  {
-    header: "Replicated Peak File Accession",
-    value: (row) => row.replicated_peaks[0].accession,
-    render: (row) => (
-      <a
-        href={`https://www.encodeproject.org/files/${row.replicated_peaks[0].accession}`}
-      >
-        {row.replicated_peaks[0].accession}
-      </a>
-    ),
-  },
-];
-
-/** To display Biosamples Data Table */
-function biosampleColumns(
-  species: string
-): DataTableColumn<BiosamplePartitionedDatasetCollection>[] {
-  return [
-    {
-      // First column: Biosample Names and Experiments Found
-      header: "Biosample",
-      value: (row) => row.biosample.name, // Access the biosample name
-      render: (row) => (
-        <Box>
-          {/* Render the biosample name */}
-          <Typography variant="body1" fontWeight="bold">
-            {row.biosample.name}
-          </Typography>
-
-          {/* Render the number of datasets (experiments) found */}
-          {row.datasets && row.datasets.length > 0 ? (
-            <Typography variant="caption">
-              {`${row.datasets.length} experiments found`}
-            </Typography>
-          ) : (
-            <Typography variant="caption">No experiments found</Typography>
-          )}
-        </Box>
-      ),
-      sort: (a, b) => b.counts.targets - a.counts.targets, // Sort by target count
-    },
-    {
-      // Second column: Wikipedia Details (if applicable)
-      header: "Wikipedia Details",
-      value: (row) => row.biosample.name,
-      render: (row) => (
-        <CtDetails
-          hideFactorCounts={true}
-          row={row}
-          species={species}
-          celltype={row.biosample.name}
-        />
-      ),
-    },
-  ];
-}
-
 const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   const { species, factor } = useParams<{ species: string; factor: string }>();
   const [imageVisible, setImageVisible] = useState(true);
+
+  // Define factorForUrl to be uppercase if species is human
+  const factorForUrl =
+    species.toLowerCase() === "human" ? factor.toUpperCase() : factor;
 
   /** Fetching factor data */
   const {
@@ -163,31 +80,29 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     () => [
       {
         name: "ENCODE",
-        url: `https://www.encodeproject.org/search/?searchTerm=${
-          props.factor
-        }&type=Experiment&assembly=${
+        url: `https://www.encodeproject.org/search/?searchTerm=${factorForUrl}&type=Experiment&assembly=${
           props.assembly === "GRCh38" ? "GRCh38" : "mm10"
         }&assay_title=TF+ChIP-seq&files.output_type=optimal+IDR+thresholded+peaks&files.output_type=pseudoreplicated+IDR+thresholded+peaks&status=released`,
       },
       {
         name: "Ensembl",
-        url: `http://www.ensembl.org/Human/Search/Results?q=${props.factor}`,
+        url: `http://www.ensembl.org/Human/Search/Results?q=${factorForUrl}`,
       },
       {
         name: "GO",
-        url: `http://amigo.geneontology.org/amigo/search/bioentity?q=${props.factor}`,
+        url: `http://amigo.geneontology.org/amigo/search/bioentity?q=${factorForUrl}`,
       },
       {
         name: "GeneCards",
-        url: `http://www.genecards.org/cgi-bin/carddisp.pl?gene=${props.factor}`,
+        url: `http://www.genecards.org/cgi-bin/carddisp.pl?gene=${factorForUrl}`,
       },
       {
         name: "HGNC",
-        url: `http://www.genenames.org/cgi-bin/gene_search?search=${props.factor}`,
+        url: `http://www.genenames.org/cgi-bin/gene_search?search=${factorForUrl}`,
       },
       {
         name: "RefSeq",
-        url: `http://www.ncbi.nlm.nih.gov/nuccore/?term=${props.factor}+AND+${
+        url: `http://www.ncbi.nlm.nih.gov/nuccore/?term=${factorForUrl}+AND+${
           props.assembly.toLowerCase() !== "mm10"
             ? '"Homo sapiens"[porgn:__txid9606]'
             : '"Mus musculus"[porgn]'
@@ -195,15 +110,95 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       },
       {
         name: "UniProt",
-        url: `http://www.uniprot.org/uniprot/?query=${props.factor}`,
+        url: `http://www.uniprot.org/uniprot/?query=${factorForUrl}`,
       },
       {
         name: "Wikipedia",
-        url: `https://en.wikipedia.org/wiki/${props.factor}`,
+        url: `https://en.wikipedia.org/wiki/${factorForUrl}`,
       },
     ],
-    [props.assembly, props.factor]
+    [props.assembly, factorForUrl]
   );
+
+  /** Columns for the experiment DataTable */
+  const datasetColumns = (species: string): DataTableColumn<any>[] => [
+    {
+      header: "Experiment Accession",
+      value: (row) => row.accession,
+      render: (row) => (
+        <a href={`/experiment/${row.accession}`}>{row.accession}</a>
+      ),
+    },
+    {
+      header: "Cell Type",
+      value: (row) => row.biosample,
+      render: (row) => (
+        <a href={`/celltype/${species}/${row.biosample}`}>{row.biosample}</a>
+      ),
+    },
+    {
+      header: "Date Released",
+      value: (row) => row.released,
+      render: (row) => {
+        const d = new Date(row.released);
+        return `${d.toLocaleString("default", {
+          month: "short",
+        })} ${d.getFullYear()}`;
+      },
+    },
+    {
+      header: "Lab",
+      value: (row) => row.lab.friendly_name,
+    },
+    {
+      header: "Replicated Peak File Accession",
+      value: (row) => row.replicated_peaks[0].accession,
+      render: (row) => (
+        <a
+          href={`https://www.encodeproject.org/files/${row.replicated_peaks[0].accession}`}
+        >
+          {row.replicated_peaks[0].accession}
+        </a>
+      ),
+    },
+  ];
+
+  /** Columns for Biosamples Data Table */
+  const biosampleColumns = (
+    species: string
+  ): DataTableColumn<BiosamplePartitionedDatasetCollection>[] => [
+    {
+      header: "Biosample",
+      value: (row) => row.biosample.name,
+      render: (row) => (
+        <Box>
+          <Typography variant="body1" fontWeight="bold">
+            {row.biosample.name}
+          </Typography>
+          {row.datasets && row.datasets.length > 0 ? (
+            <Typography variant="caption">
+              {`${row.datasets.length} experiments found`}
+            </Typography>
+          ) : (
+            <Typography variant="caption">No experiments found</Typography>
+          )}
+        </Box>
+      ),
+      sort: (a, b) => b.counts.targets - a.counts.targets,
+    },
+    {
+      header: "Wikipedia Details",
+      value: (row) => row.biosample.name,
+      render: (row) => (
+        <CtDetails
+          hideFactorCounts={true}
+          row={row}
+          species={species}
+          celltype={row.biosample.name}
+        />
+      ),
+    },
+  ];
 
   /** Error or Loading State Handling */
   if (factorLoading || datasetLoading) return <CircularProgress />;
@@ -260,7 +255,6 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         minHeight: "100vh",
       }}
     >
-      {/* Left panel with sticky position */}
       <Box
         sx={{
           display: "flex",
@@ -272,7 +266,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
           marginRight: "20px",
           width: "300px",
           minHeight: "calc(100vh - 80px)",
-          position: "sticky", // To Make this element sticky
+          position: "sticky",
           top: "0",
           height: "fit-content",
         }}
@@ -334,7 +328,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
           {datasetData?.peakDataset.partitionByBiosample && (
             <DataTable
               tableTitle={`${biosampleCount} biosamples profiled`}
-              columns={biosampleColumns(species)} // Use the updated columns
+              columns={biosampleColumns(species)}
               rows={datasetData.peakDataset.partitionByBiosample}
               searchable
               itemsPerPage={5}

@@ -40,12 +40,25 @@ const FactorDetailsPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // Define factorForUrl to be uppercase if species is human
+  const factorForUrl =
+    species.toLowerCase() === "human" ? factor.toUpperCase() : factor;
+
+  // Update the URL to uppercase if species is human and factor is not already in uppercase
+  useEffect(() => {
+    if (species.toLowerCase() === "human" && factor !== factorForUrl) {
+      router.replace(
+        `/transcriptionfactor/${species}/${factorForUrl}/${detail}`
+      );
+    }
+  }, [species, factor, factorForUrl, detail, router]);
+
   const { data, loading, error } = useQuery<FactorQueryResponse>(
     FACTOR_DESCRIPTION_QUERY,
     {
       variables: {
         assembly: species === "human" ? "GRCh38" : "mm10",
-        name: [factor],
+        name: [factorForUrl],
       },
     }
   );
@@ -55,7 +68,7 @@ const FactorDetailsPage = () => {
       DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
       {
         variables: {
-          tf: factor,
+          tf: factorForUrl,
           species: species.toLowerCase(),
           selex_round: [1, 2, 3, 4, 5, 6, 7],
         },
@@ -81,7 +94,7 @@ const FactorDetailsPage = () => {
       case "function":
         return (
           <FunctionTab
-            factor={factor}
+            factor={factorForUrl}
             assembly={species === "human" ? "GRCh38" : "mm10"}
             datasets={{
               peakDataset: {
@@ -99,23 +112,25 @@ const FactorDetailsPage = () => {
       case "expression":
         return (
           <GeneExpressionPage
-            gene_name={factor}
-            assembly={species.toLowerCase() === "human" ? "GRCh38" : "mm10"}
+            gene_name={factorForUrl}
+            assembly={species === "human" ? "GRCh38" : "mm10"}
           />
         );
       case "motifenrichmentmeme":
-        return <MotifEnrichmentMEME factor={factor} species={species} />;
+        return <MotifEnrichmentMEME factor={factorForUrl} species={species} />;
       case "motifenrichmentselex":
-        return <DeepLearnedSelexMotifs factor={factor} species={species} />;
+        return (
+          <DeepLearnedSelexMotifs factor={factorForUrl} species={species} />
+        );
       case "epigeneticprofile":
-        return <EpigeneticProfile factor={factor} species={species} />;
+        return <EpigeneticProfile factor={factorForUrl} species={species} />;
       case "peaksearch":
         return <PeakSearch />;
       default:
         return (
           <FunctionTab
-            factor={factor}
-            assembly={species === "human" ? "GRCh38" : "mm10"}
+            factor={factorForUrl}
+            assembly={species.toLowerCase() === "human" ? "GRCh38" : "mm10"}
             datasets={{
               peakDataset: {
                 datasets: [],
@@ -148,7 +163,7 @@ const FactorDetailsPage = () => {
           <Link href={`/transcriptionfactor/${species}`}>
             Transcription Factor
           </Link>{" "}
-          &gt; <Typography component="span">{factor}</Typography>
+          &gt; <Typography component="span">{factorForUrl}</Typography>
         </Box>
 
         <Box display="flex" alignItems="center">
@@ -165,7 +180,7 @@ const FactorDetailsPage = () => {
               label="Function"
               value="function"
               component={Link}
-              href={`/transcriptionfactor/${species}/${factor}/function`}
+              href={`/transcriptionfactor/${species}/${factorForUrl}/function`}
               sx={{
                 color: detail === "function" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
@@ -175,7 +190,7 @@ const FactorDetailsPage = () => {
               label="Expression (RNA-seq)"
               value="expression"
               component={Link}
-              href={`/transcriptionfactor/${species}/${factor}/expression`}
+              href={`/transcriptionfactor/${species}/${factorForUrl}/expression`}
               sx={{
                 color: detail === "expression" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
@@ -185,7 +200,7 @@ const FactorDetailsPage = () => {
               label="Motif Enrichment (MEME, ChIP-seq)"
               value="motifenrichmentmeme"
               component={Link}
-              href={`/transcriptionfactor/${species}/${factor}/motifenrichmentmeme`}
+              href={`/transcriptionfactor/${species}/${factorForUrl}/motifenrichmentmeme`}
               sx={{
                 color: detail === "motifenrichmentmeme" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
@@ -196,7 +211,7 @@ const FactorDetailsPage = () => {
                 label="Motif Enrichment (SELEX)"
                 value="motifenrichmentselex"
                 component={Link}
-                href={`/transcriptionfactor/${species}/${factor}/motifenrichmentselex`}
+                href={`/transcriptionfactor/${species}/${factorForUrl}/motifenrichmentselex`}
                 sx={{
                   color:
                     detail === "motifenrichmentselex" ? "#8169BF" : "inherit",
@@ -208,17 +223,17 @@ const FactorDetailsPage = () => {
               label={`Epigenetic Profile`}
               value="epigeneticprofile"
               component={Link}
-              href={`/transcriptionfactor/${species}/${factor}/epigeneticprofile`}
+              href={`/transcriptionfactor/${species}/${factorForUrl}/epigeneticprofile`}
               sx={{
                 color: detail === "epigeneticprofile" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",
               }}
             />
             <Tab
-              label={`Search ${factor} peaks by region`}
+              label={`Search ${factorForUrl} peaks by region`}
               value="search"
               component={Link}
-              href={`/transcriptionfactor/${species}/${factor}/peaksearch`}
+              href={`/transcriptionfactor/${species}/${factorForUrl}/peaksearch`}
               sx={{
                 color: detail === "search" ? "#8169BF" : "inherit",
                 textTransform: "capitalize",

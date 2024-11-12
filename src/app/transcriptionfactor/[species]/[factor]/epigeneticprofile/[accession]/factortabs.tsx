@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Tabs, Tab } from "@mui/material";
 import Link from "next/link";
@@ -17,6 +15,8 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
   detail,
   hasSelexData,
 }) => {
+  const factorForUrl =
+    species.toLowerCase() === "human" ? factor.toUpperCase() : factor;
   return (
     <Tabs
       value={detail}
@@ -31,7 +31,9 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
         label="Function"
         value="function"
         component={Link}
-        href={`/transcriptionfactor/${species}/${factor}/function`}
+        href={`/transcriptionfactor/${species}/${encodeURIComponent(
+          factorForUrl
+        )}/function`}
         sx={{
           color: detail === "function" ? "#8169BF" : "inherit",
           textTransform: "capitalize",
@@ -41,7 +43,9 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
         label="Expression (RNA-seq)"
         value="expression"
         component={Link}
-        href={`/transcriptionfactor/${species}/${factor}/expression`}
+        href={`/transcriptionfactor/${species}/${encodeURIComponent(
+          factorForUrl
+        )}/expression`}
         sx={{
           color: detail === "expression" ? "#8169BF" : "inherit",
           textTransform: "capitalize",
@@ -51,7 +55,9 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
         label="Motif Enrichment (MEME, ChIP-seq)"
         value="motifenrichmentmeme"
         component={Link}
-        href={`/transcriptionfactor/${species}/${factor}/motifenrichmentmeme`}
+        href={`/transcriptionfactor/${species}/${encodeURIComponent(
+          factorForUrl
+        )}/motifenrichmentmeme`}
         sx={{
           color: detail === "motifenrichmentmeme" ? "#8169BF" : "inherit",
           textTransform: "capitalize",
@@ -62,7 +68,9 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
           label="Motif Enrichment (SELEX)"
           value="motifenrichmentselex"
           component={Link}
-          href={`/transcriptionfactor/${species}/${factor}/motifenrichmentselex`}
+          href={`/transcriptionfactor/${species}/${encodeURIComponent(
+            factorForUrl
+          )}/motifenrichmentselex`}
           sx={{
             color: detail === "motifenrichmentselex" ? "#8169BF" : "inherit",
             textTransform: "capitalize",
@@ -73,7 +81,9 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
         label={`Epigenetic Profile`}
         value="epigeneticprofile"
         component={Link}
-        href={`/transcriptionfactor/${species}/${factor}/epigeneticprofile`}
+        href={`/transcriptionfactor/${species}/${encodeURIComponent(
+          factorForUrl
+        )}/epigeneticprofile`}
         sx={{
           color: detail === "epigeneticprofile" ? "#8169BF" : "inherit",
           textTransform: "capitalize",
@@ -83,7 +93,9 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
         label={`Search ${factor} peaks by region`}
         value="search"
         component={Link}
-        href={`/transcriptionfactor/${species}/${factor}/search`}
+        href={`/transcriptionfactor/${species}/${encodeURIComponent(
+          factorForUrl
+        )}/search`}
         sx={{
           color: detail === "search" ? "#8169BF" : "inherit",
           textTransform: "capitalize",

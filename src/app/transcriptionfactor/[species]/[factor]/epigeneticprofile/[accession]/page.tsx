@@ -45,7 +45,7 @@ const EpigeneticProfilePage = () => {
     AGGREGATE_METADATA_QUERY,
     {
       variables: {
-        assembly: speciesStr === "Human" ? "GRCh38" : "mm10",
+        assembly: speciesStr.toLowerCase() === "human" ? "GRCh38" : "mm10",
         target: factorStr,
       },
     }

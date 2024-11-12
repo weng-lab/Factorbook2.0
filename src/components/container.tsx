@@ -65,14 +65,14 @@ const ReferenceSection: React.FC<ReferenceProps> = ({ title, sources }) => {
         <Box
           sx={{
             display: "flex",
-            padding: "var(--2, 16px)",
+            padding: "16px",
             flexDirection: "row",
             flexWrap: "wrap",
             justifyContent: "center",
             alignItems: "center",
             gap: 2,
-            borderRadius: "var(--borderRadius3, 24px)",
-            background: "var(--grey-500, #494A50)",
+            borderRadius: "24px",
+            background: "#494A50",
             width: "100%",
           }}
         >
@@ -84,18 +84,18 @@ const ReferenceSection: React.FC<ReferenceProps> = ({ title, sources }) => {
               rel="noopener noreferrer"
               sx={{
                 display: "flex",
-                padding: "var(--2, 16px)",
+                padding: "16px",
                 justifyContent: "center",
                 alignItems: "center",
                 flex: "1 0 auto",
                 mt: 1,
                 color: "white",
                 backgroundColor: "transparent",
-                borderRadius: "var(--borderRadius3, 24px)",
+                borderRadius: "24px",
                 textDecoration: "none",
                 "&:hover": {
-                  backgroundColor: "white",
-                  color: "black",
+                  backgroundColor: "#E0E0E0", // Light gray to keep contrast
+                  color: "#000000", // Dark text on light background
                 },
                 transition: "background-color 0.2s, color 0.2s",
               }}
