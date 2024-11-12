@@ -117,7 +117,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   );
 
   const svgRefs = useRef<(SVGSVGElement | null)[]>([]);
-  const assembly = species === "Human" ? "GRCh38" : "mm10";
+  const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));

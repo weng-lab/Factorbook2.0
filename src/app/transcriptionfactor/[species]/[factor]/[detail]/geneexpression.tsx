@@ -32,7 +32,12 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const [value, setValue] = useState(0);
   const { data, loading } = useGeneExpressionData(
     props.assembly,
-    formatFactorName(props.gene_name, props.assembly)
+    formatFactorName(
+      props.assembly === "Human"
+        ? props.gene_name.toUpperCase()
+        : props.gene_name,
+      props.assembly
+    )
   );
   const [mousedOver, setMousedOver] = useState<ViolinPlotMousedOverState>({
     inner: null,

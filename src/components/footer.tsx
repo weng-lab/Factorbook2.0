@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, Typography, Link, Divider } from "@mui/material";
+import { Box, Typography, Link as MuiLink, Divider } from "@mui/material";
+import Link from "next/link";
 
 type LinkSectionProps = {
   title: string;
@@ -20,7 +21,7 @@ const LinkSection: React.FC<LinkSectionProps> = ({ title, links }) => (
     </Typography>
     <Box component="nav">
       {links.map((link) => (
-        <Link
+        <MuiLink
           href={link.href}
           color="white"
           underline="none"
@@ -29,7 +30,7 @@ const LinkSection: React.FC<LinkSectionProps> = ({ title, links }) => (
           key={link.text}
         >
           {link.text}
-        </Link>
+        </MuiLink>
       ))}
     </Box>
   </Box>
@@ -50,27 +51,15 @@ const Footer: React.FC = () => (
       px={3}
     >
       <Box sx={{ flex: 1, minWidth: 200, mb: { xs: 3, md: 0 } }}>
-        <Typography
-          variant="h4"
-          color="white"
-          gutterBottom
-          sx={{
-            color: "#FFF",
-            fontSize: "45px",
-            fontStyle: "normal",
-            fontWeight: 500,
-            lineHeight: "74.5%",
-            letterSpacing: "-1.8px",
-            display: "flex",
-            flexDirection: "column",
-            pointerEvents: "none",
-          }}
-        >
-          factor
-          <Box component="span" sx={{ ml: 7.5 }}>
-            book
-          </Box>
-        </Typography>
+        {/* Wrap the logo image with Next.js Link for homepage navigation */}
+        <Link href="/" passHref>
+          <img
+            src="/logo/on-black/Logo_01_on-black-bg.png" // Path to on-black logo
+            alt="Factorbook Logo"
+            width={180} // Adjust width for a larger appearance
+            style={{ height: "auto", maxHeight: "100px", cursor: "pointer" }} // Optional height adjustment and cursor style
+          />
+        </Link>
         <Typography
           sx={{
             alignSelf: "stretch",
@@ -81,6 +70,7 @@ const Footer: React.FC = () => (
             letterSpacing: "0.15px",
             fontFeatureSettings: "'clig' off, 'liga' off",
             pointerEvents: "none",
+            mt: 2, // Spacing below the logo
           }}
         >
           A comprehensive online resource dedicated to the study of
@@ -120,7 +110,6 @@ const Footer: React.FC = () => (
         />
       </Box>
     </Box>
-    {/* Divider with some margin on both sides (mx) */}
     <Divider sx={{ bgcolor: "white", my: 4, mx: 3, width: "auto" }} />
     <Box
       display="flex"
@@ -129,18 +118,16 @@ const Footer: React.FC = () => (
       flexWrap="wrap"
       sx={{ color: "white", fontSize: 12, width: "100%", px: 3 }}
     >
-      <Typography
-        sx={{
-          pointerEvents: "none",
-        }}
-      ></Typography>
+      <Typography sx={{ pointerEvents: "none" }}>
+        {/* Additional footer information here */}
+      </Typography>
       <Box component="nav" display="flex" gap={2}>
-        <Link href="#" color="white" underline="none">
+        <MuiLink href="#" color="white" underline="none">
           Privacy & Policy
-        </Link>
-        <Link href="#" color="white" underline="none">
+        </MuiLink>
+        <MuiLink href="#" color="white" underline="none">
           Terms & Conditions
-        </Link>
+        </MuiLink>
       </Box>
     </Box>
   </Box>

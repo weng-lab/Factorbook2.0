@@ -42,7 +42,7 @@ const Layout: React.FC<{
   const router = useRouter(); // For pushing URL updates
   const { accession: currentAccession } = useParams(); // Current accession from URL
 
-  const assembly = species === "Human" ? "GRCh38" : "mm10";
+  const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";
 
   const { data, loading, error } = useQuery(AGGREGATE_METADATA_QUERY, {
     variables: { assembly, target: factor },

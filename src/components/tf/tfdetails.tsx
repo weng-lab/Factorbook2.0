@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useEffect, ReactNode, MouseEvent } from "react";
 import { useQuery } from "@apollo/client";
 import {
@@ -69,7 +67,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
 }) => {
   const [rows, setRows] = useState<FactorRow[]>([]);
 
-  const assembly = species === "Human" ? "GRCh38" : "mm10";
+  const assembly = species === "human" ? "GRCh38" : "mm10";
 
   const [loading, setLoading] = useState(false);
   const [tfA, setTFA] = useState<Map<string, any> | null>(null);
@@ -190,10 +188,17 @@ const TfDetails: React.FC<TfDetailsProps> = ({
   const columns: DataTableColumn<FactorRow>[] = [
     {
       header: "Image",
-      render: (row: FactorRow) =>
-        row.image ? (
+      render: (row: FactorRow) => {
+        const nameForUrl =
+          species === "human"
+            ? row.name.toUpperCase()
+            : species === "mouse"
+            ? row.name.charAt(0).toUpperCase() + row.name.slice(1)
+            : row.name;
+
+        return row.image ? (
           <LinkWrapper
-            url={`/transcriptionfactor/${species}/${row.name}/function`}
+            url={`/transcriptionfactor/${species}/${nameForUrl}/function`}
           >
             <img
               src={row.image}
@@ -209,38 +214,49 @@ const TfDetails: React.FC<TfDetailsProps> = ({
           </LinkWrapper>
         ) : (
           ""
-        ),
+        );
+      },
       value: (row: FactorRow) => row.image || "",
     },
     {
       header: "Details",
-      render: (row: FactorRow) => (
-        <LinkWrapper
-          url={`/transcriptionfactor/${species}/${row.name}/function`}
-        >
-          <Box style={{ minWidth: "150px" }}>
-            <Typography variant="h6" style={{ fontWeight: "bold" }}>
-              {species === "Mouse"
-                ? row.name.charAt(0) + row.name.slice(1).toLowerCase()
-                : row.name}
-            </Typography>
-            <Typography>
-              {row.label ? (
-                <>
-                  {row.label.replace(/ -/g, "")}
-                  <br />
-                </>
-              ) : (
-                ""
+      render: (row: FactorRow) => {
+        const nameForUrl =
+          species === "human"
+            ? row.name.toUpperCase()
+            : species === "mouse"
+            ? row.name.charAt(0).toUpperCase() + row.name.slice(1)
+            : row.name;
+
+        return (
+          <LinkWrapper
+            url={`/transcriptionfactor/${species}/${nameForUrl}/function`}
+          >
+            <Box style={{ minWidth: "150px" }}>
+              <Typography variant="h6" style={{ fontWeight: "bold" }}>
+                {species === "mouse"
+                  ? row.name.charAt(0).toUpperCase() +
+                    row.name.slice(1).toLowerCase()
+                  : row.name}
+              </Typography>
+              <Typography>
+                {row.label ? (
+                  <>
+                    {row.label.replace(/ -/g, "")}
+                    <br />
+                  </>
+                ) : (
+                  ""
+                )}
+              </Typography>
+              <Typography>{row.experiments} Experiments</Typography>
+              {!hideCellTypeCounts && (
+                <Typography>{row.cellTypes} Cell Types</Typography>
               )}
-            </Typography>
-            <Typography>{row.experiments} Experiments</Typography>
-            {!hideCellTypeCounts && (
-              <Typography>{row.cellTypes} Cell Types</Typography>
-            )}
-          </Box>
-        </LinkWrapper>
-      ),
+            </Box>
+          </LinkWrapper>
+        );
+      },
       value: (row: FactorRow) =>
         `${row.name}, ${row.label || ""}, ${row.experiments} Experiments, ${
           row.cellTypes
@@ -249,29 +265,38 @@ const TfDetails: React.FC<TfDetailsProps> = ({
     },
     {
       header: "Description",
-      render: (row: FactorRow) => (
-        <LinkWrapper
-          url={`/transcriptionfactor/${species}/${row.name}/function`}
-        >
-          <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            style={{ flex: 1 }}
+      render: (row: FactorRow) => {
+        const nameForUrl =
+          species === "human"
+            ? row.name.toUpperCase()
+            : species === "mouse"
+            ? row.name.charAt(0).toUpperCase() + row.name.slice(1)
+            : row.name;
+
+        return (
+          <LinkWrapper
+            url={`/transcriptionfactor/${species}/${nameForUrl}/function`}
           >
-            <Typography variant="body2">{row.description}</Typography>
-            <IconButton
-              onClick={(event: MouseEvent) => {
-                event.stopPropagation();
-                downloadData(row);
-              }}
-              aria-label="download"
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+              style={{ flex: 1 }}
             >
-              <SaveAltIcon />
-            </IconButton>
-          </Box>
-        </LinkWrapper>
-      ),
+              <Typography variant="body2">{row.description}</Typography>
+              <IconButton
+                onClick={(event: MouseEvent) => {
+                  event.stopPropagation();
+                  downloadData(row);
+                }}
+                aria-label="download"
+              >
+                <SaveAltIcon />
+              </IconButton>
+            </Box>
+          </LinkWrapper>
+        );
+      },
       value: (row: FactorRow) => row.description || "",
     },
   ];
