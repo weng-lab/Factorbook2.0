@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Link as MuiLink, Divider } from "@mui/material";
-import Link from "next/link"; // Import Next.js Link component for navigation
+import Link from "next/link";
 
 type LinkSectionProps = {
   title: string;

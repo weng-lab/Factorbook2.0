@@ -43,7 +43,7 @@ const navItems = [
         href: "/transcriptionfactor/mouse",
       },
       { text: "Motif Catalog", href: "/motifscatalog" },
-      { text: "Annotations", href: "/annotationsVariants" },
+      { text: "Annotations", href: "/annotationsvariants" },
     ],
   },
   {
