@@ -190,7 +190,12 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       header: "Image",
       render: (row: FactorRow) => {
         const nameForUrl =
-          species === "human" ? row.name.toUpperCase() : row.name;
+          species === "human"
+            ? row.name.toUpperCase()
+            : species === "mouse"
+            ? row.name.charAt(0).toUpperCase() + row.name.slice(1)
+            : row.name;
+
         return row.image ? (
           <LinkWrapper
             url={`/transcriptionfactor/${species}/${nameForUrl}/function`}
@@ -217,15 +222,21 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       header: "Details",
       render: (row: FactorRow) => {
         const nameForUrl =
-          species === "human" ? row.name.toUpperCase() : row.name;
+          species === "human"
+            ? row.name.toUpperCase()
+            : species === "mouse"
+            ? row.name.charAt(0).toUpperCase() + row.name.slice(1)
+            : row.name;
+
         return (
           <LinkWrapper
             url={`/transcriptionfactor/${species}/${nameForUrl}/function`}
           >
             <Box style={{ minWidth: "150px" }}>
               <Typography variant="h6" style={{ fontWeight: "bold" }}>
-                {species === "Mouse"
-                  ? row.name.charAt(0) + row.name.slice(1).toLowerCase()
+                {species === "mouse"
+                  ? row.name.charAt(0).toUpperCase() +
+                    row.name.slice(1).toLowerCase()
                   : row.name}
               </Typography>
               <Typography>
@@ -256,7 +267,12 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       header: "Description",
       render: (row: FactorRow) => {
         const nameForUrl =
-          species === "human" ? row.name.toUpperCase() : row.name;
+          species === "human"
+            ? row.name.toUpperCase()
+            : species === "mouse"
+            ? row.name.charAt(0).toUpperCase() + row.name.slice(1)
+            : row.name;
+
         return (
           <LinkWrapper
             url={`/transcriptionfactor/${species}/${nameForUrl}/function`}

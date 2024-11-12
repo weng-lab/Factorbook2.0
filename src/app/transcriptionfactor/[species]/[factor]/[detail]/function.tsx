@@ -39,9 +39,13 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   const { species, factor } = useParams<{ species: string; factor: string }>();
   const [imageVisible, setImageVisible] = useState(true);
 
-  // Define factorForUrl to be uppercase if species is human
+  // Define factorForUrl to be uppercase if species is human, or capitalize the first letter if species is mouse
   const factorForUrl =
-    species.toLowerCase() === "human" ? factor.toUpperCase() : factor;
+    species.toLowerCase() === "human"
+      ? factor.toUpperCase()
+      : species.toLowerCase() === "mouse"
+      ? factor.charAt(0).toUpperCase() + factor.slice(1)
+      : factor;
 
   /** Fetching factor data */
   const {

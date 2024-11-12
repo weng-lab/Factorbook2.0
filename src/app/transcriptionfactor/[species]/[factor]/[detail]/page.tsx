@@ -40,9 +40,13 @@ const FactorDetailsPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Define factorForUrl to be uppercase if species is human
+  // Define factorForUrl with conditional capitalization
   const factorForUrl =
-    species.toLowerCase() === "human" ? factor.toUpperCase() : factor;
+    species.toLowerCase() === "human"
+      ? factor.toUpperCase()
+      : species.toLowerCase() === "mouse"
+      ? factor.charAt(0).toUpperCase() + factor.slice(1)
+      : factor;
 
   // Update the URL to uppercase if species is human and factor is not already in uppercase
   useEffect(() => {
