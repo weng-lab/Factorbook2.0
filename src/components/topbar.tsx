@@ -29,14 +29,13 @@ import {
 import { useTheme } from "@mui/material/styles";
 import styles from "./topbar.module.css";
 
-// Define the navigation items
 const navItems = [
   { title: "Home", href: "/", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
   {
     title: "Portals",
     subItems: [
       {
-        text: "Transcription Factors  in Humans",
+        text: "Transcription Factors in Humans",
         href: "/transcriptionfactor/human",
       },
       {
@@ -58,7 +57,7 @@ const navItems = [
 const Topbar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [portalsAnchorEl, setPortalsAnchorEl] =
-    React.useState<null | HTMLElement>(null); // State for portals dropdown
+    React.useState<null | HTMLElement>(null);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -67,12 +66,10 @@ const Topbar: React.FC = () => {
     setMobileOpen((prevState) => !prevState);
   };
 
-  // Function to handle the opening of the portals menu
   const handlePortalsClick = (event: React.MouseEvent<HTMLElement>) => {
     setPortalsAnchorEl(event.currentTarget);
   };
 
-  // Function to handle the closing of the portals menu
   const handlePortalsClose = () => {
     setPortalsAnchorEl(null);
   };
@@ -87,40 +84,14 @@ const Topbar: React.FC = () => {
           padding: "16px",
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            textDecoration: "none",
-            color: "var(--grey-700, #1F2021)",
-            fontSize: "32px",
-            fontStyle: "normal",
-            fontWeight: 700,
-            lineHeight: "0.745", // 74.5%
-            letterSpacing: "-1.28px",
-          }}
-        >
-          <Typography
-            variant="h6"
-            component="div"
-            className={styles.logo}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              fontSize: "32px",
-              fontStyle: "normal",
-              fontWeight: 700,
-              lineHeight: "0.745", // 74.5%
-              letterSpacing: "-1.28px",
-              color: "var(--grey-700, #1F2021)",
-            }}
-          >
-            factor
-            <span className={styles.book}>book</span>
-          </Typography>
-        </Box>
+        {/* Larger logo for Drawer */}
+        <img
+          src="/logo/on-white/Logo_01_on-white-bg.png"
+          alt="Logo"
+          width={180} // Increased width
+          style={{ height: "auto", maxHeight: "100px" }} // Optional height
+        />
+
         <IconButton
           edge="start"
           color="inherit"
@@ -190,7 +161,7 @@ const Topbar: React.FC = () => {
       className={styles.topbar}
       sx={{
         backgroundColor: "transparent",
-        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Added shadow
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
         width: "100%",
       }}
     >
@@ -213,82 +184,27 @@ const Topbar: React.FC = () => {
                 xs={6}
                 sx={{ display: "flex", justifyContent: "flex-end" }}
               >
-                <Box
-                  component="a"
-                  href="/"
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    textDecoration: "none",
-                    color: "var(--grey-700, #1F2021)",
-                    fontSize: "32px",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    lineHeight: "0.745", // 74.5%
-                    letterSpacing: "-1.28px",
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    component="div"
-                    className={styles.logo}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      fontSize: "32px",
-                      fontStyle: "normal",
-                      fontWeight: 700,
-                      lineHeight: "0.745", // 74.5%
-                      letterSpacing: "-1.28px",
-                      color: "var(--grey-700, #1F2021)",
-                    }}
-                  >
-                    factor
-                    <span className={styles.book}>book</span>
-                  </Typography>
-                </Box>
+                <a href="/">
+                  <img
+                    src="/logo/on-white/Logo_01_on-white-bg.png"
+                    alt="Logo"
+                    width={180} // Increased width
+                    style={{ height: "auto", maxHeight: "100px" }} // Optional height
+                  />
+                </a>
               </Grid>
             </>
           ) : (
             <>
               <Grid item xs="auto">
-                <Box
-                  component="a"
-                  href="/"
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    textDecoration: "none",
-                    color: "var(--grey-700, #1F2021)",
-                    fontSize: "32px",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    letterSpacing: "-1.28px",
-                  }}
-                >
-                  <Typography
-                    variant="h6"
-                    component="div"
-                    className={styles.logo}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      fontSize: "32px",
-                      fontStyle: "normal",
-                      fontWeight: 700,
-                      lineHeight: "0.745", // 74.5%
-                      letterSpacing: "-1.28px",
-                      color: "var(--grey-700, #1F2021)",
-                    }}
-                  >
-                    factor
-                    <span className={styles.book}>book</span>
-                  </Typography>
-                </Box>
+                <a href="/">
+                  <img
+                    src="/logo/on-white/Logo_01_on-white-bg.png"
+                    alt="Logo"
+                    width={180} // Increased width
+                    style={{ height: "auto", maxHeight: "100px" }} // Optional height
+                  />
+                </a>
               </Grid>
               <Grid item xs>
                 <Box
@@ -311,12 +227,9 @@ const Topbar: React.FC = () => {
                           endIcon={<ExpandMoreIcon />}
                           sx={{
                             fontSize: "15px",
-                            fontStyle: "normal",
                             fontWeight: 700,
-                            lineHeight: "26px", // 173.333%
-                            letterSpacing: "0.46px",
+                            lineHeight: "26px",
                             color: "var(--primary-mainText, #6750A4)",
-                            fontFeatureSettings: "'clig' off, 'liga' off",
                             marginLeft: "16px",
                           }}
                         >
@@ -348,12 +261,9 @@ const Topbar: React.FC = () => {
                         href={item.href}
                         sx={{
                           fontSize: "15px",
-                          fontStyle: "normal",
                           fontWeight: 700,
-                          lineHeight: "26px", // 173.333%
-                          letterSpacing: "0.46px",
+                          lineHeight: "26px",
                           color: "var(--primary-mainText, #6750A4)",
-                          fontFeatureSettings: "'clig' off, 'liga' off",
                           marginLeft: "16px",
                         }}
                       >
@@ -373,7 +283,7 @@ const Topbar: React.FC = () => {
           open={mobileOpen}
           onClose={handleDrawerToggle}
           ModalProps={{
-            keepMounted: true, // Better open performance on mobile.
+            keepMounted: true,
           }}
           sx={{
             "& .MuiDrawer-paper": {
