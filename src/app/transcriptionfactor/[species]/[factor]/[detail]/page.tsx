@@ -1,3 +1,4 @@
+// FactorDetailsPage.tsx
 "use client";
 
 import React, { useContext, useState, useEffect } from "react";
@@ -7,8 +8,6 @@ import {
   Box,
   CircularProgress,
   Typography,
-  Tabs,
-  Tab,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -24,7 +23,7 @@ import GeneExpressionPage from "./geneexpression";
 import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./queries";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
 import EpigeneticProfile from "./epigeneticprofile";
-
+import FactorTabs from "./factortabs";
 const FactorDetailsPage = () => {
   const apiContext = useContext(ApiContext);
   const router = useRouter();
@@ -170,81 +169,13 @@ const FactorDetailsPage = () => {
           &gt; <Typography component="span">{factorForUrl}</Typography>
         </Box>
 
-        <Box display="flex" alignItems="center">
-          <Tabs
-            value={detail}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons
-            allowScrollButtonsMobile
-            sx={{ flex: 1 }}
-          >
-            <Tab
-              label="Function"
-              value="function"
-              component={Link}
-              href={`/transcriptionfactor/${species}/${factorForUrl}/function`}
-              sx={{
-                color: detail === "function" ? "#8169BF" : "inherit",
-                textTransform: "capitalize",
-              }}
-            />
-            <Tab
-              label="Expression (RNA-seq)"
-              value="expression"
-              component={Link}
-              href={`/transcriptionfactor/${species}/${factorForUrl}/expression`}
-              sx={{
-                color: detail === "expression" ? "#8169BF" : "inherit",
-                textTransform: "capitalize",
-              }}
-            />
-            <Tab
-              label="Motif Enrichment (MEME, ChIP-seq)"
-              value="motifenrichmentmeme"
-              component={Link}
-              href={`/transcriptionfactor/${species}/${factorForUrl}/motifenrichmentmeme`}
-              sx={{
-                color: detail === "motifenrichmentmeme" ? "#8169BF" : "inherit",
-                textTransform: "capitalize",
-              }}
-            />
-            {hasSelexData && (
-              <Tab
-                label="Motif Enrichment (SELEX)"
-                value="motifenrichmentselex"
-                component={Link}
-                href={`/transcriptionfactor/${species}/${factorForUrl}/motifenrichmentselex`}
-                sx={{
-                  color:
-                    detail === "motifenrichmentselex" ? "#8169BF" : "inherit",
-                  textTransform: "capitalize",
-                }}
-              />
-            )}
-            <Tab
-              label={`Epigenetic Profile`}
-              value="epigeneticprofile"
-              component={Link}
-              href={`/transcriptionfactor/${species}/${factorForUrl}/epigeneticprofile`}
-              sx={{
-                color: detail === "epigeneticprofile" ? "#8169BF" : "inherit",
-                textTransform: "capitalize",
-              }}
-            />
-            <Tab
-              label={`Search ${factorForUrl} peaks by region`}
-              value="search"
-              component={Link}
-              href={`/transcriptionfactor/${species}/${factorForUrl}/peaksearch`}
-              sx={{
-                color: detail === "search" ? "#8169BF" : "inherit",
-                textTransform: "capitalize",
-              }}
-            />
-          </Tabs>
-        </Box>
+        {/* Use the FactorTabs component */}
+        <FactorTabs
+          species={species}
+          factor={factorForUrl}
+          detail={detail}
+          hasSelexData={hasSelexData}
+        />
 
         <Box mt={2}>{renderTabContent()}</Box>
       </Box>

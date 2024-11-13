@@ -24,7 +24,9 @@ import {
   MARK_TYPE_ORDER,
 } from "@/components/motifmeme/aggregate/marks";
 import { useParams } from "next/navigation";
-import FactorTabs from "./factortabs";
+import FactorTabs from "@/app/transcriptionfactor/[species]/[factor]/[detail]/factortabs";
+import Link from "next/link";
+import { useTheme, useMediaQuery } from "@mui/material";
 
 const EpigeneticProfilePage = () => {
   const { species, factor, accession } = useParams();
@@ -32,6 +34,9 @@ const EpigeneticProfilePage = () => {
   const speciesStr = Array.isArray(species) ? species[0] : species;
   const factorStr = Array.isArray(factor) ? factor[0] : factor;
   const accessionStr = Array.isArray(accession) ? accession[0] : accession;
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const { data: aggregateData, loading: aggregateLoading } = useQuery(
     AGGREGATE_DATA_QUERY,
@@ -97,50 +102,82 @@ const EpigeneticProfilePage = () => {
   );
 
   return (
-    <Layout species={speciesStr} factor={factorStr}>
-      {/* Add FactorTabs here */}
-      <Box mb={2}>
+    <Box
+      style={{
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+        padding: isMobile ? "20px 10px" : "40px 25.5px",
+        minHeight: "100vh",
+        width: "100%",
+      }}
+    >
+      <Box style={{ flex: 1 }}>
+        <Box mb={2}>
+          <Link href="/" style={{ color: "black", textDecoration: "none" }}>
+            Homepage
+          </Link>{" "}
+          &gt;{" "}
+          <Link
+            href={`/transcriptionfactor/${species}`}
+            style={{ color: "black", textDecoration: "none" }}
+          >
+            Transcription Factor
+          </Link>{" "}
+          &gt;{" "}
+          <Typography component="span" style={{ color: "black" }}>
+            {factorStr}
+          </Typography>
+        </Box>
+
         <FactorTabs
           species={speciesStr}
           factor={factorStr}
-          detail="EpigeneticProfile"
-          hasSelexData={true}
+          detail="epigeneticprofile"
+          hasSelexData={true} // Set this based on your data condition
         />
-      </Box>
 
-      <Typography variant="h5" align="center" gutterBottom>
-        {`Histone modification profiles around ${factorStr} peaks in ${biosample}`}
-      </Typography>
-      {MARK_TYPE_ORDER.filter((type) => typeGroups.get(type)).map((type) => (
-        <Accordion key={type}>
-          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-            <Typography>{type}</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Box
-              display="flex"
-              flexDirection="row"
-              flexWrap="wrap"
-              justifyContent="flex-start"
-              alignItems="flex-start"
-              gap="7rem"
-            >
-              {typeGroups.get(type)?.map((group: any, idx: number) => (
-                <Box key={idx} style={{ width: "300px", marginBottom: "20px" }}>
-                  <Graph
-                    proximal_values={group.proximal_values}
-                    distal_values={group.distal_values}
-                    dataset={group.dataset}
-                    xlabel="distance from summit (bp)"
-                    ylabel="fold change signal"
-                  />
-                </Box>
-              ))}
-            </Box>
-          </AccordionDetails>
-        </Accordion>
-      ))}
-    </Layout>
+        {/* Main content layout with sidebar */}
+        <Layout species={speciesStr} factor={factorStr}>
+          <Typography variant="h5" align="center" gutterBottom>
+            {`Histone modification profiles around ${factorStr} peaks in ${biosample}`}
+          </Typography>
+          {MARK_TYPE_ORDER.filter((type) => typeGroups.get(type)).map(
+            (type) => (
+              <Accordion key={type}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography>{type}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Box
+                    display="flex"
+                    flexDirection="row"
+                    flexWrap="wrap"
+                    justifyContent="flex-start"
+                    alignItems="flex-start"
+                    gap="7rem"
+                  >
+                    {typeGroups.get(type)?.map((group: any, idx: number) => (
+                      <Box
+                        key={idx}
+                        style={{ width: "300px", marginBottom: "20px" }}
+                      >
+                        <Graph
+                          proximal_values={group.proximal_values}
+                          distal_values={group.distal_values}
+                          dataset={group.dataset}
+                          xlabel="distance from summit (bp)"
+                          ylabel="fold change signal"
+                        />
+                      </Box>
+                    ))}
+                  </Box>
+                </AccordionDetails>
+              </Accordion>
+            )
+          )}
+        </Layout>
+      </Box>
+    </Box>
   );
 };
 
