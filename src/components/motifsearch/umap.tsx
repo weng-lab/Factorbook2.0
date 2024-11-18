@@ -41,17 +41,7 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import Link from "next/link";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Chart, Point } from "./scatterplot";
-
-// Define MetaData to include `tooltipValues` and `pwm` properties
-interface MetaData {
-  tooltipValues?: {
-    accession: string;
-    dbd: string;
-    factor: string;
-  };
-  pwm: { A: number; C: number; G: number; T: number }[];
-}
+import { Chart, Point, MetaData } from "./scatterplot";
 
 // Color definitions
 const colors = {
@@ -200,7 +190,7 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
     return data.map((x) => ({
       x: x.coordinates[0],
       y: x.coordinates[1],
-      r: 4, // Increased radius of scatter points for larger appearance
+      r: 4,
       color: x.color,
       opacity:
         selection.length === 0
@@ -423,7 +413,7 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
                     return (
                       <Box sx={{ textAlign: "center", p: 1 }}>
                         {formattedPWM && (
-                          <DNALogo ppm={formattedPWM} height={40} />
+                          <DNALogo ppm={formattedPWM} height={100} />
                         )}
                         {point.metaData?.tooltipValues && (
                           <>
@@ -520,36 +510,53 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
             </Tooltip>
           </Stack>
         </Grid>
+        <Grid
+          item
+          container
+          xs={12}
+          sm={5.5}
+          ml={isMobile ? 13.5 : isTablet ? 20 : 40} // Adjust spacing dynamically
+        >
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                maxHeight: isMobile ? "60vh" : "80vh", // Adjust height for mobile and desktop
+                overflow: isMobile ? "auto" : "hidden", // Enable scrolling for smaller screens
+                border: "1px solid",
+                borderRadius: "8px",
+                padding: isMobile ? 1 : 2,
+                backgroundColor: isMobile ? "#f9f9f9" : "inherit", // Optional: Set a background color for clarity
+              }}
+            >
+              <div style={{ fontSize: isMobile ? "10px" : "14px" }}>
+                <DataTable
+                  columns={COLUMNS(props.title)} // Use fewer columns if needed on mobile
+                  rows={selection}
+                  emptyText="Drag on the UMAP to make a selection"
+                  itemsPerPage={isMobile ? 3 : 5} // Adjust items per page for smaller screens
+                  sortColumn={1}
+                  tableTitle="Motifs"
+                />
+              </div>
 
-        <Grid item container xs={5.5} ml={40}>
-          {" "}
-          {/* Adjust ml value for spacing */}
-          <Grid item xs={10}>
-            <DataTable
-              columns={COLUMNS(props.title)}
-              rows={selection}
-              emptyText="Drag on the UMAP to make a selection"
-              itemsPerPage={isMobile ? 3 : 5}
-              sortColumn={1}
-              tableTitle="Motifs"
-            />
-
-            {selection.length > 0 && (
-              <Button
-                variant="contained"
-                sx={{
-                  borderRadius: "20px",
-                  backgroundColor: "#8169BF",
-                  color: "white",
-                  marginTop: isMobile ? 2 : 4,
-                }}
-                onClick={() =>
-                  downloadData(meme(selection), "motif-collection.meme")
-                }
-              >
-                Download these motifs
-              </Button>
-            )}
+              {selection.length > 0 && (
+                <Button
+                  variant="contained"
+                  sx={{
+                    borderRadius: "20px",
+                    backgroundColor: "#8169BF",
+                    color: "white",
+                    marginTop: isMobile ? 2 : 4,
+                    width: isMobile ? "100%" : "auto", // Make the button full width on mobile
+                  }}
+                  onClick={() =>
+                    downloadData(meme(selection), "motif-collection.meme")
+                  }
+                >
+                  Download these motifs
+                </Button>
+              )}
+            </Box>
           </Grid>
         </Grid>
       </Grid>

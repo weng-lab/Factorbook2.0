@@ -25,9 +25,18 @@ import zIndex from "@mui/material/styles/zIndex";
     All information given to a point on the plot, including its coordinates(x and y), its radius, color, and opacity, and its metadata information
     which can be any amount of strings used to display in the tooltip
 */
-// Define a metadata interface with `tooltipValues` as optional
-interface MetaData {
-  tooltipValues?: Record<string, any>;
+// Define MetaData to include `tooltipValues` and `pwm` properties
+export interface MetaData {
+  tooltipValues?: {
+    accession: string;
+    dbd: string;
+    factor: string;
+  };
+  pwm: { A: number; C: number; G: number; T: number }[];
+  sites?: number;
+  e?: number;
+  coordinates?: [number, number];
+  color?: string;
 }
 
 export type Point<T extends MetaData = MetaData> = {
