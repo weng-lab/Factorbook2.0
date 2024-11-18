@@ -515,13 +515,13 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
           container
           xs={12}
           sm={5.5}
-          ml={isMobile ? 13.5 : isTablet ? 20 : 40} // Adjust spacing dynamically
+          ml={isMobile ? "auto" : isTablet ? "auto" : "auto"} // Adjust spacing dynamically
         >
           <Grid item xs={12}>
             <Box
               sx={{
-                maxHeight: isMobile ? "60vh" : "80vh", // Adjust height for mobile and desktop
-                overflow: isMobile ? "auto" : "hidden", // Enable scrolling for smaller screens
+                maxHeight: isMobile ? "auto" : "auto", // Adjust height for mobile and desktop
+                overflow: isMobile ? "auto" : "auto", // Enable scrolling for smaller screens
                 border: "1px solid",
                 borderRadius: "8px",
                 padding: isMobile ? 1 : 2,
