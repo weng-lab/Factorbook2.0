@@ -379,9 +379,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                                 handleAccessionClick(peak.accession, index)
                               }
                             >
-                              <ListItemText
-                                primary={`${dataset.lab.friendly_name} (${dataset.accession})`}
-                              />
+                              <ListItemText primary={`${dataset.accession}`} />
                             </ListItem>
                           )
                         )

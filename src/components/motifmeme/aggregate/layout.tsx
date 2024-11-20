@@ -82,6 +82,15 @@ const Layout: React.FC<{
   }, [sortedBiosamples, debouncedSearchTerm]);
 
   useEffect(() => {
+    if (!currentAccession && datasets.length > 0) {
+      // If no accession is selected, pick the first one
+      router.push(
+        `/transcriptionfactor/${species}/${factor}/epigeneticprofile/${datasets[0].accession}`
+      );
+    }
+  }, [currentAccession, datasets, species, factor, router]);
+
+  useEffect(() => {
     if (currentAccession && expandedBiosample === false) {
       const foundBiosample = Object.keys(groupedDatasets).find((biosample) =>
         groupedDatasets[biosample].some(
@@ -94,9 +103,7 @@ const Layout: React.FC<{
     }
   }, [currentAccession, groupedDatasets, expandedBiosample]);
 
-  // Handle accession click and update route
   const handleAccessionClick = (accession: string) => {
-    // Update the route dynamically when an accession is clicked
     router.push(
       `/transcriptionfactor/${species}/${factor}/epigeneticprofile/${accession}`
     );

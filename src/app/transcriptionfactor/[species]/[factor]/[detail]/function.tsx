@@ -276,7 +276,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         }}
       >
         <Typography variant="h4" sx={{ color: "white", marginBottom: "20px" }}>
-          {factorDetails?.name}
+          {factorForUrl}
         </Typography>
         {imageVisible && imageUrl && (
           <Box position="relative" mb={2}>

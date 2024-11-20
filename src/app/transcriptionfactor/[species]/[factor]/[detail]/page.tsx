@@ -7,8 +7,6 @@ import {
   Box,
   CircularProgress,
   Typography,
-  Tabs,
-  Tab,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -24,6 +22,18 @@ import GeneExpressionPage from "./geneexpression";
 import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./queries";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
 import EpigeneticProfile from "./epigeneticprofile";
+import FactorTabs from "./factortabs";
+import { inflate } from "pako";
+import { associateBy } from "queryz";
+import { formatFactorName } from "@/utilities/misc";
+
+const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
+
+interface TFData {
+  "HGNC symbol": string;
+  "TF assessment": string;
+  [key: string]: any;
+}
 
 const FactorDetailsPage = () => {
   const apiContext = useContext(ApiContext);
@@ -40,15 +50,19 @@ const FactorDetailsPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Define factorForUrl with conditional capitalization
+  // Normalize factor name for URL
   const factorForUrl =
     species.toLowerCase() === "human"
       ? factor.toUpperCase()
       : species.toLowerCase() === "mouse"
-      ? factor.charAt(0).toUpperCase() + factor.slice(1)
+      ? factor.charAt(0).toUpperCase() + factor.slice(1).toLowerCase()
       : factor;
 
-  // Update the URL to uppercase if species is human and factor is not already in uppercase
+  const [tfA, setTFA] = useState<Map<string, TFData> | null>(null);
+  const [genomicRange, setGenomicRange] = useState<string>("No data available");
+  const [hasSelexData, setHasSelexData] = useState(false);
+
+  // Redirect for consistent URL structure
   useEffect(() => {
     if (species.toLowerCase() === "human" && factor !== factorForUrl) {
       router.replace(
@@ -57,16 +71,18 @@ const FactorDetailsPage = () => {
     }
   }, [species, factor, factorForUrl, detail, router]);
 
+  // Fetch factor description
   const { data, loading, error } = useQuery<FactorQueryResponse>(
     FACTOR_DESCRIPTION_QUERY,
     {
       variables: {
-        assembly: species === "human" ? "GRCh38" : "mm10",
+        assembly: species.toLowerCase() === "human" ? "GRCh38" : "mm10",
         name: [factorForUrl],
       },
     }
   );
 
+  // Fetch Selex Data
   const { data: selexData, loading: selexLoading } =
     useQuery<DeepLearnedSELEXMotifsMetadataQueryResponse>(
       DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
@@ -80,18 +96,61 @@ const FactorDetailsPage = () => {
       }
     );
 
-  const [hasSelexData, setHasSelexData] = useState(false);
-
+  // Load TF Assignments
   useEffect(() => {
-    if (selexData && selexData.deep_learned_motifs.length > 0) {
+    fetch("/tf-assignments.json.gz")
+      .then((response) => response.blob())
+      .then((blob) => blob.arrayBuffer())
+      .then((buffer) => inflate(buffer, { to: "string" }))
+      .then((jsonString) => {
+        const parsedData: TFData[] = JSON.parse(jsonString);
+        console.log("TF Assignments Loaded:", parsedData);
+        setTFA(
+          associateBy(
+            parsedData,
+            (item) => item["HGNC symbol"].toLowerCase(), // Normalize key
+            (item) => item
+          )
+        );
+      })
+      .catch((err) => console.error("Failed to load TF assignments:", err));
+  }, []);
+
+  // Update `hasSelexData` based on selexData
+  useEffect(() => {
+    if (selexData && selexData.deep_learned_motifs?.length > 0) {
       setHasSelexData(true);
     } else {
       setHasSelexData(false);
     }
   }, [selexData]);
 
+  // Compute Genomic Range
+  useEffect(() => {
+    if (data && data.factor && data.factor.length > 0) {
+      const factorData = data.factor[0];
+      if (factorData.coordinates) {
+        const range = `${
+          factorData.coordinates.chromosome
+        }:${factorData.coordinates.start.toLocaleString()}-${factorData.coordinates.end.toLocaleString()}`;
+        setGenomicRange(range);
+      }
+    }
+  }, [data]);
+
   if (loading || selexLoading) return <CircularProgress />;
   if (error) return <p>Error: {error.message}</p>;
+
+  // Compute Label
+  const tfAssignment = tfA?.get(factorForUrl.toLowerCase()); // Use normalized key
+  const label =
+    tfAssignment === undefined
+      ? ""
+      : (tfAssignment["TF assessment"] as string).includes("Likely")
+      ? "Likely sequence-specific TF"
+      : SEQUENCE_SPECIFIC.has(tfAssignment["TF assessment"])
+      ? "Sequence-specific TF"
+      : "Non-sequence-specific TF";
 
   const renderTabContent = () => {
     switch (detail) {
@@ -123,9 +182,9 @@ const FactorDetailsPage = () => {
       case "motifenrichmentmeme":
         return <MotifEnrichmentMEME factor={factorForUrl} species={species} />;
       case "motifenrichmentselex":
-        return (
+        return hasSelexData ? (
           <DeepLearnedSelexMotifs factor={factorForUrl} species={species} />
-        );
+        ) : null;
       case "epigeneticprofile":
         return <EpigeneticProfile factor={factorForUrl} species={species} />;
       case "peaksearch":
@@ -155,13 +214,14 @@ const FactorDetailsPage = () => {
     <Box
       style={{
         display: "flex",
-        flexDirection: isMobile ? "column" : "row",
+        flexDirection: "column",
         padding: isMobile ? "20px 10px" : "40px 25.5px",
         minHeight: "100vh",
         width: "100%",
       }}
     >
       <Box style={{ flex: 1 }}>
+        {/* Breadcrumb */}
         <Box mb={2}>
           <Link href="/">Homepage</Link> &gt;{" "}
           <Link href={`/transcriptionfactor/${species}`}>
@@ -170,82 +230,38 @@ const FactorDetailsPage = () => {
           &gt; <Typography component="span">{factorForUrl}</Typography>
         </Box>
 
-        <Box display="flex" alignItems="center">
-          <Tabs
-            value={detail}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable"
-            scrollButtons
-            allowScrollButtonsMobile
-            sx={{ flex: 1 }}
+        {/* Header Section */}
+        <Box
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "20px",
+          }}
+        >
+          <Typography
+            variant="h4"
+            style={{ fontWeight: "600" }}
+            ml={"auto"}
+            mr={2}
           >
-            <Tab
-              label="Function"
-              value="function"
-              component={Link}
-              href={`/transcriptionfactor/${species}/${factorForUrl}/function`}
-              sx={{
-                color: detail === "function" ? "#8169BF" : "inherit",
-                textTransform: "capitalize",
-              }}
-            />
-            <Tab
-              label="Expression (RNA-seq)"
-              value="expression"
-              component={Link}
-              href={`/transcriptionfactor/${species}/${factorForUrl}/expression`}
-              sx={{
-                color: detail === "expression" ? "#8169BF" : "inherit",
-                textTransform: "capitalize",
-              }}
-            />
-            <Tab
-              label="Motif Enrichment (MEME, ChIP-seq)"
-              value="motifenrichmentmeme"
-              component={Link}
-              href={`/transcriptionfactor/${species}/${factorForUrl}/motifenrichmentmeme`}
-              sx={{
-                color: detail === "motifenrichmentmeme" ? "#8169BF" : "inherit",
-                textTransform: "capitalize",
-              }}
-            />
-            {hasSelexData && (
-              <Tab
-                label="Motif Enrichment (SELEX)"
-                value="motifenrichmentselex"
-                component={Link}
-                href={`/transcriptionfactor/${species}/${factorForUrl}/motifenrichmentselex`}
-                sx={{
-                  color:
-                    detail === "motifenrichmentselex" ? "#8169BF" : "inherit",
-                  textTransform: "capitalize",
-                }}
-              />
-            )}
-            <Tab
-              label={`Epigenetic Profile`}
-              value="epigeneticprofile"
-              component={Link}
-              href={`/transcriptionfactor/${species}/${factorForUrl}/epigeneticprofile`}
-              sx={{
-                color: detail === "epigeneticprofile" ? "#8169BF" : "inherit",
-                textTransform: "capitalize",
-              }}
-            />
-            <Tab
-              label={`Search ${factorForUrl} peaks by region`}
-              value="search"
-              component={Link}
-              href={`/transcriptionfactor/${species}/${factorForUrl}/peaksearch`}
-              sx={{
-                color: detail === "search" ? "#8169BF" : "inherit",
-                textTransform: "capitalize",
-              }}
-            />
-          </Tabs>
+            {factorForUrl}
+          </Typography>
+          <Box textAlign="right">
+            <Typography variant="body2">{label}</Typography>
+            <Typography variant="body2">{genomicRange}</Typography>
+          </Box>
         </Box>
 
+        {/* Factor Tabs */}
+        <FactorTabs
+          species={species}
+          factor={factorForUrl}
+          detail={detail}
+          hasSelexData={hasSelexData} // Dynamically hide tab based on data
+        />
+
+        {/* Tab Content */}
         <Box mt={2}>{renderTabContent()}</Box>
       </Box>
     </Box>
