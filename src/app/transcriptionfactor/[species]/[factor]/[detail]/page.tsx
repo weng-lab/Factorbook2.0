@@ -60,6 +60,7 @@ const FactorDetailsPage = () => {
 
   const [tfA, setTFA] = useState<Map<string, TFData> | null>(null);
   const [genomicRange, setGenomicRange] = useState<string>("No data available");
+  const [hasSelexData, setHasSelexData] = useState(false);
 
   // Redirect for consistent URL structure
   useEffect(() => {
@@ -114,6 +115,15 @@ const FactorDetailsPage = () => {
       })
       .catch((err) => console.error("Failed to load TF assignments:", err));
   }, []);
+
+  // Update `hasSelexData` based on selexData
+  useEffect(() => {
+    if (selexData && selexData.deep_learned_motifs?.length > 0) {
+      setHasSelexData(true);
+    } else {
+      setHasSelexData(false);
+    }
+  }, [selexData]);
 
   // Compute Genomic Range
   useEffect(() => {
@@ -172,9 +182,9 @@ const FactorDetailsPage = () => {
       case "motifenrichmentmeme":
         return <MotifEnrichmentMEME factor={factorForUrl} species={species} />;
       case "motifenrichmentselex":
-        return (
+        return hasSelexData ? (
           <DeepLearnedSelexMotifs factor={factorForUrl} species={species} />
-        );
+        ) : null;
       case "epigeneticprofile":
         return <EpigeneticProfile factor={factorForUrl} species={species} />;
       case "peaksearch":
@@ -248,7 +258,7 @@ const FactorDetailsPage = () => {
           species={species}
           factor={factorForUrl}
           detail={detail}
-          hasSelexData={Boolean(selexData)}
+          hasSelexData={hasSelexData} // Dynamically hide tab based on data
         />
 
         {/* Tab Content */}

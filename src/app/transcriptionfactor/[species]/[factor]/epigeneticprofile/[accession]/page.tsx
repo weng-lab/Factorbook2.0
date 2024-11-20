@@ -101,6 +101,11 @@ const EpigeneticProfilePage = () => {
     })
   );
 
+  // Compute hasSelexData based on SELEX-related data availability
+  const hasSelexData = aggregateData?.histone_aggregate_values.some(
+    (value: any) => value.source === "SELEX"
+  );
+
   return (
     <Box
       style={{
@@ -133,7 +138,7 @@ const EpigeneticProfilePage = () => {
           species={speciesStr}
           factor={factorStr}
           detail="epigeneticprofile"
-          hasSelexData={true} // Set this based on your data condition
+          hasSelexData={hasSelexData}
         />
 
         {/* Main content layout with sidebar */}

@@ -1,4 +1,3 @@
-// FactorTabs.tsx
 "use client";
 
 import React from "react";
@@ -59,6 +58,7 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
             textTransform: "capitalize",
           }}
         />
+        {/* Conditionally render SELEX tab */}
         {hasSelexData && (
           <Tab
             label="Motif Enrichment (SELEX)"
