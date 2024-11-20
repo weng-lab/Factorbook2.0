@@ -1,4 +1,3 @@
-// FactorDetailsPage.tsx
 "use client";
 
 import React, { useContext, useState, useEffect } from "react";
@@ -24,6 +23,18 @@ import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./queries";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
 import EpigeneticProfile from "./epigeneticprofile";
 import FactorTabs from "./factortabs";
+import { inflate } from "pako";
+import { associateBy } from "queryz";
+import { formatFactorName } from "@/utilities/misc";
+
+const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
+
+interface TFData {
+  "HGNC symbol": string;
+  "TF assessment": string;
+  [key: string]: any;
+}
+
 const FactorDetailsPage = () => {
   const apiContext = useContext(ApiContext);
   const router = useRouter();
@@ -39,7 +50,6 @@ const FactorDetailsPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  // Define factorForUrl with conditional capitalization
   const factorForUrl =
     species.toLowerCase() === "human"
       ? factor.toUpperCase()
@@ -47,7 +57,6 @@ const FactorDetailsPage = () => {
       ? factor.charAt(0).toUpperCase() + factor.slice(1)
       : factor;
 
-  // Update the URL to uppercase if species is human and factor is not already in uppercase
   useEffect(() => {
     if (species.toLowerCase() === "human" && factor !== factorForUrl) {
       router.replace(
@@ -79,18 +88,54 @@ const FactorDetailsPage = () => {
       }
     );
 
-  const [hasSelexData, setHasSelexData] = useState(false);
+  const [tfA, setTFA] = useState<Map<string, TFData> | null>(null);
+  const [genomicRange, setGenomicRange] = useState<string>("No data available");
 
+  // Load TF Assignments
   useEffect(() => {
-    if (selexData && selexData.deep_learned_motifs.length > 0) {
-      setHasSelexData(true);
-    } else {
-      setHasSelexData(false);
+    fetch("/tf-assignments.json.gz")
+      .then((response) => response.blob())
+      .then((blob) => blob.arrayBuffer())
+      .then((buffer) => inflate(buffer, { to: "string" }))
+      .then((jsonString) => {
+        const parsedData: TFData[] = JSON.parse(jsonString);
+        setTFA(
+          associateBy(
+            parsedData,
+            (item) => item["HGNC symbol"],
+            (item) => item
+          )
+        );
+      })
+      .catch((err) => console.error("Failed to load TF assignments:", err));
+  }, []);
+
+  // Compute Genomic Range
+  useEffect(() => {
+    if (data && data.factor && data.factor.length > 0) {
+      const factorData = data.factor[0];
+      if (factorData.coordinates) {
+        const range = `${
+          factorData.coordinates.chromosome
+        }:${factorData.coordinates.start.toLocaleString()}-${factorData.coordinates.end.toLocaleString()}`;
+        setGenomicRange(range);
+      }
     }
-  }, [selexData]);
+  }, [data]);
 
   if (loading || selexLoading) return <CircularProgress />;
   if (error) return <p>Error: {error.message}</p>;
+
+  // Compute Label
+  const tfAssignment = tfA?.get(factor);
+  const label =
+    tfAssignment === undefined
+      ? ""
+      : (tfAssignment["TF assessment"] as string).includes("Likely")
+      ? "Likely sequence-specific TF"
+      : SEQUENCE_SPECIFIC.has(tfAssignment["TF assessment"])
+      ? "Sequence-specific TF"
+      : "Non-sequence-specific TF";
 
   const renderTabContent = () => {
     switch (detail) {
@@ -154,13 +199,14 @@ const FactorDetailsPage = () => {
     <Box
       style={{
         display: "flex",
-        flexDirection: isMobile ? "column" : "row",
+        flexDirection: "column",
         padding: isMobile ? "20px 10px" : "40px 25.5px",
         minHeight: "100vh",
         width: "100%",
       }}
     >
       <Box style={{ flex: 1 }}>
+        {/* Breadcrumb */}
         <Box mb={2}>
           <Link href="/">Homepage</Link> &gt;{" "}
           <Link href={`/transcriptionfactor/${species}`}>
@@ -169,14 +215,38 @@ const FactorDetailsPage = () => {
           &gt; <Typography component="span">{factorForUrl}</Typography>
         </Box>
 
-        {/* Use the FactorTabs component */}
+        {/* Header Section */}
+        <Box
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "20px",
+          }}
+        >
+          <Typography
+            variant="h4"
+            style={{ fontWeight: "600" }}
+            ml={"auto"}
+            mr={2}
+          >
+            {factorForUrl}
+          </Typography>
+          <Box textAlign="right">
+            <Typography variant="body2">{label}</Typography>
+            <Typography variant="body2">{genomicRange}</Typography>
+          </Box>
+        </Box>
+
+        {/* Factor Tabs */}
         <FactorTabs
           species={species}
           factor={factorForUrl}
           detail={detail}
-          hasSelexData={hasSelexData}
+          hasSelexData={Boolean(selexData)}
         />
 
+        {/* Tab Content */}
         <Box mt={2}>{renderTabContent()}</Box>
       </Box>
     </Box>
