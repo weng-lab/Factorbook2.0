@@ -50,13 +50,18 @@ const FactorDetailsPage = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
+  // Normalize factor name for URL
   const factorForUrl =
     species.toLowerCase() === "human"
       ? factor.toUpperCase()
       : species.toLowerCase() === "mouse"
-      ? factor.charAt(0).toUpperCase() + factor.slice(1)
+      ? factor.charAt(0).toUpperCase() + factor.slice(1).toLowerCase()
       : factor;
 
+  const [tfA, setTFA] = useState<Map<string, TFData> | null>(null);
+  const [genomicRange, setGenomicRange] = useState<string>("No data available");
+
+  // Redirect for consistent URL structure
   useEffect(() => {
     if (species.toLowerCase() === "human" && factor !== factorForUrl) {
       router.replace(
@@ -65,16 +70,18 @@ const FactorDetailsPage = () => {
     }
   }, [species, factor, factorForUrl, detail, router]);
 
+  // Fetch factor description
   const { data, loading, error } = useQuery<FactorQueryResponse>(
     FACTOR_DESCRIPTION_QUERY,
     {
       variables: {
-        assembly: species === "human" ? "GRCh38" : "mm10",
+        assembly: species.toLowerCase() === "human" ? "GRCh38" : "mm10",
         name: [factorForUrl],
       },
     }
   );
 
+  // Fetch Selex Data
   const { data: selexData, loading: selexLoading } =
     useQuery<DeepLearnedSELEXMotifsMetadataQueryResponse>(
       DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
@@ -88,9 +95,6 @@ const FactorDetailsPage = () => {
       }
     );
 
-  const [tfA, setTFA] = useState<Map<string, TFData> | null>(null);
-  const [genomicRange, setGenomicRange] = useState<string>("No data available");
-
   // Load TF Assignments
   useEffect(() => {
     fetch("/tf-assignments.json.gz")
@@ -99,10 +103,11 @@ const FactorDetailsPage = () => {
       .then((buffer) => inflate(buffer, { to: "string" }))
       .then((jsonString) => {
         const parsedData: TFData[] = JSON.parse(jsonString);
+        console.log("TF Assignments Loaded:", parsedData);
         setTFA(
           associateBy(
             parsedData,
-            (item) => item["HGNC symbol"],
+            (item) => item["HGNC symbol"].toLowerCase(), // Normalize key
             (item) => item
           )
         );
@@ -127,7 +132,7 @@ const FactorDetailsPage = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   // Compute Label
-  const tfAssignment = tfA?.get(factor);
+  const tfAssignment = tfA?.get(factorForUrl.toLowerCase()); // Use normalized key
   const label =
     tfAssignment === undefined
       ? ""
