@@ -419,6 +419,25 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 <Box key={motif.id} mb={4}>
                   <Grid container spacing={2} alignItems="center">
                     <Grid item xs={12} md={6}>
+                      <Typography variant="h6">
+                        De novo motif discovery in{" "}
+                        {sortedBiosamples.find((b) =>
+                          b.datasets.some((d) =>
+                            d.replicated_peaks.some(
+                              (peak) => peak.accession === selectedPeak
+                            )
+                          )
+                        )?.biosample.name || "Unknown"}{" "}
+                        {sortedBiosamples
+                          .flatMap((b) => b.datasets)
+                          .find((d) =>
+                            d.replicated_peaks.some(
+                              (peak) => peak.accession === selectedPeak
+                            )
+                          )?.accession || "Unknown"}{" "}
+                        by MEME
+                      </Typography>
+
                       {poorPeakCentrality(motif) && (
                         <Chip
                           icon={<HelpOutlineIcon />}
