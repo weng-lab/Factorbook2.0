@@ -129,11 +129,17 @@ const FactorDetailsPage = () => {
   useEffect(() => {
     if (data && data.factor && data.factor.length > 0) {
       const factorData = data.factor[0];
-      if (factorData.coordinates) {
+      if (
+        factorData.coordinates &&
+        factorData.coordinates.start != null &&
+        factorData.coordinates.end != null
+      ) {
         const range = `${
           factorData.coordinates.chromosome
         }:${factorData.coordinates.start.toLocaleString()}-${factorData.coordinates.end.toLocaleString()}`;
         setGenomicRange(range);
+      } else {
+        setGenomicRange("No genomic range available");
       }
     }
   }, [data]);

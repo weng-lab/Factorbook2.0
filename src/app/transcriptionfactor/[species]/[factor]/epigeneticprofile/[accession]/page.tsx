@@ -190,7 +190,7 @@ const EpigeneticProfilePage = () => {
 
         <Layout species={speciesStr} factor={factorStr}>
           <Typography variant="h5" align="center" gutterBottom>
-            {`Histone modification profiles around ${factorStr} peaks in ${biosample}`}
+            <strong>{`Histone modification profiles around ${factorStr} peaks in ${biosample}`}</strong>
           </Typography>
           {MARK_TYPE_ORDER.filter((type) => typeGroups.get(type)).map(
             (type, typeIdx) => {
@@ -212,7 +212,7 @@ const EpigeneticProfilePage = () => {
                       flexWrap="wrap"
                       justifyContent="flex-start"
                       alignItems="flex-start"
-                      gap="7rem"
+                      gap="5.2rem"
                     >
                       {typeGroups.get(type)?.map((group: any, idx: number) => (
                         <Box
