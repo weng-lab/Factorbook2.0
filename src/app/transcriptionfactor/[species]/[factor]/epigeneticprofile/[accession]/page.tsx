@@ -9,6 +9,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Layout from "@/components/motifmeme/aggregate/layout";
@@ -27,6 +28,24 @@ import { useParams } from "next/navigation";
 import FactorTabs from "@/app/transcriptionfactor/[species]/[factor]/[detail]/factortabs";
 import Link from "next/link";
 import { useTheme, useMediaQuery } from "@mui/material";
+
+// Utility to download an SVG element as a file
+const downloadSVG = (svgElement: SVGSVGElement, filename: string) => {
+  const svgData = new XMLSerializer().serializeToString(svgElement);
+  const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+// Map to store SVG references outside React hooks
+const svgRefs = new Map<string, Map<number, SVGSVGElement>>();
 
 const EpigeneticProfilePage = () => {
   const { species, factor, accession } = useParams();
@@ -106,6 +125,27 @@ const EpigeneticProfilePage = () => {
     (value: any) => value.source === "SELEX"
   );
 
+  const handleExportByType = (type: string) => {
+    const refMap = svgRefs.get(type);
+    if (!refMap) return;
+
+    refMap.forEach((svg, idx) => {
+      if (svg) {
+        downloadSVG(svg, `${type}-plot-${idx + 1}.svg`);
+      }
+    });
+  };
+
+  const handleExportAll = () => {
+    svgRefs.forEach((refMap, type) => {
+      refMap.forEach((svg, idx) => {
+        if (svg) {
+          downloadSVG(svg, `${type}-plot-${idx + 1}.svg`);
+        }
+      });
+    });
+  };
+
   return (
     <Box
       style={{
@@ -141,45 +181,89 @@ const EpigeneticProfilePage = () => {
           hasSelexData={hasSelexData}
         />
 
-        {/* Main content layout with sidebar */}
         <Layout species={speciesStr} factor={factorStr}>
           <Typography variant="h5" align="center" gutterBottom>
             {`Histone modification profiles around ${factorStr} peaks in ${biosample}`}
           </Typography>
           {MARK_TYPE_ORDER.filter((type) => typeGroups.get(type)).map(
-            (type) => (
-              <Accordion key={type}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography>{type}</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Box
-                    display="flex"
-                    flexDirection="row"
-                    flexWrap="wrap"
-                    justifyContent="flex-start"
-                    alignItems="flex-start"
-                    gap="7rem"
-                  >
-                    {typeGroups.get(type)?.map((group: any, idx: number) => (
-                      <Box
-                        key={idx}
-                        style={{ width: "300px", marginBottom: "20px" }}
+            (type, typeIdx) => {
+              if (!svgRefs.has(type)) {
+                svgRefs.set(type, new Map());
+              }
+
+              const refMap = svgRefs.get(type);
+
+              return (
+                <Accordion key={type}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>{type}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      flexWrap="wrap"
+                      justifyContent="flex-start"
+                      alignItems="flex-start"
+                      gap="7rem"
+                    >
+                      {typeGroups.get(type)?.map((group: any, idx: number) => (
+                        <Box
+                          key={idx}
+                          style={{ width: "300px", marginBottom: "20px" }}
+                        >
+                          <Graph
+                            ref={(el) => {
+                              if (el) refMap?.set(idx, el);
+                            }}
+                            proximal_values={group.proximal_values}
+                            distal_values={group.distal_values}
+                            dataset={group.dataset}
+                            xlabel="distance from summit (bp)"
+                            ylabel="fold change signal"
+                          />
+                        </Box>
+                      ))}
+                    </Box>
+                    <Box
+                      display="flex"
+                      justifyContent="center"
+                      marginTop="20px"
+                    >
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleExportByType(type)}
+                        style={{
+                          backgroundColor: "#9E67F2",
+                          color: "white",
+                          padding: "10px 30px",
+                          borderRadius: "30px",
+                        }}
                       >
-                        <Graph
-                          proximal_values={group.proximal_values}
-                          distal_values={group.distal_values}
-                          dataset={group.dataset}
-                          xlabel="distance from summit (bp)"
-                          ylabel="fold change signal"
-                        />
-                      </Box>
-                    ))}
-                  </Box>
-                </AccordionDetails>
-              </Accordion>
-            )
+                        Export {type} plots as SVG
+                      </Button>
+                    </Box>
+                  </AccordionDetails>
+                </Accordion>
+              );
+            }
           )}
+          <Box display="flex" justifyContent="center" marginTop="20px">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleExportAll}
+              style={{
+                backgroundColor: "#9E67F2",
+                color: "white",
+                padding: "10px 30px",
+                borderRadius: "30px",
+              }}
+            >
+              Export all plots as SVG
+            </Button>
+          </Box>
         </Layout>
       </Box>
     </Box>
