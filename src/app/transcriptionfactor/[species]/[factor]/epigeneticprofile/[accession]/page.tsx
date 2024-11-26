@@ -28,20 +28,17 @@ import { useParams } from "next/navigation";
 import FactorTabs from "@/app/transcriptionfactor/[species]/[factor]/[detail]/factortabs";
 import Link from "next/link";
 import { useTheme, useMediaQuery } from "@mui/material";
+import JSZip from "jszip";
 
-// Utility to download an SVG element as a file
-const downloadSVG = (svgElement: SVGSVGElement, filename: string) => {
-  const svgData = new XMLSerializer().serializeToString(svgElement);
-  const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
+// Utility to download ZIP
+const downloadZip = async (zip: JSZip, filename: string) => {
+  const content = await zip.generateAsync({ type: "blob" });
 
   const link = document.createElement("a");
-  link.href = url;
+  link.href = URL.createObjectURL(content);
   link.download = filename;
-  document.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  URL.revokeObjectURL(link.href);
 };
 
 // Map to store SVG references outside React hooks
@@ -125,25 +122,35 @@ const EpigeneticProfilePage = () => {
     (value: any) => value.source === "SELEX"
   );
 
-  const handleExportByType = (type: string) => {
+  const handleExportAccordionAsZip = async (type: string) => {
+    const zip = new JSZip();
     const refMap = svgRefs.get(type);
+
     if (!refMap) return;
 
     refMap.forEach((svg, idx) => {
       if (svg) {
-        downloadSVG(svg, `${type}-plot-${idx + 1}.svg`);
+        const svgData = new XMLSerializer().serializeToString(svg);
+        zip.file(`${type}-plot-${idx + 1}.svg`, svgData);
       }
     });
+
+    await downloadZip(zip, `${type}-plots.zip`);
   };
 
-  const handleExportAll = () => {
+  const handleExportAllAsZip = async () => {
+    const zip = new JSZip();
+
     svgRefs.forEach((refMap, type) => {
       refMap.forEach((svg, idx) => {
         if (svg) {
-          downloadSVG(svg, `${type}-plot-${idx + 1}.svg`);
+          const svgData = new XMLSerializer().serializeToString(svg);
+          zip.file(`${type}-plot-${idx + 1}.svg`, svgData);
         }
       });
     });
+
+    await downloadZip(zip, "all-plots.zip");
   };
 
   return (
@@ -225,6 +232,7 @@ const EpigeneticProfilePage = () => {
                         </Box>
                       ))}
                     </Box>
+                    {/* Add Export Button for Individual Accordion */}
                     <Box
                       display="flex"
                       justifyContent="center"
@@ -233,7 +241,7 @@ const EpigeneticProfilePage = () => {
                       <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => handleExportByType(type)}
+                        onClick={() => handleExportAccordionAsZip(type)}
                         style={{
                           backgroundColor: "#9E67F2",
                           color: "white",
@@ -241,7 +249,7 @@ const EpigeneticProfilePage = () => {
                           borderRadius: "30px",
                         }}
                       >
-                        Export {type} plots as SVG
+                        Export {type} plots as ZIP
                       </Button>
                     </Box>
                   </AccordionDetails>
@@ -253,7 +261,7 @@ const EpigeneticProfilePage = () => {
             <Button
               variant="contained"
               color="primary"
-              onClick={handleExportAll}
+              onClick={handleExportAllAsZip}
               style={{
                 backgroundColor: "#9E67F2",
                 color: "white",
@@ -261,7 +269,7 @@ const EpigeneticProfilePage = () => {
                 borderRadius: "30px",
               }}
             >
-              Export all plots as SVG
+              Export all plots as ZIP
             </Button>
           </Box>
         </Layout>
