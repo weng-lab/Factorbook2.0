@@ -212,7 +212,7 @@ const EpigeneticProfilePage = () => {
                       flexWrap="wrap"
                       justifyContent="flex-start"
                       alignItems="flex-start"
-                      gap="7rem"
+                      gap="5.2rem"
                     >
                       {typeGroups.get(type)?.map((group: any, idx: number) => (
                         <Box
