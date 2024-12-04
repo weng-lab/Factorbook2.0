@@ -237,6 +237,7 @@ const FactorDetailsPage = () => {
         </Box>
 
         {/* Header Section */}
+        {/* Header Section */}
         <Box
           style={{
             display: "flex",
@@ -255,7 +256,11 @@ const FactorDetailsPage = () => {
           </Typography>
           <Box textAlign="right">
             <Typography variant="body2">{label}</Typography>
-            <Typography variant="body2">{genomicRange}</Typography>
+            <Typography variant="body2">
+              {genomicRange !== "No data available"
+                ? `Genomic coordinates for ${factorForUrl}: ${genomicRange}`
+                : genomicRange}
+            </Typography>
           </Box>
         </Box>
 
