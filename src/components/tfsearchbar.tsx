@@ -289,7 +289,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
       </Stack>
 
       <Box sx={{ marginLeft: "10px" }}>
-        <Typography variant="caption" sx={{ color: "gray" }}>
+        <Typography variant="caption" sx={{ color: "white" }}>
           Example: CTCF, ATF3
         </Typography>
       </Box>
