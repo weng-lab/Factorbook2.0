@@ -78,35 +78,42 @@ function formatPWM(
 
 // MotifRow component
 const MotifRow: React.FC<MMotif> = (x) => {
-  const r = useRef<SVGSVGElement>(null);
-  const [rrc, setRC] = useState(false);
-  const formattedPWM = formatPWM(pwmArray(x.pwm));
+  const r = useRef<SVGSVGElement>(null); // Reference for the DNA logo
+  const [rrc, setRC] = useState(false); // State for Reverse Complement
+
+  // Format PWM dynamically based on reverse complement state
+  const formattedPWM = useMemo(() => {
+    const pwm = formatPWM(pwmArray(x.pwm));
+    return rrc ? rc(pwm) : pwm; // Reverse complement logic
+  }, [x.pwm, rrc]);
+
+  const handleReverseComplement = useCallback(() => {
+    setRC((prev) => !prev); // Toggle reverse complement
+  }, []);
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={10}>
-        <DNALogo
-          ppm={rrc ? rc(formattedPWM) : formattedPWM}
-          height={100}
-          ref={r}
-        />
-      </Grid>
-    </Grid>
-  );
-};
-
-const MotifIconsRow: React.FC<MMotif> = (x) => {
-  const r = useRef<SVGSVGElement>(null);
-  const [rrc, setRC] = useState(false);
-  return (
-    <Grid container spacing={2}>
+    <Grid container spacing={2} alignItems="center">
+      {/* Left-side Buttons */}
       <Grid item xs={2}>
-        <FileDownloadOutlinedIcon onClick={() => downloadSVG(r, "logo.svg")}>
-          Download
-        </FileDownloadOutlinedIcon>
-        <SwapHorizIcon onClick={() => setRC(!rrc)}>
-          Reverse Complement
-        </SwapHorizIcon>
+        <Tooltip title="Reverse Complement">
+          <IconButton onClick={handleReverseComplement}>
+            <SwapHorizIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Download Logo">
+          <IconButton
+            onClick={() =>
+              downloadSVG(r, `${x.accession}_${rrc ? "rc" : ""}_logo.svg`)
+            }
+          >
+            <FileDownloadOutlinedIcon />
+          </IconButton>
+        </Tooltip>
+      </Grid>
+
+      {/* DNA Logo */}
+      <Grid item xs={10}>
+        <DNALogo ppm={formattedPWM} height={100} ref={r} />
       </Grid>
     </Grid>
   );
@@ -115,12 +122,6 @@ const MotifIconsRow: React.FC<MMotif> = (x) => {
 // Define DataTable columns
 const COLUMNS = (title: string) => {
   return [
-    {
-      header: "",
-      value: (x: MMotif) =>
-        isPWMObjectArray(x.pwm) ? x.pwm[0].A : x.pwm[0][0],
-      FunctionalRender: MotifIconsRow,
-    },
     {
       header: "Motif",
       value: (x: MMotif) =>

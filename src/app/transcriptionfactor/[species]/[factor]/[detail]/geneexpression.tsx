@@ -176,24 +176,55 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   ) : (
     <Box sx={{ width: "100%" }}>
       <AppBar position="static" color="default">
-        {
-          <Tabs
-            value={value}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="fullWidth"
-          >
-            {[...assayTermNames].map((a) => {
-              return <Tab label={a} />;
-            })}
-          </Tabs>
-        }
+        <Tabs
+          value={value}
+          onChange={handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          variant="scrollable" // Allows the tabs to scroll when necessary
+          scrollButtons="auto" // Displays navigation buttons for overflow
+          aria-label="Gene expression tabs"
+          sx={{
+            "& .MuiTabs-flexContainer": {
+              justifyContent:
+                assayTermNames.size === 1 ? "center" : "flex-start", // Center if one tab
+            },
+            "& .MuiTab-root": {
+              textTransform: "none", // Keep the original case for the text
+              whiteSpace: "nowrap", // Prevent text wrapping
+              overflow: "hidden", // Handle overflow gracefully
+              textOverflow: "ellipsis", // Truncate long text
+              maxWidth: "200px", // Set a reasonable maximum width for tabs
+              fontSize: "0.9rem", // Adjust font size for better fit
+              padding: "6px 12px", // Adjust padding for better alignment
+            },
+          }}
+        >
+          {[...assayTermNames].map((a, index) => (
+            <Tab
+              key={index}
+              label={
+                a === "in vitro differentiated cells"
+                  ? "In Vitro Cells" // Shortened version for better fit
+                  : a === "Total RNA-Seq"
+                  ? "Total RNA-Seq"
+                  : a
+              }
+            />
+          ))}
+        </Tabs>
       </AppBar>
       <Box sx={{ marginTop: "1em" }}>
         <Grid container>
           <Grid item xs={12} sm={3}>
-            <Paper sx={{ backgroundColor: "#f5f5f5", padding: "1em" }}>
+            <Paper
+              sx={{
+                backgroundColor: "#f5f5f5",
+                padding: "1em",
+                maxWidth: "100%", // Ensure it does not exceed the container
+                overflow: "hidden", // Prevent overflow of content
+              }}
+            >
               <Typography variant="subtitle1" gutterBottom>
                 Select a biosample type:
               </Typography>
@@ -203,8 +234,9 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                   onClick={() => setBiosampleType(i)}
                   selected={i === biosampleType}
                 >
-                  {t}
-                  {t !== "in vitro differentiated cells" && "s"}
+                  {t === "in vitro differentiated cells"
+                    ? "In Vitro Differentiated Cells"
+                    : `${t}${t !== "in vitro differentiated cells" ? "s" : ""}`}
                 </MenuItem>
               ))}
             </Paper>
@@ -212,9 +244,9 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               <Box
                 sx={{
                   display: "flex",
+                  flexWrap: "wrap",
                   justifyContent: { xs: "center", sm: "flex-start" },
                   gap: "0.5em",
-                  marginLeft: { xs: "0", sm: "-0.1em" },
                   marginTop: "1.5em",
                 }}
               >

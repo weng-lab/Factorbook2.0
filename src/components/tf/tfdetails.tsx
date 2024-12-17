@@ -320,9 +320,8 @@ const TfDetails: React.FC<TfDetailsProps> = ({
   };
 
   return (
-    <Container>
-      <Box display="flex" justifyContent="flex-end" mb={2}></Box>
-      <Box style={{ overflowX: "auto" }}>
+    <Container maxWidth={false} disableGutters>
+      <Box style={{ overflowX: "auto", marginTop: "20px" }}>
         <DataTable
           columns={columns}
           rows={rows}

@@ -268,8 +268,9 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
   return (
     <Box sx={{ textAlign: "center", marginBottom: 2 }}>
       <Box
-        sx={{ display: "flex", justifyContent: "flex-start", marginBottom: 2 }}
-      >
+        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+      ></Box>
+      <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}>
         <Button
           variant="outlined"
           startIcon={<SwapHorizIcon />}
