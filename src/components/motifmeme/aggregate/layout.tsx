@@ -44,15 +44,18 @@ const Layout: React.FC<{
   const params = useParams();
   const currentAccession = params?.accession;
 
+  // Determine the assembly based on species
   const assembly = useMemo(
     () => (species.toLowerCase() === "human" ? "GRCh38" : "mm10"),
     [species]
   );
 
+  // Fetch metadata query
   const { data, loading, error } = useQuery(AGGREGATE_METADATA_QUERY, {
     variables: { assembly, target: factor },
   });
 
+  // Parse datasets from the fetched data
   const datasets: Dataset[] = useMemo(() => {
     if (!data) return [];
     return histoneBiosamplePartitions(data).list.flatMap((ds: any) =>
@@ -63,6 +66,7 @@ const Layout: React.FC<{
     );
   }, [data]);
 
+  // Group datasets by biosample
   const groupedDatasets = useMemo(() => {
     return datasets.reduce((acc: { [key: string]: Dataset[] }, dataset) => {
       const { biosample } = dataset;
@@ -72,11 +76,13 @@ const Layout: React.FC<{
     }, {});
   }, [datasets]);
 
+  // Sort biosamples alphabetically
   const sortedBiosamples = useMemo(
     () => Object.keys(groupedDatasets).sort((a, b) => a.localeCompare(b)),
     [groupedDatasets]
   );
 
+  // Filter datasets based on search input
   const filteredDatasets = useMemo(
     () =>
       sortedBiosamples.filter((biosample) =>
@@ -85,6 +91,7 @@ const Layout: React.FC<{
     [sortedBiosamples, debouncedSearchTerm]
   );
 
+  // Redirect to the first dataset if no accession is selected
   useEffect(() => {
     if (!currentAccession && datasets.length > 0) {
       router.push(
@@ -93,6 +100,7 @@ const Layout: React.FC<{
     }
   }, [currentAccession, datasets, species, factor, router]);
 
+  // Expand the biosample containing the current accession
   useEffect(() => {
     if (currentAccession && expandedBiosample === false) {
       const foundBiosample = Object.keys(groupedDatasets).find((biosample) =>
@@ -104,6 +112,7 @@ const Layout: React.FC<{
     }
   }, [currentAccession, groupedDatasets, expandedBiosample]);
 
+  // Handle accession click
   const handleAccessionClick = useCallback(
     (accession: string) => {
       router.push(
@@ -113,6 +122,7 @@ const Layout: React.FC<{
     [router, species, factor]
   );
 
+  // Debounce search input changes
   const debounceSearch = useCallback(
     debounce((value: string) => setDebouncedSearchTerm(value), 300),
     []
@@ -155,6 +165,7 @@ const Layout: React.FC<{
         </IconButton>
       )}
 
+      {/* Sidebar Drawer */}
       <Box
         sx={{
           width: drawerOpen ? { xs: "100%", md: "25%" } : 0,
@@ -207,6 +218,7 @@ const Layout: React.FC<{
               </IconButton>
             </Box>
 
+            {/* List of Biosamples and Datasets */}
             <List>
               {filteredDatasets.map((biosample) => (
                 <Accordion
@@ -250,6 +262,7 @@ const Layout: React.FC<{
         )}
       </Box>
 
+      {/* Main Content */}
       <Box
         sx={{
           flexGrow: 1,
