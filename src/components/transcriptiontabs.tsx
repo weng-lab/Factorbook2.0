@@ -29,7 +29,7 @@ const TranscriptionTabs: React.FC<{ species: string }> = ({ species }) => {
         onChange={handleChange}
         textColor="primary"
         indicatorColor="primary"
-        aria-label="primary tabs example"
+        aria-label="transcription factor and cell type tabs"
         sx={{ marginBottom: "20px" }}
       >
         <Tab

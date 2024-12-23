@@ -31,11 +31,11 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const clonedSelectComponent = isValidElement<SelectComponentProps>(
-    selectComponent
-  )
-    ? cloneElement(selectComponent, { sx: { ml: 2 } })
-    : selectComponent;
+  // Clone select component if provided
+  const clonedSelectComponent =
+    selectComponent && isValidElement<SelectComponentProps>(selectComponent)
+      ? cloneElement(selectComponent, { sx: { ml: 2 } })
+      : selectComponent;
 
   return (
     <Box
@@ -43,7 +43,6 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
         display: "flex",
         flexDirection: "column",
         width: "100vw",
-        height: "auto",
         margin: "0 auto",
         p: "5% 10%",
         overflow: "hidden",
@@ -64,10 +63,7 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
             alt={imageAlt}
             width={544}
             height={396}
-            style={{
-              maxWidth: "100%",
-              height: "auto",
-            }}
+            style={{ maxWidth: "100%", height: "auto" }}
           />
         </Grid2>
         <Grid2
@@ -89,7 +85,6 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
               color: "rgba(0, 0, 0, 0.87)",
               fontFeatureSettings: "'clig' off, 'liga' off",
               fontSize: "34px",
-              fontStyle: "normal",
               fontWeight: 400,
               p: 2,
             }}
@@ -107,19 +102,14 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
             {description}
           </Typography>
           {buttonText && (
-            <>
-              <StyledButton
-                text={buttonText}
-                href={buttonHref}
-                display={isSmallScreen ? "block" : "none"}
-              />
-              <StyledButton
-                text={buttonText}
-                href={buttonHref}
-                display={isSmallScreen ? "none" : "block"}
-                sx={{ ml: 2 }}
-              />
-            </>
+            <StyledButton
+              text={buttonText}
+              href={buttonHref}
+              sx={{
+                display: isSmallScreen ? "block" : "inline-block",
+                ml: isSmallScreen ? 0 : 2,
+              }}
+            />
           )}
           {clonedSelectComponent}
         </Grid2>
