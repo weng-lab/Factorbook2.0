@@ -6,7 +6,6 @@ export type TOMTOMMatch = {
     motifid: string;
 };
 
-
 export type MotifSearchResult = {
     motif: {
         pwm: number[][];
@@ -17,6 +16,7 @@ export type MotifSearchResult = {
     offset: number;
     reverseComplement: boolean;
 };
+
 export type MotifResultProps = {
     query: number[][];
     alignment: MotifSearchResult;
@@ -24,4 +24,3 @@ export type MotifResultProps = {
     species: string;
     tomtom_match?: TOMTOMMatch;
 };
-

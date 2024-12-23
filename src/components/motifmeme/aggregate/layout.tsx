@@ -17,7 +17,8 @@ import {
   Close as CloseIcon,
   ArrowForwardIos as ArrowForwardIosIcon,
 } from "@mui/icons-material";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter } from "next/router";
+import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import { AGGREGATE_METADATA_QUERY } from "@/components/motifmeme/aggregate/queries";
 import { debounce } from "lodash";
@@ -39,51 +40,53 @@ const Layout: React.FC<{
   const [expandedBiosample, setExpandedBiosample] = useState<string | false>(
     false
   );
-  const router = useRouter(); // For pushing URL updates
-  const { accession: currentAccession } = useParams(); // Current accession from URL
+  const router = useRouter();
+  const params = useParams();
+  const currentAccession = params?.accession;
 
-  const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";
+  const assembly = useMemo(
+    () => (species.toLowerCase() === "human" ? "GRCh38" : "mm10"),
+    [species]
+  );
 
   const { data, loading, error } = useQuery(AGGREGATE_METADATA_QUERY, {
     variables: { assembly, target: factor },
   });
 
-  const datasets: Dataset[] = data
-    ? histoneBiosamplePartitions(data)
-        .list.map((ds: any) =>
-          ds.datasets.map((d: any) => ({
-            biosample: ds.biosample.name,
-            accession: d.accession,
-          }))
-        )
-        .flat()
-    : [];
+  const datasets: Dataset[] = useMemo(() => {
+    if (!data) return [];
+    return histoneBiosamplePartitions(data).list.flatMap((ds: any) =>
+      ds.datasets.map((d: any) => ({
+        biosample: ds.biosample.name,
+        accession: d.accession,
+      }))
+    );
+  }, [data]);
 
   const groupedDatasets = useMemo(() => {
-    return datasets.reduce(
-      (acc: { [key: string]: Dataset[] }, dataset: Dataset) => {
-        const { biosample } = dataset;
-        if (!acc[biosample]) acc[biosample] = [];
-        acc[biosample].push(dataset);
-        return acc;
-      },
-      {}
-    );
+    return datasets.reduce((acc: { [key: string]: Dataset[] }, dataset) => {
+      const { biosample } = dataset;
+      if (!acc[biosample]) acc[biosample] = [];
+      acc[biosample].push(dataset);
+      return acc;
+    }, {});
   }, [datasets]);
 
-  const sortedBiosamples = useMemo(() => {
-    return Object.keys(groupedDatasets).sort((a, b) => a.localeCompare(b));
-  }, [groupedDatasets]);
+  const sortedBiosamples = useMemo(
+    () => Object.keys(groupedDatasets).sort((a, b) => a.localeCompare(b)),
+    [groupedDatasets]
+  );
 
-  const filteredDatasets = useMemo(() => {
-    return sortedBiosamples.filter((biosample) =>
-      biosample.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-    );
-  }, [sortedBiosamples, debouncedSearchTerm]);
+  const filteredDatasets = useMemo(
+    () =>
+      sortedBiosamples.filter((biosample) =>
+        biosample.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      ),
+    [sortedBiosamples, debouncedSearchTerm]
+  );
 
   useEffect(() => {
     if (!currentAccession && datasets.length > 0) {
-      // If no accession is selected, pick the first one
       router.push(
         `/transcriptionfactor/${species}/${factor}/epigeneticprofile/${datasets[0].accession}`
       );
@@ -97,20 +100,21 @@ const Layout: React.FC<{
           (dataset) => dataset.accession === currentAccession
         )
       );
-      if (foundBiosample) {
-        setExpandedBiosample(foundBiosample);
-      }
+      if (foundBiosample) setExpandedBiosample(foundBiosample);
     }
   }, [currentAccession, groupedDatasets, expandedBiosample]);
 
-  const handleAccessionClick = (accession: string) => {
-    router.push(
-      `/transcriptionfactor/${species}/${factor}/epigeneticprofile/${accession}`
-    );
-  };
+  const handleAccessionClick = useCallback(
+    (accession: string) => {
+      router.push(
+        `/transcriptionfactor/${species}/${factor}/epigeneticprofile/${accession}`
+      );
+    },
+    [router, species, factor]
+  );
 
   const debounceSearch = useCallback(
-    debounce((value) => setDebouncedSearchTerm(value), 300),
+    debounce((value: string) => setDebouncedSearchTerm(value), 300),
     []
   );
 
@@ -204,9 +208,9 @@ const Layout: React.FC<{
             </Box>
 
             <List>
-              {filteredDatasets.map((biosample, index) => (
+              {filteredDatasets.map((biosample) => (
                 <Accordion
-                  key={index}
+                  key={biosample}
                   expanded={expandedBiosample === biosample}
                   onChange={() =>
                     setExpandedBiosample(
@@ -218,31 +222,25 @@ const Layout: React.FC<{
                     <Typography variant="h6">{biosample}</Typography>
                   </AccordionSummary>
                   <AccordionDetails>
-                    {groupedDatasets[biosample].map(
-                      (dataset: Dataset, idx: number) => (
-                        <ListItem
-                          button
-                          key={idx}
-                          onClick={() =>
-                            handleAccessionClick(dataset.accession)
-                          }
-                          selected={dataset.accession === currentAccession}
-                          sx={{
-                            padding: "10px 20px",
-                            backgroundColor:
-                              dataset.accession === currentAccession
-                                ? "#e0e0e0"
-                                : "white",
-                            "&:hover": {
-                              backgroundColor: "#f0f0f0",
-                            },
-                            borderBottom: "1px solid #ddd",
-                          }}
-                        >
-                          <ListItemText primary={dataset.accession} />
-                        </ListItem>
-                      )
-                    )}
+                    {groupedDatasets[biosample].map((dataset) => (
+                      <ListItem
+                        button
+                        key={dataset.accession}
+                        onClick={() => handleAccessionClick(dataset.accession)}
+                        selected={dataset.accession === currentAccession}
+                        sx={{
+                          padding: "10px 20px",
+                          backgroundColor:
+                            dataset.accession === currentAccession
+                              ? "#e0e0e0"
+                              : "white",
+                          "&:hover": { backgroundColor: "#f0f0f0" },
+                          borderBottom: "1px solid #ddd",
+                        }}
+                      >
+                        <ListItemText primary={dataset.accession} />
+                      </ListItem>
+                    ))}
                     <Divider />
                   </AccordionDetails>
                 </Accordion>
