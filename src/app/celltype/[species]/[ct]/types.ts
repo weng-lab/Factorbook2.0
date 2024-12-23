@@ -1,4 +1,3 @@
-
 export type CellTypeDescription = {
     ct_image_url?: string;
     wiki_desc?: string;

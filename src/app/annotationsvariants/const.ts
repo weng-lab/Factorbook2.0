@@ -1,5 +1,3 @@
-
-
 export const NONE = { text: "(none)", value: "NONE" };
 
 export const POPULATIONS = [

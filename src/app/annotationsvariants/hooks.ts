@@ -24,7 +24,6 @@ function liftOver(region: GenomicRange, chainFile: ChainFile): GenomicRange[] {
     }));
 }
 
-
 export function useSNPData(id: string, assembly: string, population?: string, subpopulation?: string, chainFile?: ChainFile) {
     const { data, loading } = useQuery<SNPQueryResponse>(SNP_QUERY, {
         client,
