@@ -15,7 +15,7 @@
     "@apollo/experimental-nextjs-app-support": "^0.11.2",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
+    "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.4",
     "@mui/material-nextjs": "^5.15.11",
