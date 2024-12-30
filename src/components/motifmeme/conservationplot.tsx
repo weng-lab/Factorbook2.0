@@ -46,22 +46,26 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
     }>();
 
   useEffect(() => {
-    setLoading(true);
-    setData(null);
-    fetch(
-      `https://screen-beta-api.wenglab.org/motif_conservation/conservation-aggregate/all/${accession}-${name}.sum.npy`
-    )
-      .then((x) => x.json())
-      .then((x) => {
-        setData(x.slice(16));
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `https://screen-beta-api.wenglab.org/motif_conservation/conservation-aggregate/all/${accession}-${name}.sum.npy`
+        );
+        const result = await response.json();
+        setData(result.slice(16));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchData();
   }, [accession, name]);
 
   const setLimitS = useCallback((newLimit: number) => {
-    if (newLimit < 10) newLimit = 10;
-    if (newLimit > 500) newLimit = 500;
-    setLimit(newLimit);
+    setLimit(Math.min(500, Math.max(10, newLimit)));
   }, []);
 
   const max = useMemo(() => (data ? Math.max(...data) : 0), [data]);
@@ -92,10 +96,10 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
 
     const { x } = localPoint(event) || { x: 0 };
     const svgRect = svgRef.current?.getBoundingClientRect();
-    const graphX = x - (svgRect?.left || 0) - 60; // Account for margin
+    const graphX = x - (svgRect?.left || 0) - 60;
     const xValue = xScale.invert(graphX);
 
-    const index = Math.floor(xValue + data.length / 2); // Get data index
+    const index = Math.floor(xValue + data.length / 2);
 
     if (index >= 0 && index < data.length) {
       const proximal = parseFloat(data[index].toFixed(2));
@@ -104,18 +108,17 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
       showTooltip({
         tooltipData: { xValue, proximal, distal },
         tooltipLeft: graphX + 60,
-        tooltipTop: yScale(proximal) + 30, // Tooltip follows the y-axis scale
+        tooltipTop: yScale(proximal) + 30,
       });
     } else {
-      hideTooltip(); // Hide tooltip when outside bounds
+      hideTooltip();
     }
   };
 
-  if (loading || !data) return <div>Loading...</div>;
+  if (loading || !data) return <Typography>Loading...</Typography>;
 
   return (
     <Box position="relative">
-      {/* Centering the Typography inside a Box */}
       <Box textAlign="center" mb={2}>
         <Typography
           variant="h6"
@@ -133,7 +136,7 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
       <svg width={width} height={height} ref={svgRef}>
         <Group left={60} top={20}>
           <LinePath
-            data={data ?? undefined}
+            data={data ?? []}
             x={(d, i) => xScale(i - data.length / 2)}
             y={(d) => yScale(d)}
             stroke="#444444"
@@ -187,16 +190,11 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
           </div>
         </TooltipWithBounds>
       )}
-      {/* Align buttons next to each other under the graph */}
       <Box display="flex" justifyContent="start" mt={1} ml={7}>
         <Button
           variant="contained"
           onClick={() => downloadSVG(svgRef, "conservation.svg")}
-          sx={{
-            backgroundColor: "#8169BF",
-            color: "white",
-            marginRight: 2,
-          }}
+          sx={{ backgroundColor: "#8169BF", color: "white", marginRight: 2 }}
         >
           Export SVG
         </Button>

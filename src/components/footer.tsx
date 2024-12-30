@@ -2,34 +2,30 @@ import React from "react";
 import { Box, Typography, Link as MuiLink, Divider } from "@mui/material";
 import Link from "next/link";
 
-type LinkSectionProps = {
+const LinkSection: React.FC<{
   title: string;
   links: { text: string; href: string }[];
-};
-
-const LinkSection: React.FC<LinkSectionProps> = ({ title, links }) => (
+}> = ({ title, links }) => (
   <Box sx={{ flex: 1, minWidth: 200, mb: { xs: 3, md: 0 } }}>
     <Typography
       variant="h6"
       color="white"
       gutterBottom
-      sx={{
-        pointerEvents: "none",
-      }}
+      sx={{ pointerEvents: "none" }}
     >
       {title}
     </Typography>
     <Box component="nav">
-      {links.map((link) => (
+      {links.map(({ text, href }) => (
         <MuiLink
-          href={link.href}
+          key={text}
+          href={href}
           color="white"
           underline="none"
           display="block"
           mt={1}
-          key={link.text}
         >
-          {link.text}
+          {text}
         </MuiLink>
       ))}
     </Box>
@@ -51,26 +47,23 @@ const Footer: React.FC = () => (
       px={3}
     >
       <Box sx={{ flex: 1, minWidth: 200, mb: { xs: 3, md: 0 } }}>
-        {/* Wrap the logo image with Next.js Link for homepage navigation */}
         <Link href="/" passHref>
           <img
-            src="/logo/on-black/Logo_01_on-black-bg.png" // Path to on-black logo
+            src="/logo/on-black/Logo_01_on-black-bg.png"
             alt="Factorbook Logo"
-            width={180} // Adjust width for a larger appearance
-            style={{ height: "auto", maxHeight: "100px", cursor: "pointer" }} // Optional height adjustment and cursor style
+            width={180}
+            style={{ height: "auto", maxHeight: "100px", cursor: "pointer" }}
           />
         </Link>
         <Typography
           sx={{
-            alignSelf: "stretch",
             color: "var(--primary-contrast, #FFF)",
-            fontSize: "16px",
+            fontSize: 16,
             fontWeight: 400,
-            lineHeight: "150%", // 24px
+            lineHeight: 1.5,
             letterSpacing: "0.15px",
-            fontFeatureSettings: "'clig' off, 'liga' off",
             pointerEvents: "none",
-            mt: 2, // Spacing below the logo
+            mt: 2,
           }}
         >
           A comprehensive online resource dedicated to the study of
@@ -110,17 +103,15 @@ const Footer: React.FC = () => (
         />
       </Box>
     </Box>
-    <Divider sx={{ bgcolor: "white", my: 4, mx: 3, width: "auto" }} />
+    <Divider sx={{ bgcolor: "white", my: 4, mx: 3 }} />
     <Box
       display="flex"
       justifyContent="space-between"
       alignItems="center"
       flexWrap="wrap"
-      sx={{ color: "white", fontSize: 12, width: "100%", px: 3 }}
+      sx={{ color: "white", fontSize: 12, px: 3 }}
     >
-      <Typography sx={{ pointerEvents: "none" }}>
-        {/* Additional footer information here */}
-      </Typography>
+      <Typography sx={{ pointerEvents: "none" }}></Typography>
       <Box component="nav" display="flex" gap={2}>
         <MuiLink href="#" color="white" underline="none">
           Privacy & Policy

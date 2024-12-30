@@ -6,7 +6,7 @@ import Link from "next/link";
 
 interface StyledButtonProps {
   text: ReactNode;
-  secondaryText?: ReactNode; // New optional prop for additional text
+  secondaryText?: ReactNode;
   href: string;
   display?: string;
   sx?: SxProps<Theme>;
@@ -33,23 +33,24 @@ const StyledButton = forwardRef<HTMLButtonElement, StyledButtonProps>(
           variant="contained"
           ref={ref}
           sx={{
-            display: display,
-            padding: "8px 16px",
+            display,
+            padding: "10px 20px",
             backgroundColor: "#8169BF",
             borderRadius: "24px",
             textTransform: "none",
-            fontWeight: "medium",
+            fontWeight: 500,
             color: "#FFFFFF",
             justifyContent: "center",
             alignItems: "center",
             width: "100%",
             maxWidth: "400px",
+            transition: "background-color 0.3s ease",
             "& .MuiButton-startIcon": {
               marginRight: "8px",
               marginLeft: "-4px",
             },
             "&:focus, &:hover, &:active": {
-              backgroundColor: "#8169BF",
+              backgroundColor: "#7259A7",
             },
             "@media (max-width: 768px)": {
               maxWidth: "300px",
@@ -64,27 +65,34 @@ const StyledButton = forwardRef<HTMLButtonElement, StyledButtonProps>(
           onClick={onClick}
           startIcon={startIcon}
         >
-          {/* Main Text with Icon on the same line, centered */}
-          <Box component="div" sx={{ textAlign: "center", width: "100%" }}>
-            <Box
+          <Box
+            component="div"
+            sx={{
+              textAlign: "center",
+              width: "100%",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              variant="body1"
               component="span"
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+              sx={{ fontWeight: 500, fontSize: "16px" }}
             >
-              <Typography variant="body1" component="span" sx={{ mr: 1 }}>
-                {text}
-              </Typography>
-            </Box>
-
-            {/* Secondary text (optional), displayed on a new line */}
+              {text}
+            </Typography>
             {secondaryText && (
               <Typography
                 variant="body2"
-                component="div"
-                sx={{ mt: 1, width: "100%", textAlign: "center" }}
+                component="span"
+                sx={{
+                  mt: 1,
+                  fontSize: "14px",
+                  color: "#E0E0E0",
+                  textAlign: "center",
+                }}
               >
                 {secondaryText}
               </Typography>

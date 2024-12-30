@@ -2,70 +2,74 @@
 
 import React from "react";
 import { Box, Typography, Card, CardContent } from "@mui/material";
-import { SxProps } from "@mui/system";
+import { SxProps, Theme } from "@mui/system";
 
-interface ExperimentProps {
+interface ContentCardProps {
   title: string;
   count?: number;
   description: string;
-  sx?: SxProps;
+  sx?: SxProps<Theme>;
 }
 
-const ContentCard: React.FC<ExperimentProps> = ({
+const ContentCard: React.FC<ContentCardProps> = ({
   title,
   count,
   description,
   sx,
-}) => (
-  <Card
-    sx={{
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "flex-start",
-      gap: 4,
-      padding: 3,
-      width: "100%",
-      borderRadius: "24px",
-      backgroundColor: "#EDE7F6",
-      boxShadow: "none",
-      ...sx,
-    }}
-  >
-    <CardContent sx={{ width: "100%" }}>
-      <Box
-        component="div"
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          width: "100%",
-        }}
-      >
-        <Typography variant="h6" sx={{ fontWeight: "bold", color: "#558B2F" }}>
-          {title}
-        </Typography>
-        {count !== undefined && (
+}) => {
+  return (
+    <Card
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 4,
+        p: 3,
+        width: "100%",
+        borderRadius: 2,
+        backgroundColor: "#EDE7F6",
+        boxShadow: "none",
+        ...sx,
+      }}
+    >
+      <CardContent sx={{ width: "100%" }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            width: "100%",
+          }}
+        >
           <Typography
-            variant="body2"
-            sx={{ fontWeight: "medium", color: "#333" }}
+            variant="h6"
+            sx={{ fontWeight: "bold", color: "#558B2F" }}
           >
-            {count} performed
+            {title}
           </Typography>
-        )}
-      </Box>
-      <Typography
-        variant="body1"
-        sx={{
-          color: "#333",
-          marginTop: 2,
-          width: "100%",
-          whiteSpace: "pre-line",
-        }}
-      >
-        {description}
-      </Typography>
-    </CardContent>
-  </Card>
-);
+          {typeof count === "number" && (
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: "medium", color: "#333" }}
+            >
+              {count} performed
+            </Typography>
+          )}
+        </Box>
+        <Typography
+          variant="body1"
+          sx={{
+            color: "#333",
+            mt: 2,
+            width: "100%",
+            whiteSpace: "pre-line",
+          }}
+        >
+          {description}
+        </Typography>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default ContentCard;

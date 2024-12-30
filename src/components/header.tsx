@@ -1,22 +1,21 @@
 "use client";
 
 import React from "react";
-import { Box, Typography } from "@mui/material";
-import SvgIcon from "@mui/material/SvgIcon";
+import { Box, Typography, SvgIcon } from "@mui/material";
 
 const Header: React.FC = () => {
   return (
     <Box
       component="header"
-      display="flex"
-      width="100%"
-      padding="30px 0 16px 0"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
       sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        p: "30px 0 16px 0",
         textAlign: "center",
-        backgroundColor: "transparent", // Ensure header is transparent
+        backgroundColor: "transparent",
         color: "var(--text-primary, rgba(0, 0, 0, 0.87))",
       }}
     >
@@ -24,7 +23,6 @@ const Header: React.FC = () => {
         variant="h4"
         sx={{
           fontSize: "34px",
-          fontStyle: "normal",
           fontWeight: 400,
           lineHeight: "123.5%",
           letterSpacing: "0.25px",
@@ -32,16 +30,17 @@ const Header: React.FC = () => {
           flexDirection: "column",
           alignItems: "center",
           fontFeatureSettings: "'clig' off, 'liga' off",
-          marginBottom: "0px", // Remove margin below text
+          mb: 0,
         }}
       >
         Portals
       </Typography>
+
       <Box
         sx={{
           width: "166px",
           height: "51px",
-          marginTop: "-20px", // Adjust this value to decrease the gap
+          mt: "-20px",
         }}
       >
         <svg
@@ -56,15 +55,17 @@ const Header: React.FC = () => {
             stroke="#E0E0FF"
             strokeWidth="10"
             strokeLinecap="round"
-            fill="none" // Ensure no fill is applied
           />
         </svg>
       </Box>
+
       <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        mt="-10px"
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          mt: "-10px",
+        }}
       >
         <SvgIcon viewBox="0 0 24 24" sx={{ width: 24, height: 24 }}>
           <path

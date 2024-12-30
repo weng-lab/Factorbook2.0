@@ -10,7 +10,6 @@ export const CELLTYPE_DESCRIPTION_QUERY = gql`
     }
 `;
 
-
 export const DATASET_QUERY = gql`
     query Datasets(
         $biosample: String

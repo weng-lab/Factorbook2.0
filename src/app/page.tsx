@@ -210,8 +210,8 @@ const Homepage = () => {
               <InputLabel
                 id="search-portal"
                 sx={{
-                  color: "white", // Default color of the label
-                  "&.Mui-focused": { color: theme.palette.primary.main }, // Color when focused
+                  color: "white",
+                  "&.Mui-focused": { color: theme.palette.primary.main },
                 }}
               >
                 Search
@@ -224,51 +224,38 @@ const Homepage = () => {
                 MenuProps={{
                   PaperProps: {
                     sx: {
-                      bgcolor:
-                        "var(--material-theme-ref-neutral-neutral17, #2A2A2D)", // Dropdown background color
+                      bgcolor: "white",
                       "& .MuiMenuItem-root": {
-                        color: "black", // Text color of dropdown options
-                        backgroundColor: "white", // Background color for the dropdown items
+                        color: "black",
                         "&:hover": {
-                          backgroundColor: theme.palette.gray.main, // Slightly different hover effect
+                          backgroundColor: "rgba(218, 226, 136, 0.2)",
+                        },
+                        "&.Mui-selected": {
+                          backgroundColor: "rgba(218, 226, 136, 0.4)",
+                          color: "black",
                         },
                       },
                     },
                   },
                 }}
                 sx={{
-                  ":before": {
-                    borderBottomColor: "white", // Default border color when not focused
-                  },
-                  ":after": {
-                    borderBottomColor: theme.palette.primary.main, // Border color when focused (primary color)
-                  },
-                  "&:focus, &:hover, &:active": {
-                    borderBottomColor: theme.palette.primary.main, // Border color when focused, hovered, or active (primary color)
-                  },
-                  color: "white", // Text color for the selected value
-                  "&:not(.Mui-disabled):hover::before": {
-                    borderBottomColor: "white", // Border color when hovered
-                  },
-                  "& .MuiSvgIcon-root": {
-                    color: "white", // Change arrow icon color to white
-                  },
-                  minWidth: "200px", // Optional: set minimum width to ensure consistency
-                  minHeight: "40px", // Optional: set minimum height to maintain original size
+                  ":before": { borderBottomColor: "white" },
+                  ":after": { borderBottomColor: theme.palette.primary.main },
+                  "& .MuiSvgIcon-root": { color: "white" },
+                  color: "white",
+                  minWidth: "200px",
                 }}
               >
-                <MenuItem value={"Human Transcription Factors"}>
+                <MenuItem value="Human Transcription Factors">
                   Human Transcription Factors
                 </MenuItem>
-                <MenuItem value={"Mouse Transcription Factors"}>
+                <MenuItem value="Mouse Transcription Factors">
                   Mouse Transcription Factors
                 </MenuItem>
-                <MenuItem value={"Motif Site Catalog"}>
+                <MenuItem value="Motif Site Catalog">
                   Motif Site Catalog
                 </MenuItem>
-                <MenuItem value={"Annotate Variants"}>
-                  Annotate Variants
-                </MenuItem>
+                <MenuItem value="Annotate Variants">Annotate Variants</MenuItem>
               </Select>
             </FormControl>
 
