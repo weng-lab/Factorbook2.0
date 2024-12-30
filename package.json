@@ -40,7 +40,7 @@
     "context": "^3.0.31",
     "copy-to-clipboard": "^3.3.3",
     "eslint-plugin-react": "^7.34.3",
-    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-hooks": "^5.1.0",
     "jszip": "^3.10.1",
     "jubilant-carnival": "^0.6.0",
     "liftover": "^0.1.0",
