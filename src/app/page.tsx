@@ -323,7 +323,7 @@ const Homepage = () => {
       <PortalPanel
         title="Motif Site Catalog"
         description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
-        imageSrc="/IllustrationsNew.png"
+        imageSrc="/Motifs.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
         buttonHref="/motifscatalog"
