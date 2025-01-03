@@ -54,7 +54,7 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
           sm={6}
           sx={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: isSmallScreen ? "center" : reverse ? "flex-start" : "center",
             order: isSmallScreen ? 0 : reverse ? 1 : 0,
           }}
         >
@@ -74,7 +74,7 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            alignItems: isSmallScreen ? "center" : "flex-start",
+            alignItems: isSmallScreen ? "center" : reverse ? "center" : "flex-start",
             gap: 2,
             order: isSmallScreen ? 1 : reverse ? 0 : 1,
           }}
