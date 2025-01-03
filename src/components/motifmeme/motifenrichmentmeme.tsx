@@ -142,15 +142,27 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     skip: !selectedPeak,
   });
 
+  const sortedBiosamples = [
+    ...(data?.peakDataset.partitionByBiosample || []),
+  ].sort((a, b) => {
+    if (a.biosample.name < b.biosample.name) return -1;
+    if (a.biosample.name > b.biosample.name) return 1;
+    return 0;
+  });
+
+  const filteredBiosamples = sortedBiosamples.filter((biosample) =>
+    biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   useEffect(() => {
     if (data && !selectedPeak) {
-      const firstBiosample = data.peakDataset.partitionByBiosample[0];
+      const firstBiosample = sortedBiosamples[0];
       const firstDataset = firstBiosample.datasets[0];
       const firstPeakAccession = firstDataset.replicated_peaks[0].accession;
       setSelectedPeak(firstPeakAccession);
       setExpandedAccordion(0);
     }
-  }, [data, selectedPeak]);
+  }, [sortedBiosamples, selectedPeak, data]);
 
   useEffect(() => {
     if (motifData && motifData.meme_motifs) {
@@ -219,18 +231,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     if (!aIsPoor && bIsPoor) return -1; // Move 'b' down if it's poor but 'a' isn't
     return 0; // Otherwise, keep them in the same order
   });
-
-  const sortedBiosamples = [
-    ...(data?.peakDataset.partitionByBiosample || []),
-  ].sort((a, b) => {
-    if (a.biosample.name < b.biosample.name) return -1;
-    if (a.biosample.name > b.biosample.name) return 1;
-    return 0;
-  });
-
-  const filteredBiosamples = sortedBiosamples.filter((biosample) =>
-    biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   // Map meme_motifs with target_motifs (tomtomMatch) by index
   const motifsWithMatches = sortedMotifs.map((motif, index) => ({
