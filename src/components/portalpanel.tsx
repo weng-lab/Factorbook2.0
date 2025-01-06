@@ -1,7 +1,7 @@
 "use client";
 
 import React, { isValidElement, cloneElement, ReactElement } from "react";
-import { Box, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import Image from "next/image";
 import StyledButton from "@/components/styledbutton";
@@ -73,45 +73,50 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
             textAlign: isSmallScreen ? "center" : "left",
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
             alignItems: isSmallScreen ? "center" : reverse ? "center" : "flex-start",
-            gap: 2,
             order: isSmallScreen ? 1 : reverse ? 0 : 1,
           }}
         >
-          <Typography
-            variant="h4"
+          <Stack
             sx={{
-              color: "rgba(0, 0, 0, 0.87)",
-              fontFeatureSettings: "'clig' off, 'liga' off",
-              fontSize: "34px",
-              fontWeight: 400,
-              p: 2,
+              alignItems: isSmallScreen ? "center" : "flex-start",
+              gap: 2,
             }}
           >
-            {title}
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              color: "#333",
-              maxWidth: "539px",
-              p: "8px 16px",
-            }}
-          >
-            {description}
-          </Typography>
-          {buttonText && (
-            <StyledButton
-              text={buttonText}
-              href={buttonHref}
+            <Typography
+              variant="h4"
               sx={{
-                display: isSmallScreen ? "block" : "inline-block",
-                ml: isSmallScreen ? 0 : 2,
+                color: "rgba(0, 0, 0, 0.87)",
+                fontFeatureSettings: "'clig' off, 'liga' off",
+                fontSize: "34px",
+                fontWeight: 400,
+                p: 2,
               }}
-            />
-          )}
-          {clonedSelectComponent}
+            >
+              {title}
+            </Typography>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "#333",
+                maxWidth: "539px",
+                p: "8px 16px",
+              }}
+            >
+              {description}
+            </Typography>
+            {buttonText && (
+              <StyledButton
+                text={buttonText}
+                href={buttonHref}
+                sx={{
+                  display: isSmallScreen ? "block" : "inline-block",
+                  ml: isSmallScreen ? 0 : 2,
+                }}
+              />
+            )}
+            {clonedSelectComponent}
+          </Stack>
         </Grid2>
       </Grid2>
     </Box>
