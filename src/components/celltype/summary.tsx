@@ -53,10 +53,13 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species }) => {
               {row.biosample.name}
             </Typography>
             <br />
-            {row.counts.total + " Experiments"}
-
+            <Typography variant="subtitle2" noWrap>
+              {`${row.counts.total} Experiments`}
+            </Typography>
             <br />
-            {row.counts.targets + " Factors"}
+            <Typography variant="subtitle2" noWrap>
+              {`${row.counts.targets} Factors`}
+            </Typography>
           </Box>
         </LinkWrapper>
       ),
