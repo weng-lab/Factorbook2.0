@@ -45,11 +45,14 @@
     "jubilant-carnival": "^0.6.0",
     "liftover": "^0.1.0",
     "logojs-react": "^2.1.1",
+    "logots-react": "^0.2.0",
+    "mui-markdown": "^1.2.3",
     "next": "14.2.3",
     "pako": "^1.0.11",
     "queryz": "^0.0.3",
     "react": "^18",
     "react-dom": "^18",
+    "react-rnd": "^10.4.13",
     "react-router": "^6.24.0",
     "react-router-dom": "^6.24.1"
   },
@@ -68,5 +71,6 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5"
-  }
+  },
+  "packageManager": "yarn@3.5.0+sha512.2dc70be5fce9f66756d25b00a888f3ca66f86b502b76750e72ba54cec89da767b938c54124595e26f868825688e0fe3552c26c76a330673343057acadd5cfcf2"
 }
