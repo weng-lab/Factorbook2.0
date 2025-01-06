@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { FactorChatMessage, FactorChatResponse } from "./types";
-import { exampleResponse } from "@/components/exampleResponse";
 
 export function useFactorChat() {
   const [messages, setMessages] = useState<FactorChatMessage[]>([])
