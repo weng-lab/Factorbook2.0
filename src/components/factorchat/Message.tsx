@@ -6,7 +6,8 @@ import { ExpandMore, FileDownloadOutlined, InfoOutlined } from "@mui/icons-mater
 import { DNALogo } from "logots-react";
 import { getFileSize } from "./helpers";
 import { useState, useEffect, useMemo } from "react";
-import Link, { LinkProps } from "next/link";
+import NextLink, { LinkProps as NextLinkProps } from "next/link";
+import Link, { LinkProps } from "@mui/material/Link";
 import MotifFigure from "./MotifFigure";
 
 const Figure = (props: {figure: FactorChatFigure, index: number}) => {
@@ -39,7 +40,8 @@ export const Message = (message: FactorChatMessage) => {
   }, [files])
 
   //temporarily forcing all links to open in new tab, since existing links will be broken on the new site
-  const LinkOpenInNew = (props: LinkProps) => <Link {...props} rel="noopener noreferrer" target="_blank" />
+  // Override <a> with Next.js <Link> to avoid hard navigation
+  const LinkOpenInNew = (props: LinkProps) => <Link component={NextLink} {...props} rel="noopener noreferrer" target="_blank" />
 
   return (
     <MessageBubble isUser={isUser}>
@@ -47,7 +49,7 @@ export const Message = (message: FactorChatMessage) => {
         overrides={{
           ...getOverrides({}),
           a: {
-            component: LinkOpenInNew, // Override <a> with Next.js <Link> to avoid hard navigation
+            component: LinkOpenInNew, 
           },
         }}
       >
@@ -63,8 +65,9 @@ export const Message = (message: FactorChatMessage) => {
           fullWidth
           endIcon={<FileDownloadOutlined />}
           variant="contained"
-          sx={{ justifyContent: "space-between" }}
+          sx={{ justifyContent: "space-between", textTransform: "none" }}
           key={i}
+          
         >
           <Typography
             variant="body2"

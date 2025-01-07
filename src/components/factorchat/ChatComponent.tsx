@@ -1,5 +1,5 @@
 'use client'
-import { Chat, Close, CropSquare, Download, DragIndicator, InfoOutlined, Maximize, Minimize, Refresh, Send } from "@mui/icons-material";
+import { Chat, Close, CloseFullscreen, CropSquare, Download, DragIndicator, InfoOutlined, Maximize, Minimize, Refresh, Send } from "@mui/icons-material";
 import { Box, Button, Divider, Fab, Fade, IconButton, Paper, Stack, SxProps, TextField, Theme, Tooltip, Typography, useTheme } from "@mui/material";
 import { LegacyRef, useEffect, useRef, useState } from "react";
 import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
@@ -10,7 +10,7 @@ import { LoadingMessage } from "./LoadingMessage";
 
 export default function ChatComponenet() {
   const { input, handleInputChange, handleSubmit, messages, setMessages, loading } = useFactorChat();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   // Start with null or consistent initial position
   const [position, setPosition] = useState({
     x: 0,
@@ -125,6 +125,8 @@ export default function ChatComponenet() {
     setPosition({ width: ref.offsetWidth, height: ref.offsetHeight, ...position })
   }
 
+  const isMaximized = (position.width >= window.innerWidth - 30) && (position.height >= window.innerHeight - 30)
+
   return (
     <Box height={'100vh'} width={'100vw'} position={"fixed"} top={0} left={0} sx={{ pointerEvents: 'none' }}>
       {/* Chat window */}
@@ -141,25 +143,39 @@ export default function ChatComponenet() {
       >
         {/* Fade does not work when parent of Rnd, so setting pointerEvents to none on Rnd when not open */}
         <Fade in={open}>
-          <Paper elevation={5} sx={{ ...paperStyle }} >
+          <Paper elevation={5}  sx={{ ...paperStyle }} >
             {/* <Stack> */}
             <Stack direction={"row"} ml={0.5} mr={0.5}>
-              <Typography variant="h4" flexGrow={1} className='drag-surface' sx={{ cursor: "move" }} onDoubleClick={handleMaximize}>
+              <Typography variant="h5" display={"flex"} alignItems={"center"} flexGrow={1} className='drag-surface' sx={{ cursor: "move" }} onDoubleClick={handleMaximize}>
                 <DragIndicator />
                 FactorChat
                 <Tooltip title="Here is some information on how FactorChat works" placement="top">
                   <InfoOutlined sx={{ ml: 0.5 }} fontSize="small" />
                 </Tooltip>
               </Typography>
-              <IconButton onClick={handleMinimize}>
-                <Minimize />
-              </IconButton>
-              <IconButton onClick={handleMaximize}>
-                <CropSquare />
-              </IconButton>
-              <IconButton onClick={handleClose}>
-                <Close />
-              </IconButton>
+              <Tooltip title="Minimize" placement="bottom" enterDelay={2000}>
+                <IconButton onClick={handleMinimize}>
+                  <Minimize />
+                </IconButton>
+              </Tooltip>
+              {isMaximized ?
+                <Tooltip title="Reset Position" placement="bottom" enterDelay={2000}>
+                  <IconButton onClick={handleResetPosition}>
+                    <CloseFullscreen />
+                  </IconButton>
+                </Tooltip>
+                :
+                <Tooltip title="Maximize" placement="bottom" enterDelay={2000}>
+                  <IconButton onClick={handleMaximize}>
+                    <CropSquare />
+                  </IconButton>
+                </Tooltip>
+              }
+              <Tooltip title="Close" placement="bottom" enterDelay={2000}>
+                <IconButton onClick={handleClose}>
+                  <Close />
+                </IconButton>
+              </Tooltip>
             </Stack>
             <Divider />
             {/* The Chat */}
@@ -193,7 +209,7 @@ export default function ChatComponenet() {
                 }}
               />
               <Stack direction={"row"} justifyContent={"space-between"} mt={1}>
-                <Button variant="contained" type="submit" disabled={!input} endIcon={<Send />}>
+                <Button variant="contained" type="submit" disabled={!input} endIcon={<Send />} sx={{ textTransform: "none" }}>
                   Send Message
                 </Button>
                 <div>
