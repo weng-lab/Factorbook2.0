@@ -211,15 +211,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   if (error) return <p>Error: {error.message}</p>;
 
   // Sort the motifs so that those with either poor peak centrality or enrichment are at the bottom
-  const sortedMotifs = [...(motifData?.meme_motifs || [])].sort((a, b) => {
-    const aIsPoor = poorPeakCentrality(a) || poorPeakEnrichment(a);
-    const bIsPoor = poorPeakCentrality(b) || poorPeakEnrichment(b);
-
-    if (aIsPoor && !bIsPoor) return 1; // Move 'a' down if it's poor but 'b' isn't
-    if (!aIsPoor && bIsPoor) return -1; // Move 'b' down if it's poor but 'a' isn't
-    return 0; // Otherwise, keep them in the same order
-  });
-
+  const sortedMotifs = [...(motifData?.meme_motifs || [])].sort((a, b) => b.flank_z_score + b.shuffled_z_score - a.flank_z_score - a.shuffled_z_score);
+ 
   const sortedBiosamples = [
     ...(data?.peakDataset.partitionByBiosample || []),
   ].sort((a, b) => {
@@ -237,7 +230,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     ...motif,
     tomtomMatch:
       motifData?.target_motifs && motifData.target_motifs[index]
-        ? motifData.target_motifs[index]
+        ? motifData.target_motifs.filter(tm=>tm.motifid===motif.id).slice().sort((a, b) => a.e_value - b.e_value)[0]
         : undefined, // Change `null` to `undefined`
   }));
 
@@ -408,6 +401,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
         {motifsWithMatches.length > 0 && (
           <Box>
             {motifsWithMatches.map((motif, index) => {
+              
               const motifppm = reverseComplements[index]
                 ? rc(motif.pwm)
                 : motif.pwm;
@@ -532,7 +526,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                                 </Box>
                               </TableCell>
                               <TableCell align="right">
-                                {toScientificNotationElement(motif.e_value)}
+                              <>{motif.e_value ? toScientificNotationElement(motif.e_value) : <div style={{"display": "flex"}}>{'<'}&nbsp;{toScientificNotationElement(+1e-300)}</div> }</>
                               </TableCell>
                             </TableRow>
                             <TableRow>
