@@ -526,7 +526,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                                 </Box>
                               </TableCell>
                               <TableCell align="right">
-                              <>{motif.e_value ? toScientificNotationElement(motif.e_value) : <div style={{"display": "flex"}}>{'<'}&nbsp;{toScientificNotationElement(+1e-300)}</div> }</>
+                              {motif.e_value ? toScientificNotationElement(motif.e_value) : <div style={{"display": "inline-flex" }}>{'<'}&nbsp;{toScientificNotationElement(+1e-300)}</div> }
                               </TableCell>
                             </TableRow>
                             <TableRow>
