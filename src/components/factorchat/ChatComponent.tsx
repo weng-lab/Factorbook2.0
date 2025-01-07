@@ -1,7 +1,7 @@
 'use client'
-import { Chat, Close, CloseFullscreen, CropSquare, Download, DragIndicator, InfoOutlined, Maximize, Minimize, Refresh, Send } from "@mui/icons-material";
+import { Chat, Close, CloseFullscreen, CropSquare, Download, DragIndicator, InfoOutlined, Minimize, Refresh, Send } from "@mui/icons-material";
 import { Box, Button, Divider, Fab, Fade, IconButton, Paper, Stack, SxProps, TextField, Theme, Tooltip, Typography, useTheme } from "@mui/material";
-import { LegacyRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
 import { useFactorChat } from "./useFactorChat";
 import { FactorChatMessage } from "./types";
@@ -11,7 +11,7 @@ import { LoadingMessage } from "./LoadingMessage";
 export default function ChatComponenet() {
   const { input, handleInputChange, handleSubmit, messages, setMessages, loading } = useFactorChat();
   const [open, setOpen] = useState(false);
-  // Start with null or consistent initial position
+  // Start with null or consistent initial position to 
   const [position, setPosition] = useState({
     x: 0,
     y: 0,
@@ -19,6 +19,7 @@ export default function ChatComponenet() {
     height: 600
   });
 
+  // Sets position/size to default bottom left corner
   const handleResetPosition = () => {
     setPosition({
       width: 600,
@@ -46,6 +47,7 @@ export default function ChatComponenet() {
     setOpen(true);
   }
 
+  // Minimize window, reset position, and clear messages
   const handleClose = () => {
     setOpen(false);
     //needed to use timeout here since the position was being reset before the transition to closed would happen
@@ -55,10 +57,15 @@ export default function ChatComponenet() {
     }, 300);
   };
 
+  // Minimize chat window and reset position
   const handleMinimize = () => {
     setOpen(false)
+    setTimeout(() => {
+      handleResetPosition();
+    }, 300);
   }
 
+  // Maximize window, set position to fill screen
   const handleMaximize = () => {
     setPosition({
       x: 15,
@@ -125,10 +132,18 @@ export default function ChatComponenet() {
     setPosition({ width: ref.offsetWidth, height: ref.offsetHeight, ...position })
   }
 
-  const isMaximized = (position.width >= window.innerWidth - 30) && (position.height >= window.innerHeight - 30)
+  const isMaximized =
+    position.width >= window.innerWidth - 30
+    && position.height >= window.innerHeight - 30
+    
+  const isDefaultPosition =
+    position.width === 600
+    && position.height === 600
+    && position.x === window.innerWidth - 600 - 15
+    && position.y === window.innerHeight - 600 - 15
 
   return (
-    <Box height={'100vh'} width={'100vw'} position={"fixed"} top={0} left={0} sx={{ pointerEvents: 'none' }}>
+    <Box height={'100vh'} zIndex={3000} width={'100vw'} position={"fixed"} top={0} left={0} sx={{ pointerEvents: 'none' }}>
       {/* Chat window */}
       <Rnd
         dragHandleClassName="drag-surface"
@@ -149,9 +164,9 @@ export default function ChatComponenet() {
               <Typography variant="h5" display={"flex"} alignItems={"center"} flexGrow={1} className='drag-surface' sx={{ cursor: "move" }} onDoubleClick={handleMaximize}>
                 <DragIndicator />
                 FactorChat
-                <Tooltip title="Here is some information on how FactorChat works" placement="top">
+                {/* <Tooltip title="Here is some information on how FactorChat works" placement="top">
                   <InfoOutlined sx={{ ml: 0.5 }} fontSize="small" />
-                </Tooltip>
+                </Tooltip> */}
               </Typography>
               <Tooltip title="Minimize" placement="bottom" enterDelay={2000}>
                 <IconButton onClick={handleMinimize}>

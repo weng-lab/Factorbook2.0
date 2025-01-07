@@ -94,6 +94,7 @@ const MotifFigure: React.FC<FigureHandlerProps> = ({
       </div>
       <Box display="flex" justifyContent="space-between" mt={2}>
         <Button
+          sx={{ textTransform: "none" }}
           onClick={handleReverseComplement}
           variant={reverseComplementState ? "outlined" : "contained"} // Toggle styles
           color={reverseComplementState ? "secondary" : "primary"} // Change color for inline mode
@@ -102,6 +103,7 @@ const MotifFigure: React.FC<FigureHandlerProps> = ({
           Reverse Complement
         </Button>
         <Button
+          sx={{ textTransform: "none" }}
           variant="contained"
           color="primary"
           onClick={() => setShowDownloadDialog(true)}
@@ -164,6 +166,7 @@ const MotifFigure: React.FC<FigureHandlerProps> = ({
         <DialogTitle>Download Options</DialogTitle>
         <DialogActions>
           <Button
+            sx={{ textTransform: "none" }}
             onClick={() => handleDownload("meme")}
             startIcon={
               downloadSuccess && (
@@ -174,6 +177,7 @@ const MotifFigure: React.FC<FigureHandlerProps> = ({
             Download MEME
           </Button>
           <Button
+            sx={{ textTransform: "none" }}
             onClick={() => handleDownload("svg")}
             startIcon={
               downloadSuccess && (

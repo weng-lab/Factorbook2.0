@@ -80,7 +80,7 @@ export const Message = (message: FactorChatMessage) => {
             : 'Loading...'}
         </Button>
       )}
-      {!isUser && !message.contents.error &&
+      {!isUser && !error &&
         <div>
           <Accordion sx={{ pointerEvents: isToolGenerated ? 'auto' : "none" }} elevation={0}>
             <AccordionSummary expandIcon={isToolGenerated && <ExpandMore />}>

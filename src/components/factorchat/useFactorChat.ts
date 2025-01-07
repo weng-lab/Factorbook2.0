@@ -26,9 +26,7 @@ export function useFactorChat() {
     try {
       setLoading(true)
 
-      // for sending POST with payload. Might need to modify headers or how the body is sent, not sure
       const res = await fetch('http://34.144.226.106/api/chat', {
-      // const res = await fetch('http://localhost:8000/api/chat', {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +41,6 @@ export function useFactorChat() {
       const backendMessage: FactorChatResponse = await res.json()
 
       setMessages([...newMessages, { origin: "backend", contents: backendMessage }])
-      // setMessages([...newMessages, {origin: "backend", contents: exampleResponse}])
 
     } catch (error) {
       console.error('Error:\n', error)
@@ -53,7 +50,7 @@ export function useFactorChat() {
         files: [],
         tool_generated: false,
         thoughts: "",
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unexpected error',
       }
       setMessages([...newMessages, { origin: "backend", contents: errorMsg }])
     }
