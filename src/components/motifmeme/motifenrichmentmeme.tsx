@@ -145,9 +145,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const sortedBiosamples = [
     ...(data?.peakDataset.partitionByBiosample || []),
   ].sort((a, b) => {
-    if (a.biosample.name < b.biosample.name) return -1;
-    if (a.biosample.name > b.biosample.name) return 1;
-    return 0;
+    return a.biosample.name.localeCompare(b.biosample.name);
   });
 
   const filteredBiosamples = sortedBiosamples.filter((biosample) =>

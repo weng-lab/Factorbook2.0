@@ -23,6 +23,7 @@ import { inflate } from "pako";
 import { associateBy } from "queryz";
 import ClearIcon from "@mui/icons-material/Clear";
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
+import Link from "next/link";
 
 interface TFSearchBarProps {
   assembly: string;
@@ -90,6 +91,13 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
     }
   }, [loading]);
 
+  //handle the case where all characters are deleted
+  useEffect(() => {
+    if (inputValue === "") {
+      handleReset()
+    }
+  }, [inputValue])
+
   const handleReset = () => {
     setSnpValue(null); // Clear the selected value
     setInputValue(""); // Clear the input text
@@ -150,14 +158,14 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
               !tfAassignment || !tfAassignment.get(g.name!)
                 ? ""
                 : (
-                    tfAassignment.get(g.name!)["TF assessment"] as string
-                  ).includes("Likely")
-                ? "Likely sequence-specific TF - "
-                : SEQUENCE_SPECIFIC.has(
+                  tfAassignment.get(g.name!)["TF assessment"] as string
+                ).includes("Likely")
+                  ? "Likely sequence-specific TF - "
+                  : SEQUENCE_SPECIFIC.has(
                     tfAassignment.get(g.name!)["TF assessment"]
                   )
-                ? "Sequence-specific TF - "
-                : "Non-sequence-specific factor - ",
+                    ? "Sequence-specific TF - "
+                    : "Non-sequence-specific factor - ",
             name: g.name,
           };
         }
@@ -190,9 +198,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 event.preventDefault();
                 window.open(
                   snpValue
-                    ? `/transcriptionfactor/${
-                        assembly === "GRCh38" ? "human" : "mouse"
-                      }/${snpValue}/function`
+                    ? `/transcriptionfactor/${assembly === "GRCh38" ? "human" : "mouse"
+                    }/${snpValue}/function`
                     : "",
                   "_self"
                 );
@@ -200,8 +207,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
             }}
             popupIcon={<ArrowDropDown sx={{ color: "white" }} />} // Arrow icon white when not focused
             clearIcon={<ClearIcon sx={{ color: "white" }} // Clear icon white when not focused
-            onClick={() => {handleReset()}}
-            />} 
+              onClick={() => { handleReset() }}
+            />}
             sx={{
               "& .MuiOutlinedInput-root": {
                 height: "40px",
@@ -270,42 +277,32 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
             }}
           />
         </StyledFormControl>
-
         <Button
+          LinkComponent={Link}
           variant="contained"
-          color="secondary"
-          disabled={!validSearch}
+          disabled={!validSearch && inputValue !== ""}
           sx={{
-            width: "125px",
-            height: "41px",
             padding: "8px 24px",
             borderRadius: "24px",
-            backgroundColor: "#8169BF",
-            color: "white",
-            fontFeatureSettings: "'clig' off, 'liga' off",
             fontSize: "15px",
-            fontStyle: "normal",
-            fontWeight: 500,
             lineHeight: "26px",
-            letterSpacing: "0.46px",
             textTransform: "none",
-            "&:hover": {
-              backgroundColor: "#7151A1",
-            },
             "&:disabled": {
               backgroundColor: "#8169BF",
+              color: "white",
+              opacity: "75%"
             },
           }}
           href={
-            snpValue
-              ? `/transcriptionfactor/${
-                  assembly === "GRCh38" ? "human" : "mouse"
-                }/${snpValue}/function`
+            snpValue && validSearch
+              ? `/transcriptionfactor/${assembly === "GRCh38" ? "human" : "mouse"
+              }/${snpValue}/function`
               : ""
           }
         >
           Search
         </Button>
+
       </Stack>
 
       <Box sx={{ marginLeft: "10px" }}>

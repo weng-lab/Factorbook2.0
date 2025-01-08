@@ -289,16 +289,16 @@ const Homepage = () => {
               display: "flex",
               width: "550px",
               height: "507.537px",
-              p: 3,
               justifyContent: "center",
               alignItems: "center",
+              position: "relative"
             }}
           >
             <Image
               src="/Factorbook.png"
               alt="Illustration"
-              width={600}
-              height={600}
+              fill
+              objectFit="contain"
             />
           </Box>
         )}
