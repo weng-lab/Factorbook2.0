@@ -221,14 +221,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   if (error) return <p>Error: {error.message}</p>;
 
   // Sort the motifs so that those with either poor peak centrality or enrichment are at the bottom
-  const sortedMotifs = [...(motifData?.meme_motifs || [])].sort((a, b) => {
-    const aIsPoor = poorPeakCentrality(a) || poorPeakEnrichment(a);
-    const bIsPoor = poorPeakCentrality(b) || poorPeakEnrichment(b);
-
-    if (aIsPoor && !bIsPoor) return 1; // Move 'a' down if it's poor but 'b' isn't
-    if (!aIsPoor && bIsPoor) return -1; // Move 'b' down if it's poor but 'a' isn't
-    return 0; // Otherwise, keep them in the same order
-  });
+  const sortedMotifs = [...(motifData?.meme_motifs || [])].sort((a, b) => b.flank_z_score + b.shuffled_z_score - a.flank_z_score - a.shuffled_z_score);
 
   // Map meme_motifs with target_motifs (tomtomMatch) by index
   const motifsWithMatches = sortedMotifs.map((motif, index) => ({
