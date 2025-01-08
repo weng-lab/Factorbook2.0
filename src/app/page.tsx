@@ -267,7 +267,7 @@ const Homepage = () => {
               }}
             >
               {selectedPortal === "Human Transcription Factors" ||
-              selectedPortal === "Mouse Transcription Factors" ? (
+                selectedPortal === "Mouse Transcription Factors" ? (
                 <TFSearchbar
                   assembly={
                     selectedPortal === "Human Transcription Factors"
@@ -289,16 +289,16 @@ const Homepage = () => {
               display: "flex",
               width: "550px",
               height: "507.537px",
-              p: 3,
               justifyContent: "center",
               alignItems: "center",
+              position: "relative"
             }}
           >
             <Image
               src="/Factorbook.png"
               alt="Illustration"
-              width={600}
-              height={600}
+              fill
+              objectFit="contain"
             />
           </Box>
         )}
@@ -323,7 +323,7 @@ const Homepage = () => {
       <PortalPanel
         title="Motif Site Catalog"
         description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
-        imageSrc="/IllustrationsNew.png"
+        imageSrc="/Motifs.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
         buttonHref="/motifscatalog"
