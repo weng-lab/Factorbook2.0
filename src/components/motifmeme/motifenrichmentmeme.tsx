@@ -235,7 +235,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     ...motif,
     tomtomMatch:
       motifData?.target_motifs && motifData.target_motifs[index]
-        ? motifData.target_motifs[index]
+        ? motifData.target_motifs.filter(tm=>tm.motifid===motif.id).slice().sort((a, b) => a.e_value - b.e_value)[0]
         : undefined, // Change `null` to `undefined`
   }));
 
@@ -406,6 +406,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
         {motifsWithMatches.length > 0 && (
           <Box>
             {motifsWithMatches.map((motif, index) => {
+              
               const motifppm = reverseComplements[index]
                 ? rc(motif.pwm)
                 : motif.pwm;
@@ -530,7 +531,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                                 </Box>
                               </TableCell>
                               <TableCell align="right">
-                                {toScientificNotationElement(motif.e_value)}
+                              {motif.e_value ? toScientificNotationElement(motif.e_value) : <div style={{"display": "inline-flex" }}>{'<'}&nbsp;{toScientificNotationElement(+1e-300)}</div> }
                               </TableCell>
                             </TableRow>
                             <TableRow>

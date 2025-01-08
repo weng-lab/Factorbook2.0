@@ -168,9 +168,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
       const tissue = subGrouped.get(x)![0]["tissue"];
       return [
         x,
-        sortedBiosampleTypes[biosampleType] === "tissue"
-          ? tissueColors[tissue] ?? tissueColors.missing
-          : color(i),
+      tissueColors[tissue] ?? tissueColors.missing
+          
       ];
     })
   );
