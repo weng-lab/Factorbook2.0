@@ -26,7 +26,7 @@ export function useFactorChat() {
     try {
       setLoading(true)
 
-      const res = await fetch('http://34.144.226.106/api/chat', {
+      const res = await fetch('https://factorchat.staging.wenglab.org/api/chat', {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
