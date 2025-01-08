@@ -63,10 +63,11 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
 
   const [snpValue, setSnpValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState<string[]>([]);
   const [snpids, setSnpIds] = useState<any[]>([]);
   const [tfA, setTFA] = useState<Map<string, any> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [validSearch, setValidSearch] = useState<boolean>(false)
 
   // Fetch and inflate the data from the gzipped JSON file
   useEffect(() => {
@@ -88,6 +89,13 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
       setLoading(true);
     }
   }, [loading]);
+
+  const handleReset = () => {
+    setSnpValue(null); // Clear the selected value
+    setInputValue(""); // Clear the input text
+    setOptions([]); //clear the options
+    setValidSearch(false); // disable search
+  }
 
   // Handle changes in the search bar with debouncing
   const onSearchChange = async (value: string, tfAassignment: any) => {
@@ -128,7 +136,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
     });
     const tfSuggestion = (await response.json()).data?.counts;
     if (tfSuggestion && tfSuggestion.length > 0) {
-      const r = tfSuggestion.map((g: { name: string }) => g.name);
+      const r: string[] = tfSuggestion.map((g: { name: string }) => g.name);
 
       const snp = tfSuggestion.map(
         (g: {
@@ -156,6 +164,11 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
       );
       setOptions(r);
       setSnpIds(snp);
+      const exists = r.some(str => str.toLowerCase() === value.toLowerCase());
+      setValidSearch(exists)
+      if (exists) {
+        setSnpValue(value as any)
+      }
     } else {
       setOptions([]);
       setSnpIds([]);
@@ -171,8 +184,9 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
         <StyledFormControl fullWidth variant="outlined">
           <StyledAutocomplete
             options={options}
+            freeSolo
             onKeyDown={(event: any) => {
-              if (event.key === "Enter" && snpValue) {
+              if (event.key === "Enter" && snpValue && validSearch) {
                 event.preventDefault();
                 window.open(
                   snpValue
@@ -185,7 +199,9 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
               }
             }}
             popupIcon={<ArrowDropDown sx={{ color: "white" }} />} // Arrow icon white when not focused
-            clearIcon={<ClearIcon sx={{ color: "white" }} />} // Clear icon white when not focused
+            clearIcon={<ClearIcon sx={{ color: "white" }} // Clear icon white when not focused
+            onClick={() => {handleReset()}}
+            />} 
             sx={{
               "& .MuiOutlinedInput-root": {
                 height: "40px",
@@ -258,6 +274,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
         <Button
           variant="contained"
           color="secondary"
+          disabled={!validSearch}
           sx={{
             width: "125px",
             height: "41px",
@@ -274,6 +291,9 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
             textTransform: "none",
             "&:hover": {
               backgroundColor: "#7151A1",
+            },
+            "&:disabled": {
+              backgroundColor: "#8169BF",
             },
           }}
           href={

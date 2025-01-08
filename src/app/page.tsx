@@ -267,7 +267,7 @@ const Homepage = () => {
               }}
             >
               {selectedPortal === "Human Transcription Factors" ||
-              selectedPortal === "Mouse Transcription Factors" ? (
+                selectedPortal === "Mouse Transcription Factors" ? (
                 <TFSearchbar
                   assembly={
                     selectedPortal === "Human Transcription Factors"
