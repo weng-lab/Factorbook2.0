@@ -28,6 +28,7 @@ import {
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import styles from "./topbar.module.css";
+import Link from "next/link";
 
 const navItems = [
   { title: "Home", href: "/", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
@@ -120,7 +121,7 @@ const Topbar: React.FC = () => {
                     {item.subItems.map((subItem) => (
                       <ListItemButton
                         key={subItem.text}
-                        component="a"
+                        component={Link}
                         href={subItem.href}
                       >
                         <ListItemText
@@ -133,7 +134,7 @@ const Topbar: React.FC = () => {
                 </Collapse>
               </>
             ) : (
-              <ListItemButton component="a" href={item.href}>
+              <ListItemButton component={Link} href={item.href}>
                 <ListItemText primary={item.title} />
                 {item.icon && (
                   <Box
@@ -184,27 +185,27 @@ const Topbar: React.FC = () => {
                 xs={6}
                 sx={{ display: "flex", justifyContent: "flex-end" }}
               >
-                <a href="/">
+                <Link href="/">
                   <img
                     src="/logo/on-white/Logo_01_on-white-bg.png"
                     alt="Logo"
                     width={180} // Increased width
                     style={{ height: "auto", maxHeight: "100px" }} // Optional height
                   />
-                </a>
+                </Link>
               </Grid>
             </>
           ) : (
             <>
               <Grid item xs="auto">
-                <a href="/">
+                <Link href="/">
                   <img
                     src="/logo/on-white/Logo_01_on-white-bg.png"
                     alt="Logo"
                     width={180} // Increased width
                     style={{ height: "auto", maxHeight: "100px" }} // Optional height
                   />
-                </a>
+                </Link>
               </Grid>
               <Grid item xs>
                 <Box
@@ -247,7 +248,7 @@ const Topbar: React.FC = () => {
                           {item.subItems.map((subItem) => (
                             <MenuItem
                               key={subItem.text}
-                              component="a"
+                              component={Link}
                               href={subItem.href}
                             >
                               {subItem.text}
@@ -258,6 +259,7 @@ const Topbar: React.FC = () => {
                     ) : (
                       <Button
                         key={item.title}
+                        LinkComponent={Link}
                         href={item.href}
                         sx={{
                           fontSize: "15px",

@@ -229,14 +229,19 @@ export default function ChatComponenet() {
                 </Button>
                 <div>
                   <Tooltip title="Reset Conversation" placement="top">
-                    <IconButton onClick={handleClearMessages} disabled={messages.length === 0}>
-                      <Refresh />
-                    </IconButton>
+                    {/* span necessary since Tooltip needs to listen to child's events and disabled buttons do not fire events */}
+                    <span>
+                      <IconButton onClick={handleClearMessages} disabled={messages.length === 0}>
+                        <Refresh />
+                      </IconButton>
+                    </span>
                   </Tooltip>
                   <Tooltip title="Download Conversation" placement="top">
-                    <IconButton onClick={handleDownloadMessages} disabled={messages.length === 0}>
-                      <Download />
-                    </IconButton>
+                    <span>
+                      <IconButton onClick={handleDownloadMessages} disabled={messages.length === 0}>
+                        <Download />
+                      </IconButton>
+                    </span>
                   </Tooltip>
                 </div>
               </Stack>

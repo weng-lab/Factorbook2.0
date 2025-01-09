@@ -128,6 +128,16 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     }
   }
 
+  //This feels like an unstable way to do this, but works afaik?
+  useEffect(() => {
+    if (searchParams.get("experiment") !== selectedExperimentID) {
+      const newDataset = sortedBiosamples.flatMap((b) => b.datasets).find((d) => d.accession === searchParams.get("experiment"))
+      if (newDataset) {
+        handleSetSelectedDataset(newDataset)
+      }
+    }
+  }, [searchParams])
+
   const svgRefs = useRef<(SVGSVGElement | null)[]>([]);
   const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";
 

@@ -41,7 +41,14 @@ export const Message = (message: FactorChatMessage) => {
 
   //temporarily forcing all links to open in new tab, since existing links will be broken on the new site
   // Override <a> with Next.js <Link> to avoid hard navigation
-  const LinkOpenInNew = (props: LinkProps) => <Link component={NextLink} {...props} rel="noopener noreferrer" target="_blank" />
+  const LinkOpenInNew = (props: LinkProps) => {
+    const isInternalLink = props.href?.includes("https://factorbook2-0.vercel.app")
+    const href = isInternalLink ? props.href?.replace('https://factorbook2-0.vercel.app/', '/') : props.href
+    const modifiedProps = {...props, href}
+    return (
+      <Link component={NextLink} {...modifiedProps} />
+    )
+  }
 
   return (
     <MessageBubble isUser={isUser}>
