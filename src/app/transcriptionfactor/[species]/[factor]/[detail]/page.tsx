@@ -104,7 +104,6 @@ const FactorDetailsPage = () => {
       .then((buffer) => inflate(buffer, { to: "string" }))
       .then((jsonString) => {
         const parsedData: TFData[] = JSON.parse(jsonString);
-        console.log("TF Assignments Loaded:", parsedData);
         setTFA(
           associateBy(
             parsedData,
