@@ -31,10 +31,10 @@ html, body {
   box-sizing: inherit;
 }
 
-body {
+/* body {
   font-family: "Helvetica Neue"; 
   color: rgb(var(--foreground-rgb));
-}
+} */
 
 @layer utilities {
   .text-balance {

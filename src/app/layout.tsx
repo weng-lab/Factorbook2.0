@@ -8,6 +8,7 @@ import Footer from "@/components/footer";
 import { ApolloWrapper } from "../../lib/apollo-wrapper";
 import { ApiContext, apiContextValue } from "@/apicontext";
 import { AppProvider } from "@/appcontext";
+import { Hind } from 'next/font/google'
 
 const ClientThemeProvider = dynamic(
   () => import("../components/clientthemeprovider"),
@@ -18,15 +19,20 @@ type LayoutProps = {
   children: ReactNode;
 };
 
+const hind = Hind({
+  weight: "400",
+  subsets: ["latin"]
+})
+
 export default function RootLayout({ children }: LayoutProps) {
   return (
-    <html lang="en">
-      <head>
+    <html lang="en" className={hind.className}>
+      {/* <head>
         <link
           href="https://fonts.googleapis.com/css2?family=Helvetica+Neue"
           rel="stylesheet"
         />
-      </head>
+      </head> */}
       <body>
         <ApolloWrapper>
           <ApiContext.Provider value={apiContextValue}>
