@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, MutableRefObject } from "react";
+import React, { useState, useRef, useEffect, MutableRefObject, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import {
   CircularProgress,
@@ -30,6 +30,7 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
+  Stack,
 } from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
@@ -55,6 +56,8 @@ import CentralityPlot from "./centralityplot";
 import ATACPlot from "./atacplot";
 import ConservationPlot from "./conservationplot";
 import { TOMTOMMessage } from "./tomtommessage";
+import { HelpRounded } from "@mui/icons-material";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 // Helper function to convert numbers to scientific notation
 export function toScientificNotationElement(
@@ -103,9 +106,13 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   factor,
   species,
 }) => {
+  const searchParams = useSearchParams()
+  const pathname = usePathname()
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedPeak, setSelectedPeak] = useState<string | null>(null);
-  const [expandedAccordion, setExpandedAccordion] = useState<number | false>(0);
+  const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
+  const selectedPeakID = useMemo(() => selectedDataset && selectedDataset.replicated_peaks[0].accession, [selectedDataset]);
+  const selectedExperimentID = useMemo(() => selectedDataset && selectedDataset.accession, [selectedDataset]);
   const [reverseComplements, setReverseComplements] = useState<boolean[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [exportMotif, setExportMotif] = useState<boolean>(true);
@@ -116,12 +123,25 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     {}
   );
 
+  const handleSetSelectedDataset = (newDataset: Dataset) => {
+    setSelectedDataset(newDataset)
+    if (searchParams.get("experiment") !== newDataset.accession){
+      router.push(pathname + `?experiment=${newDataset.accession}`)
+    }
+  }
+
   const svgRefs = useRef<(SVGSVGElement | null)[]>([]);
   const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";
 
   const theme = useTheme();
+  const isXS = useMediaQuery(theme.breakpoints.only("xs"));
+  const isSM = useMediaQuery(theme.breakpoints.only("sm"));
+  const isMD = useMediaQuery(theme.breakpoints.only("md"));
+  const isLG = useMediaQuery(theme.breakpoints.only("lg"));
+  const isXL = useMediaQuery(theme.breakpoints.only("xl"));
+
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "lg"));
 
   const { data, loading, error } = useQuery<DataResponse>(DATASETS_QUERY, {
     variables: {
@@ -131,6 +151,23 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
       include_investigatedas: includeTargetTypes,
       exclude_investigatedas: excludeTargetTypes,
     },
+    onCompleted: (d) => {
+      //if there's a url experiment passed, initialize selectedDataset with that, else set to first
+      if (!selectedDataset) {
+        const urlExp = searchParams.get('experiment')
+        const partitionedBiosamples = [...d.peakDataset.partitionByBiosample]
+        const foundDataset = urlExp && partitionedBiosamples.flatMap((b) => b.datasets).find((d) => d.accession === urlExp)
+        if (foundDataset) {
+          handleSetSelectedDataset(foundDataset)
+        } else {
+          console.log(d)
+          const firstExperiment = partitionedBiosamples
+            .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name)) //sort alphabetically
+            [0].datasets[0] //extract first experiment
+          handleSetSelectedDataset(firstExperiment)
+        }
+      }
+    }
   });
 
   const {
@@ -138,8 +175,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     loading: motifLoading,
     error: motifError,
   } = useQuery<MotifResponse>(MOTIF_QUERY, {
-    variables: { peaks_accession: selectedPeak ? [selectedPeak] : [] },
-    skip: !selectedPeak,
+    variables: { peaks_accession: [selectedPeakID]},
+    skip: !selectedPeakID,
   });
 
   const sortedBiosamples = [
@@ -152,16 +189,10 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  useEffect(() => {
-    if (data && !selectedPeak) {
-      const firstBiosample = sortedBiosamples[0];
-      const firstDataset = firstBiosample.datasets[0];
-      const firstPeakAccession = firstDataset.replicated_peaks[0].accession;
-      setSelectedPeak(firstPeakAccession);
-      setExpandedAccordion(0);
-    }
-  }, [sortedBiosamples, selectedPeak, data]);
-
+  /**
+   * @todo the better way to do this would be to have each motif tile have it's own state, versus tracking the state of each
+   * in the parent like this. No reason for the state to be lifted up like this (I think)
+   */
   useEffect(() => {
     if (motifData && motifData.meme_motifs) {
       setReverseComplements(
@@ -170,9 +201,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     }
   }, [motifData]);
 
-  const handleAccessionClick = (peakAccession: string, index: number) => {
-    setSelectedPeak(peakAccession);
-    setExpandedAccordion(index);
+  const handleExperimentClick = (peakDataset: Dataset) => {
+    handleSetSelectedDataset(peakDataset)
   };
 
   const handleReverseComplement = (index: number) => {
@@ -217,25 +247,28 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     setIsDialogOpen(false);
   };
 
-  if (loading) return <CircularProgress />;
-  if (error) return <p>Error: {error.message}</p>;
-
   // Sort the motifs so that those with either poor peak centrality or enrichment are at the bottom
   const sortedMotifs = [...(motifData?.meme_motifs || [])].sort((a, b) => b.flank_z_score + b.shuffled_z_score - a.flank_z_score - a.shuffled_z_score);
-
+  
   // Map meme_motifs with target_motifs (tomtomMatch) by index
   const motifsWithMatches = sortedMotifs.map((motif, index) => ({
     ...motif,
     tomtomMatch:
-      motifData?.target_motifs && motifData.target_motifs[index]
-        ? motifData.target_motifs.filter(tm=>tm.motifid===motif.id).slice().sort((a, b) => a.e_value - b.e_value)[0]
-        : undefined, // Change `null` to `undefined`
+    motifData?.target_motifs && motifData.target_motifs[index]
+    ? motifData.target_motifs.filter(tm=>tm.motifid===motif.id).slice().sort((a, b) => a.e_value - b.e_value)[0]
+    : undefined, // Change `null` to `undefined`
   }));
-
+  
+  const selectedBiosample = useMemo(() => {
+    return sortedBiosamples.find(x => x.datasets.some(y => y.accession === selectedExperimentID))?.biosample.name
+  }, [sortedBiosamples, selectedDataset, selectedExperimentID])
+  
+  if (loading) return <CircularProgress />;
+  if (error) return <p>Error: {error.message}</p>;
   return (
     <Box
       sx={{
-        height: "calc(100vh - 64px)", // Respect header/footer
+        height: "100vh",
         display: "flex",
         padding: "5px",
         flexDirection: { xs: "column", md: "row" },
@@ -265,8 +298,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
       <Box
         sx={{
           width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
-          height: "calc(100vh - 128px)", // Respect header/footer
-          marginBottom: "64px", // Above footer
+          height: "100vh", // Respect header/footer
           position: "relative", // Not fixed, part of the layout
           overflowY: "auto", // Allow scrolling of drawer content
           transition: "width 0.3s ease", // Smooth transition when opening/closing
@@ -323,13 +355,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
             <List sx={{ padding: "16px" }}>
               {filteredBiosamples.map((biosample, index) => (
                 <Accordion
-                  key={index}
-                  expanded={expandedAccordion === index}
-                  onChange={() =>
-                    setExpandedAccordion(
-                      expandedAccordion === index ? false : index
-                    )
-                  }
+                  key={Math.random()}
+                  defaultExpanded={!!(selectedDataset && biosample.datasets.some(x => x.accession === selectedExperimentID))}
                 >
                   <AccordionSummary
                     aria-controls={`panel${index}-content`}
@@ -358,17 +385,15 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                                 paddingLeft: "30px",
                                 cursor: "pointer",
                                 backgroundColor:
-                                  selectedPeak === peak.accession
+                                  selectedDataset?.accession === dataset.accession
                                     ? "#D3D3D3"
                                     : "transparent",
                                 fontWeight:
-                                  selectedPeak === peak.accession
+                                  selectedDataset?.accession === dataset.accession
                                     ? "bold"
                                     : "normal",
                               }}
-                              onClick={() =>
-                                handleAccessionClick(peak.accession, index)
-                              }
+                              onClick={() => handleExperimentClick(dataset)}
                             >
                               <ListItemText primary={`${dataset.accession}`} />
                             </ListItem>
@@ -410,29 +435,14 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
               return (
                 <Box key={motif.id} mb={4}>
                   <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={12} md={12} lg={7} xl={6}>
                       <Typography variant="h6">
                         <span style={{ fontWeight: "bold" }}>
                           De novo motif discovery in{" "}
-                          {sortedBiosamples.find((b) =>
-                            b.datasets.some((d) =>
-                              d.replicated_peaks.some(
-                                (peak) => peak.accession === selectedPeak
-                              )
-                            )
-                          )?.biosample.name || "Unknown"}{" "}
-                          (
-                          {sortedBiosamples
-                            .flatMap((b) => b.datasets)
-                            .find((d) =>
-                              d.replicated_peaks.some(
-                                (peak) => peak.accession === selectedPeak
-                              )
-                            )?.accession || "Unknown"}
-                          ) by MEME
+                          {selectedBiosample || "Unknown"}{" "}
+                          ({selectedExperimentID || "Unknown"}) by MEME
                         </span>
                       </Typography>
-
                       {poorPeakCentrality(motif) && (
                         <Chip
                           icon={<HelpOutlineIcon />}
@@ -474,35 +484,39 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                           ref={(el: SVGSVGElement | null) =>
                             (svgRefs.current[index] = el)
                           }
-                          width={isMobile ? 300 : 400}
-                          height={isMobile ? 150 : 250}
+                          width={
+                            (isXS || isSM) ? 290
+                              : isMD ? 348
+                                : isLG ? 406
+                                  : 522
+                          }
+                          height={
+                            (isXS || isSM) ? 127
+                              : isMD ? 152
+                                : isLG ? 178
+                                  : 229
+                          }
                         />
                       </Box>
                     </Grid>
-
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} sm={12} md={12} lg={5} xl={6}>
                       <Paper
-                        elevation={3}
+                        elevation={2}
                         sx={{
-                          padding: "16px",
-                          textAlign: "center",
                           display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          margin: "0 auto",
-                          width: "60%",
-                          backgroundColor: "white",
-                          borderRadius: "16px", // Adding rounded corners
+                          justifyContent: "space-between",
+                          flexDirection: "column",
+                          borderRadius: "16px",
                         }}
                       >
-                        <Table>
+                        <Table sx={{border: 0}}>
                           <TableBody>
                             <TableRow>
                               <TableCell>
                                 <Box display="flex" alignItems="center">
                                   <Tooltip
                                     title={
-                                      <Typography sx={{ fontSize: "1rem" }}>
+                                      <Typography>
                                         The statistical significance of the
                                         motif. The E-value is an estimate of the
                                         expected number that one would find in a
@@ -510,10 +524,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                                       </Typography>
                                     }
                                   >
-                                    <HelpOutlineIcon
-                                      fontSize="small"
-                                      sx={{ marginRight: 1 }}
-                                    />
+                                    <HelpRounded sx={{ mr: 1 }} htmlColor="grey"/>
                                   </Tooltip>
                                   <Typography
                                     variant="body1"
@@ -528,7 +539,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                               </TableCell>
                             </TableRow>
                             <TableRow>
-                              <TableCell>
+                              <TableCell sx={{border: 0}}>
                                 <Box display="flex" alignItems="center">
                                   <Tooltip
                                     title={
@@ -540,10 +551,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                                       </Typography>
                                     }
                                   >
-                                    <HelpOutlineIcon
-                                      fontSize="small"
-                                      sx={{ marginRight: 1 }}
-                                    />
+                                    <HelpRounded htmlColor="grey" sx={{ marginRight: 1 }} />
                                   </Tooltip>
                                   <Typography
                                     variant="body1"
@@ -553,7 +561,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                                   </Typography>
                                 </Box>
                               </TableCell>
-                              <TableCell align="right">
+                              <TableCell align="right" sx={{border: 0}}>
                                 {motif.original_peaks_occurrences.toLocaleString()}{" "}
                                 / {motif.original_peaks.toLocaleString()} peaks
                               </TableCell>
@@ -568,7 +576,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
 
                   <Box
                     display="flex"
-                    justifyContent="space-between"
                     mt={2}
                     gap={2}
                   >
@@ -580,7 +587,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         backgroundColor: "#8169BF",
                         color: "white",
                         flex: 1,
-                        minWidth: "20%",
                       }}
                       onClick={() => setIsDialogOpen(true)}
                     >
@@ -596,15 +602,14 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         color: "#8169BF",
                         backgroundColor: "white",
                         flex: 1,
-                        minWidth: "20%",
                       }}
                       onClick={() => handleReverseComplement(index)}
                     >
                       Reverse Complement
                     </Button>
 
-                    <Button
-                      variant="outlined"
+                    {/* <Button
+                      variant="text"
                       startIcon={<PublicIcon />}
                       sx={{
                         borderRadius: "20px",
@@ -616,7 +621,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                       }}
                     >
                       Show Genomic Sites
-                    </Button>
+                    </Button> */}
 
                     <Button
                       variant="outlined"
@@ -627,7 +632,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         color: "#8169BF",
                         backgroundColor: "white",
                         flex: 1,
-                        minWidth: "20%",
                       }}
                       onClick={() => toggleShowQC(motif.id)}
                     >
@@ -635,7 +639,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                     </Button>
                   </Box>
 
-                  {showQCStates[motif.id] && selectedPeak && (
+                  {showQCStates[motif.id] && selectedPeakID && (
                     <Box mt={3}>
                       <Grid container spacing={2} mt={3}>
                         <Grid item xs={12} md={6}>
@@ -651,7 +655,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                             <Grid item xs={12} md={6}>
                               <ATACPlot
                                 name={motif.name}
-                                accession={selectedPeak}
+                                accession={selectedPeakID}
                                 pwm={motifppm}
                               />
                             </Grid>
@@ -659,7 +663,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         <Grid item xs={12} md={6}>
                           <ConservationPlot
                             name={motif.name}
-                            accession={selectedPeak}
+                            accession={selectedPeakID}
                             pwm={motifppm}
                             width={isMobile ? 300 : 500}
                             height={isMobile ? 150 : 300}
@@ -738,10 +742,10 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                           if (exportPeakSites) {
                             const speciesGenome =
                               species === "Human" ? "hg38" : "mm10";
-                            const downloadUrl = `https://screen-beta-api.wenglab.org/factorbook_downloads/hq-occurrences/${selectedPeak}_${motif.name}.gz`;
+                            const downloadUrl = `https://screen-beta-api.wenglab.org/factorbook_downloads/hq-occurrences/${selectedPeakID}_${motif.name}.gz`;
                             const link = document.createElement("a");
                             link.href = downloadUrl;
-                            link.download = `${selectedPeak}_${motif.name}_${speciesGenome}.gz`;
+                            link.download = `${selectedPeakID}_${motif.name}_${speciesGenome}.gz`;
                             link.click();
                           }
                           if (exportLogo && svgRefs.current[index]) {
