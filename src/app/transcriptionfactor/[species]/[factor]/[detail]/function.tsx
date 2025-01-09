@@ -102,7 +102,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       },
       {
         name: "HGNC",
-        url: `http://www.genenames.org/cgi-bin/gene_search?search=${factorForUrl}`,
+        url: `https://genenames.org/tools/search/#!/?query=${factorForUrl}`,
       },
       {
         name: "RefSeq",

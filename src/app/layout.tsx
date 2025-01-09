@@ -1,7 +1,6 @@
 "use client";
 
 import "./globals.css";
-import dynamic from "next/dynamic";
 import { ReactNode } from "react";
 import Topbar from "@/components/topbar";
 import Footer from "@/components/footer";
@@ -9,11 +8,7 @@ import { ApolloWrapper } from "../../lib/apollo-wrapper";
 import { ApiContext, apiContextValue } from "@/apicontext";
 import { AppProvider } from "@/appcontext";
 import ChatComponenet from "@/components/factorchat/ChatComponent";
-
-const ClientThemeProvider = dynamic(
-  () => import("../components/clientthemeprovider"),
-  { ssr: false }
-);
+import ClientThemeProvider from "@/components/clientthemeprovider";
 
 type LayoutProps = {
   children: ReactNode;
