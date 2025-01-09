@@ -272,7 +272,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
         display: "flex",
         padding: "5px",
         flexDirection: { xs: "column", md: "row" },
-        overflow: "hidden", // Fix extra white space issue
       }}
     >
       {!drawerOpen && (
@@ -410,19 +409,29 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
       </Box>
 
       {/* Right-side Content */}
-      <Box
+      <Stack
         sx={{
           flexGrow: 1,
+          height: '100vh',
           marginLeft: drawerOpen ? { xs: 0 } : 0, // Adjust margin when drawer is open
           transition: "margin-left 0.3s ease", // Smooth transition for content shift
-          padding: "16px",
-          overflowY: "auto", // Scrollable right-side content
         }}
+        divider={<Divider />}
       >
+        <Typography variant="h5" m={2}>
+          <span style={{ fontWeight: "bold" }}>
+            De novo motif discovery in{" "}
+            {selectedBiosample || "Unknown"}{" "}
+            ({selectedExperimentID || "Unknown"}) by MEME
+          </span>
+        </Typography>
         {motifLoading && <CircularProgress />}
         {motifError && <p>Error: {motifError.message}</p>}
         {motifsWithMatches.length > 0 && (
-          <Box>
+          <Stack
+            sx={{ overflowY: "scroll" }}
+            divider={<Divider />}
+          >
             {motifsWithMatches.map((motif, index) => {
               
               const motifppm = reverseComplements[index]
@@ -433,16 +442,9 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 poorPeakCentrality(motif) || poorPeakEnrichment(motif);
 
               return (
-                <Box key={motif.id} mb={4}>
+                <Box key={motif.id} m={2}>
                   <Grid container spacing={2} alignItems="center">
                     <Grid item xs={12} sm={12} md={12} lg={7} xl={6}>
-                      <Typography variant="h6">
-                        <span style={{ fontWeight: "bold" }}>
-                          De novo motif discovery in{" "}
-                          {selectedBiosample || "Unknown"}{" "}
-                          ({selectedExperimentID || "Unknown"}) by MEME
-                        </span>
-                      </Typography>
                       {poorPeakCentrality(motif) && (
                         <Chip
                           icon={<HelpOutlineIcon />}
@@ -571,9 +573,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                       </Paper>
                     </Grid>
                   </Grid>
-
                   <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
-
                   <Box
                     display="flex"
                     mt={2}
@@ -592,7 +592,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                     >
                       Download
                     </Button>
-
                     <Button
                       variant="outlined"
                       startIcon={<SwapHorizIcon />}
@@ -607,22 +606,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                     >
                       Reverse Complement
                     </Button>
-
-                    {/* <Button
-                      variant="text"
-                      startIcon={<PublicIcon />}
-                      sx={{
-                        borderRadius: "20px",
-                        borderColor: "#8169BF",
-                        color: "#8169BF",
-                        backgroundColor: "white",
-                        flex: 1,
-                        minWidth: "20%",
-                      }}
-                    >
-                      Show Genomic Sites
-                    </Button> */}
-
                     <Button
                       variant="outlined"
                       startIcon={<VisibilityIcon />}
@@ -740,8 +723,10 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                             );
                           }
                           if (exportPeakSites) {
-                            const speciesGenome =
-                              species === "Human" ? "hg38" : "mm10";
+                            const speciesGenome = species === "Human" ? "hg38" : "mm10";
+                            /**
+                             * @todo figure out if this is the correct API url
+                             */
                             const downloadUrl = `https://screen-beta-api.wenglab.org/factorbook_downloads/hq-occurrences/${selectedPeakID}_${motif.name}.gz`;
                             const link = document.createElement("a");
                             link.href = downloadUrl;
@@ -766,16 +751,15 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                       </Button>
                     </DialogActions>
                   </Dialog>
-                  <Divider style={{ margin: "20px 0" }} />
                 </Box>
               );
             })}
-          </Box>
+          </Stack>
         )}
         {!motifLoading && !motifData && (
           <Typography>Select a peak to view motif data</Typography>
         )}
-      </Box>
+      </Stack>
     </Box>
   );
 };
