@@ -31,14 +31,12 @@ import {
   useMediaQuery,
   useTheme,
   Stack,
+  InputAdornment,
 } from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import PublicIcon from "@mui/icons-material/Public";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import CloseIcon from "@mui/icons-material/Close";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/motifmeme/queries";
 import {
@@ -56,7 +54,7 @@ import CentralityPlot from "./centralityplot";
 import ATACPlot from "./atacplot";
 import ConservationPlot from "./conservationplot";
 import { TOMTOMMessage } from "./tomtommessage";
-import { HelpRounded } from "@mui/icons-material";
+import { ArrowBackIos, ArrowBackIosNew, ArrowForwardIos, Clear, HelpRounded } from "@mui/icons-material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 // Helper function to convert numbers to scientific notation
@@ -186,7 +184,12 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   });
 
   const filteredBiosamples = sortedBiosamples.filter((biosample) =>
-    biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase())
+    biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase()) //biosample name
+    || biosample.datasets.some(dataset => //search within experiments for that biosample
+      dataset.accession.toLowerCase().includes(searchTerm.toLowerCase()) //experiment ID
+      || dataset.lab.friendly_name.toLowerCase().includes(searchTerm.toLowerCase()) //lab name
+      || dataset.replicated_peaks[0].accession.toLowerCase().includes(searchTerm.toLowerCase()) //file ID
+    )
   );
 
   /**
@@ -289,7 +292,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
             boxShadow: 3,
           }}
         >
-          <ArrowForwardIosIcon /> {/* Right-facing arrow for expanding */}
+          <ArrowForwardIos /> {/* Right-facing arrow for expanding */}
         </IconButton>
       )}
 
@@ -324,9 +327,16 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                 label="Search Biosamples"
                 variant="outlined"
                 fullWidth
+                size="small"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 InputProps={{
+                  endAdornment: searchTerm && 
+                    <InputAdornment position="end">
+                      <IconButton onClick={() => setSearchTerm('')}>
+                        <Clear />
+                      </IconButton>
+                    </InputAdornment>,
                   sx: {
                     backgroundColor: "rgba(129, 105, 191, 0.09)",
                     borderRadius: "50px",
@@ -347,7 +357,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                   color: "white",
                 }}
               >
-                <CloseIcon />
+                <ArrowBackIosNew />
               </IconButton>
             </Box>
 
