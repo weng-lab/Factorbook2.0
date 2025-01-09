@@ -20,7 +20,7 @@ export const MessageBubble = ({ isUser, children }: MessageBubbleProps) => {
         color: isUser ? theme.palette.primary.contrastText : 'inherit',
         display: "flex",
         flexDirection: "column",
-        gap: theme.spacing(1)
+        gap: theme.spacing(1.5)
       }}
     >
       {children}

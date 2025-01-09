@@ -114,8 +114,7 @@ const MotifFigure: React.FC<FigureHandlerProps> = ({
       </Box>
 
       {/* E-value and Occurrences Section */}
-      <Box mt={2}>
-        {/* E-value */}
+      {/* <Box mt={2}>
         <Box display="flex" alignItems="center">
           <Tooltip
             title={
@@ -135,8 +134,6 @@ const MotifFigure: React.FC<FigureHandlerProps> = ({
             {motifData.e_value || "N/A"}
           </Typography>
         </Box>
-
-        {/* Occurrences */}
         <Box display="flex" alignItems="center" mt={1}>
           <Tooltip
             title={
@@ -156,7 +153,7 @@ const MotifFigure: React.FC<FigureHandlerProps> = ({
             {motifData.original_peaks?.toLocaleString() || 0}
           </Typography>
         </Box>
-      </Box>
+      </Box> */}
 
       {/* Download Dialog */}
       <Dialog

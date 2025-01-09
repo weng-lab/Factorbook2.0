@@ -161,7 +161,7 @@ export default function ChatComponenet() {
           <Paper elevation={5}  sx={{ ...paperStyle }} >
             {/* <Stack> */}
             <Stack direction={"row"} ml={0.5} mr={0.5}>
-              <Typography variant="h5" display={"flex"} alignItems={"center"} flexGrow={1} className='drag-surface' sx={{ cursor: "move" }} onDoubleClick={handleMaximize}>
+              <Typography variant="h5" display={"flex"} alignItems={"center"} flexGrow={1} className='drag-surface' sx={{ cursor: "move" }} onDoubleClick={isMaximized ? handleResetPosition : handleMaximize}>
                 <DragIndicator />
                 FactorChat
                 {/* <Tooltip title="Here is some information on how FactorChat works" placement="top">

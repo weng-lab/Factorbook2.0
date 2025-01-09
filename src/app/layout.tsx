@@ -8,7 +8,11 @@ import { ApolloWrapper } from "../../lib/apollo-wrapper";
 import { ApiContext, apiContextValue } from "@/apicontext";
 import { AppProvider } from "@/appcontext";
 import ChatComponenet from "@/components/factorchat/ChatComponent";
-import ClientThemeProvider from "@/components/clientthemeprovider";
+import dynamic from "next/dynamic";
+const ClientThemeProvider = dynamic(
+  () => import("../components/clientthemeprovider"),
+  { ssr: false }
+);
 
 type LayoutProps = {
   children: ReactNode;
