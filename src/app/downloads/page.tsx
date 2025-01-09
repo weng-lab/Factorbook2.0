@@ -13,6 +13,8 @@ import {
   Tab,
   CardContent,
   Card,
+  useTheme,
+  Stack,
 } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
@@ -61,7 +63,8 @@ function formatSuperscript(text: string) {
 
 const DownloadPage: React.FC = () => {
   const [value, setValue] = React.useState(0);
-  const isMobile = window.innerWidth <= 600;
+  const theme = useTheme()
+  const isMobile = theme.breakpoints.down('sm');
   const [expandedAccordions, setExpandedAccordions] = React.useState({
     panel1: true,
     panel2: true,
@@ -102,89 +105,78 @@ const DownloadPage: React.FC = () => {
 
       {/* Tab Content */}
       <TabPanel value={value} index={0}>
-        <Box
+        <Stack
           sx={{
-            mt: 4,
-            mx: "auto",
-            pb: 16,
+            minHeight: '50vh',
             maxWidth: isMobile ? "90%" : "800px",
           }}
+          gap={2}
         >
-          {/* Title */}
-          <Typography
-            variant="h4"
-            component="h1"
-            fontWeight={"bold"}
-            gutterBottom
-          >
-            TF Motif Catalog
-          </Typography>
-
-          {/* Description */}
-          <Typography variant="body1" gutterBottom>
-            Motifs discovered using MEME on ChIP-seq experiments and the ZMotif
-            neural network on HT-SELEX experiments. The catalog contains more
-            than 6,000 motifs for each (with some redundancy).
-          </Typography>
-          <Grid2 container spacing={4}>
-            {/* MEME ChIP-seq Catalog Section */}
-            <Grid2 xs={12} sm={6}>
-              <Typography variant="h6" gutterBottom>
-                MEME ChIP-seq Catalog
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                6,069 Motifs
-                <br />
-                733 Transcription Factors
-              </Typography>
-              <StyledButton
-                href="/motifscatlog/factorbook_chipseq_meme_motifs.tsv"
-                text={
-                  <>
-                    <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                    <strong>Download motifs in MEME Format</strong>
-                  </>
-                }
-                secondaryText="1 MB"
-              />
-
-              <Box sx={{ marginTop: 2 }}>
-                <StyledButton
-                  href="/motifscatlog/complete-factorbook-catalog.meme.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Download metadata in TSV Format</strong>
-                    </>
-                  }
-                  secondaryText="2.9 MB"
-                />
-              </Box>
-
-              <Grid2 xs={12} sm={6}>
-                <Typography variant="h6" gutterBottom>
-                  HT-SELEX Catalog
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  6,700 Motifs
-                  <br />
-                  631 TFs
-                </Typography>
-
-                <StyledButton
-                  href="/motifscatlog/all-selex-motifs.meme.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Download motifs in MEME Format</strong>
-                    </>
-                  }
-                  secondaryText="1 MB"
-                />
-              </Grid2>
-            </Grid2>
-          </Grid2>
-        </Box>
+          <Box>
+            <Typography
+              variant="h4"
+              component="h1"
+              fontWeight={"bold"}
+            >
+              TF Motif Catalog
+            </Typography>
+            <Typography variant="body1">
+              Motifs discovered using MEME on ChIP-seq experiments and the ZMotif
+              neural network on HT-SELEX experiments. The catalog contains more
+              than 6,000 motifs for each (with some redundancy).
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="h6">
+              MEME ChIP-seq Catalog
+            </Typography>
+            <Typography variant="body2">
+              6,069 Motifs
+              <br />
+              733 Transcription Factors
+            </Typography>
+          </Box>
+          <StyledButton
+            href="/motifscatlog/factorbook_chipseq_meme_motifs.tsv"
+            text={
+              <>
+                <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                <strong>Download motifs in MEME Format</strong>
+              </>
+            }
+            secondaryText="1 MB"
+          />
+          <StyledButton
+            href="/motifscatlog/complete-factorbook-catalog.meme.gz"
+            text={
+              <>
+                <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                <strong>Download metadata in TSV Format</strong>
+              </>
+            }
+            secondaryText="2.9 MB"
+          />
+          <Box>
+            <Typography variant="h6">
+              HT-SELEX Catalog
+            </Typography>
+            <Typography variant="body2">
+              6,700 Motifs
+              <br />
+              631 TFs
+            </Typography>
+          </Box>
+          <StyledButton
+            href="/motifscatlog/all-selex-motifs.meme.gz"
+            text={
+              <>
+                <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                <strong>Download motifs in MEME Format</strong>
+              </>
+            }
+            secondaryText="1 MB"
+          />
+        </Stack>
       </TabPanel>
 
       {/* Genomic Motif Sites Tab */}
@@ -198,12 +190,12 @@ const DownloadPage: React.FC = () => {
           Factorbook Human Motif Site Catalog
         </Typography>
 
-        <Typography variant="subtitle1" gutterBottom>
+        <Typography variant="subtitle1">
           Genomic Motif Sites in ChIP-seq Peaks and Candidate Regulatory
           Elements
         </Typography>
 
-        <Typography variant="body1" gutterBottom>
+        <Typography variant="body1">
           Motif sites identified by scanning ChIP-seq peaks and candidate
           cis-regulatory elements with FIMO. There are approximately 6 million
           motif sites in ChIP-seq peaks and 7 million motif sites in candidate
