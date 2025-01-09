@@ -168,7 +168,6 @@ const AnnotationDetailLD = () => {
               height: "41px",
               padding: "8px 24px",
               borderRadius: "24px",
-              fontFamily: "Helvetica Neue",
               textTransform: "none",
             }}
           >

@@ -246,7 +246,6 @@ const PeakIntersection: React.FC<IntersectionViewProps> = (props) => {
           variant="caption"
           sx={{
             fontSize: isMobile ? "11px" : "13px",
-            fontFamily: "Helvetica Neue",
             marginLeft: "3px",
           }}
         >
@@ -266,7 +265,6 @@ const PeakIntersection: React.FC<IntersectionViewProps> = (props) => {
         sx={{
           "& .MuiTab-root": {
             fontSize: isMobile ? "14px" : "16px",
-            fontFamily: "Helvetica Neue",
           },
         }}
       >

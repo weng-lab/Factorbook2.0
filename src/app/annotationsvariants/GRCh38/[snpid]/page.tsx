@@ -157,7 +157,6 @@ const AnnotationDetailPage = () => {
                 height: "41px",
                 padding: "8px 24px",
                 borderRadius: "24px",
-                fontFamily: "Helvetica Neue",
                 letterSpacing: "0.46px",
                 textTransform: "none",
               }}

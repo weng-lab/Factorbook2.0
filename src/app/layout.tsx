@@ -27,12 +27,6 @@ const hind = Hind({
 export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en" className={hind.className}>
-      {/* <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Helvetica+Neue"
-          rel="stylesheet"
-        />
-      </head> */}
       <body>
         <ApolloWrapper>
           <ApiContext.Provider value={apiContextValue}>
