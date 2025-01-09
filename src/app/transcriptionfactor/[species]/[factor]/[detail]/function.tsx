@@ -332,9 +332,11 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
           {datasetData?.peakDataset.partitionByBiosample && (
             <DataTable
               tableTitle={`${biosampleCount} biosamples profiled`}
+              downloadFileName={`${factor}_profiled_biosamples.tsv`}
               columns={biosampleColumns(species)}
               rows={datasetData.peakDataset.partitionByBiosample}
               searchable
+              sortDescending
               itemsPerPage={5}
               headerColor={{
                 backgroundColor: "#7151A1",
