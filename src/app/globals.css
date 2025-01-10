@@ -31,11 +31,6 @@ html, body {
   box-sizing: inherit;
 }
 
-body {
-  font-family: "Helvetica Neue"; 
-  color: rgb(var(--foreground-rgb));
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;

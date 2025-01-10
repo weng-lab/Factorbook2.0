@@ -340,7 +340,6 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
           variant={isMobile ? "body1" : "h6"}
           gutterBottom
           style={{
-            fontFamily: "Helvetica Neue",
             color: "#5056A9",
             fontSize: isMobile ? "12px" : "14px",
           }}
