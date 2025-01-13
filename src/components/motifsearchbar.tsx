@@ -10,6 +10,8 @@ import {
   TextField,
   Button,
   InputAdornment,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 
 
@@ -18,96 +20,94 @@ import Config from "../../config.json";
 
 
 const MotifSearchbar: React.FC = () => {
-  
-  const [val, setVal] = React.useState<String | null >(null);
-  
-  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+
+  const [val, setVal] = React.useState<String>("");
+
+
   return (
     <Box>
-                <Stack direction="row" spacing={2}>
-                  
-                  <TextField
+      <Stack direction="row" spacing={2}>
+        <TextField
           variant="outlined"
           placeholder={"enter sequence or regex"}
           fullWidth
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ color: "gray" }} />
+                <SearchIcon sx={{ color: "white" }} />
               </InputAdornment>
             ),
-            style: {
-              height: "40px",
-              borderRadius: "24px",
-              color: "gray", // Text color
-            },
+            style: { textAlign: "center", color: "white" }, // Ensures text is white and visible
           }}
           InputLabelProps={{
-            style: {
-              color: "gray", // Placeholder color
-            },
+            style: { textAlign: "center", width: "100%" },
           }}
-          onChange={(e)=>{           
-
+          onChange={(e) => {
             setVal(e.target.value)
-           }}
+          }}
+          onKeyDown={(event: any) => {
+            if (event.key === "Enter" && val !== " " && val !== "") {
+              event.preventDefault();
+              window.open(`/motifscatalog/human/${val}`, "_self");
+            }
+          }}
           sx={{
             "& .MuiOutlinedInput-root": {
               height: "40px",
               borderRadius: "24px",
-              borderColor: "gray",
-              "&:hover fieldset": {
-                borderColor: "gray",
+              paddingLeft: "12px",
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "white", // Ensure hover border color is white
               },
-              "&.Mui-focused fieldset": {
-                borderColor: "gray",
+              "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: theme.palette.primary.main, // Retain primary color on hover when focused
               },
             },
             "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: "gray",
+              borderColor: "white", // White border when not focused
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: theme.palette.primary.main, // Primary border when focused
             },
             "& .MuiInputBase-input::placeholder": {
               color: "gray", // Placeholder color
-              opacity: 1, // Ensure placeholder text is fully opaque
-            }
+              opacity: 1,
+            },
           }}
+          
         />
-         <Button
-                    variant="contained"
-                    color="secondary"
-                  //  onClick={handleSubmit}
-                  onClick={()=>{
-                    window.open(`/motifscatalog/human/${val}`, "_self")
-                    
-                  }}
-                    sx={{
-                      width: "100px",
-                      height: "41px",
-                      padding: "8px 24px",
-                      borderRadius: "24px",
-                      backgroundColor: "#8169BF",
-                      color: "white",
-                      fontFeatureSettings: "'clig' off, 'liga' off",
-                      fontSize: "15px",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      lineHeight: "26px",
-                      letterSpacing: "0.46px",
-                      textTransform: "none",
-                      "&:hover": {
-                        backgroundColor: "#7151A1",
-                      },
-                    }}
-                   // href={snpValue ? str : ""}
-                  >
-                    Search
-                  </Button>
-                </Stack>
-                <Box sx={{ marginLeft: "10px" }}>
-                  <Typography variant="caption" sx={{ color: "gray" }}>
-                  Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
-                  </Typography>
-                </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            window.open(`/motifscatalog/human/${val}`, "_self")
+
+          }}
+          sx={{
+            padding: "8px 24px",
+            borderRadius: "24px",
+            fontSize: "15px",
+            lineHeight: "26px",
+            textTransform: "none",
+            "&:disabled": {
+              backgroundColor: "#8169BF",
+              color: "white",
+              opacity: "75%"
+            },
+          }}
+        // href={snpValue ? str : ""}
+        >
+          Search
+        </Button>
+      </Stack>
+      <Box sx={{ marginLeft: "10px" }}>
+        <Typography variant="caption" sx={{ color: "gray" }}>
+          Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
+        </Typography>
+      </Box>
     </Box>
   );
 };
