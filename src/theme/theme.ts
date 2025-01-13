@@ -32,9 +32,6 @@ const theme = createTheme({
       main: '#000000',  // Black used in text (like headers)
     },
   },
-  typography: {
-    fontFamily: 'Helvetica Neue',
-  },
   components: {
     // Customize Table styles
     MuiTable: {

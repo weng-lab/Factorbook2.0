@@ -13,20 +13,20 @@ const ClientThemeProvider = dynamic(
   () => import("../components/clientthemeprovider"),
   { ssr: false }
 );
+import { Hind } from 'next/font/google'
 
 type LayoutProps = {
   children: ReactNode;
 };
 
+const hind = Hind({
+  weight: "400",
+  subsets: ["latin"]
+})
+
 export default function RootLayout({ children }: LayoutProps) {
   return (
-    <html lang="en">
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Helvetica+Neue"
-          rel="stylesheet"
-        />
-      </head>
+    <html lang="en" className={hind.className}>
       <body>
         <ApolloWrapper>
           <ApiContext.Provider value={apiContextValue}>

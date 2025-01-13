@@ -11,10 +11,9 @@ import {
   AccordionDetails,
   Tabs,
   Tab,
-  CardContent,
-  Card,
   useTheme,
   Stack,
+  Divider,
 } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
@@ -66,8 +65,8 @@ const DownloadPage: React.FC = () => {
   const theme = useTheme()
   const isMobile = theme.breakpoints.down('sm');
   const [expandedAccordions, setExpandedAccordions] = React.useState({
-    panel1: true,
-    panel2: true,
+    panel1: false,
+    panel2: false,
   });
   const [accordionOpen, setAccordionOpen] = useState(true);
 
@@ -96,87 +95,98 @@ const DownloadPage: React.FC = () => {
 
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange} aria-label="download tabs">
-          <Tab label="TF Motif Catalog" {...a11yProps(0)} />
-          <Tab label="Genomic Motif Sites" {...a11yProps(1)} />
-          <Tab label="Heritability Models" {...a11yProps(2)} />
+        <Tabs value={value} onChange={handleChange} aria-label="download tabs" variant="fullWidth" >
+          <Tab label="TF Motif Catalog" {...a11yProps(0)} sx={{ textTransform: "none" }} />
+          <Tab label="Genomic Motif Sites" {...a11yProps(1)} sx={{ textTransform: "none" }} />
+          <Tab label="Heritability Models" {...a11yProps(2)} sx={{ textTransform: "none" }} />
         </Tabs>
       </Box>
 
       {/* Tab Content */}
       <TabPanel value={value} index={0}>
-        <Stack
-          sx={{
-            minHeight: '50vh',
-            maxWidth: isMobile ? "90%" : "800px",
-          }}
-          gap={2}
-        >
-          <Box>
-            <Typography
-              variant="h4"
-              component="h1"
-              fontWeight={"bold"}
-            >
-              TF Motif Catalog
-            </Typography>
-            <Typography variant="body1">
-              Motifs discovered using MEME on ChIP-seq experiments and the ZMotif
-              neural network on HT-SELEX experiments. The catalog contains more
-              than 6,000 motifs for each (with some redundancy).
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="h6">
-              MEME ChIP-seq Catalog
-            </Typography>
-            <Typography variant="body2">
-              6,069 Motifs
-              <br />
-              733 Transcription Factors
-            </Typography>
-          </Box>
-          <StyledButton
-            href="/motifscatlog/factorbook_chipseq_meme_motifs.tsv"
-            text={
-              <>
-                <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                <strong>Download motifs in MEME Format</strong>
-              </>
-            }
-            secondaryText="1 MB"
-          />
-          <StyledButton
-            href="/motifscatlog/complete-factorbook-catalog.meme.gz"
-            text={
-              <>
-                <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                <strong>Download metadata in TSV Format</strong>
-              </>
-            }
-            secondaryText="2.9 MB"
-          />
-          <Box>
-            <Typography variant="h6">
-              HT-SELEX Catalog
-            </Typography>
-            <Typography variant="body2">
-              6,700 Motifs
-              <br />
-              631 TFs
-            </Typography>
-          </Box>
-          <StyledButton
-            href="/motifscatlog/all-selex-motifs.meme.gz"
-            text={
-              <>
-                <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                <strong>Download motifs in MEME Format</strong>
-              </>
-            }
-            secondaryText="1 MB"
-          />
-        </Stack>
+
+        <Box>
+          <Typography
+            variant="h4"
+            component="h1"
+            fontWeight={"bold"}
+            marginBottom={5}
+          >
+            TF Motif Catalog
+          </Typography>
+          <Typography variant="body1">
+            Motifs discovered using MEME on ChIP-seq experiments and the ZMotif
+            neural network on HT-SELEX experiments. The catalog contains more
+            than 6,000 motifs for each (with some redundancy).
+          </Typography>
+        </Box>
+        <Divider />
+        <Grid2 container sx={{ mt: 5 }}>
+          <Grid2 xs={8}>
+            <Stack spacing={2}>
+              <Typography variant="h6">
+                MEME ChIP-seq Catalog
+                <InfoIcon sx={{ ml: 1 }} />
+              </Typography>
+              <Stack direction={"row"} spacing={2}>
+                <Typography variant="body2">
+                  6,069 Motifs
+                </Typography>
+                <Typography variant="body2">
+                  733 Transcription Factors
+                </Typography>
+              </Stack>
+              <Stack direction={"row"} spacing={2}>
+                <StyledButton
+                  href="/motifscatlog/factorbook_chipseq_meme_motifs.tsv"
+                  text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Download Motifs in MEME Format</strong>
+                    </>
+                  }
+                  secondaryText="1 MB"
+                />
+                <StyledButton
+                  href="/motifscatlog/complete-factorbook-catalog.meme.gz"
+                  text={
+                    <>
+                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                      <strong>Download Metadata in TSV Format</strong>
+                    </>
+                  }
+                  secondaryText="2.9 MB"
+                />
+              </Stack>
+            </Stack>
+          </Grid2>
+          <Grid2 xs={4}>
+            <Stack spacing={2}>
+              <Typography variant="h6">
+                HT-SELEX Catalog
+                <InfoIcon sx={{ ml: 1 }} />
+              </Typography>
+              <Stack direction={"row"} spacing={2}>
+                <Typography variant="body2">
+                  6,700 Motifs
+                </Typography>
+                <Typography variant="body2">
+                  631 Transcription Factors
+                </Typography>
+              </Stack>
+              <StyledButton
+                href="/motifscatlog/all-selex-motifs.meme.gz"
+                text={
+                  <>
+                    <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                    <strong>Download Motifs in MEME Format</strong>
+                  </>
+                }
+                secondaryText="1 MB"
+              />
+            </Stack>
+          </Grid2>
+        </Grid2>
       </TabPanel>
 
       {/* Genomic Motif Sites Tab */}
@@ -185,12 +195,11 @@ const DownloadPage: React.FC = () => {
           variant="h4"
           component="h1"
           fontWeight={"bold"}
-          gutterBottom
         >
           Factorbook Human Motif Site Catalog
         </Typography>
 
-        <Typography variant="subtitle1">
+        <Typography variant="subtitle2" marginBottom={4}>
           Genomic Motif Sites in ChIP-seq Peaks and Candidate Regulatory
           Elements
         </Typography>
@@ -201,6 +210,7 @@ const DownloadPage: React.FC = () => {
           motif sites in ChIP-seq peaks and 7 million motif sites in candidate
           regulatory elements after merging overlapping motif sites.
         </Typography>
+        <Divider />
 
         {/* Info Box */}
         <Box
@@ -210,12 +220,12 @@ const DownloadPage: React.FC = () => {
             padding: 2,
             display: "flex",
             alignItems: "center",
-            my: 3,
+            my: 4,
           }}
         >
-          <InfoIcon color="primary" sx={{ mr: 1 }} />
+          <InfoIcon color="primary" sx={{ mr: 1 }}/>
           <Typography variant="body2" color="textPrimary">
-            This page offers downloads of the complete motif site catalog. To
+            <b>This page offers downloads of the complete motif site catalog.</b> To
             download genomic sites for an individual motif, you can use the
             buttons available through the TF search or motif search on the home
             page.
@@ -226,6 +236,9 @@ const DownloadPage: React.FC = () => {
         <Accordion
           expanded={expandedAccordions.panel1}
           onChange={handleAccordionChange("panel1")}
+          sx={{
+            marginBottom: 2,
+          }}
         >
           <AccordionSummary
             expandIcon={
@@ -258,152 +271,152 @@ const DownloadPage: React.FC = () => {
             >
               <ReportProblemIcon sx={{ mr: 1 }} />
               <Typography variant="body2" sx={{ color: "#663C00" }}>
-                This catalog contains sites of MEME motifs from ChIP-seq
-                datasets identified within ChIP-seq peaks using FIMO.{" "}
-                <a href="#">See here</a> for a list of cell types in which these
-                ChIP-seq peaks were identified. Regulatory motif sites in cell
+                <b>This catalog contains sites of MEME motifs from ChIP-seq
+                datasets identified within ChIP-seq peaks using FIMO.</b>{" "}
+                <a href="#" style={{textDecoration: "underline"}}>See here</a> for a list of cell types in which these
+                ChIP-seq peaks were identified. <b>Regulatory motif sites in cell
                 types biologically distinct from well-profiled cell types might
-                not be contained in this catalog!
+                not be contained in this catalog!</b>
               </Typography>
             </Box>
-
-            <Grid container spacing={4}>
-              <Grid item xs={12} md={6}>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{ textTransform: "uppercase" }}
-                >
-                  Download merged motif sites
-                </Typography>
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.merged.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Lenient set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "FIMO p-value < 10^-4 (46 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                />
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.merged.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Moderate set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "FIMO p-value < 10^-5 (45 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.merged.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Stringent set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "FIMO p-value < 10^-6 (44 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{ textTransform: "uppercase" }}
-                >
-                  Download all motif sites
-                </Typography>
-
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Lenient set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "FIMO p-value < 10^-4 (758 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                />
-
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Moderate set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "FIMO p-value < 10^-5 (684 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Stringent set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "FIMO p-value < 10^-6 (653 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-              </Grid>
-            </Grid>
+            <Stack spacing={2}>
+              <Typography
+                variant="subtitle2"
+                sx={{ textTransform: "uppercase" }}
+              >
+                Download merged motif sites
+              </Typography>
+              <Grid2 container spacing={2}>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.merged.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>Lenient set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-4 (46 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.merged.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>Moderate set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-5 (45 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.merged.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>Stringent set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-6 (44 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+              </Grid2>
+              <Typography
+                variant="subtitle2"
+                sx={{ textTransform: "uppercase" }}
+              >
+                Download all motif sites
+              </Typography>
+              <Grid2 container spacing={2}>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>Lenient set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-4 (758 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>Moderate set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-5 (684 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>Stringent set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-6 (653 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+              </Grid2>
+            </Stack>
           </AccordionDetails>
         </Accordion>
 
@@ -443,23 +456,22 @@ const DownloadPage: React.FC = () => {
             >
               <ReportProblemIcon sx={{ mr: 1 }} />
               <Typography variant="body2" sx={{ color: "#663C00" }}>
-                This catalog contains sites of MEME motifs and HT-SELEX motifs
+                <b>This catalog contains sites of MEME motifs and HT-SELEX motifs
                 identified within rDHSs from the ENCODE Registry of cCREs using
-                FIMO. <a href="#">Click here</a> for more information on the
+                FIMO.</b> <a href="#" style={{ textDecoration: "underline" }}>Click here</a> for more information on the
                 Registry of cCREs.
               </Typography>
             </Box>
 
-            <Grid container spacing={4}>
-              <Grid item xs={12} md={6}>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{ textTransform: "uppercase" }}
-                >
-                  Download merged motif sites
-                </Typography>
-                <>
+            <Stack spacing={2}>
+              <Typography
+                variant="subtitle2"
+                sx={{ textTransform: "uppercase" }}
+              >
+                Download merged motif sites
+              </Typography>
+              <Grid2 container spacing={2}>
+                <Grid2 xs={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.merged.bed.gz"
                     text={
@@ -478,7 +490,8 @@ const DownloadPage: React.FC = () => {
                       />
                     }
                   />
-
+                </Grid2>
+                <Grid2 xs={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.merged.bed.gz"
                     text={
@@ -496,9 +509,9 @@ const DownloadPage: React.FC = () => {
                         }}
                       />
                     }
-                    sx={{ mt: 2 }}
                   />
-
+                </Grid2>
+                <Grid2 xs={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.merged.bed.gz"
                     text={
@@ -516,9 +529,9 @@ const DownloadPage: React.FC = () => {
                         }}
                       />
                     }
-                    sx={{ mt: 2 }}
                   />
-
+                </Grid2>
+                <Grid2 xs={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-5.merged.bed.gz"
                     text={
@@ -536,9 +549,9 @@ const DownloadPage: React.FC = () => {
                         }}
                       />
                     }
-                    sx={{ mt: 2 }}
                   />
-
+                </Grid2>
+                <Grid2 xs={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-6.merged.bed.gz"
                     text={
@@ -556,9 +569,9 @@ const DownloadPage: React.FC = () => {
                         }}
                       />
                     }
-                    sx={{ mt: 2 }}
                   />
-
+                </Grid2>
+                <Grid2 xs={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-7.merged.bed.gz"
                     text={
@@ -576,145 +589,139 @@ const DownloadPage: React.FC = () => {
                         }}
                       />
                     }
-                    sx={{ mt: 2 }}
                   />
-                </>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{ textTransform: "uppercase" }}
-                >
-                  Download all motif sites
-                </Typography>
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Lenient set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "FIMO p-value < 10^-6 (2.9 GB)"
-                        ),
-                      }}
-                    />
-                  }
-                />
-
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Moderate set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "FIMO p-value < 10^-7 (1.5 GB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Stringent set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript(
-                          "FIMO p-value < 10^-8 (885 MB)"
-                        ),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>HT-SELEX: Lenient set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript("FIMO p-value < 10^-5"),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>HT-SELEX: Moderate set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript("FIMO p-value < 10^-6"),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-
-                <StyledButton
-                  href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>HT-SELEX: Stringent set</strong>
-                    </>
-                  }
-                  secondaryText={
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: formatSuperscript("FIMO p-value < 10^-7"),
-                      }}
-                    />
-                  }
-                  sx={{ mt: 2 }}
-                />
-              </Grid>
-            </Grid>
+                </Grid2>
+              </Grid2>
+              <Typography
+                variant="subtitle2"
+                sx={{ textTransform: "uppercase" }}
+              >
+                Download all motif sites
+              </Typography>
+              <Grid2 container spacing={2}>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>Lenient set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-6 (2.9 GB)"
+                          ),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>Moderate set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-7 (1.5 GB)"
+                          ),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>Stringent set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript(
+                            "FIMO p-value < 10^-8 (885 MB)"
+                          ),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>HT-SELEX: Lenient set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript("FIMO p-value < 10^-5"),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>HT-SELEX: Moderate set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript("FIMO p-value < 10^-6"),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+                <Grid2 xs={4}>
+                  <StyledButton
+                    href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
+                    text={
+                      <>
+                        <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
+                        <strong>HT-SELEX: Stringent set</strong>
+                      </>
+                    }
+                    secondaryText={
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: formatSuperscript("FIMO p-value < 10^-7"),
+                        }}
+                      />
+                    }
+                  />
+                </Grid2>
+              </Grid2>
+            </Stack>
           </AccordionDetails>
         </Accordion>
       </TabPanel>
 
       {/* Heritability Models Tab */}
       <TabPanel value={value} index={2}>
-        <Box
-          sx={{
-            mb: accordionOpen ? 0 : 13,
-            mt: accordionOpen ? 0 : 6,
-          }}
-        >
+        <Box>
           <Typography
             variant="h4"
             component="h1"
@@ -731,6 +738,7 @@ const DownloadPage: React.FC = () => {
             trait and disease heritability enrichment within TF ChIP-seq peaks
             or TF motif sites.
           </Typography>
+          <Divider sx={{mb: 2}}/>
 
           {/* Accordion - Getting Started */}
           <Accordion
@@ -748,16 +756,18 @@ const DownloadPage: React.FC = () => {
               </Typography>
               <ol>
                 <li>
+                  1.{" "}
                   <a
                     href="https://docs.docker.com/get-docker/"
                     target="_blank"
                     rel="noopener noreferrer"
+                    style={{textDecoration: "underline"}}
                   >
                     Install Docker
                   </a>
                 </li>
                 <li>
-                  Run the following command to partition heritability for motif
+                  2. Run the following command to partition heritability for motif
                   sites in ChIP-seq peaks from seven ENCODE cell lines:
                 </li>
               </ol>
@@ -791,7 +801,7 @@ const DownloadPage: React.FC = () => {
               <Typography variant="body2">
                 Output will be located at{" "}
                 <Box component="pre" display="inline">
-                  /path/to/outputs/partitioned-heritability.txt
+                  <b>/path/to/outputs/partitioned-heritability.txt</b>
                 </Box>{" "}
                 when the command finishes.
               </Typography>
@@ -804,68 +814,72 @@ const DownloadPage: React.FC = () => {
               <Typography variant="h6">View and Download Models</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography variant="body1" gutterBottom>
-                Select an annotation to quantify heritability:
-              </Typography>
-              <Grid container spacing={4}>
-                {/* TF ChIP-seq Peaks Card */}
-                <Grid item xs={12} md={6}>
-                  <Box
-                    sx={{
-                      backgroundColor: "#333",
-                      color: "#fff",
-                      padding: 3,
-                      borderRadius: 2,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      height: "100%",
-                    }}
-                  >
-                    <Typography variant="h6" gutterBottom>
-                      TF ChIP-seq Peaks
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                      Quantify heritability enrichment within TF peaks
-                      identified from ChIP-seq experiments in one of five
-                      well-profiled ENCODE cell lines.
-                    </Typography>
-                    <StyledButton
-                      text="View Models (5)"
-                      href="https://factorbook.org/partitioned-ldr/hg38/peak-models"
-                    />
-                  </Box>
-                </Grid>
+              <Box marginX={10}>
+                <Typography variant="body1" gutterBottom>
+                  Select an annotation to quantify heritability:
+                </Typography>
+                <Grid container spacing={4}>
+                  {/* TF ChIP-seq Peaks Card */}
+                  <Grid item xs={12} md={6}>
+                    <Box
+                      sx={{
+                        backgroundColor: "#333",
+                        color: "#fff",
+                        padding: 3,
+                        borderRadius: 6,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        height: "100%",
+                      }}
+                    >
+                      <Typography variant="h6" sx={{mb: 4}}>
+                        TF ChIP-seq Peaks
+                      </Typography>
+                      <Typography variant="body2" sx={{mb: 5}}>
+                        Quantify heritability enrichment within TF peaks
+                        identified from ChIP-seq experiments in one of five
+                        well-profiled ENCODE cell lines.
+                      </Typography>
+                      <StyledButton
+                        text="View Models (5)"
+                        href="https://factorbook.org/partitioned-ldr/hg38/peak-models"
+                        sx={{width: "auto"}}
+                      />
+                    </Box>
+                  </Grid>
 
-                {/* Motif Sites in TF ChIP-seq Peaks Card */}
-                <Grid item xs={12} md={6}>
-                  <Box
-                    sx={{
-                      backgroundColor: "#333",
-                      color: "#fff",
-                      padding: 3,
-                      borderRadius: 2,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      height: "100%",
-                    }}
-                  >
-                    <Typography variant="h6" gutterBottom>
-                      Motif Sites in TF ChIP-seq Peaks
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                      Quantify heritability enrichment within TF motif sites
-                      identified in peaks from ChIP-seq experiments in one of
-                      five well-profiled ENCODE cell lines.
-                    </Typography>
-                    <StyledButton
-                      text="View Models (2)"
-                      href="https://factorbook.org/partitioned-ldr/hg38/peak-motif-models"
-                    />
-                  </Box>
+                  {/* Motif Sites in TF ChIP-seq Peaks Card */}
+                  <Grid item xs={12} md={6}>
+                    <Box
+                      sx={{
+                        backgroundColor: "#333",
+                        color: "#fff",
+                        padding: 3,
+                        borderRadius: 6,
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "space-between",
+                        height: "100%",
+                      }}
+                    >
+                      <Typography variant="h6" sx={{mb: 4}}>
+                        Motif Sites in TF ChIP-seq Peaks
+                      </Typography>
+                      <Typography variant="body2" sx={{mb: 5}}>
+                        Quantify heritability enrichment within TF motif sites
+                        identified in peaks from ChIP-seq experiments in one of
+                        five well-profiled ENCODE cell lines.
+                      </Typography>
+                      <StyledButton
+                        text="View Models (2)"
+                        href="https://factorbook.org/partitioned-ldr/hg38/peak-motif-models"
+                        sx={{width: "auto"}}
+                      />
+                    </Box>
+                  </Grid>
                 </Grid>
-              </Grid>
+              </Box>
             </AccordionDetails>
           </Accordion>
         </Box>

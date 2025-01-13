@@ -499,7 +499,6 @@ const DeepLearnedSelexMotif: React.FC<{
               display: "flex",
               flexDirection: "column",
               alignItems: isMobile ? "flex-start" : "center",
-              fontFamily: "Helvetica Neue",
             }}
           >
             <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
@@ -591,7 +590,6 @@ const DeepLearnedSelexMotif: React.FC<{
                 backgroundColor: "#8169BF",
                 color: "white",
                 marginTop: "10px",
-                fontFamily: "Helvetica Neue",
               }}
             >
               Export Line Plot
@@ -697,7 +695,6 @@ const DeepLearnedSelexMotif: React.FC<{
                 backgroundColor: "#8169BF",
                 color: "white",
                 marginTop: "10px",
-                fontFamily: "Helvetica Neue",
               }}
             >
               Export Bar Plot
