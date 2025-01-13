@@ -143,7 +143,7 @@ export default function ChatComponenet() {
     && position.y === window.innerHeight - 600 - 15
 
   return (
-    <Box height={'100vh'} zIndex={3000} width={'100vw'} position={"fixed"} top={0} left={0} sx={{ pointerEvents: 'none' }}>
+    <Box height={'100vh'} zIndex={1500} width={'100vw'} position={"fixed"} top={0} left={0} sx={{ pointerEvents: 'none' }}>
       {/* Chat window */}
       <Rnd
         dragHandleClassName="drag-surface"
@@ -153,7 +153,7 @@ export default function ChatComponenet() {
         onResize={handleResize}
         minHeight={500}
         minWidth={500}
-        style={{ display: 'flex', flexDirection: 'column', pointerEvents: open ? 'auto' : 'none', zIndex: 1000 }}
+        style={{ display: 'flex', flexDirection: 'column', pointerEvents: open ? 'auto' : 'none' }}
         bounds={"window"}
       >
         {/* Fade does not work when parent of Rnd, so setting pointerEvents to none on Rnd when not open */}
