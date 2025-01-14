@@ -46,11 +46,6 @@ const navItems = [
       { text: "Annotations", href: "/annotationsvariants" },
     ],
   },
-  {
-    title: "Resources",
-    href: "#",
-    icon: <MenuBookIcon sx={{ color: "#8169BF" }} />,
-  },
   { title: "Downloads", href: "/downloads" },
 ];
 
