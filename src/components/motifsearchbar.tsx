@@ -1,8 +1,6 @@
 "use client";
 
-import { debounce } from "lodash";
-import React, { useState, useCallback } from "react";
-
+import React from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
@@ -11,26 +9,19 @@ import {
   Button,
   InputAdornment,
   useTheme,
-  useMediaQuery,
 } from "@mui/material";
-
-
 import Stack from "@mui/material/Stack";
-import Config from "../../config.json";
-
 
 const MotifSearchbar: React.FC = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   const [val, setVal] = React.useState<String>("");
-
 
   return (
     <Box>
       <Stack direction="row" spacing={2}>
         <TextField
+          color="primary"
           variant="outlined"
           placeholder={"enter sequence or regex"}
           fullWidth
@@ -40,7 +31,7 @@ const MotifSearchbar: React.FC = () => {
                 <SearchIcon sx={{ color: "white" }} />
               </InputAdornment>
             ),
-            style: { textAlign: "center", color: "white" }, // Ensures text is white and visible
+            style: { textAlign: "center", color: "white" },
           }}
           InputLabelProps={{
             style: { textAlign: "center", width: "100%" },
@@ -59,25 +50,19 @@ const MotifSearchbar: React.FC = () => {
               height: "40px",
               borderRadius: "24px",
               paddingLeft: "12px",
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "white", // Ensure hover border color is white
+              "& fieldset": {
+                borderColor: "white", // Default border color
               },
-              "&.Mui-focused:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: theme.palette.primary.main, // Retain primary color on hover when focused
+              "&:hover fieldset": {
+                borderColor: theme.palette.primary.main, // Hover border color
               },
-            },
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: "white", // White border when not focused
-            },
-            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: theme.palette.primary.main, // Primary border when focused
             },
             "& .MuiInputBase-input::placeholder": {
               color: "gray", // Placeholder color
               opacity: 1,
             },
           }}
-          
+
         />
         <Button
           variant="contained"
@@ -98,7 +83,6 @@ const MotifSearchbar: React.FC = () => {
               opacity: "75%"
             },
           }}
-        // href={snpValue ? str : ""}
         >
           Search
         </Button>

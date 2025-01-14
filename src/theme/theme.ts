@@ -22,6 +22,9 @@ const theme = createTheme({
     secondary: {
       main: '#673AB7',  // Secondary purple color
     },
+    error: {
+      main: "#ee725f"
+    },
     gray: {
       main: '#EDE7F6',  // Light gray used for backgrounds
     },

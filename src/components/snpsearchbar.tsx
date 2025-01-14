@@ -13,7 +13,6 @@ import {
   useTheme,
   Autocomplete,
   FormControl,
-  Theme
 } from "@mui/material";
 import styled from "@emotion/styled";
 import Stack from "@mui/material/Stack";
@@ -24,29 +23,16 @@ import ClearIcon from '@mui/icons-material/Clear';
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import Link from "next/link";
 
-// Custom styled Autocomplete with theme-based border and focus colors
-const StyledAutocomplete = styled(Autocomplete)(({ theme }: { theme: Theme }) => ({
+// Custom styled Autocomplete textField
+const StyledAutocomplete = styled(Autocomplete)(() => ({
   "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "white", // Default border color when not focused
-    },
-    "&:hover fieldset": {
-      borderColor: "white", // Hover border color when not focused
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.main, // Border color on focus (primary color)
-      borderWidth: 2, // Thicker border when focused
-    },
+    height: "40px",
+    borderRadius: "24px",
+    paddingLeft: "12px",
   },
-  "& .MuiAutocomplete-endAdornment": {
-    color: "white", // Dropdown arrow icon color when not focused
-  },
-}));
-
-// Custom styled FormControl with theme-based focus color
-const StyledFormControl = styled(FormControl)(({ theme }: { theme: Theme }) => ({
-  "& .MuiInputLabel-root.Mui-focused": {
-    color: theme.palette.primary.main, // Label color when focused
+  "& .MuiInputBase-input::placeholder": {
+    color: "white", // Placeholder color
+    opacity: 1,
   },
 }));
 
@@ -136,7 +122,7 @@ const SnpSearchbar: React.FC = () => {
   return (
     <Box>
       <Stack direction="row" spacing={2}>
-        <StyledFormControl fullWidth variant="outlined" theme={theme}>
+        <FormControl fullWidth variant="outlined">
           <StyledAutocomplete
             options={options}
             freeSolo
@@ -145,29 +131,12 @@ const SnpSearchbar: React.FC = () => {
                 event.preventDefault();
                 window.open(snpValue ? `/annotationsvariants/GRCh38/${snpValue}` : "", "_self");
               }
-            } }
+            }}
             popupIcon={<ArrowDropDown sx={{ color: "gray" }} />}
 
             clearIcon={<ClearIcon sx={{ color: "white" }}
               onClick={() => { handleReset() }}
             />}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                height: "40px",
-                borderRadius: "24px",
-                paddingLeft: "12px",
-              },
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "white", // White border when not focused
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: theme.palette.primary.main, // Primary border when focused
-              },
-              "& .MuiInputBase-input::placeholder": {
-                color: "gray", // Placeholder color
-                opacity: 1,
-              },
-            }}
             value={snpValue}
             onChange={(_, newValue: any) => setSnpValue(newValue)}
             inputValue={inputValue}
@@ -176,17 +145,18 @@ const SnpSearchbar: React.FC = () => {
                 debounceFn(newInputValue);
               }
               setInputValue(newInputValue);
-            } }
+            }}
             noOptionsText="Example: rs3794102"
             renderInput={(params) => (
               <TextField
+                color="primary"
+                error={!validSearch && inputValue !== ""}
+                label={validSearch || inputValue === "" ? "" : "Invalid TF"}
                 {...params}
                 placeholder="Enter rsID"
-
                 fullWidth
                 InputProps={{
                   ...params.InputProps,
-
                   startAdornment: (
                     <InputAdornment position="start">
                       <SearchIcon sx={{ color: "white" }} />
@@ -195,8 +165,19 @@ const SnpSearchbar: React.FC = () => {
                   style: { textAlign: "center", color: "white" },
                 }}
                 InputLabelProps={{
-                  style: { textAlign: "center", width: "100%", color: "white" },
-                }} />
+                  style: { width: "100%" },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "white", // Default border color
+                    },
+                    "&:hover fieldset": {
+                      borderColor: validSearch || inputValue === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
+                    },
+                  }
+                }}
+              />
             )}
             renderOption={(props, option: any) => {
               const selectedSnp = snpids.find((g) => g.id === option);
@@ -219,8 +200,8 @@ const SnpSearchbar: React.FC = () => {
                   </Grid2>
                 </li>
               );
-            } } theme={theme}/>
-        </StyledFormControl>
+            }} theme={theme} />
+        </FormControl>
         <Button
           LinkComponent={Link}
           variant="contained"
@@ -240,7 +221,7 @@ const SnpSearchbar: React.FC = () => {
           }}
           href={snpValue && validSearch ? `/annotationsvariants/GRCh38/${snpValue}` : ""}
         >
-          Search
+          Go
         </Button>
       </Stack>
       <Box sx={{ marginLeft: "10px" }}>
