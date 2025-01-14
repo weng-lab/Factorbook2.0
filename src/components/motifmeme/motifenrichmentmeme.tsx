@@ -158,7 +158,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
         if (foundDataset) {
           handleSetSelectedDataset(foundDataset)
         } else {
-          console.log(d)
           const firstExperiment = partitionedBiosamples
             .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name)) //sort alphabetically
             [0].datasets[0] //extract first experiment

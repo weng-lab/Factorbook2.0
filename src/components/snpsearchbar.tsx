@@ -117,7 +117,6 @@ const SnpSearchbar: React.FC = () => {
     setValidSearch(false); // disable search
   }
 
-  //console.log(snpids,"snpids")
   const debounceFn = useCallback(debounce(onSearchChange, 500), []);
   return (
     <Box>
