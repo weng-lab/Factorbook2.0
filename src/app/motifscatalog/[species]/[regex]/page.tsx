@@ -37,6 +37,7 @@ const CustomButton = styled(Button)(({ theme }) => ({
 const MotifDetails = () => {
   const { species, regex } = useParams<{ species: string; regex: string }>();
   const [value, setValue] = React.useState(0);
+  const decodedRegex = decodeURIComponent(regex || "");
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // For mobile devices
@@ -74,7 +75,7 @@ const MotifDetails = () => {
       {value === 0 && (
         <Box sx={{ padding: isMobile ? 2 : 4 }}>
           <Typography variant={isMobile ? "h5" : "h4"}>
-            Motif search results for {regex}
+            Motif search results for {decodedRegex}
           </Typography>
 
           <Grid
@@ -104,7 +105,7 @@ const MotifDetails = () => {
                 >
                   Motif Catalog
                 </Link>
-                <Typography color="textPrimary">{regex}</Typography>
+                <Typography color="textPrimary">{decodedRegex}</Typography>
               </Breadcrumbs>
             </Grid>
             <Grid item>
