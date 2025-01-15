@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
@@ -14,13 +14,29 @@ import Stack from "@mui/material/Stack";
 
 const MotifSearchbar: React.FC = () => {
   const theme = useTheme();
-
   const [val, setVal] = React.useState<String>("");
+  const [validSearch, setValidSearch] = useState(false);
+
+  const handleChange = (input: string) => {
+    setVal(input);
+
+    // Regex to validate allowed characters and closed brackets
+    const regex = /^[acgtwsmkrybdhvn\[\]]*$/i; // Match allowed letters and brackets
+    const bracketBalanced = (input.match(/\[/g)?.length || 0) === (input.match(/\]/g)?.length || 0);
+
+    if (regex.test(input) && bracketBalanced) {
+      setValidSearch(true);
+    } else {
+      setValidSearch(false);
+    }
+  };
 
   return (
     <Box>
       <Stack direction="row" spacing={2}>
         <TextField
+          error={!validSearch && val !== ""}
+          label={validSearch || val === "" ? "" : "Invalid Sequence"}
           color="primary"
           variant="outlined"
           placeholder={"enter sequence or regex"}
@@ -34,13 +50,13 @@ const MotifSearchbar: React.FC = () => {
             style: { textAlign: "center", color: "white" },
           }}
           InputLabelProps={{
-            style: { textAlign: "center", width: "100%" },
+            style: { width: "100%" },
           }}
           onChange={(e) => {
-            setVal(e.target.value)
+            handleChange(e.target.value)
           }}
           onKeyDown={(event: any) => {
-            if (event.key === "Enter" && val !== " " && val !== "") {
+            if (event.key === "Enter" && val !== " " && val !== "" && validSearch) {
               event.preventDefault();
               window.open(`/motifscatalog/human/${val}`, "_self");
             }
@@ -54,19 +70,19 @@ const MotifSearchbar: React.FC = () => {
                 borderColor: "white", // Default border color
               },
               "&:hover fieldset": {
-                borderColor: theme.palette.primary.main, // Hover border color
+                borderColor: validSearch || val === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
               },
             },
             "& .MuiInputBase-input::placeholder": {
-              color: "gray", // Placeholder color
+              color: "white",
               opacity: 1,
             },
-          }}
-
+          }}          
         />
         <Button
           variant="contained"
           color="primary"
+          disabled={!validSearch && val !== ""}
           onClick={() => {
             window.open(`/motifscatalog/human/${val}`, "_self")
 
