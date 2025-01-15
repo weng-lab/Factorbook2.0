@@ -28,6 +28,7 @@ import {
   SelectChangeEvent,
   useMediaQuery,
   useTheme,
+  Stack,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid2 for MUI v2
 import { ApiContext } from "@/apicontext";
@@ -308,29 +309,38 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
         aria-labelledby="export-dialog-title"
+        PaperProps={{
+          sx: {
+            width: "25vw",
+            maxWidth: "90%",
+            borderRadius: 6
+          },
+        }}
       >
         <DialogTitle id="export-dialog-title">Export as</DialogTitle>
         <DialogContent>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={exportMotif}
-                onChange={(e) => setExportMotif(e.target.checked)}
-                sx={{ color: "#8169BF" }}
-              />
-            }
-            label="Motif (MEME)"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={exportLogo}
-                onChange={(e) => setExportLogo(e.target.checked)}
-                sx={{ color: "#8169BF" }}
-              />
-            }
-            label="Logo"
-          />
+          <Stack>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={exportMotif}
+                  onChange={(e) => setExportMotif(e.target.checked)}
+                  sx={{ color: "#8169BF" }}
+                />
+              }
+              label="Motif (MEME)"
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={exportLogo}
+                  onChange={(e) => setExportLogo(e.target.checked)}
+                  sx={{ color: "#8169BF" }}
+                />
+              }
+              label="Logo"
+            />
+          </Stack>
         </DialogContent>
         <DialogActions>
           <Button
@@ -592,7 +602,7 @@ const DeepLearnedSelexMotif: React.FC<{
                 marginTop: "10px",
               }}
             >
-              Export Line Plot
+              Download Line Plot
             </Button>
             <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
               <Group left={isMobile ? 0 : margin.left} top={margin.top}>
@@ -697,7 +707,7 @@ const DeepLearnedSelexMotif: React.FC<{
                 marginTop: "10px",
               }}
             >
-              Export Bar Plot
+              Download Bar Plot
             </Button>
           </Box>
         </Grid>
