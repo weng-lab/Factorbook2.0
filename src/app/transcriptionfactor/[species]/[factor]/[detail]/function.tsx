@@ -130,7 +130,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       header: "Experiment Accession",
       value: (row) => row.accession,
       render: (row) => (
-        <a href={`/experiment/${row.accession}`}>{row.accession}</a>
+        <a href={`/transcriptionfactor/human/${factor}/motifenrichmentmeme?experiment=${row.accession}`}>{row.accession}</a>
       ),
     },
     {
