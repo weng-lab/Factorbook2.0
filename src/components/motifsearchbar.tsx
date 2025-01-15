@@ -35,6 +35,7 @@ const MotifSearchbar: React.FC = () => {
     <Box>
       <Stack direction="row" spacing={2}>
         <TextField
+          autoComplete="off"
           error={!validSearch && val !== ""}
           label={validSearch || val === "" ? "" : "Invalid Sequence"}
           color="primary"
@@ -77,7 +78,7 @@ const MotifSearchbar: React.FC = () => {
               color: "white",
               opacity: 1,
             },
-          }}          
+          }}
         />
         <Button
           variant="contained"
