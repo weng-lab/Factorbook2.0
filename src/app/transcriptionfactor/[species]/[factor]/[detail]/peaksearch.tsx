@@ -646,7 +646,6 @@ const PeakSearch: React.FC = () => {
                 },
               }}
               onClick={() => {
-                //console.log(value.split(":")[0],value.split(":")[1].split("-")[0].replaceAll(",",""),value.split(":")[1].split("-")[1].replaceAll(",",""),"val")
                 const chromosome = value.split(":")[0];
                 const start = +value
                   .split(":")[1]
