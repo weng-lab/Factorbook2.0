@@ -9,6 +9,8 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Link as MuiLink,
+  Breadcrumbs
 } from "@mui/material";
 import { FACTOR_DESCRIPTION_QUERY } from "@/components/tf/query";
 import { FactorQueryResponse } from "@/components/celltype/types";
@@ -20,6 +22,7 @@ import { useParams } from "next/navigation";
 import FactorTabs from "./[detail]/factortabs";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./[detail]/types";
 import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./[detail]/queries";
+import { ChevronRight, NavigateNext } from "@mui/icons-material";
 
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
@@ -103,9 +106,7 @@ export default function FactorDetailsLayout({
   }, [selexData]);
 
   // Load TF Assignments
-  /**
-   *  I feel like this should be done server-side?
-   * */
+  // This feels like something that should be done server side
   useEffect(() => {
     fetch("/tf-assignments.json.gz")
       .then((response) => response.blob())
@@ -142,15 +143,13 @@ export default function FactorDetailsLayout({
 
   return (
     <Stack direction="column" m={2}>
-      <Stack direction="row" justifyContent={"space-between"} flexWrap={"wrap"}>
+      <Stack direction="row" justifyContent={"space-between"} flexWrap={"wrap"} m={1}>
         {/* Breadcrumb */}
-        <Typography>
-          <Link href="/">Homepage</Link>
-          {" > "}
-          <Link  href={`/transcriptionfactor/${species}`}>Transcription Factor</Link>
-          {" > "}
-          {factorForUrl}
-        </Typography>
+        <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
+          <MuiLink underline="hover" color={'inherit'} component={Link} href="/">Home</MuiLink>
+          <MuiLink underline="hover" color={'inherit'} component={Link} href={`/transcriptionfactor/${species}`}>Transcription Factor</MuiLink>
+          <Typography color={"text.primary"}>{factorForUrl}</Typography>
+        </Breadcrumbs>
 
         {/* Header Section */}
         <Box
@@ -158,7 +157,6 @@ export default function FactorDetailsLayout({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: "20px",
           }}
           alignSelf={"flex-end"}
         >

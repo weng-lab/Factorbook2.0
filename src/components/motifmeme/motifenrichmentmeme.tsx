@@ -442,7 +442,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
             divider={<Divider />}
           >
             {motifsWithMatches.map((motif, index) => {
-              
               const motifppm = reverseComplements[index]
                 ? rc(motif.pwm)
                 : motif.pwm;
