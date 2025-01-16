@@ -265,7 +265,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     return sortedBiosamples.find(x => x.datasets.some(y => y.accession === selectedExperimentID))?.biosample.name
   }, [sortedBiosamples, selectedDataset, selectedExperimentID])
   
-  if (loading) return <CircularProgress />;
+  if (loading || !selectedPeakID) return <CircularProgress />;
   if (error) return <p>Error: {error.message}</p>;
   return (
     <Box

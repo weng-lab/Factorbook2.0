@@ -83,7 +83,7 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
         />
         <Tab
           label={`Search ${factor} peaks by region`}
-          value="search"
+          value="peaksearch"
           component={Link}
           href={`/transcriptionfactor/${species}/${factor}/peaksearch`}
           sx={{
