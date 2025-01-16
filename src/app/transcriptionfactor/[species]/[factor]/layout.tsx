@@ -34,26 +34,17 @@ export default function FactorDetailsLayout({
   params: {
     species,
     factor,
+    detail = 'function'
   }
 }: {
   children: React.ReactNode,
   params: {
     species: string,
     factor: string,
+    detail: string
   }
 }) {
   const apiContext = useContext(ApiContext);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  /**
-   * extracting detail here since this layout is not within the [detail] route and thus can't be technically gauranteed. Extracting it here to have the tabs state live here
-   */
-  const {
-    detail = 'function'
-  } = useParams<{
-    detail: string
-  }>()
-
   // Normalize factor name for URL
   /**
    * @todo this is in both this layout file and in page.tsx. I feel like this duplication should be fixed
