@@ -143,32 +143,24 @@ export default function FactorDetailsLayout({
 
   return (
     <Stack direction="column" m={2}>
-      <Stack direction="row" justifyContent={"space-between"} flexWrap={"wrap"} m={1}>
+      <Stack direction={{xs: "column", md: "row"}} justifyContent={"space-between"} m={1} spacing={{xs: 2, md: 0}}>
         {/* Breadcrumb */}
-        <Breadcrumbs separator={<NavigateNext fontSize="small" />}>
+        <Breadcrumbs separator={<NavigateNext fontSize="small" />} id="breadcrumbs">
           <MuiLink underline="hover" color={'inherit'} component={Link} href="/">Home</MuiLink>
           <MuiLink underline="hover" color={'inherit'} component={Link} href={`/transcriptionfactor/${species}`}>Transcription Factor</MuiLink>
           <Typography color={"text.primary"}>{factorForUrl}</Typography>
         </Breadcrumbs>
 
         {/* Header Section */}
-        <Box
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-          alignSelf={"flex-end"}
+        <Stack
+          id="tfinfo"
+          direction={{xs: "column", md: "row"}}
+          spacing={{xs: 0, md: 2}}
         >
-          <Typography
-            variant="h4"
-            style={{ fontWeight: "600" }}
-            ml={"auto"}
-            mr={2}
-          >
+          <Typography variant="h4">
             {factorForUrl}
           </Typography>
-          <Box textAlign="right">
+          <Box>
             <Typography variant="body2">
               {label}
             </Typography>
@@ -176,7 +168,7 @@ export default function FactorDetailsLayout({
               {TFregion}
             </Typography>
           </Box>
-        </Box>
+        </Stack>
       </Stack>
       <FactorTabs
         species={species}
