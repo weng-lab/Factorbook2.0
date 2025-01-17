@@ -33,6 +33,7 @@ export default async function Page({
           )
           .flat()
       : null;
+      
   } catch (error) {
     console.error("Error fetching data:", error);
     return <p>Error fetching Histone Modification Data</p>;

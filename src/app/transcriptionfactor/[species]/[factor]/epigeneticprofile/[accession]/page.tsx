@@ -12,7 +12,6 @@ import {
   Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import EpigeneticProfileLayout from "@/components/motifmeme/aggregate/EpigeneticProfileLayout";
 import Graph from "@/components/motifmeme/aggregate/graphs";
 import {
   AGGREGATE_DATA_QUERY,
@@ -76,8 +75,8 @@ const EpigeneticProfilePage = () => {
       variables: {
         accessions: aggregateData
           ? aggregateData.histone_aggregate_values.map(
-              (x: any) => x.histone_dataset_accession
-            )
+            (x: any) => x.histone_dataset_accession
+          )
           : [],
       },
       skip: !aggregateData,
@@ -147,103 +146,91 @@ const EpigeneticProfilePage = () => {
   };
 
   return (
-    <Box
-      style={{
-        display: "flex",
-        flexDirection: isMobile ? "column" : "row",
-        padding: isMobile ? "20px 10px" : "40px 25.5px",
-        minHeight: "100vh",
-        width: "100%",
-      }}
-    >
-      <Box style={{ flex: 1 }}>
-        <EpigeneticProfileLayout species={speciesStr} factor={factorStr}>
-          <Typography variant="h5" align="center" gutterBottom>
-            <strong>{`Histone modification profiles around ${factorStr} peaks in ${biosample}`}</strong>
-          </Typography>
-          {MARK_TYPE_ORDER.filter((type) => typeGroups.get(type)).map(
-            (type, typeIdx) => {
-              if (!svgRefs.has(type)) {
-                svgRefs.set(type, new Map());
-              }
+    <>
+      <Typography variant="h5" align="center" gutterBottom>
+        <strong>{`Histone modification profiles around ${factorStr} peaks in ${biosample}`}</strong>
+      </Typography>
+      {MARK_TYPE_ORDER.filter((type) => typeGroups.get(type)).map(
+        (type, typeIdx) => {
+          if (!svgRefs.has(type)) {
+            svgRefs.set(type, new Map());
+          }
 
-              const refMap = svgRefs.get(type);
+          const refMap = svgRefs.get(type);
 
-              return (
-                <Accordion key={type}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>{type}</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
+          return (
+            <Accordion key={type}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography>{type}</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  flexWrap="wrap"
+                  justifyContent="flex-start"
+                  alignItems="flex-start"
+                  gap="5.2rem"
+                >
+                  {typeGroups.get(type)?.map((group: any, idx: number) => (
                     <Box
-                      display="flex"
-                      flexDirection="row"
-                      flexWrap="wrap"
-                      justifyContent="flex-start"
-                      alignItems="flex-start"
-                      gap="5.2rem"
+                      key={idx}
+                      style={{ width: "300px", marginBottom: "20px" }}
                     >
-                      {typeGroups.get(type)?.map((group: any, idx: number) => (
-                        <Box
-                          key={idx}
-                          style={{ width: "300px", marginBottom: "20px" }}
-                        >
-                          <Graph
-                            ref={(el) => {
-                              if (el) refMap?.set(idx, el);
-                            }}
-                            proximal_values={group.proximal_values}
-                            distal_values={group.distal_values}
-                            dataset={group.dataset}
-                            xlabel="distance from summit (bp)"
-                            ylabel="fold change signal"
-                          />
-                        </Box>
-                      ))}
-                    </Box>
-                    {/* Add Export Button for Individual Accordion */}
-                    <Box
-                      display="flex"
-                      justifyContent="center"
-                      marginTop="20px"
-                    >
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleExportAccordionAsZip(type)}
-                        style={{
-                          backgroundColor: "#9E67F2",
-                          color: "white",
-                          padding: "10px 30px",
-                          borderRadius: "30px",
+                      <Graph
+                        ref={(el) => {
+                          if (el) refMap?.set(idx, el);
                         }}
-                      >
-                        Export {type} plots as ZIP
-                      </Button>
+                        proximal_values={group.proximal_values}
+                        distal_values={group.distal_values}
+                        dataset={group.dataset}
+                        xlabel="distance from summit (bp)"
+                        ylabel="fold change signal"
+                      />
                     </Box>
-                  </AccordionDetails>
-                </Accordion>
-              );
-            }
-          )}
-          <Box display="flex" justifyContent="center" marginTop="20px">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleExportAllAsZip}
-              style={{
-                backgroundColor: "#9E67F2",
-                color: "white",
-                padding: "10px 30px",
-                borderRadius: "30px",
-              }}
-            >
-              Export all plots as ZIP
-            </Button>
-          </Box>
-        </EpigeneticProfileLayout>
+                  ))}
+                </Box>
+                {/* Add Export Button for Individual Accordion */}
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  marginTop="20px"
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleExportAccordionAsZip(type)}
+                    style={{
+                      backgroundColor: "#9E67F2",
+                      color: "white",
+                      padding: "10px 30px",
+                      borderRadius: "30px",
+                    }}
+                  >
+                    Export {type} plots as ZIP
+                  </Button>
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+          );
+        }
+      )}
+      <Box display="flex" justifyContent="center" marginTop="20px">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleExportAllAsZip}
+          style={{
+            backgroundColor: "#9E67F2",
+            color: "white",
+            padding: "10px 30px",
+            borderRadius: "30px",
+          }}
+        >
+          Export all plots as ZIP
+        </Button>
       </Box>
-    </Box>
+    </>
   );
 };
 

@@ -4,7 +4,6 @@ export const AGGREGATE_METADATA_QUERY = gql`
     query dnasemetadataquery($assembly: String!, $target: String!) {
         histone_aggregate_values(assembly: $assembly) {
             peaks_dataset_accession
-            histone_dataset_accession
         }
         peakDataset(processed_assembly: $assembly, target: $target) {
             datasets {

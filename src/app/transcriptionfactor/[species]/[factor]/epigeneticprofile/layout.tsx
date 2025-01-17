@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Box,
@@ -21,18 +23,29 @@ import { useRouter, useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import { AGGREGATE_METADATA_QUERY } from "@/components/motifmeme/aggregate/queries";
 import { debounce } from "lodash";
-import { histoneBiosamplePartitions } from "./utils";
+import { histoneBiosamplePartitions } from "../../../../../components/motifmeme/aggregate/utils";
 
 interface Dataset {
   biosample: string;
   accession: string;
 }
 
-const EpigeneticProfileLayout: React.FC<{
-  species: string;
-  factor: string;
-  children: React.ReactNode;
-}> = ({ species, factor, children }) => {
+/**
+ * Provides left side panel for biosample selection
+ */
+export default function EpigeneticProfileLayout({
+  children,
+}: {
+  children: React.ReactNode,
+}) {
+  const params = useParams<{
+    species: string,
+    factor: string,
+    detail: string,
+    accession: string
+  }>()
+
+  const { species, factor, detail, accession } = params
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState(true);
@@ -50,13 +63,13 @@ const EpigeneticProfileLayout: React.FC<{
 
   const datasets: Dataset[] = data
     ? histoneBiosamplePartitions(data)
-        .list.map((ds: any) =>
-          ds.datasets.map((d: any) => ({
-            biosample: ds.biosample.name,
-            accession: d.accession,
-          }))
-        )
-        .flat()
+      .list.map((ds: any) =>
+        ds.datasets.map((d: any) => ({
+          biosample: ds.biosample.name,
+          accession: d.accession,
+        }))
+      )
+      .flat()
     : [];
 
   const groupedDatasets = useMemo(() => {
@@ -80,15 +93,6 @@ const EpigeneticProfileLayout: React.FC<{
       biosample.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
     );
   }, [sortedBiosamples, debouncedSearchTerm]);
-
-  useEffect(() => {
-    if (!currentAccession && datasets.length > 0) {
-      // If no accession is selected, pick the first one
-      router.push(
-        `/transcriptionfactor/${species}/${factor}/epigeneticprofile/${datasets[0].accession}`
-      );
-    }
-  }, [currentAccession, datasets, species, factor, router]);
 
   useEffect(() => {
     if (currentAccession && expandedBiosample === false) {
@@ -263,7 +267,5 @@ const EpigeneticProfileLayout: React.FC<{
         {children}
       </Box>
     </Box>
-  );
-};
-
-export default EpigeneticProfileLayout;
+  )
+}

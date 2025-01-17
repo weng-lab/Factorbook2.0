@@ -7,7 +7,6 @@ import MotifEnrichmentMEME from "@/components/motifmeme/motifenrichmentmeme";
 import PeakSearch from "./peaksearch";
 import DeepLearnedSelexMotifs from "./motifenrichmentselex";
 import GeneExpressionPage from "./geneexpression";
-import EpigeneticProfile from "./epigeneticprofile";
 
 
 export default function FactorDetailsPage({ 

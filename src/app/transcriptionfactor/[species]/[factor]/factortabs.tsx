@@ -16,8 +16,13 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
   factor,
   hasSelexData,
 }) => {
-  // usePathname().split('/') -> ["", "transcriptionfactor", "[species]", "[factor]", "[detail]"]
+  // usePathname().split('/') -> ["", "transcriptionfactor", "[species]", "[factor]", "[detail]", "[accession"]
   const detail = usePathname().split('/')[4]
+  const accession = usePathname().split('/')[5]
+
+  const isCurrentTab = (tab: string): boolean => {
+    return tab === detail
+  }
 
   return (
     <Box display="flex" alignItems="center">
@@ -77,7 +82,7 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
           label="Epigenetic Profile"
           value="epigeneticprofile"
           component={Link}
-          href={`/transcriptionfactor/${species}/${factor}/epigeneticprofile`}
+          href={`/transcriptionfactor/${species}/${factor}/epigeneticprofile/${isCurrentTab("epigeneticprofile") ? accession : ""}`}
           sx={{
             color: detail === "epigeneticprofile" ? "#8169BF" : "inherit",
             textTransform: "capitalize",
