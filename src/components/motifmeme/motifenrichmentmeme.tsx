@@ -676,43 +676,52 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
                         },
                       },
                     }}
+                    PaperProps={{
+                      sx: {
+                        width: "25vw",
+                        maxWidth: "90%",
+                        borderRadius: 6
+                      },
+                    }}
                   >
                     <DialogTitle id="export-dialog-title">
                       Download as
                     </DialogTitle>
                     <DialogContent>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={exportMotif}
-                            onChange={(e) => setExportMotif(e.target.checked)}
-                            sx={{ color: "#8169BF" }}
-                          />
-                        }
-                        label="Motif (MEME)"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={exportLogo}
-                            onChange={(e) => setExportLogo(e.target.checked)}
-                            sx={{ color: "#8169BF" }}
-                          />
-                        }
-                        label="Logo"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={exportPeakSites}
-                            onChange={(e) =>
-                              setExportPeakSites(e.target.checked)
-                            }
-                            sx={{ color: "#8169BF" }}
-                          />
-                        }
-                        label="Peak Sites"
-                      />
+                      <Stack>
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={exportMotif}
+                              onChange={(e) => setExportMotif(e.target.checked)}
+                              sx={{ color: "#8169BF" }}
+                            />
+                          }
+                          label="Motif (MEME)"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={exportLogo}
+                              onChange={(e) => setExportLogo(e.target.checked)}
+                              sx={{ color: "#8169BF" }}
+                            />
+                          }
+                          label="Logo"
+                        />
+                        <FormControlLabel
+                          control={
+                            <Checkbox
+                              checked={exportPeakSites}
+                              onChange={(e) =>
+                                setExportPeakSites(e.target.checked)
+                              }
+                              sx={{ color: "#8169BF" }}
+                            />
+                          }
+                          label="Peak Sites"
+                        />
+                      </Stack>
                     </DialogContent>
                     <DialogActions>
                       <Button
