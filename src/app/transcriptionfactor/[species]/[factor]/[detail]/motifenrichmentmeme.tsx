@@ -50,10 +50,10 @@ import { DNALogo, DNAAlphabet } from "logojs-react";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/motifsearch/motifutil";
-import CentralityPlot from "./centralityplot";
-import ATACPlot from "./atacplot";
-import ConservationPlot from "./conservationplot";
-import { TOMTOMMessage } from "./tomtommessage";
+import CentralityPlot from "../../../../../components/motifmeme/centralityplot";
+import ATACPlot from "../../../../../components/motifmeme/atacplot";
+import ConservationPlot from "../../../../../components/motifmeme/conservationplot";
+import { TOMTOMMessage } from "../../../../../components/motifmeme/tomtommessage";
 import { ArrowBackIos, ArrowBackIosNew, ArrowForwardIos, Clear, HelpRounded } from "@mui/icons-material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 

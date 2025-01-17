@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import FunctionTab from "./function";
-import MotifEnrichmentMEME from "@/components/motifmeme/motifenrichmentmeme";
+import MotifEnrichmentMEME from "./motifenrichmentmeme";
 import PeakSearch from "./peaksearch";
 import DeepLearnedSelexMotifs from "./motifenrichmentselex";
 import GeneExpressionPage from "./geneexpression";
@@ -26,7 +26,7 @@ export default function FactorDetailsPage({
 
   // Normalize factor name for URL
     /**
-   * @todo this is in both this layout file and in page.tsx. I feel like this duplication should be fixed
+   * @todo this is in both this layout file and in page.tsx.
    */
   const factorForUrl =
     species.toLowerCase() === "human"

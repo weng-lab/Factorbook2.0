@@ -51,7 +51,7 @@ export default function FactorDetailsLayout({
 
   // Normalize factor name for URL
   /**
-   * @todo this is in both this layout file and in page.tsx. I feel like this duplication should be fixed
+   * @todo this is in both this layout file and in page.tsx. 
    */
   const factorForUrl =
     species.toLowerCase() === "human"
