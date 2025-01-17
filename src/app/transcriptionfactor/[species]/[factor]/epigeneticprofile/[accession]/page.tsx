@@ -12,7 +12,7 @@ import {
   Button,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import Layout from "@/components/motifmeme/aggregate/layout";
+import EpigeneticProfileLayout from "@/components/motifmeme/aggregate/EpigeneticProfileLayout";
 import Graph from "@/components/motifmeme/aggregate/graphs";
 import {
   AGGREGATE_DATA_QUERY,
@@ -25,8 +25,6 @@ import {
   MARK_TYPE_ORDER,
 } from "@/components/motifmeme/aggregate/marks";
 import { useParams } from "next/navigation";
-import FactorTabs from "@/app/transcriptionfactor/[species]/[factor]/[detail]/factortabs";
-import Link from "next/link";
 import { useTheme, useMediaQuery } from "@mui/material";
 import JSZip from "jszip";
 
@@ -117,11 +115,6 @@ const EpigeneticProfilePage = () => {
     })
   );
 
-  // Compute hasSelexData based on SELEX-related data availability
-  const hasSelexData = aggregateData?.histone_aggregate_values.some(
-    (value: any) => value.source === "SELEX"
-  );
-
   const handleExportAccordionAsZip = async (type: string) => {
     const zip = new JSZip();
     const refMap = svgRefs.get(type);
@@ -164,31 +157,7 @@ const EpigeneticProfilePage = () => {
       }}
     >
       <Box style={{ flex: 1 }}>
-        <Box mb={2}>
-          <Link href="/" style={{ color: "black", textDecoration: "none" }}>
-            Homepage
-          </Link>{" "}
-          &gt;{" "}
-          <Link
-            href={`/transcriptionfactor/${species}`}
-            style={{ color: "black", textDecoration: "none" }}
-          >
-            Transcription Factor
-          </Link>{" "}
-          &gt;{" "}
-          <Typography component="span" style={{ color: "black" }}>
-            {factorStr}
-          </Typography>
-        </Box>
-
-        <FactorTabs
-          species={speciesStr}
-          factor={factorStr}
-          detail="epigeneticprofile"
-          hasSelexData={hasSelexData}
-        />
-
-        <Layout species={speciesStr} factor={factorStr}>
+        <EpigeneticProfileLayout species={speciesStr} factor={factorStr}>
           <Typography variant="h5" align="center" gutterBottom>
             <strong>{`Histone modification profiles around ${factorStr} peaks in ${biosample}`}</strong>
           </Typography>
@@ -272,7 +241,7 @@ const EpigeneticProfilePage = () => {
               Export all plots as ZIP
             </Button>
           </Box>
-        </Layout>
+        </EpigeneticProfileLayout>
       </Box>
     </Box>
   );

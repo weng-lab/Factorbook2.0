@@ -3,7 +3,7 @@
 import React, { useMemo, useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { CircularProgress, Typography, Box } from "@mui/material";
-import Layout from "@/components/motifmeme/aggregate/layout";
+import EpigeneticProfileLayout from "@/components/motifmeme/aggregate/EpigeneticProfileLayout";
 import GraphSet from "@/components/motifmeme/aggregate/graphset";
 import {
   AGGREGATE_DATA_QUERY,
@@ -66,14 +66,19 @@ const EpigeneticProfile: React.FC<EpigeneticProfileProps> = ({
 
   const histoneData = aggregateData?.histone_aggregate_values || [];
 
+  //This is currently needed since the tabs try to naviagate here, and then the layout (?) redirects to a specific experiment
+  //Which then causes the other page.tsx to be rendered
   return (
-    <Layout species={speciesStr} factor={factorStr}>
+    <EpigeneticProfileLayout species={speciesStr} factor={factorStr}>
       {histoneData.length > 0 && metadata.length > 0 ? (
+        <>
         <GraphSet histoneData={histoneData} metadata={metadata} />
+        </>
       ) : (
         <Typography>Select an accession to view its data.</Typography>
       )}
-    </Layout>
+      <p>Hello World</p>
+    </EpigeneticProfileLayout>
   );
 };
 

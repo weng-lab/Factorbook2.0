@@ -28,7 +28,7 @@ interface Dataset {
   accession: string;
 }
 
-const Layout: React.FC<{
+const EpigeneticProfileLayout: React.FC<{
   species: string;
   factor: string;
   children: React.ReactNode;
@@ -266,4 +266,4 @@ const Layout: React.FC<{
   );
 };
 
-export default Layout;
+export default EpigeneticProfileLayout;

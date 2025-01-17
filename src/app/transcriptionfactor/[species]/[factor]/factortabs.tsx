@@ -3,20 +3,22 @@
 import React from "react";
 import { Tabs, Tab, Box } from "@mui/material";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface FactorTabsProps {
   species: string;
   factor: string;
-  detail: string;
   hasSelexData: boolean;
 }
 
 const FactorTabs: React.FC<FactorTabsProps> = ({
   species,
   factor,
-  detail,
   hasSelexData,
 }) => {
+  // usePathname().split('/') -> ["", "transcriptionfactor", "[species]", "[factor]", "[detail]"]
+  const detail = usePathname().split('/')[4]
+
   return (
     <Box display="flex" alignItems="center">
       <Tabs

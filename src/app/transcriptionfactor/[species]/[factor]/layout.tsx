@@ -18,8 +18,8 @@ import Link from "next/link";
 import { ApiContext } from "@/apicontext";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
-import { useParams } from "next/navigation";
-import FactorTabs from "./[detail]/factortabs";
+import { useParams, usePathname } from "next/navigation";
+import FactorTabs from "./factortabs";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./[detail]/types";
 import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./[detail]/queries";
 import { ChevronRight, NavigateNext } from "@mui/icons-material";
@@ -48,15 +48,6 @@ export default function FactorDetailsLayout({
   const apiContext = useContext(ApiContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  
-  /**
-   * have to extract this client side
-   */
-  const {
-    detail = 'function'
-  } = useParams<{
-    detail: string
-  }>()
 
   // Normalize factor name for URL
   /**
@@ -173,7 +164,6 @@ export default function FactorDetailsLayout({
       <FactorTabs
         species={species}
         factor={factorForUrl}
-        detail={detail}
         hasSelexData={hasSelexData} // Dynamically hide tab based on data
       />
       {/* Tab Content */}

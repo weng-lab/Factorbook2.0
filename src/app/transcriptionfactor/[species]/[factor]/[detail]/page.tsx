@@ -63,12 +63,9 @@ export default function FactorDetailsPage({
     case "motifenrichmentmeme":
       return <MotifEnrichmentMEME factor={factorForUrl} species={species} />;
     case "motifenrichmentselex":
-      /**
-       * @todo make sure that removing this check won't error out app if the factor doesn't have data
-       */
       return <DeepLearnedSelexMotifs factor={factorForUrl} species={species} />
-    case "epigeneticprofile":
-      return <EpigeneticProfile factor={factorForUrl} species={species} />;
+    // case "epigeneticprofile":
+    //   return <EpigeneticProfile factor={factorForUrl} species={species} />;
     case "peaksearch":
       return <PeakSearch />;
     default:
