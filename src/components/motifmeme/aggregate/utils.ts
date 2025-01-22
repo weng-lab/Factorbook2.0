@@ -46,6 +46,9 @@ function accessionMap(queryResult: AggregateMetadataQueryResponse): { [accession
     );
 }
 
+/**
+ * @todo remove this once page.tsx rerouter component is using new logic and queries
+ */
 export function histoneBiosamplePartitions(queryResult: AggregateMetadataQueryResponse): MappedDatasetCollection {
     const biosamples = accessionMap(queryResult);
     const groups: { [biosample: string]: Set<string> } = {};

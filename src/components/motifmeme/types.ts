@@ -1,40 +1,5 @@
 import { GenomicRange } from "../types";
 
-export type ReplicatedPeaks = {
-  accession: string;
-};
-
-/**
- * @todo deduplicate this type with components/types
- */
-export type Dataset = {
-  replicated_peaks: ReplicatedPeaks[];
-  biosample: string;
-  lab: {
-    friendly_name: string;
-  };
-  accession: string;
-};
-
-export type DataResponse = {
-  peakDataset: {
-    partitionByBiosample: BiosamplePartition[];
-  };
-};
-
-/**
- * @todo deduplicate this type with components/types
- */
-export type BiosamplePartition = {
-  biosample: {
-    name: string;
-  };
-  counts: {
-    total: number;
-  };
-  datasets: Dataset[];
-};
-
 export type MotifResponse = {
   meme_motifs: {
     atac_data: boolean;

@@ -1,7 +1,7 @@
 import { gql } from "../../types/gql";
 
 export const CELLTYPE_DESCRIPTION_QUERY = gql(`
-  query CellType($name: [String], $assembly: String!) {
+  query CellType2($name: [String], $assembly: String!) {
     celltype(name: $name, assembly: $assembly) {
       ct_image_url
       wiki_desc

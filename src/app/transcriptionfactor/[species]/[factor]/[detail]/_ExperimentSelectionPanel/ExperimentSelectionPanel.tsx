@@ -1,7 +1,6 @@
 'use client'
 
-import { DATASETS_QUERY } from "@/components/motifmeme/queries"
-import { DataResponse, Dataset, ReplicatedPeaks } from "@/components/motifmeme/types"
+import { DATASETS_QUERY, EPIGENETIC_PROFILE_ACCESSIONS } from "./queries"
 import { includeTargetTypes, excludeTargetTypes } from "@/consts"
 import { useQuery } from "@apollo/client"
 import { ArrowBackIosNewSharp, Clear, InfoOutlined, Search } from "@mui/icons-material"
@@ -39,25 +38,33 @@ export type ExperimentSelectionPanelProps<Mode extends ("MotifEnrichment" | "Epi
   /**
    * Fired when component requests to be close
    */
-  onClose?: () => void
+  onClose: () => void
 }
 
+export type Dataset = {
+  replicated_peaks: {
+    accession: string;
+  }[];
+  biosample: string;
+  lab?: {
+    friendly_name?: string;
+  };
+  accession: string;
+};
 
 
 const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticProfiles">(props: ExperimentSelectionPanelProps<Mode>) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [expanded, setExpanded] = useState<string | false>(false);
 
-  const handleChange =
-    (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    }
+  const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
+    setExpanded(newExpanded ? panel : false);
+  }
   
   /**
-   * Hardcoding the meme motif experiments for now, undo
+   * Fetch all experiments
    */
-
-  const { data, loading, error } = useQuery<DataResponse>(DATASETS_QUERY, {
+  const { data: experimentsData, loading: experimentsLoading, error: experimentsError } = useQuery(DATASETS_QUERY, {
     variables: {
       processed_assembly: props.assembly,
       target: props.factor,
@@ -67,18 +74,44 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
     },
   })
 
+  /**
+   * Accessions valid for epigenetic profiles page
+   */
+  const { data: histoneAccessions, loading: histoneAccessionsLoading, error: histoneAccessionsError } = useQuery(EPIGENETIC_PROFILE_ACCESSIONS, {
+    variables: {
+      assembly: props.assembly,
+      target: props.factor,
+    },
+    skip: props.mode !== "EpigeneticProfiles"
+  })
+
   const filteredBiosamples = useMemo(() => {
-    return [...(data?.peakDataset.partitionByBiosample || [])]
-    .sort((a, b) => { return a.biosample.name.localeCompare(b.biosample.name) })
-    .filter((biosample) =>
-      biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase()) //biosample name
-      || biosample.datasets.some(dataset => //search within experiments for that biosample
-        dataset.accession.toLowerCase().includes(searchTerm.toLowerCase()) //experiment ID
-        || dataset.lab.friendly_name.toLowerCase().includes(searchTerm.toLowerCase()) //lab name
-        || dataset.replicated_peaks[0].accession.toLowerCase().includes(searchTerm.toLowerCase()) //file ID
-      )
+    if (!experimentsData || (props.mode === "EpigeneticProfiles" && !histoneAccessions)) return []
+
+    return (
+      [...experimentsData.peakDataset.partitionByBiosample]
+        .map((biosample) => {
+          if (props.mode === "EpigeneticProfiles"){
+            return {
+              ...biosample, 
+              datasets: biosample.datasets.filter((dataset) => 
+                histoneAccessions?.histone_aggregate_values?.some(x => x.peaks_dataset_accession === dataset.accession)
+              )
+            }
+          } else return biosample
+        })
+        .sort((a, b) => { return a.biosample.name.localeCompare(b.biosample.name) }) //sort tissues alphabetically
+        .filter((biosample) =>
+          biosample.datasets.length > 0 //filter out empty accordions. Only should happen on Epigenetic Profiles
+          && biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase()) //biosample name
+          || biosample.datasets.some(dataset => //search within experiments for that biosample
+            dataset.accession.toLowerCase().includes(searchTerm.toLowerCase()) //experiment ID
+            || dataset.lab?.friendly_name?.toLowerCase().includes(searchTerm.toLowerCase()) //lab name
+            || dataset.replicated_peaks[0].accession.toLowerCase().includes(searchTerm.toLowerCase()) //file ID
+          )
+        )
     )
-  }, [data, searchTerm]) 
+  }, [experimentsData, searchTerm, histoneAccessions]) 
 
   //Find Accordion to open on initial load
   useEffect(() => {
@@ -142,7 +175,7 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
                 {biosample.biosample.name}
               </Typography>
               <Chip
-                label={`${biosample.counts.total} exp`}
+                label={`${biosample.datasets.length} exp`}
                 style={{
                   backgroundColor: "#8169BF",
                   color: "white",
@@ -153,14 +186,13 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
             </AccordionSummary>
             <AccordionDetails sx={{borderTop: '0'}}>
               <List disablePadding>
-                {biosample.datasets.map((dataset: Dataset, idx: number) =>
+                {biosample.datasets.map((dataset, idx: number) =>
                   dataset.replicated_peaks.map(
-                    (peak: ReplicatedPeaks, peakIdx: number) => {
+                    (peak, peakIdx: number) => {
                       const isSelected =
                         typeof props.selectedExperiment === 'object' ?
                           props.selectedExperiment?.accession === dataset.accession
                           : props.selectedExperiment === dataset.accession
-
                       return (
                         <ListItem
                           key={`${idx}-${peakIdx}`}
@@ -170,12 +202,12 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
                             fontWeight: isSelected ? "bold" : "normal",
                             borderRadius: (theme) => theme.shape.borderRadius,
                           }}
-                          onClick={() => props.onChange && props.onChange(dataset)}
+                          onClick={() => props.onChange && props.onChange(dataset as Dataset)}
                         >
                           <ListItemText primaryTypographyProps={{display: "flex", alignItems: "center", gap: 0.5}}>
                             {dataset.accession}
                             {props.tooltipContents &&
-                              <Tooltip title={props.tooltipContents(dataset)}>
+                              <Tooltip title={props.tooltipContents(dataset as Dataset)}>
                                 <InfoOutlined fontSize="small" />
                               </Tooltip>
                             }

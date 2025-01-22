@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const CELLTYPE_DESCRIPTION_QUERY = gql`
-    query CellType($name: [String], $assembly: String!) {
+    query CellType1($name: [String], $assembly: String!) {
         celltype(name: $name, assembly: $assembly) {
             ct_image_url
             wiki_desc
@@ -11,7 +11,7 @@ export const CELLTYPE_DESCRIPTION_QUERY = gql`
 `;
 
 export const DATASET_QUERY = gql`
-    query Datasets(
+    query Datasets2(
         $biosample: String
         $processed_assembly: String
         $replicated_peaks: Boolean

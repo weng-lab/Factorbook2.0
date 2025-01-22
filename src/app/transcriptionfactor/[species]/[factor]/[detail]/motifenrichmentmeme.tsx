@@ -3,14 +3,7 @@ import { useQuery } from "@apollo/client";
 import {
   CircularProgress,
   Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  List,
-  ListItem,
-  ListItemText,
   Chip,
-  TextField,
   Box,
   Paper,
   Button,
@@ -30,21 +23,15 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
-  Stack,
-  InputAdornment,
+  Stack
 } from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
-import { DATASETS_QUERY, MOTIF_QUERY } from "@/components/motifmeme/queries";
-import {
-  DataResponse,
-  Dataset,
-  MotifResponse,
-  ReplicatedPeaks,
-} from "@/components/motifmeme/types";
+import { MOTIF_QUERY } from "./queries";
+import { MotifResponse } from "@/components/motifmeme/types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 import { DNALogo, DNAAlphabet } from "logojs-react";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
@@ -54,9 +41,11 @@ import CentralityPlot from "../../../../../components/motifmeme/centralityplot";
 import ATACPlot from "../../../../../components/motifmeme/atacplot";
 import ConservationPlot from "../../../../../components/motifmeme/conservationplot";
 import { TOMTOMMessage } from "../../../../../components/motifmeme/tomtommessage";
-import { ArrowBackIos, ArrowBackIosNew, ArrowForwardIos, Clear, HelpRounded } from "@mui/icons-material";
+import { ArrowForwardIos, HelpRounded } from "@mui/icons-material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import ExperimentSelectionPanel from "./_ExperimentSelectionPanel/ExperimentSelectionPanel";
+import ExperimentSelectionPanel, { Dataset } from "./_ExperimentSelectionPanel/ExperimentSelectionPanel";
+import { DATASETS_QUERY } from "./_ExperimentSelectionPanel/queries";
+
 
 // Helper function to convert numbers to scientific notation
 export function toScientificNotationElement(
@@ -146,9 +135,10 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "lg"));
 
   /**
-   * @todo is all the requested data actually needed? Aren't we only using partitionByBiosample
+   * @todo this is only used to set first selected sample. This should be done in a server component once the proper
+   * folder structure is setup similar to epigenetic profile
    */
-  const { data, loading, error } = useQuery<DataResponse>(DATASETS_QUERY, {
+  const { data, loading, error } = useQuery(DATASETS_QUERY, {
     variables: {
       processed_assembly: assembly,
       target: factor,
@@ -163,12 +153,12 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
         const partitionedBiosamples = [...d.peakDataset.partitionByBiosample]
         const foundDataset = urlExp && partitionedBiosamples.flatMap((b) => b.datasets).find((d) => d.accession === urlExp)
         if (foundDataset) {
-          handleSetSelectedDataset(foundDataset)
+          handleSetSelectedDataset(foundDataset as Dataset)
         } else {
           const firstExperiment = partitionedBiosamples
             .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name)) //sort alphabetically
             [0].datasets[0] //extract first experiment
-          handleSetSelectedDataset(firstExperiment)
+          handleSetSelectedDataset(firstExperiment as Dataset)
         }
       }
     }
@@ -198,8 +188,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     }
   }, [motifData]);
 
-  const handleExperimentClick = (peakDataset: Dataset) => {
-    handleSetSelectedDataset(peakDataset)
+  const handleExperimentChange = (experiment: Dataset) => {
+    handleSetSelectedDataset(experiment)
   };
 
   const handleReverseComplement = (index: number) => {
@@ -291,19 +281,21 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
           </IconButton>
         </Tooltip>
       )}
+      {/**
+       * @todo this can probably live in ExperimentSelectionPanel? Duplicated currently
+       */}
       {/* Left-side Drawer */}
       <Box
         sx={{
           width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
           transition: "width 0.3s ease", // Smooth transition when opening/closing
           position: "relative",
-
         }}
       >
         {drawerOpen && (
           <ExperimentSelectionPanel
             mode={"MotifEnrichment"}
-            onChange={handleExperimentClick}
+            onChange={handleExperimentChange}
             assembly={species === "human" ? "GRCh38" : "mm10"}
             selectedExperiment={selectedExperimentID}
             factor={factor}
@@ -312,7 +304,7 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
               return (
                 <Stack>
                   <Typography variant="subtitle1">
-                    Lab: {experiment.lab.friendly_name}
+                    Lab: {experiment.lab?.friendly_name}
                   </Typography>
                 </Stack>
               )

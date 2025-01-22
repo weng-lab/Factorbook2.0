@@ -109,7 +109,7 @@ export const PEAK_QUERY = gql`
 `;
 
 export const MOTIF_QUERY = gql`
-    query occurrences($range: [GenomicRegionInput!]) {
+    query occurrences1($range: [GenomicRegionInput!]) {
         meme_occurrences(genomic_region: $range) {
             motif {
                 pwm
@@ -138,7 +138,7 @@ export const MOTIF_QUERY = gql`
 `;
 
 export const RDHS_OCCU_QUERY = gql`
-    query occurrences($range: [GenomicRegionInput!]!) {
+    query occurrences2($range: [GenomicRegionInput!]!) {
         rdhs_motif_occurrences(genomic_region: $range) {
             motif {
                 pwm

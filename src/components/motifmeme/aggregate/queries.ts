@@ -1,5 +1,11 @@
 import gql from 'graphql-tag';
 
+/**
+ * @todo this is used in 3 places, need to remove from all and delete this once fixed:
+ * 1) [factor]/epigeneticprofile/page.tsx rerouter component. Also need to switch to new processing function to find first item
+ * 2) Layout for side panel. Shouldn't be necessary once new componenet used
+ * 3) [factor]/epigeneticprofile/[accession]/page.tsx only used for matching experiment to biosample. Info should be available in HISTONE_METADATA_QUERY
+ */
 export const AGGREGATE_METADATA_QUERY = gql`
     query dnasemetadataquery($assembly: String!, $target: String!) {
         histone_aggregate_values(assembly: $assembly) {

@@ -1,37 +1,19 @@
 'use client'
 
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
-  TextField,
   CircularProgress,
   IconButton,
   Stack,
   Tooltip,
 } from "@mui/material";
 import {
-  Close as CloseIcon,
-  ArrowForwardIos as ArrowForwardIosIcon,
+  ArrowForwardIos,
 } from "@mui/icons-material";
 import { useRouter, useParams } from "next/navigation";
-import { useQuery } from "@apollo/client";
-import { AGGREGATE_METADATA_QUERY } from "@/components/motifmeme/aggregate/queries";
-import { debounce } from "lodash";
-import { histoneBiosamplePartitions } from "../../../../../components/motifmeme/aggregate/utils";
-import ExperimentSelectionPanel from "../[detail]/_ExperimentSelectionPanel/ExperimentSelectionPanel";
-
-interface Dataset {
-  biosample: string;
-  accession: string;
-}
+import ExperimentSelectionPanel, { Dataset } from "../[detail]/_ExperimentSelectionPanel/ExperimentSelectionPanel";
 
 /**
  * Provides left side panel for biosample selection
@@ -49,86 +31,14 @@ export default function EpigeneticProfileLayout({
   }>()
 
   const { species, factor, detail, accession } = params
-
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState(true);
-  const [expandedBiosample, setExpandedBiosample] = useState<string | false>(
-    false
-  );
   const router = useRouter(); // For pushing URL updates
-  const { accession: currentAccession } = useParams(); // Current accession from URL
 
-  const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";
-
-  const { data, loading, error } = useQuery(AGGREGATE_METADATA_QUERY, {
-    variables: { assembly, target: factor },
-  });
-
-  const datasets: Dataset[] = data
-    ? histoneBiosamplePartitions(data)
-      .list.map((ds: any) =>
-        ds.datasets.map((d: any) => ({
-          biosample: ds.biosample.name,
-          accession: d.accession,
-        }))
-      )
-      .flat()
-    : [];
-
-  const groupedDatasets = useMemo(() => {
-    return datasets.reduce(
-      (acc: { [key: string]: Dataset[] }, dataset: Dataset) => {
-        const { biosample } = dataset;
-        if (!acc[biosample]) acc[biosample] = [];
-        acc[biosample].push(dataset);
-        return acc;
-      },
-      {}
-    );
-  }, [datasets]);
-
-  const sortedBiosamples = useMemo(() => {
-    return Object.keys(groupedDatasets).sort((a, b) => a.localeCompare(b));
-  }, [groupedDatasets]);
-
-  const filteredDatasets = useMemo(() => {
-    return sortedBiosamples.filter((biosample) =>
-      biosample.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
-    );
-  }, [sortedBiosamples, debouncedSearchTerm]);
-
-  useEffect(() => {
-    if (currentAccession && expandedBiosample === false) {
-      const foundBiosample = Object.keys(groupedDatasets).find((biosample) =>
-        groupedDatasets[biosample].some(
-          (dataset) => dataset.accession === currentAccession
-        )
-      );
-      if (foundBiosample) {
-        setExpandedBiosample(foundBiosample);
-      }
-    }
-  }, [currentAccession, groupedDatasets, expandedBiosample]);
-
-  const handleAccessionClick = (accession: string) => {
+  const handleExperimentChange = (experiment: Dataset) => {
     router.push(
-      `/transcriptionfactor/${species}/${factor}/epigeneticprofile/${accession}`
+      `/transcriptionfactor/${species}/${factor}/epigeneticprofile/${experiment.accession}`
     );
   };
-
-  const debounceSearch = useCallback(
-    debounce((value) => setDebouncedSearchTerm(value), 300),
-    []
-  );
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    debounceSearch(e.target.value);
-  };
-
-  if (loading) return <CircularProgress />;
-  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <Box
@@ -162,121 +72,34 @@ export default function EpigeneticProfileLayout({
         </Tooltip>
       )}
 
+      {/* Left-side Drawer */}
       <Box
         sx={{
-          width: drawerOpen ? { xs: "100%", md: "25%" } : 0,
-          height: "calc(100vh - 128px)",
-          marginBottom: "64px",
-          overflowY: "auto",
-          transition: "width 0.3s ease",
-          paddingRight: drawerOpen ? { md: "10px" } : 0,
-          backgroundColor: "white",
-          borderRight: drawerOpen ? "1px solid #ccc" : "none",
+          width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
+          transition: "width 0.3s ease", // Smooth transition when opening/closing
+          position: "relative",
         }}
       >
         {drawerOpen && (
-          <Box>
-            <Box
-              sx={{
-                position: "sticky",
-                top: 0,
-                zIndex: 1100,
-                backgroundColor: "white",
-                padding: "16px",
-                borderBottom: "1px solid #ccc",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <TextField
-                label="Search Biosamples"
-                variant="outlined"
-                fullWidth
-                value={searchTerm}
-                onChange={handleSearchChange}
-                InputProps={{
-                  sx: {
-                    backgroundColor: "rgba(129, 105, 191, 0.09)",
-                    borderRadius: "50px",
-                    paddingLeft: "20px",
-                  },
-                }}
-              />
-              <IconButton
-                onClick={() => setDrawerOpen(false)}
-                sx={{
-                  marginLeft: 2,
-                  backgroundColor: "#8169BF",
-                  color: "white",
-                }}
-              >
-                <CloseIcon />
-              </IconButton>
-            </Box>
-
-            <List>
-              {filteredDatasets.map((biosample, index) => (
-                <Accordion
-                  key={index}
-                  expanded={expandedBiosample === biosample}
-                  onChange={() =>
-                    setExpandedBiosample(
-                      expandedBiosample === biosample ? false : biosample
-                    )
-                  }
-                >
-                  <AccordionSummary>
-                    <Typography variant="h6">{biosample}</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {groupedDatasets[biosample].map(
-                      (dataset: Dataset, idx: number) => (
-                        <ListItem
-                          button
-                          key={idx}
-                          onClick={() =>
-                            handleAccessionClick(dataset.accession)
-                          }
-                          selected={dataset.accession === currentAccession}
-                          sx={{
-                            padding: "10px 20px",
-                            backgroundColor:
-                              dataset.accession === currentAccession
-                                ? "#e0e0e0"
-                                : "white",
-                            "&:hover": {
-                              backgroundColor: "#f0f0f0",
-                            },
-                            borderBottom: "1px solid #ddd",
-                          }}
-                        >
-                          <ListItemText primary={dataset.accession} />
-                        </ListItem>
-                      )
-                    )}
-                    <Divider />
-                  </AccordionDetails>
-                </Accordion>
-              ))}
-            </List>
-          </Box>
+          <ExperimentSelectionPanel
+            mode={"MotifEnrichment"}
+            onChange={handleExperimentChange}
+            assembly={species === "human" ? "GRCh38" : "mm10"}
+            selectedExperiment={accession}
+            factor={factor}
+            onClose={() => setDrawerOpen(false)}
+            tooltipContents={(experiment) => {
+              return (
+                <Stack>
+                  <Typography variant="subtitle1">
+                    Lab: {experiment.lab?.friendly_name}
+                  </Typography>
+                </Stack>
+              )
+            }}
+          />
         )}
       </Box>
-      <ExperimentSelectionPanel
-        mode={"EpigeneticProfiles"}
-        assembly={species === "human" ? "GRCh38" : "mm10"}
-        selectedExperiment={accession}
-        factor={factor}
-        tooltipContents={(experiment) => {
-          return (
-            <Stack>
-              <Typography variant="subtitle1">
-                Lab: {experiment.lab.friendly_name}
-              </Typography>
-            </Stack>
-          )
-        }}
-      />
       <Box
         sx={{
           flexGrow: 1,
