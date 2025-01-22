@@ -43,7 +43,7 @@ export default function EpigeneticProfileLayout({
   return (
     <Box
       sx={{
-        height: "calc(100vh)",
+        height: "100vh",
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
       }}
@@ -82,7 +82,7 @@ export default function EpigeneticProfileLayout({
       >
         {drawerOpen && (
           <ExperimentSelectionPanel
-            mode={"MotifEnrichment"}
+            mode={"EpigeneticProfiles"}
             onChange={handleExperimentChange}
             assembly={species === "human" ? "GRCh38" : "mm10"}
             selectedExperiment={accession}

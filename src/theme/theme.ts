@@ -36,7 +36,7 @@ const theme = createTheme({
     },
   },
   shape: {
-    borderRadius: 6
+    borderRadius: 24
   },
   components: {
     // Customize Table styles

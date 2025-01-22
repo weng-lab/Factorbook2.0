@@ -26,6 +26,7 @@ import {
 import { useParams } from "next/navigation";
 import { useTheme, useMediaQuery } from "@mui/material";
 import JSZip from "jszip";
+import { Download } from "@mui/icons-material";
 
 // Utility to download ZIP
 const downloadZip = async (zip: JSZip, filename: string) => {
@@ -153,6 +154,8 @@ const EpigeneticProfilePage = () => {
       <Typography variant="h5" align="center" gutterBottom>
         <strong>{`Histone modification profiles around ${factorStr} peaks in ${biosample}`}</strong>
       </Typography>
+      <div>
+
       {MARK_TYPE_ORDER.filter((type) => typeGroups.get(type)).map(
         (type, typeIdx) => {
           if (!svgRefs.has(type)) {
@@ -162,7 +165,7 @@ const EpigeneticProfilePage = () => {
           const refMap = svgRefs.get(type);
 
           return (
-            <Accordion key={type}>
+            <Accordion key={type} defaultExpanded={typeIdx === 0}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography>{type}</Typography>
               </AccordionSummary>
@@ -194,23 +197,14 @@ const EpigeneticProfilePage = () => {
                   ))}
                 </Box>
                 {/* Add Export Button for Individual Accordion */}
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  marginTop="20px"
-                >
+                <Box display="flex" justifyContent="center" marginTop="20px">
                   <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleExportAccordionAsZip(type)}
-                    style={{
-                      backgroundColor: "#9E67F2",
-                      color: "white",
-                      padding: "10px 30px",
-                      borderRadius: "30px",
-                    }}
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleExportAccordionAsZip(type)}
+                  endIcon={<Download />}
                   >
-                    Export {type} plots as ZIP
+                  Export {type} plots as ZIP
                   </Button>
                 </Box>
               </AccordionDetails>
@@ -218,17 +212,13 @@ const EpigeneticProfilePage = () => {
           );
         }
       )}
+      </div>
       <Box display="flex" justifyContent="center" marginTop="20px">
         <Button
           variant="contained"
           color="primary"
           onClick={handleExportAllAsZip}
-          style={{
-            backgroundColor: "#9E67F2",
-            color: "white",
-            padding: "10px 30px",
-            borderRadius: "30px",
-          }}
+          endIcon={<Download />}
         >
           Export all plots as ZIP
         </Button>
