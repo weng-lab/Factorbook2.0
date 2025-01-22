@@ -4,8 +4,12 @@ export type ReplicatedPeaks = {
   accession: string;
 };
 
+/**
+ * @todo deduplicate this type with components/types
+ */
 export type Dataset = {
   replicated_peaks: ReplicatedPeaks[];
+  biosample: string;
   lab: {
     friendly_name: string;
   };
@@ -18,6 +22,9 @@ export type DataResponse = {
   };
 };
 
+/**
+ * @todo deduplicate this type with components/types
+ */
 export type BiosamplePartition = {
   biosample: {
     name: string;

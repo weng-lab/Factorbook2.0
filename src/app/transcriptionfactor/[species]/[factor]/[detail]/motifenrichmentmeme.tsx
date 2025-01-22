@@ -56,6 +56,7 @@ import ConservationPlot from "../../../../../components/motifmeme/conservationpl
 import { TOMTOMMessage } from "../../../../../components/motifmeme/tomtommessage";
 import { ArrowBackIos, ArrowBackIosNew, ArrowForwardIos, Clear, HelpRounded } from "@mui/icons-material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import ExperimentSelectionPanel from "./_ExperimentSelectionPanel/ExperimentSelectionPanel";
 
 // Helper function to convert numbers to scientific notation
 export function toScientificNotationElement(
@@ -108,9 +109,12 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const pathname = usePathname()
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState<string>("");
+
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const selectedPeakID = useMemo(() => selectedDataset && selectedDataset.replicated_peaks[0].accession, [selectedDataset]);
   const selectedExperimentID = useMemo(() => selectedDataset && selectedDataset.accession, [selectedDataset]);
+  const selectedBiosample = useMemo(() => { return selectedDataset?.biosample }, [selectedDataset])
+
   const [reverseComplements, setReverseComplements] = useState<boolean[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [exportMotif, setExportMotif] = useState<boolean>(true);
@@ -141,6 +145,9 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "lg"));
 
+  /**
+   * @todo is all the requested data actually needed? Aren't we only using partitionByBiosample
+   */
   const { data, loading, error } = useQuery<DataResponse>(DATASETS_QUERY, {
     variables: {
       processed_assembly: assembly,
@@ -176,20 +183,8 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     skip: !selectedPeakID,
   });
 
-  const sortedBiosamples = [
-    ...(data?.peakDataset.partitionByBiosample || []),
-  ].sort((a, b) => {
-    return a.biosample.name.localeCompare(b.biosample.name);
-  });
 
-  const filteredBiosamples = sortedBiosamples.filter((biosample) =>
-    biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase()) //biosample name
-    || biosample.datasets.some(dataset => //search within experiments for that biosample
-      dataset.accession.toLowerCase().includes(searchTerm.toLowerCase()) //experiment ID
-      || dataset.lab.friendly_name.toLowerCase().includes(searchTerm.toLowerCase()) //lab name
-      || dataset.replicated_peaks[0].accession.toLowerCase().includes(searchTerm.toLowerCase()) //file ID
-    )
-  );
+
 
   /**
    * @todo the better way to do this would be to have each motif tile have it's own state, versus tracking the state of each
@@ -260,160 +255,69 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
     ? motifData.target_motifs.filter(tm=>tm.motifid===motif.id).slice().sort((a, b) => a.e_value - b.e_value)[0]
     : undefined, // Change `null` to `undefined`
   }));
-  
-  const selectedBiosample = useMemo(() => {
-    return sortedBiosamples.find(x => x.datasets.some(y => y.accession === selectedExperimentID))?.biosample.name
-  }, [sortedBiosamples, selectedDataset, selectedExperimentID])
-  
+
   if (loading || !selectedPeakID) return <CircularProgress />;
   if (error) return <p>Error: {error.message}</p>;
+
+
   return (
     <Box
       sx={{
         height: "100vh",
         display: "flex",
-        padding: "5px",
         flexDirection: { xs: "column", md: "row" },
       }}
     >
+      {/**
+       * @todo this can probably live in ExperimentSelectionPanel? Duplicated currently
+       */}
+      {/* Right-facing arrow for expanding */}
       {!drawerOpen && (
-        <IconButton
-          onClick={() => setDrawerOpen(true)}
-          sx={{
-            position: "fixed",
-            top: "50%", // Center the button vertically
-            left: 0,
-            transform: "translateY(-50%)", // Adjust centering
-            zIndex: 2000,
-            backgroundColor: "white",
-            color: "#8169BF",
-            borderRadius: "50%",
-            boxShadow: 3,
-          }}
-        >
-          <ArrowForwardIos /> {/* Right-facing arrow for expanding */}
-        </IconButton>
+        <Tooltip title="Open Experiment Selection" placement="right">
+          <IconButton
+            onClick={() => setDrawerOpen(true)}
+            sx={{
+              position: "fixed",
+              top: "50%", // Center the button vertically
+              left: 5,
+              transform: "translateY(-50%)", // Adjust centering
+              zIndex: 2000,
+              backgroundColor: "white",
+              boxShadow: 3,
+            }}
+            color="primary"
+          >
+            <ArrowForwardIos />
+          </IconButton>
+        </Tooltip>
       )}
-
       {/* Left-side Drawer */}
       <Box
         sx={{
           width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
-          height: "100vh", // Respect header/footer
-          position: "relative", // Not fixed, part of the layout
-          overflowY: "auto", // Allow scrolling of drawer content
           transition: "width 0.3s ease", // Smooth transition when opening/closing
-          paddingRight: drawerOpen ? { md: "10px" } : 0,
-          backgroundColor: "white",
-          borderRight: drawerOpen ? "1px solid #ccc" : "none", // Show border when open
+          position: "relative",
+
         }}
       >
         {drawerOpen && (
-          <Box>
-            <Box
-              sx={{
-                position: "sticky",
-                top: 0,
-                zIndex: 1100,
-                backgroundColor: "white",
-                padding: "16px",
-                borderBottom: "1px solid #ccc", // Divider between search bar and list
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <TextField
-                label="Search Biosamples"
-                variant="outlined"
-                fullWidth
-                size="small"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                InputProps={{
-                  endAdornment: searchTerm && 
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => setSearchTerm('')}>
-                        <Clear />
-                      </IconButton>
-                    </InputAdornment>,
-                  sx: {
-                    backgroundColor: "rgba(129, 105, 191, 0.09)",
-                    borderRadius: "50px",
-                    paddingLeft: "20px",
-                  },
-                }}
-                sx={{
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": { borderColor: "#8169BF" },
-                  },
-                }}
-              />
-              <IconButton
-                onClick={() => setDrawerOpen(false)}
-                sx={{
-                  marginLeft: 2,
-                  backgroundColor: "#8169BF",
-                  color: "white",
-                }}
-              >
-                <ArrowBackIosNew />
-              </IconButton>
-            </Box>
-
-            <List sx={{ padding: "16px" }}>
-              {filteredBiosamples.map((biosample, index) => (
-                <Accordion
-                  key={Math.random()}
-                  defaultExpanded={!!(selectedDataset && biosample.datasets.some(x => x.accession === selectedExperimentID))}
-                >
-                  <AccordionSummary
-                    aria-controls={`panel${index}-content`}
-                    id={`panel${index}-header`}
-                  >
-                    <Typography style={{ fontWeight: "bold" }}>
-                      {biosample.biosample.name}
-                    </Typography>
-                    <Chip
-                      label={`${biosample.counts.total} exp`}
-                      style={{
-                        backgroundColor: "#8169BF",
-                        color: "white",
-                        marginLeft: "auto",
-                      }}
-                    />
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <List disablePadding>
-                      {biosample.datasets.map((dataset: Dataset, idx: number) =>
-                        dataset.replicated_peaks.map(
-                          (peak: ReplicatedPeaks, peakIdx: number) => (
-                            <ListItem
-                              key={`${idx}-${peakIdx}`}
-                              style={{
-                                paddingLeft: "30px",
-                                cursor: "pointer",
-                                backgroundColor:
-                                  selectedDataset?.accession === dataset.accession
-                                    ? "#D3D3D3"
-                                    : "transparent",
-                                fontWeight:
-                                  selectedDataset?.accession === dataset.accession
-                                    ? "bold"
-                                    : "normal",
-                              }}
-                              onClick={() => handleExperimentClick(dataset)}
-                            >
-                              <ListItemText primary={`${dataset.accession}`} />
-                            </ListItem>
-                          )
-                        )
-                      )}
-                    </List>
-                  </AccordionDetails>
-                </Accordion>
-              ))}
-            </List>
-          </Box>
+          <ExperimentSelectionPanel
+            mode={"MotifEnrichment"}
+            onChange={handleExperimentClick}
+            assembly={species === "human" ? "GRCh38" : "mm10"}
+            selectedExperiment={selectedExperimentID}
+            factor={factor}
+            onClose={() => setDrawerOpen(false)}
+            tooltipContents={(experiment) => {
+              return (
+                <Stack>
+                  <Typography variant="subtitle1">
+                    Lab: {experiment.lab.friendly_name}
+                  </Typography>
+                </Stack>
+              )
+            }}
+          />
         )}
       </Box>
 
@@ -422,8 +326,6 @@ const MotifEnrichmentMEME: React.FC<MotifEnrichmentMEMEProps> = ({
         sx={{
           flexGrow: 1,
           height: '100vh',
-          marginLeft: drawerOpen ? { xs: 0 } : 0, // Adjust margin when drawer is open
-          transition: "margin-left 0.3s ease", // Smooth transition for content shift
         }}
         divider={<Divider />}
       >

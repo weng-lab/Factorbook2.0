@@ -14,6 +14,8 @@ import {
   TextField,
   CircularProgress,
   IconButton,
+  Stack,
+  Tooltip,
 } from "@mui/material";
 import {
   Close as CloseIcon,
@@ -24,6 +26,7 @@ import { useQuery } from "@apollo/client";
 import { AGGREGATE_METADATA_QUERY } from "@/components/motifmeme/aggregate/queries";
 import { debounce } from "lodash";
 import { histoneBiosamplePartitions } from "../../../../../components/motifmeme/aggregate/utils";
+import ExperimentSelectionPanel from "../[detail]/_ExperimentSelectionPanel/ExperimentSelectionPanel";
 
 interface Dataset {
   biosample: string;
@@ -46,6 +49,7 @@ export default function EpigeneticProfileLayout({
   }>()
 
   const { species, factor, detail, accession } = params
+
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [drawerOpen, setDrawerOpen] = useState(true);
@@ -129,30 +133,33 @@ export default function EpigeneticProfileLayout({
   return (
     <Box
       sx={{
-        height: "calc(100vh - 64px)",
+        height: "calc(100vh)",
         display: "flex",
-        padding: "5px",
         flexDirection: { xs: "column", md: "row" },
-        overflow: "hidden",
       }}
     >
+      {/**
+       * @todo this can probably live in ExperimentSelectionPanel? Duplicated currently
+       */}
+      {/* Right-facing arrow for expanding */}
       {!drawerOpen && (
-        <IconButton
-          onClick={() => setDrawerOpen(true)}
-          sx={{
-            position: "fixed",
-            top: "50%",
-            left: 0,
-            transform: "translateY(-50%)",
-            zIndex: 2000,
-            backgroundColor: "white",
-            color: "#8169BF",
-            borderRadius: "50%",
-            boxShadow: 3,
-          }}
-        >
-          <ArrowForwardIosIcon />
-        </IconButton>
+        <Tooltip title="Open Experiment Selection" placement="right">
+          <IconButton
+            onClick={() => setDrawerOpen(true)}
+            sx={{
+              position: "fixed",
+              top: "50%", // Center the button vertically
+              left: 5,
+              transform: "translateY(-50%)", // Adjust centering
+              zIndex: 2000,
+              backgroundColor: "white",
+              boxShadow: 3,
+            }}
+            color="primary"
+          >
+            <ArrowForwardIos />
+          </IconButton>
+        </Tooltip>
       )}
 
       <Box
@@ -255,7 +262,21 @@ export default function EpigeneticProfileLayout({
           </Box>
         )}
       </Box>
-
+      <ExperimentSelectionPanel
+        mode={"EpigeneticProfiles"}
+        assembly={species === "human" ? "GRCh38" : "mm10"}
+        selectedExperiment={accession}
+        factor={factor}
+        tooltipContents={(experiment) => {
+          return (
+            <Stack>
+              <Typography variant="subtitle1">
+                Lab: {experiment.lab.friendly_name}
+              </Typography>
+            </Stack>
+          )
+        }}
+      />
       <Box
         sx={{
           flexGrow: 1,

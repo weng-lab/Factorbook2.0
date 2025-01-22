@@ -35,6 +35,9 @@ const theme = createTheme({
       main: '#000000',  // Black used in text (like headers)
     },
   },
+  shape: {
+    borderRadius: 6
+  },
   components: {
     // Customize Table styles
     MuiTable: {
