@@ -264,6 +264,7 @@ const Homepage = () => {
                 padding: "9px 9px 8px 10px",
                 marginLeft: "-10px",
                 width: "550px",
+                zIndex: 1
               }}
             >
               {selectedPortal === "Human Transcription Factors" ||
