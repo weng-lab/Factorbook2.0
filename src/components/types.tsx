@@ -10,6 +10,9 @@ export type Region = {
   chrom_end: number;
 };
 
+/**
+ * @todo deduplicate this type with motifmeme/types
+ */
 export type Dataset = {
   lab: {
     friendly_name: string;
@@ -21,6 +24,9 @@ export type Dataset = {
   }[];
 };
 
+/**
+ * @todo deduplicate this type with motifmeme/types
+ */
 export type BiosamplePartitionedDatasetCollection = {
   biosample: {
     name: string;
