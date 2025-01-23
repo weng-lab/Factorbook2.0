@@ -269,7 +269,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
 
   return (
     <Box sx={{ textAlign: "center", marginBottom: 2, padding: "2p"}}>
-      <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center", width: "600px"}}>
+      <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center"}}>
         <Button
           variant="outlined"
           startIcon={<SwapHorizIcon />}
@@ -300,8 +300,8 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         ppm={motifppm}
         alphabet={DNAAlphabet}
         ref={svgRef as MutableRefObject<SVGSVGElement>}
-        width={600}
-        height={400}
+        width={450}
+        height={300}
       />
       
       <Dialog
@@ -417,10 +417,10 @@ const DeepLearnedSelexMotif: React.FC<{
     [data]
   );
 
-  const lineGraphHeight = 400;
-  const lineGraphWidth = 600;
-  const barGraphHeight = 400;
-  const barGraphWidth = 600;
+  const lineGraphHeight = 300;
+  const lineGraphWidth = 450;
+  const barGraphHeight = 300;
+  const barGraphWidth = 450;
   const margin = {top: 20, right: 90, bottom: 70, left: 70 };
 
   const theme = useTheme();
@@ -476,7 +476,8 @@ const DeepLearnedSelexMotif: React.FC<{
     }
   };
 
-  const presentCycles = data.map((d) => d.selex_round);
+
+
 
   return (
     <Box sx={{ padding: "1em" }}>
@@ -509,6 +510,8 @@ const DeepLearnedSelexMotif: React.FC<{
               display: "flex",
               flexDirection: "column",
               alignItems: isMobile ? "flex-start" : "center",
+              marginTop: "30px",
+              marginBottom: "20px"
             }}
           >
              <Button
@@ -527,7 +530,7 @@ const DeepLearnedSelexMotif: React.FC<{
             <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
               
               <Group left={isMobile ? 0 : margin.left} top={margin.top}>
-                s
+                
                 <AxisLeft
                   scale={yScale}
                   label="Formyl peptide receptor"
@@ -575,8 +578,8 @@ const DeepLearnedSelexMotif: React.FC<{
                   />
                 ))}
                 <Text
-                  x={250}
-                  y={370}
+                  x={180}
+                  y={270}
                   fontSize={14}
                   textAnchor="middle"
                   fill="black"
@@ -584,7 +587,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   Tetratricopeptide Repeat
                 </Text>
                 <Text
-                  x={-170}
+                  x={-135}
                   y={-40}
                   fontSize={14}
                   textAnchor="middle"
@@ -595,12 +598,12 @@ const DeepLearnedSelexMotif: React.FC<{
                 </Text>
               </Group>
             </svg>
-            <Box display="flex" alignItems="center">
-            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '40px'}}> 
+            <Box display="flex" alignItems="center" style={{marginBottom: "17px"}}>
+            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '40px', fontSize: "14px"}}> 
             Cycle  {[2, 3, 4].map((cycle) => (
-         <div style={{ marginLeft: "10px", display:'flex',
+         <div style={{ marginLeft: "5px", display:'flex',
           alignItems: 'center',
-          justifyContent: 'left',
+          justifyContent: 'left'
       }}
       ><div
           style={{
@@ -687,19 +690,19 @@ const DeepLearnedSelexMotif: React.FC<{
                 {data.map((d, i) => (
                   <React.Fragment key={i}>
                     <Bar
-                      x={barXScale(d.selex_round)}
+                      x={barXScale(d.selex_round)! +14}
                       y={barYScale(d.fractional_enrichment)}
                       height={
                         barGraphHeight -
                         margin.bottom -
                         barYScale(d.fractional_enrichment)
                       }
-                      width={barXScale.bandwidth()}
+                      width={barXScale.bandwidth() * 0.5}
                       fill={colors[d.selex_round]}
                       
                     />
                     <Text
-                      x={barXScale(d.selex_round)! + barXScale.bandwidth() / 2}
+                      x={barXScale(d.selex_round)! + barXScale.bandwidth()/ 2}
                       y={barYScale(d.fractional_enrichment) - 5}
                       fontSize={12}
                       fill={colors[d.selex_round]}
@@ -710,8 +713,8 @@ const DeepLearnedSelexMotif: React.FC<{
                   </React.Fragment>
                 ))}
                 <Text
-                  x={255}
-                  y={370}
+                  x={180}
+                  y={270}
                   fontSize={14}
                   textAnchor="middle"
                   fill="black"
@@ -719,7 +722,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   Cycle
                 </Text>
                 <Text
-                  x={-170}
+                  x={-135}
                   y={-40}
                   fontSize={14}
                   textAnchor="middle"
@@ -730,9 +733,9 @@ const DeepLearnedSelexMotif: React.FC<{
                 </Text>
               </Group>
             </svg>
-            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',  marginLeft: '40px'}}>
+            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',  marginLeft: '20px', fontSize: "14px"}}>
       Cycle  {[2, 3, 4].map((cycle, index) => (
-         <div style={{ marginLeft: "10px", display:'flex',
+         <div style={{ marginLeft: "5px", display:'flex',
           alignItems: 'center',
           justifyContent: 'left',
           }}
