@@ -39,7 +39,7 @@ export const DATASETS_QUERY = gql(`
 `)
 
 export const EPIGENETIC_PROFILE_ACCESSIONS = gql(`
-    query epigenetic_accessions($assembly: String!, $target: String!) {
+    query epigenetic_accessions($assembly: String!) {
         histone_aggregate_values(assembly: $assembly) {
             peaks_dataset_accession
         }

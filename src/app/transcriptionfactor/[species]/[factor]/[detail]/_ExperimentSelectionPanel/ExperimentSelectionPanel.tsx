@@ -80,7 +80,7 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
   const { data: histoneAccessions, loading: histoneAccessionsLoading, error: histoneAccessionsError } = useQuery(EPIGENETIC_PROFILE_ACCESSIONS, {
     variables: {
       assembly: props.assembly,
-      target: props.factor,
+      // target: props.factor,
     },
     skip: props.mode !== "EpigeneticProfiles"
   })
@@ -90,7 +90,7 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
 
     return (
       [...experimentsData.peakDataset.partitionByBiosample]
-        .map((biosample) => {
+        .map((biosample) => { //filter out invalid accessions if used in Epigenetic Profiles
           if (props.mode === "EpigeneticProfiles"){
             return {
               ...biosample, 
@@ -103,17 +103,17 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
         .sort((a, b) => { return a.biosample.name.localeCompare(b.biosample.name) }) //sort tissues alphabetically
         .filter((biosample) =>
           biosample.datasets.length > 0 //filter out empty accordions. Only should happen on Epigenetic Profiles
-          && biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase()) //biosample name
+          && biosample.biosample.name.toLowerCase().includes(searchTerm.toLowerCase()) //search biosample name
           || biosample.datasets.some(dataset => //search within experiments for that biosample
-            dataset.accession.toLowerCase().includes(searchTerm.toLowerCase()) //experiment ID
-            || dataset.lab?.friendly_name?.toLowerCase().includes(searchTerm.toLowerCase()) //lab name
-            || dataset.replicated_peaks[0].accession.toLowerCase().includes(searchTerm.toLowerCase()) //file ID
+            dataset.accession.toLowerCase().includes(searchTerm.toLowerCase()) //search experiment ID
+            || dataset.lab?.friendly_name?.toLowerCase().includes(searchTerm.toLowerCase()) //search lab name
+            || dataset.replicated_peaks[0].accession.toLowerCase().includes(searchTerm.toLowerCase()) //search file ID
           )
         )
     )
   }, [experimentsData, searchTerm, histoneAccessions]) 
 
-  //Find Accordion to open on initial load
+  //Find Accordion to open on initial load. Currently also resets the open accordion on search change. May want to change in future
   useEffect(() => {
     const expandedIdx = filteredBiosamples.findIndex((x) => {
       return x.datasets.find(y => {
