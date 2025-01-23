@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect, MutableRefObject, useMemo } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import {
   CircularProgress,
@@ -42,12 +42,11 @@ import ATACPlot from "../../../../../../components/motifmeme/atacplot";
 import ConservationPlot from "../../../../../../components/motifmeme/conservationplot";
 import { TOMTOMMessage } from "../../../../../../components/motifmeme/tomtommessage";
 import { HelpRounded } from "@mui/icons-material";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Dataset } from "../../_ExperimentSelectionPanel/ExperimentSelectionPanel";
 import { DATASETS_QUERY } from "../../_ExperimentSelectionPanel/queries";
 
 // Helper function to convert numbers to scientific notation
-export function toScientificNotationElement(
+function toScientificNotationElement(
   num: number,
   variant:
     | "body1"
