@@ -30,7 +30,7 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
-import { MOTIF_QUERY } from "./queries";
+import { MOTIF_QUERY } from "../queries";
 import { MotifResponse } from "@/components/motifmeme/types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 import { DNALogo, DNAAlphabet } from "logojs-react";
@@ -43,8 +43,8 @@ import ConservationPlot from "../../../../../components/motifmeme/conservationpl
 import { TOMTOMMessage } from "../../../../../components/motifmeme/tomtommessage";
 import { ArrowForwardIos, HelpRounded } from "@mui/icons-material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import ExperimentSelectionPanel, { Dataset } from "./_ExperimentSelectionPanel/ExperimentSelectionPanel";
-import { DATASETS_QUERY } from "./_ExperimentSelectionPanel/queries";
+import ExperimentSelectionPanel, { Dataset } from "../_ExperimentSelectionPanel/ExperimentSelectionPanel";
+import { DATASETS_QUERY } from "../_ExperimentSelectionPanel/queries";
 
 
 // Helper function to convert numbers to scientific notation

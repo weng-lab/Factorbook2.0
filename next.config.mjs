@@ -4,8 +4,8 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: '/transcriptionfactor/:species/:factor',
-        destination: '/transcriptionfactor/:species/:factor/function',
+        source: '/tf/:species/:factor',
+        destination: '/tf/:species/:factor/function',
         permanent: true,
       },
     ]

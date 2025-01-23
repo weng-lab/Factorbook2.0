@@ -61,7 +61,7 @@ const EpigeneticProfilePage = () => {
   );
 
   /**
-   * @todo this shouldn't be necessary. ONLY used for matching the accession to a biosample. Fetch biosample as part of HISTONE_METADATA_QUERY
+   * @todo this shouldn't be necessary. ONLY used for matching the accession to a biosample. Fetch biosample as part of HISTONE_METADATA_QUERY and remove from queries.ts
    */
   const { data: metadataData, loading: metadataLoading } = useQuery(
     AGGREGATE_METADATA_QUERY,

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useCallback } from 'react';
-import { MOTIFS_QUERY } from './queries';
-import { MotifQueryDataOccurrence, MotifQueryData } from './types';
+import { MOTIFS_QUERY } from '../queries';
+import { MotifQueryDataOccurrence, MotifQueryData } from '../types';
 
 import { ApiContext } from "@/apicontext";
 type Range = { chromosome: string; start: number; end: number };

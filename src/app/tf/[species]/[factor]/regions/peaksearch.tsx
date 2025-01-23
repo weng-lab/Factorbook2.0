@@ -27,8 +27,8 @@ import {
   PeakQueryResponse,
   PeakResult,
   TomtomMatchQueryData,
-} from "./types";
-import { PEAK_QUERY, TOMTOM_MATCH_QUERY } from "./queries";
+} from "../types";
+import { PEAK_QUERY, TOMTOM_MATCH_QUERY } from "../queries";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 const style = {
   position: "absolute",

@@ -16,7 +16,7 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
   factor,
   hasSelexData,
 }) => {
-  // usePathname().split('/') -> ["", "transcriptionfactor", "[species]", "[factor]", "[detail]", "[accession"]
+  // usePathname().split('/') -> ["", "tf", "[species]", "[factor]", "[detail]", "[accession used in /motif & /deeplearnedselexmotif)]"]
   const detail = usePathname().split('/')[4]
   const accession = usePathname().split('/')[5]
 
@@ -39,7 +39,7 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
           label="Function"
           value="function"
           component={Link}
-          href={`/transcriptionfactor/${species}/${factor}/function`}
+          href={`/tf/${species}/${factor}/function`}
           sx={{
             color: detail === "function" ? "#8169BF" : "inherit",
             textTransform: "capitalize",
@@ -47,21 +47,21 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
         />
         <Tab
           label="Expression (RNA-seq)"
-          value="expression"
+          value="geneexpression"
           component={Link}
-          href={`/transcriptionfactor/${species}/${factor}/expression`}
+          href={`/tf/${species}/${factor}/geneexpression`}
           sx={{
-            color: detail === "expression" ? "#8169BF" : "inherit",
+            color: detail === "geneexpression" ? "#8169BF" : "inherit",
             textTransform: "capitalize",
           }}
         />
         <Tab
           label="Motif Enrichment (MEME, ChIP-seq)"
-          value="motifenrichmentmeme"
+          value="motif"
           component={Link}
-          href={`/transcriptionfactor/${species}/${factor}/motifenrichmentmeme`}
+          href={`/tf/${species}/${factor}/motif`}
           sx={{
-            color: detail === "motifenrichmentmeme" ? "#8169BF" : "inherit",
+            color: detail === "motif" ? "#8169BF" : "inherit",
             textTransform: "capitalize",
           }}
         />
@@ -69,32 +69,32 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
         {hasSelexData && (
           <Tab
             label="Motif Enrichment (SELEX)"
-            value="motifenrichmentselex"
+            value="deeplearnedselexmotif"
             component={Link}
-            href={`/transcriptionfactor/${species}/${factor}/motifenrichmentselex`}
+            href={`/tf/${species}/${factor}/deeplearnedselexmotif`}
             sx={{
-              color: detail === "motifenrichmentselex" ? "#8169BF" : "inherit",
+              color: detail === "deeplearnedselexmotif" ? "#8169BF" : "inherit",
               textTransform: "capitalize",
             }}
           />
         )}
         <Tab
           label="Epigenetic Profile"
-          value="epigeneticprofile"
+          value="histone"
           component={Link}
-          href={`/transcriptionfactor/${species}/${factor}/epigeneticprofile/${isCurrentTab("epigeneticprofile") ? accession : ""}`}
+          href={`/tf/${species}/${factor}/histone/${isCurrentTab("histone") ? accession : ""}`}
           sx={{
-            color: detail === "epigeneticprofile" ? "#8169BF" : "inherit",
+            color: detail === "histone" ? "#8169BF" : "inherit",
             textTransform: "capitalize",
           }}
         />
         <Tab
           label={`Search ${factor} peaks by region`}
-          value="peaksearch"
+          value="regions"
           component={Link}
-          href={`/transcriptionfactor/${species}/${factor}/peaksearch`}
+          href={`/tf/${species}/${factor}/regions`}
           sx={{
-            color: detail === "search" ? "#8169BF" : "inherit",
+            color: detail === "regions" ? "#8169BF" : "inherit",
             textTransform: "capitalize",
           }}
         />

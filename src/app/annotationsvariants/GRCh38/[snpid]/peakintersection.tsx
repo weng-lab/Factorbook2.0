@@ -38,7 +38,7 @@ function f(coordinates: GenomicRange): {
 
 // Modified to ensure lowercase URLs
 const tfRoute = (species?: string, factor?: string, details?: string): string =>
-  `/transcriptionfactor${species ? `/${species.toLowerCase()}` : ""}${
+  `/tf${species ? `/${species.toLowerCase()}` : ""}${
     species && factor ? `/${factor.toLowerCase()}` : ""
   }${species && factor && details ? `/${details.toLowerCase()}` : ""}/function`;
 

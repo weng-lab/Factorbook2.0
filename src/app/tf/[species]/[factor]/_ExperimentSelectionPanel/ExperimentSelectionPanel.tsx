@@ -8,9 +8,9 @@ import { Box, TextField, InputAdornment, IconButton, Chip, List, ListItem, ListI
 import { useEffect, useMemo, useState } from "react"
 import { Accordion, AccordionDetails, AccordionSummary } from "./StyledAccordion"
 
-type ExperimentInfo<Mode> = Mode extends ("MotifEnrichment" | "EpigeneticProfiles") ? Dataset : Dataset
+type ExperimentInfo<Mode> = Mode extends ("MotifEnrichment" | "EpigeneticProfile") ? Dataset : Dataset
 
-export type ExperimentSelectionPanelProps<Mode extends ("MotifEnrichment" | "EpigeneticProfiles")> = {
+export type ExperimentSelectionPanelProps<Mode extends ("MotifEnrichment" | "EpigeneticProfile")> = {
   /**
    * toggles the experiments to be fetched and displayed depending on tab
    */
@@ -53,7 +53,7 @@ export type Dataset = {
 };
 
 
-const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticProfiles">(props: ExperimentSelectionPanelProps<Mode>) => {
+const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticProfile">(props: ExperimentSelectionPanelProps<Mode>) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [expanded, setExpanded] = useState<string | false>(false);
 
@@ -82,16 +82,16 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
       assembly: props.assembly,
       // target: props.factor,
     },
-    skip: props.mode !== "EpigeneticProfiles"
+    skip: props.mode !== "EpigeneticProfile"
   })
 
   const filteredBiosamples = useMemo(() => {
-    if (!experimentsData || (props.mode === "EpigeneticProfiles" && !histoneAccessions)) return []
+    if (!experimentsData || (props.mode === "EpigeneticProfile" && !histoneAccessions)) return []
 
     return (
       [...experimentsData.peakDataset.partitionByBiosample]
         .map((biosample) => { //filter out invalid accessions if used in Epigenetic Profiles
-          if (props.mode === "EpigeneticProfiles"){
+          if (props.mode === "EpigeneticProfile"){
             return {
               ...biosample, 
               datasets: biosample.datasets.filter((dataset) => 

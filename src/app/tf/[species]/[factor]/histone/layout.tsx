@@ -13,7 +13,7 @@ import {
   ArrowForwardIos,
 } from "@mui/icons-material";
 import { useRouter, useParams } from "next/navigation";
-import ExperimentSelectionPanel, { Dataset } from "../[detail]/_ExperimentSelectionPanel/ExperimentSelectionPanel";
+import ExperimentSelectionPanel, { Dataset } from "../_ExperimentSelectionPanel/ExperimentSelectionPanel";
 
 /**
  * Provides left side panel for biosample selection
@@ -36,7 +36,7 @@ export default function EpigeneticProfileLayout({
 
   const handleExperimentChange = (experiment: Dataset) => {
     router.push(
-      `/transcriptionfactor/${species}/${factor}/epigeneticprofile/${experiment.accession}`
+      `/tf/${species}/${factor}/histone/${experiment.accession}`
     );
   };
 
@@ -82,7 +82,7 @@ export default function EpigeneticProfileLayout({
       >
         {drawerOpen && (
           <ExperimentSelectionPanel
-            mode={"EpigeneticProfiles"}
+            mode={"EpigeneticProfile"}
             onChange={handleExperimentChange}
             assembly={species === "human" ? "GRCh38" : "mm10"}
             selectedExperiment={accession}

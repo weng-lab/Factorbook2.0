@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { query } from "../../../../../../lib/client";
-import { DATASETS_QUERY, EPIGENETIC_PROFILE_ACCESSIONS } from "../[detail]/_ExperimentSelectionPanel/queries";
+import { DATASETS_QUERY, EPIGENETIC_PROFILE_ACCESSIONS } from "../_ExperimentSelectionPanel/queries";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 
 async function getExperiments(processed_assembly: "GRCh38" | "mm10", target: string) {
@@ -26,7 +26,7 @@ async function getValidExps(assembly: "GRCh38" | "mm10") {
 }
 
 /**
- * This file is here to redirect requests to /transcriptionfactor/[species]/[factor]/epigeneticprofile
+ * This file is here to redirect requests to /tf/[species]/[factor]/histone
  * by adding first experiment to url
  */
 export default async function Page({
@@ -71,7 +71,7 @@ export default async function Page({
   }
 
   if (firstExperiment) {
-    redirect(`/transcriptionfactor/${species}/${factor}/epigeneticprofile/${firstExperiment}`);
+    redirect(`/tf/${species}/${factor}/histone/${firstExperiment}`);
   } else {
     return <p>No experiments found</p>;
   }

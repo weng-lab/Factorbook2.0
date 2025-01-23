@@ -18,10 +18,10 @@ import Link from "next/link";
 import { ApiContext } from "@/apicontext";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import FactorTabs from "./factortabs";
-import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./[detail]/types";
-import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./[detail]/queries";
+import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
+import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./queries";
 import { ChevronRight, NavigateNext } from "@mui/icons-material";
 
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
@@ -48,6 +48,8 @@ export default function FactorDetailsLayout({
   const apiContext = useContext(ApiContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const router = useRouter()
 
   // Normalize factor name for URL
   /**
@@ -138,7 +140,7 @@ export default function FactorDetailsLayout({
         {/* Breadcrumb */}
         <Breadcrumbs separator={<NavigateNext fontSize="small" />} id="breadcrumbs">
           <MuiLink underline="hover" color={'inherit'} component={Link} href="/">Home</MuiLink>
-          <MuiLink underline="hover" color={'inherit'} component={Link} href={`/transcriptionfactor/${species}`}>Transcription Factor</MuiLink>
+          <MuiLink underline="hover" color={'inherit'} component={Link} href={`/tf/${species}`}>Transcription Factor</MuiLink>
           <Typography color={"text.primary"}>{factorForUrl}</Typography>
         </Breadcrumbs>
 
