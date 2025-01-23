@@ -80,7 +80,6 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
   const { data: histoneAccessions, loading: histoneAccessionsLoading, error: histoneAccessionsError } = useQuery(EPIGENETIC_PROFILE_ACCESSIONS, {
     variables: {
       assembly: props.assembly,
-      // target: props.factor,
     },
     skip: props.mode !== "EpigeneticProfile"
   })

@@ -43,6 +43,9 @@ const downloadZip = async (zip: JSZip, filename: string) => {
 const svgRefs = new Map<string, Map<number, SVGSVGElement>>();
 
 const EpigeneticProfilePage = () => {
+  /**
+   * @todo why is this using useParams instead of taking params exposed as props?
+   */
   const { species, factor, accession } = useParams();
 
   const speciesStr = Array.isArray(species) ? species[0] : species;
@@ -61,7 +64,7 @@ const EpigeneticProfilePage = () => {
   );
 
   /**
-   * @todo this shouldn't be necessary. ONLY used for matching the accession to a biosample. Fetch biosample as part of HISTONE_METADATA_QUERY and remove from queries.ts
+   * @todo this shouldn't be necessary. ONLY used for matching the accession to a biosample. Fetch biosample as part of HISTONE_METADATA_QUERY and remove from 
    */
   const { data: metadataData, loading: metadataLoading } = useQuery(
     AGGREGATE_METADATA_QUERY,
