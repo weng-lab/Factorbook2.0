@@ -16,6 +16,7 @@ import ExperimentSelectionPanel, { Dataset } from "../_ExperimentSelectionPanel/
 
 /**
  * Provides left side panel for biosample selection
+ * @todo this layout is basically identical to histone/layout, deduplicate
  */
 export default function MotifEnrichmentLayout({
   children,
@@ -42,7 +43,7 @@ export default function MotifEnrichmentLayout({
   return (
     <Box
       sx={{
-        height: "100vh",
+        height: {xs: 'auto', md: "100vh"},
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
       }}
@@ -72,11 +73,13 @@ export default function MotifEnrichmentLayout({
       )}
 
       {/* Left-side Drawer */}
+      {/** @todo this looks terrible on mobile, fix */}
       <Box
         sx={{
           width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
           transition: "width 0.3s ease", // Smooth transition when opening/closing
           position: "relative",
+          height: drawerOpen ? {xs: '300px', md: 'auto'} : 'auto'
         }}
       >
         {drawerOpen && (
@@ -103,7 +106,7 @@ export default function MotifEnrichmentLayout({
         sx={{
           flexGrow: 1,
           marginLeft: { xs: 0, md: "25px" },
-          padding: "16px",
+          padding: 2,
           overflowY: "auto",
         }}
       >
