@@ -59,7 +59,7 @@ const MotifSearchbar: React.FC = () => {
           onKeyDown={(event: any) => {
             if (event.key === "Enter" && val !== " " && val !== "" && validSearch) {
               event.preventDefault();
-              window.open(`/motifscatalog/human/${val}`, "_self");
+              window.open(`/motif/human/${val}`, "_self");
             }
           }}
           sx={{
@@ -85,7 +85,7 @@ const MotifSearchbar: React.FC = () => {
           color="primary"
           disabled={!validSearch && val !== ""}
           onClick={() => {
-            window.open(`/motifscatalog/human/${val}`, "_self")
+            window.open(`/motif/human/${val}`, "_self")
 
           }}
           sx={{

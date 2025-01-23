@@ -87,7 +87,7 @@ const MemeSearchPage = () => {
             const sanitizedMotifName = motifName.replace(/\s+/g, "");
 
             // This is the actual redirection URL used for fetching or loading the motif
-            const redirectUrl = `/motifscatalog/human/meme-search/fileupload/${sanitizedMotifName}`;
+            const redirectUrl = `/motif/human/meme-search/fileupload/${sanitizedMotifName}`;
 
             // Redirect to the motif URL based on the sanitized file name
             window.location.href = redirectUrl;
@@ -148,7 +148,7 @@ const MemeSearchPage = () => {
                     }}
                     onClick={() => {
                         if (val) {
-                            window.open(`/motifscatalog/human/meme-search/${val}`, "_self");
+                            window.open(`/motif/human/meme-search/${val}`, "_self");
                         }
                     }}
                 >

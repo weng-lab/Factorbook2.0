@@ -2,7 +2,7 @@
 
 import RegexSearchResults from "@/components/motifsearch/regexsearchresults";
 import { Box, Typography, Grid, Breadcrumbs, Button, Divider, useTheme, useMediaQuery, Link } from "@mui/material";
-import { useParams } from "react-router";
+import { useParams } from "next/navigation";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 
@@ -43,7 +43,7 @@ const MotifDetails = () => {
                         <Link
                             color="inherit"
                             underline="hover"
-                            onClick={() => window.open(`/motifscatalog`, "_self")}
+                            onClick={() => window.open(`/motif/human/meme-search`, "_self")}
                         >
                             Motif Catalog
                         </Link>
@@ -53,7 +53,7 @@ const MotifDetails = () => {
                 <Grid item>
                     <Button
                         onClick={() => {
-                            window.open(`/motifscatalog`, "_self");
+                            window.open(`/motif`, "_self");
                         }}
                         variant="contained"
                         color="secondary"
