@@ -93,7 +93,7 @@ const Footer: React.FC = () => (
           links={[
             { text: "TFs in Humans", href: "/tf/human" },
             { text: "TFs in Mouse", href: "/tf/mouse" },
-            { text: "Motif Catalog", href: "/motifscatalog" },
+            { text: "Motif Catalog", href: "/motif/human/meme-search" },
             { text: "Annotations", href: "/annotationsvariants" },
           ]}
         />
