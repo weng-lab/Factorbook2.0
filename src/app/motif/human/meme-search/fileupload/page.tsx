@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Box, Breadcrumbs, Button, Divider, Grid, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useParams } from "next/navigation";
 import RegexSearchResults from "@/components/motifsearch/regexsearchresults";
-import { Motif } from "../../types";
+import { Motif } from "../types";
 import MotifDrawer from "@/components/motifsearch/motiffileuploaddrawer";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
@@ -13,8 +13,8 @@ const FileUploadMotifDetails = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // For mobile devices
     
-    const { filename } = useParams<{ filename: string }>();
     const [uniqueMotifs, setUniqueMotifs] = useState<Motif[]>([]);
+    const [filename, setFileName] = useState<string>("");
     const [selectedMotif, setSelectedMotif] = useState<Motif | null>(null);
 
     useEffect(() => {
@@ -22,6 +22,7 @@ const FileUploadMotifDetails = () => {
         const fileData = sessionStorage.getItem("uploadedFile");
         if (fileData) {
             const parsedData = JSON.parse(fileData) as { name: string; motifs: Motif[] };
+            setFileName(parsedData.name)
 
             // Deduplicate motifs by name
             const seenNames = new Set<string>();

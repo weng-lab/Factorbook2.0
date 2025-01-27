@@ -83,7 +83,6 @@ const MemeSearchPage = () => {
         if (selectedFile) {
             const fileReader = new FileReader();
             fileReader.onload = () => {
-                const fileContent = fileReader.result; // File content as a string (e.g., text)
                 const fileName = selectedFile.name.replace(".meme", "").replace(/\s+/g, "");
 
                 const test = memeTxtToMotifs(fileReader.result);
@@ -95,7 +94,7 @@ const MemeSearchPage = () => {
                 );
 
                 // Redirect to the new URL
-                window.location.href = `/motif/human/meme-search/fileupload/${fileName}`;
+                window.location.href = `/motif/human/meme-search/fileupload`;
             };
 
             fileReader.readAsText(selectedFile); // Read the file as text
