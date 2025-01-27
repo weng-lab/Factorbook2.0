@@ -30,6 +30,7 @@ import {
 } from "../types";
 import { PEAK_QUERY, TOMTOM_MATCH_QUERY } from "../queries";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -82,6 +83,30 @@ export type GenomicRange = {
   start?: number;
   end?: number;
 };
+
+const parseBedFile = async (file: File | null): Promise<GenomicRange[]> => {
+  const reader = new FileReader();
+  const ret: GenomicRange[] = await new Promise((resolve, reject) => {
+    reader.onload = () => {
+      const lines = reader.result;
+      if (typeof lines === "string") {
+        resolve(lines.split("\n").map((line: string) => line.split("\t")).map((a: string[]): GenomicRange => ({
+          chromosome: a[0], // chr
+          start: parseInt(a[1]), // start
+          end: parseInt(a[2]), // end
+        })));
+      }
+    }
+    reader.onerror = () => {
+      reject(reader.error);
+      console.log("Error reading file");
+    }
+    if (file) {
+      reader.readAsText(file);
+    }
+  });
+  return ret;
+}
 
 const PEAKS_COLUMNS = (): DataTableColumn<PeakResult>[] => {
   const cols: DataTableColumn<PeakResult>[] = [
@@ -497,6 +522,7 @@ const PeakSearch: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [value, setValue] = useState("");
   const [regions, setRegions] = useState<GenomicRange[]>([]);
+  const [isFileUpload, setFileUpload] = useState<boolean>(false)
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -519,10 +545,11 @@ const PeakSearch: React.FC = () => {
     setSelectedFile(file);
   };
 
-  const handleFileUpload = () => {
+  const handleFileUpload = async () => {
     if (selectedFile) {
-      // TODO [Akshay] Implement file upload logic here
-      console.log("Uploading file:", selectedFile);
+      const parsed = await parseBedFile(selectedFile);
+      setRegions(parsed);
+      setFileUpload(true);
     }
   };
 
@@ -571,11 +598,18 @@ const PeakSearch: React.FC = () => {
         <>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item>
-              <Typography variant="h4">
-                {peaksData && peaksData.peaksrange.data
-                  ? `Showing ${factor} ChIP-seq peaks in ${value}`
-                  : `Searching ENCODE ChIP-seq peaks for ${factor}`}
-              </Typography>
+              { isFileUpload ? 
+                <Typography variant="h4">
+                  {peaksData && peaksData.peaksrange.data
+                    ? `Showing ${factor} ChIP-seq peaks`
+                    : `Searching ENCODE ChIP-seq peaks for ${factor}`}
+                </Typography> :
+                <Typography variant="h4">
+                  {peaksData && peaksData.peaksrange.data
+                    ? `Showing ${factor} ChIP-seq peaks in ${value}`
+                    : `Searching ENCODE ChIP-seq peaks for ${factor}`}
+                </Typography>
+              }
             </Grid>
             <Grid item>
               <Button
@@ -658,6 +692,7 @@ const PeakSearch: React.FC = () => {
                 setRegions([
                   { chromosome: chromosome, start: start!!, end: end!! },
                 ]);
+                setFileUpload(false)
               }}
             >
               Search
@@ -667,6 +702,79 @@ const PeakSearch: React.FC = () => {
               example: chr1:100,000,000-100,101,000
             </Typography>
           </StyledSearchBox>
+          {(
+            <>
+              <Typography variant="h6" gutterBottom>
+                You could also upload .bed files here
+              </Typography>
+              <UploadBox
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                isDragging={isDragging}
+              >
+                <DriveFolderUploadIcon fontSize="large" />
+                <Typography variant="body1" sx={{ mt: 2 }}>
+                  Drag and drop .bed files here
+                  <br />
+                  or
+                </Typography>
+                <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                  <input
+                    type="file"
+                    id="file-input"
+                    hidden
+                    onChange={handleFileChange}
+                  />
+                  <label htmlFor="file-input">
+                    <Button
+                      variant="contained"
+                      component="span"
+                      sx={{
+                        display: "block",
+                        padding: "8px 16px",
+                        backgroundColor: "#8169BF",
+                        borderRadius: "24px",
+                        textTransform: "none",
+                        fontWeight: "medium",
+                        color: "#FFFFFF",
+                        "&:focus, &:hover, &:active": {
+                          backgroundColor: "#8169BF",
+                        },
+                      }}
+                    >
+                      Browse Computer
+                    </Button>
+                  </label>
+                </Box>
+                {selectedFile && (
+                  <Typography variant="body2" sx={{ mt: 2 }}>
+                    Selected file: {selectedFile.name}
+                  </Typography>
+                )}
+              </UploadBox>
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    margin: "auto",
+                    backgroundColor: "#8169BF",
+                    borderRadius: "24px",
+                    textTransform: "none",
+                    fontWeight: "medium",
+                    color: "#FFFFFF",
+                    "&:focus, &:hover, &:active": {
+                      backgroundColor: "#8169BF",
+                    },
+                  }}
+                  onClick={() => handleFileUpload()}
+                  disabled={!selectedFile}
+                >
+                  Upload File
+                </Button>
+              </Box>
+            </>
+          )}
         </Box>
       )}
       {peaksData && peaksData.peaksrange.data && (
@@ -681,79 +789,6 @@ const PeakSearch: React.FC = () => {
             tableTitle={`${peaksData.peaksrange.data.length} ${factor} peaks matched your input:`}
           />
         </Box>
-      )}
-      {0 > 1 && (
-        <>
-          <Typography variant="h6" gutterBottom>
-            You could also upload MEME files here
-          </Typography>
-          <UploadBox
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            isDragging={isDragging}
-          >
-            <DriveFolderUploadIcon fontSize="large" />
-            <Typography variant="body1" sx={{ mt: 2 }}>
-              Drag and drop MEME files here
-              <br />
-              or
-            </Typography>
-            <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-              <input
-                type="file"
-                id="file-input"
-                hidden
-                onChange={handleFileChange}
-              />
-              <label htmlFor="file-input">
-                <Button
-                  variant="contained"
-                  component="span"
-                  sx={{
-                    display: "block",
-                    padding: "8px 16px",
-                    backgroundColor: "#8169BF",
-                    borderRadius: "24px",
-                    textTransform: "none",
-                    fontWeight: "medium",
-                    color: "#FFFFFF",
-                    "&:focus, &:hover, &:active": {
-                      backgroundColor: "#8169BF",
-                    },
-                  }}
-                >
-                  Browse Computer
-                </Button>
-              </label>
-            </Box>
-            {selectedFile && (
-              <Typography variant="body2" sx={{ mt: 2 }}>
-                Selected file: {selectedFile.name}
-              </Typography>
-            )}
-          </UploadBox>
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-            <Button
-              variant="contained"
-              sx={{
-                margin: "auto",
-                backgroundColor: "#8169BF",
-                borderRadius: "24px",
-                textTransform: "none",
-                fontWeight: "medium",
-                color: "#FFFFFF",
-                "&:focus, &:hover, &:active": {
-                  backgroundColor: "#8169BF",
-                },
-              }}
-              onClick={handleFileUpload}
-              disabled={!selectedFile}
-            >
-              Upload File
-            </Button>
-          </Box>
-        </>
       )}
     </Box>
   );
