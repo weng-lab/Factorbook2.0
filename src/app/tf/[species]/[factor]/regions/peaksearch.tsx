@@ -692,6 +692,7 @@ const PeakSearch: React.FC = () => {
                 setRegions([
                   { chromosome: chromosome, start: start!!, end: end!! },
                 ]);
+                setFileUpload(false)
               }}
             >
               Search
