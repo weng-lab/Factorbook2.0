@@ -4,6 +4,7 @@ import { Box, Typography, Button, useTheme, useMediaQuery, styled, TextField } f
 import ErrorMessage from "../../upload/errormessage";
 import React from "react";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
+import { memeTxtToMotifs } from "./helpers";
 
 // Styling for text fields and upload areas
 const UploadBox = styled(Box)(({ theme }) => ({
@@ -80,19 +81,27 @@ const MemeSearchPage = () => {
 
     const handleFileUpload = () => {
         if (selectedFile) {
-            const fileName = selectedFile.name;
-            const motifName = fileName.replace(".meme", "");
+            const fileReader = new FileReader();
+            fileReader.onload = () => {
+                const fileContent = fileReader.result; // File content as a string (e.g., text)
+                const fileName = selectedFile.name.replace(".meme", "").replace(/\s+/g, "");
 
-            // Replace spaces in the motif name
-            const sanitizedMotifName = motifName.replace(/\s+/g, "");
+                const test = memeTxtToMotifs(fileReader.result);
 
-            // This is the actual redirection URL used for fetching or loading the motif
-            const redirectUrl = `/motif/human/meme-search/fileupload/${sanitizedMotifName}`;
+                // Store the file content and metadata in sessionStorage
+                sessionStorage.setItem(
+                    "uploadedFile",
+                    JSON.stringify({ name: fileName, motifs: test })
+                );
 
-            // Redirect to the motif URL based on the sanitized file name
-            window.location.href = redirectUrl;
+                // Redirect to the new URL
+                window.location.href = `/motif/human/meme-search/fileupload/${fileName}`;
+            };
+
+            fileReader.readAsText(selectedFile); // Read the file as text
         }
     };
+    
 
     // Drag & Drop Handlers
     const handleDragOver = (event: React.DragEvent) => {

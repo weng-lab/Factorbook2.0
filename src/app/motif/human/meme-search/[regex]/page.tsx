@@ -53,7 +53,7 @@ const MotifDetails = () => {
                 <Grid item>
                     <Button
                         onClick={() => {
-                            window.open(`/motif`, "_self");
+                            window.open("/motif/human/meme-search", "_self");
                         }}
                         variant="contained"
                         color="secondary"
