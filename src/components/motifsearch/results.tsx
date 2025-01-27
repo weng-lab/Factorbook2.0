@@ -13,7 +13,7 @@ DNAAlphabet[0].color = "#228b22";
 DNAAlphabet[3].color = "red";
 
 export const DATASET_QUERY = gql`
-  query Experiment($peak_accession: String) {
+  query Experiment1($peak_accession: String) {
     peakDataset(replicated_peak_accession: $peak_accession) {
       datasets {
         accession
@@ -134,7 +134,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
               style={{ color: "#8169BF" }}
               rel="noopener noreferrer"
               target="_blank"
-              href={`/transcriptionfactor/human/${data.peakDataset.datasets[0].target}/function`}
+              href={`/tf/human/${data.peakDataset.datasets[0].target}/function`}
             >
               <strong>{data.peakDataset.datasets[0].target}</strong>
             </Link>{" "}

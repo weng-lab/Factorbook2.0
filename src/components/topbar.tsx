@@ -36,11 +36,11 @@ const navItems = [
     subItems: [
       {
         text: "Transcription Factors in Humans",
-        href: "/transcriptionfactor/human",
+        href: "/tf/human",
       },
       {
         text: "Transcription Factors in Mouse",
-        href: "/transcriptionfactor/mouse",
+        href: "/tf/mouse",
       },
       { text: "Motif Catalog", href: "/motif/human/meme-search" },
       { text: "Annotations", href: "/annotationsvariants" },

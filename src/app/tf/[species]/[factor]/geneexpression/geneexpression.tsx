@@ -18,14 +18,14 @@ import {
 import { formatFactorName } from "@/utilities/misc";
 import { useGeneExpressionData } from "@/components/tf/geneexpression/hooks";
 import { GeneExpressionPageProps } from "@/components/tf/geneexpression/types";
-import { ViolinPlotMousedOverState } from "./violin/types";
+import { ViolinPlotMousedOverState } from "./_violin/types";
 import {
   downloadTSV,
   downloadSVG,
   spacedColors,
   tissueColors,
 } from "@/components/tf/geneexpression/utils";
-import ViolinPlot from "./violin/violin";
+import ViolinPlot from "./_violin/violin";
 import StyledButton from "@/components/styledbutton";
 import { groupBy } from "queryz";
 

@@ -59,9 +59,6 @@ export type DatasetQueryResponse = {
 export type FunctionPageProps = {
   factor: string;
   assembly: string;
-  datasets: DatasetQueryResponse;
-  datasetsLoading: boolean;
-  label?: string;
 };
 
 export type TFInfoQueryResponse = {

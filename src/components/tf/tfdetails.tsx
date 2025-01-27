@@ -198,7 +198,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
 
         return row.image ? (
           <LinkWrapper
-            url={`/transcriptionfactor/${species}/${nameForUrl}/function`}
+            url={`/tf/${species}/${nameForUrl}/function`}
           >
             <img
               src={row.image}
@@ -230,7 +230,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
 
         return (
           <LinkWrapper
-            url={`/transcriptionfactor/${species}/${nameForUrl}/function`}
+            url={`/tf/${species}/${nameForUrl}/function`}
           >
             <Box style={{ minWidth: "150px" }}>
               <Typography variant="h6" style={{ fontWeight: "bold" }}>
@@ -275,7 +275,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
 
         return (
           <LinkWrapper
-            url={`/transcriptionfactor/${species}/${nameForUrl}/function`}
+            url={`/tf/${species}/${nameForUrl}/function`}
           >
             <Box
               display="flex"

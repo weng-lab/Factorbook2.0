@@ -43,11 +43,11 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import {
   DEEP_LEARNED_MOTIFS_SELEX_QUERY,
   DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY,
-} from "./queries";
+} from "../queries";
 import {
   DeepLearnedSELEXMotifsQueryResponse,
   DeepLearnedSELEXMotifsMetadataQueryResponse,
-} from "./types";
+} from "../types";
 import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/motifsearch/motifutil";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";

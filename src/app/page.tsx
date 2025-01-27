@@ -50,7 +50,7 @@ const Homepage = () => {
 
   const handleGoClick = () => {
     if (selectedValue) {
-      router.push(`/transcriptionfactor/${selectedValue}`);
+      router.push(`/tf/${selectedValue}`);
     }
   };
 

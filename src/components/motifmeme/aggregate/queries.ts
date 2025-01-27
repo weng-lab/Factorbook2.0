@@ -1,10 +1,13 @@
 import gql from 'graphql-tag';
 
+/**
+ * @todo this is used in 3 places, need to remove from all and delete this once fixed:
+ * 3) [factor]/histone/[accession]/page.tsx only used for matching experiment to biosample. Info should be available in HISTONE_METADATA_QUERY
+ */
 export const AGGREGATE_METADATA_QUERY = gql`
     query dnasemetadataquery($assembly: String!, $target: String!) {
         histone_aggregate_values(assembly: $assembly) {
             peaks_dataset_accession
-            histone_dataset_accession
         }
         peakDataset(processed_assembly: $assembly, target: $target) {
             datasets {
