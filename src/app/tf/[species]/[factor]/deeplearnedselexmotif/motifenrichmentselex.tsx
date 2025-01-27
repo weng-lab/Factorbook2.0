@@ -504,7 +504,7 @@ const DeepLearnedSelexMotif: React.FC<{
             </Box>
           ))}
         </Grid>
-        <Grid md={4.5}>
+        <Grid md={5}>
           <Box
             sx={{
               display: "flex",
@@ -702,7 +702,7 @@ const DeepLearnedSelexMotif: React.FC<{
                       
                     />
                     <Text
-                      x={barXScale(d.selex_round)! + barXScale.bandwidth()/ 2}
+                      x={barXScale(d.selex_round)! + barXScale.bandwidth() / 2}
                       y={barYScale(d.fractional_enrichment) - 5}
                       fontSize={12}
                       fill={colors[d.selex_round]}
