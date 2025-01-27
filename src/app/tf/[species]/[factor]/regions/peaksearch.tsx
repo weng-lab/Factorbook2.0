@@ -522,6 +522,7 @@ const PeakSearch: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [value, setValue] = useState("");
   const [regions, setRegions] = useState<GenomicRange[]>([]);
+  const [isFileUpload, setFileUpload] = useState<boolean>(false)
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -548,6 +549,7 @@ const PeakSearch: React.FC = () => {
     if (selectedFile) {
       const parsed = await parseBedFile(selectedFile);
       setRegions(parsed);
+      setFileUpload(true);
     }
   };
 
@@ -596,11 +598,18 @@ const PeakSearch: React.FC = () => {
         <>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item>
-              <Typography variant="h4">
-                {peaksData && peaksData.peaksrange.data
-                  ? `Showing ${factor} ChIP-seq peaks in ${value}`
-                  : `Searching ENCODE ChIP-seq peaks for ${factor}`}
-              </Typography>
+              { isFileUpload ? 
+                <Typography variant="h4">
+                  {peaksData && peaksData.peaksrange.data
+                    ? `Showing ${factor} ChIP-seq peaks`
+                    : `Searching ENCODE ChIP-seq peaks for ${factor}`}
+                </Typography> :
+                <Typography variant="h4">
+                  {peaksData && peaksData.peaksrange.data
+                    ? `Showing ${factor} ChIP-seq peaks in ${value}`
+                    : `Searching ENCODE ChIP-seq peaks for ${factor}`}
+                </Typography>
+              }
             </Grid>
             <Grid item>
               <Button
