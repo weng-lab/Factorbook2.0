@@ -476,6 +476,7 @@ const DeepLearnedSelexMotif: React.FC<{
   };
 
 
+  const presentCycles = data.map((d) => d.selex_round);
 
 
   return (
@@ -599,7 +600,7 @@ const DeepLearnedSelexMotif: React.FC<{
             </svg>
             <Box display="flex" alignItems="center" style={{marginBottom: "17px"}}>
             <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '40px', fontSize: "14px"}}> 
-            Cycle  {[2, 3, 4].map((cycle) => (
+            Cycle  {presentCycles.map((cycle) => (
          <div style={{ marginLeft: "5px", display:'flex',
           alignItems: 'center',
           justifyContent: 'left'
@@ -689,14 +690,14 @@ const DeepLearnedSelexMotif: React.FC<{
                 {data.map((d, i) => (
                   <React.Fragment key={i}>
                     <Bar
-                      x={barXScale(d.selex_round)! +14}
+                      x={barXScale(d.selex_round)!+12}
                       y={barYScale(d.fractional_enrichment)}
                       height={
                         barGraphHeight -
                         margin.bottom -
                         barYScale(d.fractional_enrichment)
                       }
-                      width={barXScale.bandwidth() * 0.5}
+                      width={20}
                       fill={colors[d.selex_round]}
                       
                     />
