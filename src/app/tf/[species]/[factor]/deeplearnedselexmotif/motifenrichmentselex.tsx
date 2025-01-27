@@ -369,7 +369,6 @@ const DeepLearnedSelexMotif: React.FC<{
   assay: string;
   protein_type: string;
   data: {
-    cycle: any;
     selex_round: number;
     ppm: number[][];
     fractional_enrichment: number;
