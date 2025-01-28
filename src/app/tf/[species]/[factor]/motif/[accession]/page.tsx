@@ -139,7 +139,6 @@ export default function MotifEnrichmentPage({
     onCompleted: (d) => {
       //if there's a url experiment passed, initialize selectedDataset with that, else set to first
       if (!selectedDataset) {
-        console.log("running")
         const urlExp = accession
         const partitionedBiosamples = [...d.peakDataset.partitionByBiosample]
         const foundDataset = urlExp && partitionedBiosamples.flatMap((b) => b.datasets).find((d) => d.accession === urlExp)

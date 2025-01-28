@@ -59,7 +59,7 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
           label="Motif Enrichment (MEME, ChIP-seq)"
           value="motif"
           component={Link}
-          href={`/tf/${species}/${factor}/motif`}
+          href={`/tf/${species}/${factor}/motif/${isCurrentTab("motif") ? accession : ""}`}
           sx={{
             color: detail === "motif" ? "#8169BF" : "inherit",
             textTransform: "capitalize",

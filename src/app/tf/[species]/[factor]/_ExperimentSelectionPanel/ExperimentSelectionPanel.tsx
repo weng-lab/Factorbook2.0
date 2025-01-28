@@ -54,8 +54,10 @@ export type Dataset = {
 
 
 const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticProfile">(props: ExperimentSelectionPanelProps<Mode>) => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [expanded, setExpanded] = useState<string | false>(false);
+  const [searchTerm, setSearchTerm] = useState<string>("")
+  const [expanded, setExpanded] = useState<string | false>('panel0') // default to first accordion
+
+  console.log("rerendering ExperimentSelectionPanel")
 
   const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(newExpanded ? panel : false);
@@ -112,7 +114,8 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
     )
   }, [experimentsData, searchTerm, histoneAccessions]) 
 
-  //Find Accordion to open on initial load. Currently also resets the open accordion on search change. May want to change in future
+  // Find Accordion to open on initial load if it's not the first experiment (default)
+  // Currently also resets the open accordion on search change. May want to change in future
   useEffect(() => {
     const expandedIdx = filteredBiosamples.findIndex((x) => {
       return x.datasets.find(y => {
@@ -123,7 +126,9 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
         }
       })
     })
-    setExpanded(`panel${expandedIdx}`)
+    if (expanded !== `panel${expandedIdx}` && expandedIdx !== -1) {
+      setExpanded(`panel${expandedIdx}`)
+    }
   }, [filteredBiosamples])
 
   return (
