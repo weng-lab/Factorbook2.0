@@ -30,6 +30,7 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import LanguageIcon from '@mui/icons-material/Language';
 import { MOTIF_QUERY } from "../../queries";
 import { MotifResponse } from "@/components/motifmeme/types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
@@ -44,6 +45,7 @@ import { TOMTOMMessage } from "../../../../../../components/motifmeme/tomtommess
 import { HelpRounded } from "@mui/icons-material";
 import { Dataset } from "../../_ExperimentSelectionPanel/ExperimentSelectionPanel";
 import { DATASETS_QUERY } from "../../_ExperimentSelectionPanel/queries";
+import createFullScreenDialog from "./genomicsites";
 
 // Helper function to convert numbers to scientific notation
 function toScientificNotationElement(
@@ -96,17 +98,35 @@ export default function MotifEnrichmentPage({
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const selectedPeakID = useMemo(() => selectedDataset && selectedDataset.replicated_peaks[0].accession, [selectedDataset]);
   const selectedExperimentID = useMemo(() => selectedDataset && selectedDataset.accession, [selectedDataset]);
-  const selectedBiosample = useMemo(() => { return selectedDataset?.biosample }, [selectedDataset])
+  const selectedBiosample = useMemo(() => { return selectedDataset?.biosample }, [selectedDataset]);
 
   const [reverseComplements, setReverseComplements] = useState<boolean[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [exportMotif, setExportMotif] = useState<boolean>(true);
   const [exportLogo, setExportLogo] = useState<boolean>(false);
   const [exportPeakSites, setExportPeakSites] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
   const [showQCStates, setShowQCStates] = useState<{ [key: string]: boolean }>(
     {}
   );
 
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
+
+  // const handleClose = () => {
+  //   setOpen(false);
+  // };
+
+  // const Transition = React.forwardRef(function Transition(
+  //   props: TransitionProps & {
+  //     children: React.ReactElement<unknown>;
+  //   },
+  //   ref: React.Ref<unknown>,
+  // ) {
+  //   return <Slide direction="up" ref={ref} {...props} />;
+  // });
+  
   const handleSetSelectedDataset = (newDataset: Dataset) => {
     setSelectedDataset(newDataset)
   }
@@ -217,6 +237,8 @@ export default function MotifEnrichmentPage({
 
     setIsDialogOpen(false);
   };
+
+  const GenomePopUp = createFullScreenDialog();
 
   // Sort the motifs so that those with either poor peak centrality or enrichment are at the bottom
   const sortedMotifs = [...(motifData?.meme_motifs || [])].sort((a, b) => b.flank_z_score + b.shuffled_z_score - a.flank_z_score - a.shuffled_z_score);
@@ -428,6 +450,11 @@ export default function MotifEnrichmentPage({
                   >
                     Reverse Complement
                   </Button>
+                  <GenomePopUp
+                    species={species}
+                    consensusRegex={motif.consensus_regex}
+                    experimentID={selectedExperimentID}
+                  />
                   <Button
                     variant="outlined"
                     startIcon={<VisibilityIcon />}
