@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { query } from "../../../../../../lib/client";
-import { DATASETS_QUERY } from "../_ExperimentSelectionPanel/queries";
+import { DATASETS_QUERY, EPIGENETIC_PROFILE_ACCESSIONS } from "../_ExperimentSelectionPanel/queries";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 
 /**
@@ -21,6 +21,15 @@ async function getExperiments(processed_assembly: "GRCh38" | "mm10", target: str
   })
 }
 
+async function getValidExps(assembly: "GRCh38" | "mm10") {
+  return await query({
+    query: EPIGENETIC_PROFILE_ACCESSIONS,
+    variables: {
+      assembly: assembly,
+    }
+  })
+}
+
 type Params = {
   species: string;
   factor: string;
@@ -34,10 +43,24 @@ export async function GET(request: Request, context: { params: Params }) {
   let firstExperiment: string | null = null;
 
   try {
-    const allExperiments = await getExperiments(assembly, factor)
+    const allExperimentsData = getExperiments(assembly, factor)
+    const validExperimentsData = getValidExps(assembly)
+
+    const [allExperiments, histoneAccessions] = await Promise.all([allExperimentsData, validExperimentsData]);
 
     firstExperiment = [... allExperiments.data.peakDataset.partitionByBiosample]
       .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name)) //sort alphabetically
+      .map(biosample => {
+        return ({
+          ...biosample,
+          //filter out experiments which are not valid
+          datasets: biosample.datasets.filter(dataset =>
+            histoneAccessions.data.histone_aggregate_values?.some(x =>
+              x.peaks_dataset_accession === dataset.accession)
+          )
+        })
+      })
+      .filter(biosample => biosample.datasets.length > 0) //filter out biosamples with no valid experiments
       [0].datasets[0].accession; //take first experiment
       
   } catch (error) {
@@ -46,7 +69,7 @@ export async function GET(request: Request, context: { params: Params }) {
   }
 
   if (firstExperiment) {
-    redirect(`/tf/${species}/${factor}/motif/${firstExperiment}`);
+    redirect(`/tf/${species}/${factor}/histone/${firstExperiment}`);
   } else {
     return new Response("No experiments found", { status: 404 });
   }
