@@ -2,6 +2,7 @@ import React, { useState, SetStateAction } from "react";
 import Dialog from '@mui/material/Dialog';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
+import ListItem from '@mui/material/ListItem';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import AppBar from '@mui/material/AppBar';
@@ -73,17 +74,26 @@ interface FullScreenDialogProps {
 
 export default function createFullScreenDialog(): React.FC<FullScreenDialogProps> {
   return function FullScreenDialog({ species, consensusRegex, experimentID }) {
-    const [open, setOpen] = React.useState(false);
+    const [sitesOpen, setSitesOpen] = React.useState(false); // for show genome sites button
+    const [popupTabsOpen, setPopupTabsOpen] = React.useState(false); // for popup tabs
     const [isDragging, setIsDragging] = useState<boolean>(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const theme = useTheme();
   
-    const handleClickOpen = () => {
-      setOpen(true);
+    const handleClickOpenSites = () => {
+      setSitesOpen(true);
     };
   
-    const handleClose = () => {
-      setOpen(false);
+    const handleCloseSites = () => {
+      setSitesOpen(false);
+    };
+
+    const handlePopupChange = () => {
+      if (popupTabsOpen) {
+        setPopupTabsOpen(false);
+      } else {
+        setPopupTabsOpen(true);
+      }
     };
 
     const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
@@ -119,14 +129,14 @@ export default function createFullScreenDialog(): React.FC<FullScreenDialogProps
             backgroundColor: "white",
             flex: 1,
           }}
-          onClick={handleClickOpen}
+          onClick={handleClickOpenSites}
           >
           Show Genomic Sites
         </Button>
         <Dialog
           fullScreen
-          open={open}
-          onClose={handleClose}
+          open={sitesOpen}
+          onClose={handleCloseSites}
           TransitionComponent={Transition}
         >
           <AppBar sx={{ position: 'relative' }}>
@@ -134,7 +144,7 @@ export default function createFullScreenDialog(): React.FC<FullScreenDialogProps
               <IconButton
                 edge="start"
                 color="inherit"
-                onClick={handleClose}
+                onClick={handleCloseSites}
                 aria-label="close"
               >
                 <CloseIcon />
@@ -149,21 +159,23 @@ export default function createFullScreenDialog(): React.FC<FullScreenDialogProps
               <ListItemText primary="Genome Browser" secondary="" />
             </ListItemButton>
             <Divider />
-            <ListItemButton>
+            <ListItemButton
+              onClick={handlePopupChange}>
               <ListItemText
                 primary="ChIP-seq Peak Motif Sites"
                 secondary=""
               />
             </ListItemButton>
-            <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
-             <br />
-            <Typography variant="h6" gutterBottom>
-              {`Enter genomic coordinates (${
-                species.toLowerCase() === "human" ? "GRCh38" : "mm10"
-              }):`}
-            </Typography>
-            <StyledSearchBox>
-              <LargeTextField
+            {popupTabsOpen && <ListItem>
+              <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+                <br />
+                <Typography variant="h6" gutterBottom>
+                  {`Enter genomic coordinates (${
+                      species.toLowerCase() === "human" ? "GRCh38" : "mm10"
+                    }):`}
+                </Typography>
+                <StyledSearchBox>
+                    <LargeTextField
                 // onKeyDown={(event) => {
                 //   if (event.key === "Tab" && !value) {
                 //     const defaultGenomicRegion = `chr1:${(100000000).toLocaleString()}-${(100101000).toLocaleString()}`;
@@ -174,102 +186,103 @@ export default function createFullScreenDialog(): React.FC<FullScreenDialogProps
                 // onChange={handleChange}
                 // id="region-input"
                 // value={value}
-              />{" "}
-              <Button
-                variant="contained"
-                sx={{
-                  margin: "auto",
-                  backgroundColor: theme.palette.primary.main,
-                  borderRadius: "24px",
-                  textTransform: "none",
-                  fontWeight: "medium",
-                  color: "#FFFFFF",
-                  "&:focus, &:hover, &:active": {
-                  backgroundColor: theme.palette.primary.main,
-                },
-              }}
-            >
-              Search
-            </Button>
-            <br />
-            <Typography variant="body2" sx={{ marginLeft: "8px" }}>
-              example: chr1:100,000,000-100,101,000
-            </Typography>
-          </StyledSearchBox>
-          {(
-            <>
-              <Typography variant="h6" gutterBottom>
-                You could also upload .bed files here
-              </Typography>
-              <UploadBox
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                isDragging={isDragging}
-              >
-                <DriveFolderUploadIcon fontSize="large" />
-                <Typography variant="body1" sx={{ mt: 2 }}>
-                  Drag and drop .bed files here
-                  <br />
-                  or
-                </Typography>
-                <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                  <input
-                    type="file"
-                    id="file-input"
-                    hidden
-                    onChange={handleFileChange}
-                  />
-                  <label htmlFor="file-input">
-                    <Button
-                      variant="contained"
-                      component="span"
-                      sx={{
-                        display: "block",
-                        padding: "8px 16px",
-                        backgroundColor: "#8169BF",
-                        borderRadius: "24px",
-                        textTransform: "none",
-                        fontWeight: "medium",
-                        color: "#FFFFFF",
-                        "&:focus, &:hover, &:active": {
-                          backgroundColor: "#8169BF",
-                        },
-                      }}
-                    >
-                      Browse Computer
-                    </Button>
-                  </label>
-                </Box>
-                {selectedFile && (
-                  <Typography variant="body2" sx={{ mt: 2 }}>
-                    Selected file: {selectedFile.name}
+                  />{" "}
+                  <Button
+                    variant="contained"
+                    sx={{
+                      margin: "auto",
+                      backgroundColor: theme.palette.primary.main,
+                      borderRadius: "24px",
+                      textTransform: "none",
+                      fontWeight: "medium",
+                      color: "#FFFFFF",
+                      "&:focus, &:hover, &:active": {
+                      backgroundColor: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                    Search
+                  </Button>
+                <br />
+                  <Typography variant="body2" sx={{ marginLeft: "8px" }}>
+                    example: chr1:100,000,000-100,101,000
                   </Typography>
-                )}
-              </UploadBox>
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                <Button
-                  variant="contained"
-                  sx={{
-                    margin: "auto",
-                    backgroundColor: "#8169BF",
-                    borderRadius: "24px",
-                    textTransform: "none",
-                    fontWeight: "medium",
-                    color: "#FFFFFF",
-                    "&:focus, &:hover, &:active": {
-                      backgroundColor: "#8169BF",
-                    },
-                  }}
-                  // onClick={() => handleFileUpload()}
-                  disabled={!selectedFile}
-                >
-                  Upload File
-                </Button>
-              </Box>
-            </>
-          )}
-        </Box>
+                </StyledSearchBox>
+                  {(
+                    <>
+                      <Typography variant="h6" gutterBottom>
+                        You could also upload .bed files here
+                      </Typography>
+                      <UploadBox
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        isDragging={isDragging}
+                      >
+                        <DriveFolderUploadIcon fontSize="large" />
+                        <Typography variant="body1" sx={{ mt: 2 }}>
+                          Drag and drop .bed files here
+                          <br />
+                          or
+                        </Typography>
+                        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                          <input
+                            type="file"
+                            id="file-input"
+                            hidden
+                            onChange={handleFileChange}
+                          />
+                          <label htmlFor="file-input">
+                            <Button
+                              variant="contained"
+                              component="span"
+                              sx={{
+                                display: "block",
+                                padding: "8px 16px",
+                                backgroundColor: "#8169BF",
+                                borderRadius: "24px",
+                                textTransform: "none",
+                                fontWeight: "medium",
+                                color: "#FFFFFF",
+                                "&:focus, &:hover, &:active": {
+                                  backgroundColor: "#8169BF",
+                                },
+                              }}
+                            >
+                              Browse Computer
+                            </Button>
+                          </label>
+                        </Box>
+                        {selectedFile && (
+                          <Typography variant="body2" sx={{ mt: 2 }}>
+                            Selected file: {selectedFile.name}
+                          </Typography>
+                        )}
+                      </UploadBox>
+                      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                        <Button
+                          variant="contained"
+                          sx={{
+                            margin: "auto",
+                            backgroundColor: "#8169BF",
+                            borderRadius: "24px",
+                            textTransform: "none",
+                            fontWeight: "medium",
+                            color: "#FFFFFF",
+                            "&:focus, &:hover, &:active": {
+                              backgroundColor: "#8169BF",
+                            },
+                          }}
+                          // onClick={() => handleFileUpload()}
+                          disabled={!selectedFile}
+                        >
+                          Upload File
+                        </Button>
+                      </Box>
+                    </>
+                  )}
+                </Box>
+              </ListItem>}
         </List>
         </Dialog>
       </React.Fragment>
