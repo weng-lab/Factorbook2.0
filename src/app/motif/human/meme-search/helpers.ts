@@ -1,7 +1,8 @@
+import { ACMAPType, PCMAPType, Result } from "./types";
 
-const parseBackgroundLine = line => {
+const parseBackgroundLine = (line: string): Record<string, number> => {
     const p = line.split(/\s+/g);
-    let result = {};
+    let result: Record<string, number> = {};
     for (let i = 0; i < p.length / 2; ++i) {
         const f = +p[i * 2 + 1];
         if (!isNaN(f)) result[p[i * 2]] = f;
@@ -9,16 +10,17 @@ const parseBackgroundLine = line => {
     return result;
 };
 
-export const parseMemeTxt = text => {
+
+export const parseMemeTxt = (text: string) => {
     let inmotif = false;
-    let results = [],
-        alphabet = [],
-        cppm = [],
-        cmotifname = null;
+    let results: Result[] = [],
+        alphabet: string[] = [],
+        cppm: number[][] = [],
+        cmotifname: string = "";
     let name = null;
-    let motifnames = [];
+    let motifnames: string[] = [];
     let alength = 0;
-    let backgroundFrequencies = {},
+    let backgroundFrequencies: Record<string, number> = {},
         inBackgroundFrequencies = false;
     text.split('\n').forEach(line => {
         if (line.startsWith('letter-probability')) {
@@ -33,7 +35,7 @@ export const parseMemeTxt = text => {
             results.push({ ppm: cppm });
             motifnames.push(cmotifname);
             cppm = [];
-            cmotifname = null;
+            cmotifname = "";
         } else if (inmotif) {
             const values = line
                 .trim()
@@ -52,14 +54,14 @@ export const parseMemeTxt = text => {
             name: motifnames[i],
             alphabet,
             backgroundFrequencies: alphabet.map(a =>
-                backgroundFrequencies[a.regex] === undefined ? 1.0 / alphabet.length : backgroundFrequencies[a.regex]
+                backgroundFrequencies[a] === undefined ? 1.0 / alphabet.length : backgroundFrequencies[a]
             ),
         })),
         name,
     };
 };
 
-export const memeTxtToMotifs = content =>
+export const memeTxtToMotifs = (content: string) =>
     parseMemeTxt(content).logos.map(x => {
         const llh = logLikelihood(
             x.backgroundFrequencies.length === 0 ? [0.25, 0.25, 0.25, 0.25] : x.backgroundFrequencies
@@ -70,7 +72,7 @@ export const memeTxtToMotifs = content =>
         };
     });
 
-export const logLikelihood = backgroundFrequencies => r => {
+export const logLikelihood = (backgroundFrequencies: number[]) => (r: number[]): number[] => {
     let sum = 0.0;
     r.map((x, i) => (sum += x === 0 ? 0 : x * Math.log2(x / (backgroundFrequencies[i] || 0.01))));
     return r.map(x => {
@@ -80,8 +82,8 @@ export const logLikelihood = backgroundFrequencies => r => {
 };
 
 const ONETHIRD = 1 / 3;
-const ACMAP = { a: 0, c: 1, g: 2, t: 3 };
-const PCMAP = {
+const ACMAP: ACMAPType = { a: 0, c: 1, g: 2, t: 3 };
+const PCMAP: PCMAPType = {
     a: [1, 0, 0, 0],
     c: [0, 1, 0, 0],
     g: [0, 0, 1, 0],
@@ -99,8 +101,8 @@ const PCMAP = {
     n: [0.25, 0.25, 0.25, 0.25],
 };
 
-export const regexToPWM = regex => {
-    const pwm = [];
+export const regexToPWM = (regex: string) => {
+    const pwm: number[][] = [];
     const lregex = regex.toLowerCase();
     let inBracket = false,
         cbracket = [0.0, 0.0, 0.0, 0.0],

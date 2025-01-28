@@ -52,12 +52,12 @@ const MemeSearchPage = () => {
             fileReader.onload = () => {
                 const fileName = selectedFile.name.replace(".meme", "").replace(/\s+/g, "");
 
-                const test = memeTxtToMotifs(fileReader.result);
+                const motifs = memeTxtToMotifs(fileReader.result as string);
 
                 // Store the file content and metadata in sessionStorage
                 sessionStorage.setItem(
                     "motifSearch",
-                    JSON.stringify({ name: fileName, motifs: test })
+                    JSON.stringify({ name: fileName, motifs: motifs })
                 );
 
                 // Redirect to the new URL
