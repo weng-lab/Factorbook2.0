@@ -3,10 +3,30 @@
 import { Box, Tab, Tabs } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 export default function MotifLayout({ children }: { children: React.ReactNode }) {
+    const [searchURL, setSearchURL] = useState<string>("/motif/human/meme-search")
     const tab = usePathname().split('/')[3];
+
+    //Change the url of motif search based on storage
+    useEffect(() => {
+        const motifSearchData = sessionStorage.getItem("motifSearch");
+
+        if (motifSearchData) {
+            const parsedData = JSON.parse(motifSearchData);
+            //if this prop exists, that means a file has been uploaded recently, so set the url to fileupload
+            if (parsedData.motifs !== undefined) {
+                setSearchURL("/motif/human/meme-search/fileupload")
+            } else {
+                //if it doesnt exist but something is in storage under the key "motifSearch" then its a regular expression
+                setSearchURL(`/motif/human/meme-search/${parsedData}`)
+            }
+        } else {
+            //otherwise, go back to base search page
+            setSearchURL("/motif/human/meme-search")
+        }
+    }, [])
 
     return (
         <section>
@@ -23,7 +43,7 @@ export default function MotifLayout({ children }: { children: React.ReactNode })
                         label="Motif Search"
                         value="meme-search"
                         component={Link}
-                        href="/motif/human/meme-search"
+                        href={searchURL}
                     />
                     <Tab
                         label="MEME Motif UMAP"

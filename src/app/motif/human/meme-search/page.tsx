@@ -56,7 +56,7 @@ const MemeSearchPage = () => {
 
                 // Store the file content and metadata in sessionStorage
                 sessionStorage.setItem(
-                    "uploadedFile",
+                    "motifSearch",
                     JSON.stringify({ name: fileName, motifs: test })
                 );
 

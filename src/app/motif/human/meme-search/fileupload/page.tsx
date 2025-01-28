@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Box, Breadcrumbs, Button, Divider, Grid, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { useParams } from "next/navigation";
 import RegexSearchResults from "@/components/motifsearch/regexsearchresults";
 import { Motif } from "../types";
 import MotifDrawer from "@/components/motifsearch/motiffileuploaddrawer";
@@ -19,26 +18,36 @@ const FileUploadMotifDetails = () => {
 
     useEffect(() => {
         // Access sessionStorage only on the client side
-        const fileData = sessionStorage.getItem("uploadedFile");
+        const fileData = sessionStorage.getItem("motifSearch");
         if (fileData) {
             const parsedData = JSON.parse(fileData) as { name: string; motifs: Motif[] };
-            setFileName(parsedData.name)
+            //if no file was uploaded but the last search was for an expression, redirect back to the main search and clear the storage
+            if (parsedData.motifs === undefined) {
+                sessionStorage.removeItem("motifSearch");
+                window.open(`/motif/human/meme-search/`, "_self");
+            } else {
+                setFileName(parsedData.name)
 
-            // Deduplicate motifs by name
-            const seenNames = new Set<string>();
-            const deduplicatedMotifs = parsedData.motifs.filter((motif) => {
-                if (!seenNames.has(motif.name)) {
-                    seenNames.add(motif.name);
-                    return true;
+                // Deduplicate motifs by name
+                const seenNames = new Set<string>();
+                const deduplicatedMotifs = parsedData.motifs.filter((motif) => {
+                    if (!seenNames.has(motif.name)) {
+                        seenNames.add(motif.name);
+                        return true;
+                    }
+                    return false;
+                });
+
+                // Set deduplicated motifs and default selection
+                setUniqueMotifs(deduplicatedMotifs);
+                if (deduplicatedMotifs.length > 0) {
+                    setSelectedMotif(deduplicatedMotifs[0]); // Default to the first motif
                 }
-                return false;
-            });
-
-            // Set deduplicated motifs and default selection
-            setUniqueMotifs(deduplicatedMotifs);
-            if (deduplicatedMotifs.length > 0) {
-                setSelectedMotif(deduplicatedMotifs[0]); // Default to the first motif
             }
+        } else {
+            //if no file was uploaded redirect back to the main search and clear the storage
+            sessionStorage.removeItem("motifSearch");
+            window.open(`/motif/human/meme-search/`, "_self");
         }
     }, []);
 
@@ -86,6 +95,7 @@ const FileUploadMotifDetails = () => {
                 <Grid item>
                     <Button
                         onClick={() => {
+                            sessionStorage.removeItem("motifSearch");
                             window.open("/motif/human/meme-search", "_self");
                         }}
                         variant="contained"

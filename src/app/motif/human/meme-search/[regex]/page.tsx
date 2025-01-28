@@ -53,6 +53,7 @@ const MotifDetails = () => {
                 <Grid item>
                     <Button
                         onClick={() => {
+                            sessionStorage.removeItem("motifSearch");
                             window.open("/motif/human/meme-search", "_self");
                         }}
                         variant="contained"

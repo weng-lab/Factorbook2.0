@@ -90,6 +90,10 @@ const MotifSearchbar: React.FC<MotifSearchBarProps> = ({dark}) => {
           color="primary"
           disabled={!validSearch && val !== ""}
           onClick={() => {
+            sessionStorage.setItem(
+              "motifSearch",
+              JSON.stringify(val)
+            );
             window.open(`/motif/human/meme-search/${val}`, "_self");
           }}
           sx={{
