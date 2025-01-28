@@ -1,12 +1,11 @@
 "use client";
 
-import { Box, Typography, Button, useTheme, useMediaQuery, styled, TextField } from "@mui/material";
+import { Box, Typography, Button, useTheme, useMediaQuery, styled } from "@mui/material";
 import ErrorMessage from "../../upload/errormessage";
 import React, { useEffect } from "react";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import { memeTxtToMotifs } from "./helpers";
 import MotifSearchbar from "@/components/motifsearchbar";
-import { Motif } from "./types";
 
 // Styling for text fields and upload areas
 const UploadBox = styled(Box)(({ theme }) => ({
@@ -29,19 +28,8 @@ const MemeSearchPage = () => {
     const [errorFiles, setErrorFiles] = React.useState<File[]>([]);
 
     useEffect(() => {
-        // Access sessionStorage only on the client side
-        const fileData = sessionStorage.getItem("motifSearch");
-        if (fileData) {
-            const parsedData = JSON.parse(fileData) as { name: string; motifs: Motif[] };
-            //if no file was uploaded but the last search was for an expression, redirect to the expression
-            if (parsedData.motifs === undefined) {
-                window.open(`/motif/human/meme-search/${parsedData}`, "_self");
-            } else {
-                //redirect to file upload if file was uploaded
-                window.open(`/motif/human/meme-search/fileupload`, "_self");
-            }
-        }
-    }, []);
+        sessionStorage.removeItem("motifSearch")
+    });
 
     // File upload handlers
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {

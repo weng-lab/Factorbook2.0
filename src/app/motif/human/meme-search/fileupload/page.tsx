@@ -21,9 +21,8 @@ const FileUploadMotifDetails = () => {
         const fileData = sessionStorage.getItem("motifSearch");
         if (fileData) {
             const parsedData = JSON.parse(fileData) as { name: string; motifs: Motif[] };
-            //if no file was uploaded but the last search was for an expression, redirect back to the main search and clear the storage
+            //if no file was uploaded but the last search was for an expression, redirect back to the main search
             if (parsedData.motifs === undefined) {
-                sessionStorage.removeItem("motifSearch");
                 window.open(`/motif/human/meme-search/`, "_self");
             } else {
                 setFileName(parsedData.name)
@@ -45,8 +44,7 @@ const FileUploadMotifDetails = () => {
                 }
             }
         } else {
-            //if no file was uploaded redirect back to the main search and clear the storage
-            sessionStorage.removeItem("motifSearch");
+            //if no file was uploaded redirect back to the main search
             window.open(`/motif/human/meme-search/`, "_self");
         }
     }, []);
@@ -97,7 +95,6 @@ const FileUploadMotifDetails = () => {
                 <Grid item>
                     <Button
                         onClick={() => {
-                            sessionStorage.removeItem("motifSearch");
                             window.open("/motif/human/meme-search", "_self");
                         }}
                         variant="contained"
