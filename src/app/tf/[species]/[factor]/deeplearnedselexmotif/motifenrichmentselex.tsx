@@ -300,7 +300,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         ppm={motifppm}
         alphabet={DNAAlphabet}
         ref={svgRef as MutableRefObject<SVGSVGElement>}
-        width={450}
+        width={300}
         height={300}
       />
       
@@ -417,9 +417,9 @@ const DeepLearnedSelexMotif: React.FC<{
   );
 
   const lineGraphHeight = 300;
-  const lineGraphWidth = 450;
+  const lineGraphWidth = 300;
   const barGraphHeight = 300;
-  const barGraphWidth = 450;
+  const barGraphWidth = 300;
   const margin = {top: 20, right: 90, bottom: 70, left: 70 };
 
   const theme = useTheme();
@@ -429,7 +429,7 @@ const DeepLearnedSelexMotif: React.FC<{
     () =>
       scaleLinear({
         domain: [domain.x.start, domain.x.end],
-        range: [0, lineGraphWidth - (isMobile ? 0 : margin.right)],
+        range: [3, lineGraphWidth - (isMobile ? 0 : margin.right)],
       }),
     [domain, lineGraphWidth, margin, isMobile]
   );
@@ -533,14 +533,15 @@ const DeepLearnedSelexMotif: React.FC<{
                 
                 <AxisLeft
                   scale={yScale}
-                  label="Formyl peptide receptor"
+                  label="1-Sensitivity"
                   labelProps={{
                     fontSize: 12,
                     fill: "black",
                     textAnchor: "middle",
                     transform: "translate(-60, 0) rotate(-90)",
                   }}
-                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
+                  strokeWidth={3}
+                  tickValues={[0, 0.5, 1.0]}
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -552,14 +553,15 @@ const DeepLearnedSelexMotif: React.FC<{
                 <AxisBottom
                   scale={xScale}
                   top={lineGraphHeight - margin.bottom}
-                  label="Tetratricopeptide Repeat"
+                  label="Sensitivity"
                   labelProps={{
                     fontSize: 12,
                     fill: "black",
                     textAnchor: "middle",
                     transform: "translate(0, 40)",
                   }}
-                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
+                  strokeWidth={3}
+                  tickValues={[0, 0.5, 1.0]}
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -578,23 +580,23 @@ const DeepLearnedSelexMotif: React.FC<{
                   />
                 ))}
                 <Text
-                  x={180}
+                  x={105}
                   y={270}
                   fontSize={14}
                   textAnchor="middle"
                   fill="black"
                 >
-                  Tetratricopeptide Repeat
+                 Sensitivity
                 </Text>
                 <Text
-                  x={-135}
+                  x={-125}
                   y={-40}
                   fontSize={14}
                   textAnchor="middle"
                   fill="black"
                   transform="rotate(-90)"
                 >
-                   Peptide Receptor
+                  1-Sensitivity
                 </Text>
               </Group>
             </svg>
@@ -661,6 +663,8 @@ const DeepLearnedSelexMotif: React.FC<{
                     textAnchor: "middle",
                     transform: "translate(-60, 0) rotate(-90)",
                   }}
+                  strokeWidth={3}
+                  tickValues={[0, data[data.length-1].fractional_enrichment*0.5, data[data.length-1].fractional_enrichment, data[data.length-1].fractional_enrichment*1.5]}
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -673,6 +677,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   scale={barXScale}
                   top={barGraphHeight - margin.bottom}
                   label="Cycle"
+                  strokeWidth={3}
                   labelProps={{
                     fontSize: 12,
                     fill: "black",
@@ -690,14 +695,14 @@ const DeepLearnedSelexMotif: React.FC<{
                 {data.map((d, i) => (
                   <React.Fragment key={i}>
                     <Bar
-                      x={barXScale(d.selex_round)!+12}
+                      x={barXScale(d.selex_round)}
                       y={barYScale(d.fractional_enrichment)}
                       height={
                         barGraphHeight -
                         margin.bottom -
                         barYScale(d.fractional_enrichment)
                       }
-                      width={20}
+                      width={ barXScale.bandwidth()}
                       fill={colors[d.selex_round]}
                       
                     />
@@ -713,7 +718,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   </React.Fragment>
                 ))}
                 <Text
-                  x={180}
+                  x={100}
                   y={270}
                   fontSize={14}
                   textAnchor="middle"
