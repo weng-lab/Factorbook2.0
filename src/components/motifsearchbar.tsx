@@ -63,7 +63,11 @@ const MotifSearchbar: React.FC<MotifSearchBarProps> = ({dark}) => {
           onKeyDown={(event: any) => {
             if (event.key === "Enter" && val !== " " && val !== "" && validSearch) {
               event.preventDefault();
-              window.open(`/motif/human/${val}`, "_self");
+              sessionStorage.setItem(
+                "motifSearch",
+                JSON.stringify(val)
+              );
+              window.open(`/motif/human/meme-search/${val}`, "_self");
             }
           }}
           sx={{

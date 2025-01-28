@@ -79,6 +79,7 @@ const FileUploadMotifDetails = () => {
                             color="inherit"
                             underline="hover"
                             onClick={() => (window.location.href = `/`)}
+                            sx={{ cursor: 'pointer' }}
                         >
                             Homepage
                         </Link>
@@ -86,6 +87,7 @@ const FileUploadMotifDetails = () => {
                             color="inherit"
                             underline="hover"
                             onClick={() => window.open(`/motif/human/meme-search`, "_self")}
+                            sx={{ cursor: 'pointer' }}
                         >
                             Motif Catalog
                         </Link>

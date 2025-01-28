@@ -1,7 +1,7 @@
 import { ACMAPType, PCMAPType, Result } from "./types";
 
 // All helper functions take directly from old factorbook
-//TODO comment out functions, figure out what each does
+//TODO add comments to functions, figure out what each does
 
 const parseBackgroundLine = (line: string): Record<string, number> => {
     const p = line.split(/\s+/g);
