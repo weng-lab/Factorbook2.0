@@ -74,7 +74,7 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
     })
     .filter(biosample => biosample.datasets.length > 0) //filter out biosamples with no valid experiments
     [0]?.datasets[0].accession; //take first experiment
-  }, [allExperiments]);
+  }, [allExperiments, histoneAccessions]);
 
   return (
     <Box display="flex" alignItems="center">
