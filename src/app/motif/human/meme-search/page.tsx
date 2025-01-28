@@ -5,6 +5,7 @@ import ErrorMessage from "../../upload/errormessage";
 import React from "react";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import { memeTxtToMotifs } from "./helpers";
+import MotifSearchbar from "@/components/motifsearchbar";
 
 // Styling for text fields and upload areas
 const UploadBox = styled(Box)(({ theme }) => ({
@@ -18,47 +19,13 @@ const UploadBox = styled(Box)(({ theme }) => ({
     position: "relative",
 }));
 
-const LargeTextField = styled(TextField)(({ theme }) => ({
-    minWidth: "700px",
-    "& .MuiInputBase-root": {
-        height: "32px",
-    },
-    "& .MuiOutlinedInput-root": {
-        backgroundColor: "#EDE7F6",
-        height: "40px",
-        borderRadius: "24px",
-        paddingLeft: "5px",
-        "&:hover fieldset": {
-            borderColor: theme.palette.primary.main,
-        },
-        "&.Mui-focused fieldset": {
-            borderColor: theme.palette.primary.main,
-        },
-    },
-    // Fix for autofill dropdown styling
-    "&:-webkit-autofill": {
-        "-webkit-box-shadow": `0 0 0 1000px #EDE7F6 inset`,
-        "-webkit-text-fill-color": "#000000",
-        "font-family": theme.typography.fontFamily,
-        transition: "background-color 5000s ease-in-out 0s",
-    },
-}));
-
-const StyledBox = styled(Box)({
-    "& .MuiOutlinedInput-root": {
-        backgroundColor: "#EDE7F6",
-    },
-});
-
 const MemeSearchPage = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Target mobile screens
-    const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md")); // Target tablet screens
 
     const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
     const [isDragging, setIsDragging] = React.useState(false);
     const [errorFiles, setErrorFiles] = React.useState<File[]>([]);
-    const [val, setVal] = React.useState<string | null>(null);
 
     // File upload handlers
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -135,38 +102,7 @@ const MemeSearchPage = () => {
             <Typography variant="h6" gutterBottom>
                 Enter a consensus sequence or regex:
             </Typography>
-            <StyledBox>
-                <LargeTextField
-                    placeholder="enter sequence or regex"
-                    onChange={(e) => setVal(e.target.value)}
-                    sx={{
-                        minWidth: isMobile ? "100%" : "700px",
-                    }}
-                />
-                <Button
-                    variant="contained"
-                    sx={{
-                        margin: "auto",
-                        backgroundColor: "#8169BF",
-                        borderRadius: "24px",
-                        textTransform: "none",
-                        fontWeight: "medium",
-                        color: "#FFFFFF",
-                        mt: isMobile ? 2 : 0,
-                    }}
-                    onClick={() => {
-                        if (val) {
-                            window.open(`/motif/human/meme-search/${val}`, "_self");
-                        }
-                    }}
-                >
-                    Search
-                </Button>
-                <Typography variant="body2" sx={{ mt: 0 }}>
-                    Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
-                </Typography>
-            </StyledBox>
-
+            <MotifSearchbar dark={true}/>
             <Typography variant="h6" gutterBottom color="primary">
                 You could also upload MEME files here
             </Typography>
