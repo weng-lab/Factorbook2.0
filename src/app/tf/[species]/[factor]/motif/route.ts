@@ -5,7 +5,8 @@ import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 
 /**
  * This file is here to redirect requests to /tf/[species]/[factor]/motif
- * by adding first experiment to url
+ * by adding first experiment to url. Currently this route handler is not
+ * used unless the route is manually hit.
  */
 
 async function getExperiments(processed_assembly: "GRCh38" | "mm10", target: string) {
