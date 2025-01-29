@@ -43,7 +43,7 @@ const navItems = [
         href: "/tf/mouse",
       },
       { text: "Motif Catalog", href: "/motif/human/meme-search" },
-      { text: "Annotations", href: "/annotationsvariants" },
+      { text: "Annotations", href: "/snpannotation" },
     ],
   },
   { title: "Downloads", href: "/downloads" },

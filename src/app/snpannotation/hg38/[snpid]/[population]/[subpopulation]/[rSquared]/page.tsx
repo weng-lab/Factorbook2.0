@@ -88,71 +88,7 @@ const AnnotationDetailLD = () => {
   }
 
   return (
-    <Box sx={{ padding: isMobile ? 2 : isTablet ? 3 : 4 }}>
-      <Typography variant={isMobile ? "h5" : "h4"}>
-        Annotations for {snpid}
-      </Typography>
-
-      <Grid
-        container
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{ marginTop: isMobile ? 1 : 2 }}
-      >
-        <Grid item>
-          <Breadcrumbs
-            aria-label="breadcrumb"
-            separator={<NavigateNextIcon fontSize="small" />}
-            sx={{ mb: 2 }}
-            style={{ margin: "3px" }}
-          >
-            <Link
-              color="inherit"
-              underline="hover"
-              onClick={() => (window.location.href = `/`)}
-            >
-              Homepage
-            </Link>
-            <Link
-              color="inherit"
-              underline="hover"
-              onClick={() => window.history.back()}
-            >
-              Annotations
-            </Link>
-            <Typography color="textPrimary">{snpid}</Typography>
-          </Breadcrumbs>
-        </Grid>
-        <Grid item>
-          <Button
-            onClick={() => {
-              window.history.back();
-            }}
-            variant="contained"
-            color="secondary"
-            sx={{
-              width: isMobile ? "160px" : "220px",
-              height: "41px",
-              padding: "8px 24px",
-              borderRadius: "24px",
-              backgroundColor: "#8169BF",
-              color: "white",
-              fontSize: isMobile ? "13px" : "15px",
-              fontWeight: 500,
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "#7151A1",
-              },
-            }}
-          >
-            <NavigateBeforeIcon />
-            Perform New Search
-          </Button>
-        </Grid>
-      </Grid>
-
-      <Divider sx={{ my: isMobile ? 2 : 4 }} />
-
+    <Box sx={{ paddingX: isMobile ? 2 : isTablet ? 3 : 4 }}>
       <Grid container spacing={isMobile ? 1 : 2} alignItems="center">
         <Grid item>
           <Typography variant={isMobile ? "body1" : "h6"}>

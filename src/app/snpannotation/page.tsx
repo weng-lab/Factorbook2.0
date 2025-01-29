@@ -10,21 +10,9 @@ import Checkbox from "@mui/material/Checkbox";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import Grid2 from "@mui/material/Unstable_Grid2";
-import { debounce } from "lodash";
 import Link from "@mui/material/Link";
-import Config from "../../../config.json";
-import { SNP_AUTOCOMPLETE_QUERY } from "./queries";
 import { useParams } from "react-router";
-import SearchIcon from "@mui/icons-material/Search";
-import InputAdornment from "@mui/material/InputAdornment";
 import { POPULATIONS, SUBPOPULATIONS } from "./const";
 import styled from "@emotion/styled";
 import {
@@ -36,6 +24,7 @@ import {
 } from "@mui/material";
 import ClearIcon from '@mui/icons-material/Clear';
 import SnpSearchBar from "@/components/snpsearchbar";
+import { DisequilibriumDetails } from "./types";
 
 type Snp = {
   id: string;
@@ -107,54 +96,60 @@ const AnnotationsVariants = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
-
+  const { population, subPopulation, rSquared } = useParams();
   const [value, setValue] = useState(0);
   const params = useParams();
-
-  const [snpValue, setSnpValue] = useState(null);
-  const [inputValue, setInputValue] = useState("");
-  const [options, setOptions] = useState<string[]>([]);
-  const [snpids, setSnpIds] = useState<Snp[]>([]);
-  const [page, setPage] = useState(0);
-  const [selected, setSelected] = useState(true);
-
-  const { p, s, r } = useParams();
-
-  const snpid = params?.[2];
+  const [disequilibriumDetails, setDisequilibriumDetails] = useState<DisequilibriumDetails>({
+    selected: false,
+    population: population || POPULATIONS[0].value,
+    subpopulation: subPopulation || "NONE",
+    rSquaredThreshold: +(rSquared || 0.7)
+  });
 
   const [id, setId] = useState<string | undefined>(params.i);
-  const [population, setPopulation] = useState(p || POPULATIONS[0].value);
-  const [subpopulation, setSubpopulation] = useState(s || "NONE");
-  const [rSquaredThreshold, setRSquaredThreshold] = useState(+(r || 0.7));
+
+  //update specific variable in disequilbriumDetails
+  const updateDetails = (key: keyof DisequilibriumDetails, value: unknown) => {
+    setDisequilibriumDetails((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
 
   const handleTabChange = (_: any, newValue: React.SetStateAction<number>) => {
     setValue(newValue);
   };
 
   const handlePopulationChange = (event: any) => {
-    setPopulation(event.target.value);
+    updateDetails("population", event.target.value);
+    updateDetails("subpopulation", "NONE");
   };
 
   const handleSubpopulationChange = (event: any) => {
-    setSubpopulation(event.target.value);
+    updateDetails("subpopulation", event.target.value);
   };
 
   const handleSelectionChange = (prev: boolean) => {
-    setSelected(!prev);
+    updateDetails("selected", !prev);
+  };
+
+  const handleSubmit = (snpValue: string) => {
+    //create cutom redirect url based on if the user wants to change the linkage disequilibrium details
+    const url: string = disequilibriumDetails.selected
+      ? "/snpannotation/hg38/" +
+      snpValue +
+      "/" +
+      disequilibriumDetails.population +
+      "/" +
+      disequilibriumDetails.subpopulation +
+      "/" +
+      disequilibriumDetails.rSquaredThreshold
+      : "/snpannotation/hg38/" + snpValue;
+
+      window.open(snpValue ? url : "", "_self");
   };
 
   const annotationsContent = `Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Often identified in genome-wide association studies, these variants can disrupt gene regulatory networks, leading to varied phenotypic effects or predispositions to diseases. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants.`;
-
-  const str: string = selected
-    ? "/annotationsvariants/GRCh38/" +
-    snpValue +
-    "/" +
-    population +
-    "/" +
-    subpopulation +
-    "/" +
-    rSquaredThreshold
-    : "/annotationsvariants/GRCh38/" + snpValue;
 
   return (
     <>
@@ -192,7 +187,7 @@ const AnnotationsVariants = () => {
               Annotate a variant of interest using peaks and motif sites
             </Typography>
             <StyledBox>
-              <SnpSearchBar textColor="gray"/>
+              <SnpSearchBar textColor="gray" handleSubmit={handleSubmit}/>
             </StyledBox>
             <Box sx={{ mt: 4 }}>
               <Typography variant="h6" gutterBottom>
@@ -201,15 +196,15 @@ const AnnotationsVariants = () => {
               <FormControlLabel
                 control={
                   <Checkbox
-                    defaultChecked
-                    onClick={() => handleSelectionChange(selected)}
+                    checked={disequilibriumDetails.selected}
+                    onClick={() => handleSelectionChange(disequilibriumDetails.selected)}
                     style={{ color: "primary" }}
                   />
                 }
                 label="Include SNPs in linkage disequilibrium with the query"
                 style={{ marginBottom: "5px" }}
               />
-              {selected && (
+              {disequilibriumDetails.selected && (
                 <>
                   <FlexBox>
                     <Typography variant="body1">
@@ -230,10 +225,10 @@ const AnnotationsVariants = () => {
                       Select a Subpopulation:
                     </Typography>
                     <SmallSelect
-                      value={subpopulation}
+                      value={disequilibriumDetails.subpopulation}
                       onChange={handleSubpopulationChange}
                     >
-                      {SUBPOPULATIONS.get(population)?.map((e) => {
+                      {SUBPOPULATIONS.get(disequilibriumDetails.population)?.map((e) => {
                         return <MenuItem value={e.value}>{e.text}</MenuItem>;
                       })}
                     </SmallSelect>

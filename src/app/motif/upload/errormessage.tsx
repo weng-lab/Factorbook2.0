@@ -1,6 +1,6 @@
 import React from "react";
 import { Alert, AlertTitle, List, ListItem, Typography } from "@mui/material";
-import { ParsedMotifFile } from "@/app/annotationsvariants/types";
+import { ParsedMotifFile } from "@/app/snpannotation/types";
 
 export type ErrorMessageProps = {
   files: ParsedMotifFile[];

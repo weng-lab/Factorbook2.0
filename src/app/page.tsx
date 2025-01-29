@@ -54,6 +54,10 @@ const Homepage = () => {
     }
   };
 
+  const handleSubmit = (snpValue: string) => {
+      router.push(`/snpannotation/hg38/${snpValue}`)
+  };
+
   return (
     <>
       <Box
@@ -277,7 +281,7 @@ const Homepage = () => {
                   }
                 />
               ) : selectedPortal === "Annotate Variants" ? (
-                <SnpSearchBar />
+                <SnpSearchBar handleSubmit={handleSubmit}/>
               ) : (
                 <MotifSearchbar />
               )}
@@ -337,7 +341,7 @@ const Homepage = () => {
         imageSrc="/Human.png"
         imageAlt="Annotate Variants"
         buttonText="Explore Annotations"
-        buttonHref="/annotationsvariants"
+        buttonHref="/snpannotation"
         reverse={false}
       />
     </>
