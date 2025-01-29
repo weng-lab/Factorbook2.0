@@ -27,17 +27,16 @@ export default function ExperimentPanelLayout({
   const params = useParams<{
     species: string,
     factor: string,
-    detail: string,
     accession: string
   }>()
 
-  const { species, factor, detail, accession } = params
+  const { species, factor, accession } = params
   const [drawerOpen, setDrawerOpen] = useState(true);
   const router = useRouter(); // For pushing URL updates
 
   const handleExperimentChange = (experiment: Dataset) => {
     router.push(
-      `/tf/${species}/${factor}/${detail}/${experiment.accession}`
+      `/tf/${species}/${factor}/${mode === "MotifEnrichment" ? "motif" : "histone"}/${experiment.accession}`
     );
   };
 
