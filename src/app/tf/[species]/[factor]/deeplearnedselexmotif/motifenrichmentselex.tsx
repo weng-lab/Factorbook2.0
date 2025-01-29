@@ -29,6 +29,7 @@ import {
   useMediaQuery,
   useTheme,
   Stack,
+  Chip,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid2 for MUI v2
 import { ApiContext } from "@/apicontext";
@@ -267,11 +268,8 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
   };
 
   return (
-    <Box sx={{ textAlign: "center", marginBottom: 2 }}>
-      <Box
-        sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-      ></Box>
-      <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}>
+    <Box sx={{ textAlign: "center", marginBottom: 2, padding: "2p"}}>
+      <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center"}}>
         <Button
           variant="outlined"
           startIcon={<SwapHorizIcon />}
@@ -302,9 +300,10 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         ppm={motifppm}
         alphabet={DNAAlphabet}
         ref={svgRef as MutableRefObject<SVGSVGElement>}
-        width={400}
-        height={250}
+        width={300}
+        height={300}
       />
+      
       <Dialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
@@ -417,11 +416,11 @@ const DeepLearnedSelexMotif: React.FC<{
     [data]
   );
 
-  const lineGraphHeight = 400;
-  const lineGraphWidth = 600;
-  const barGraphHeight = 400;
-  const barGraphWidth = 600;
-  const margin = { top: 20, right: 90, bottom: 70, left: 70 };
+  const lineGraphHeight = 300;
+  const lineGraphWidth = 300;
+  const barGraphHeight = 300;
+  const barGraphWidth = 300;
+  const margin = {top: 20, right: 90, bottom: 70, left: 70 };
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -430,7 +429,7 @@ const DeepLearnedSelexMotif: React.FC<{
     () =>
       scaleLinear({
         domain: [domain.x.start, domain.x.end],
-        range: [margin.left, lineGraphWidth - (isMobile ? 0 : margin.right)],
+        range: [3, lineGraphWidth - (isMobile ? 0 : margin.right)],
       }),
     [domain, lineGraphWidth, margin, isMobile]
   );
@@ -448,7 +447,7 @@ const DeepLearnedSelexMotif: React.FC<{
     () =>
       scaleBand({
         domain: data.map((d) => d.selex_round),
-        range: [margin.left, barGraphWidth - (isMobile ? 0 : margin.right)],
+        range: [0, barGraphWidth - (isMobile ? 0 : margin.right)],
         paddingInner: 0.5,
         paddingOuter: 0.3,
       }),
@@ -476,7 +475,9 @@ const DeepLearnedSelexMotif: React.FC<{
     }
   };
 
+
   const presentCycles = data.map((d) => d.selex_round);
+
 
   return (
     <Box sx={{ padding: "1em" }}>
@@ -488,7 +489,7 @@ const DeepLearnedSelexMotif: React.FC<{
         found in {study.replace("_", " ")} study
       </Typography>
       <Grid container spacing={3}>
-        <Grid xs={12} md={6}>
+        <Grid >
           {data.map((d, i) => (
             <Box key={`logo${i}`} sx={{ textAlign: "center" }}>
               <Typography variant="h6" sx={{ color: "brown" }}>
@@ -497,32 +498,50 @@ const DeepLearnedSelexMotif: React.FC<{
               {d.ppm && d.ppm.length > 0 && (
                 <>
                   <DownloadableMotif ppm={d.ppm} name={study} />
-                  <Divider sx={{ my: 2 }} />
+            
                 </>
               )}
             </Box>
           ))}
         </Grid>
-        <Grid xs={12} md={6}>
+        <Grid md={5}>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
               alignItems: isMobile ? "flex-start" : "center",
+              marginTop: "30px",
+              marginBottom: "20px"
             }}
           >
+             <Button
+              variant="contained"
+              startIcon={<SaveAltIcon />}
+              onClick={() => downloadSVGElement(lineref, "lineplot.svg")}
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#8169BF",
+                color: "white",
+                marginTop: "20px",
+              }}
+            >
+              Download Line Plot
+            </Button>
             <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
+              
               <Group left={isMobile ? 0 : margin.left} top={margin.top}>
+                
                 <AxisLeft
                   scale={yScale}
-                  label="Formyl peptide receptor"
+                  label="1-Specificity"
                   labelProps={{
                     fontSize: 12,
                     fill: "black",
                     textAnchor: "middle",
                     transform: "translate(-60, 0) rotate(-90)",
                   }}
-                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
+                  strokeWidth={3}
+                  tickValues={[0, 0.5, 1.0]}
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -534,14 +553,15 @@ const DeepLearnedSelexMotif: React.FC<{
                 <AxisBottom
                   scale={xScale}
                   top={lineGraphHeight - margin.bottom}
-                  label="Tetratricopeptide Repeat"
+                  label="Sensitivity"
                   labelProps={{
                     fontSize: 12,
                     fill: "black",
                     textAnchor: "middle",
                     transform: "translate(0, 40)",
                   }}
-                  tickValues={[0, 0.2, 0.4, 0.6, 0.8, 1.0]}
+                  strokeWidth={3}
+                  tickValues={[0, 0.5, 1.0]}
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -560,41 +580,71 @@ const DeepLearnedSelexMotif: React.FC<{
                   />
                 ))}
                 <Text
-                  x={310}
-                  y={370}
+                  x={105}
+                  y={270}
                   fontSize={14}
                   textAnchor="middle"
                   fill="black"
                 >
-                  Tetratricopeptide Repeat
+                 Sensitivity
                 </Text>
                 <Text
-                  x={-170}
+                  x={-125}
                   y={-40}
                   fontSize={14}
                   textAnchor="middle"
                   fill="black"
                   transform="rotate(-90)"
                 >
-                  Formyl Peptide Receptor
+                  1-Specificity
                 </Text>
               </Group>
             </svg>
-            <Box sx={{ display: "flex", marginTop: 1 }}>
-              {presentCycles.map((cycle) => (
-                <Typography
-                  key={cycle}
-                  variant="body1"
-                  sx={{ color: colors[cycle], marginRight: 2 }}
-                >
-                  Cycle {cycle}
-                </Typography>
-              ))}
-            </Box>
-            <Button
+            <Box display="flex" alignItems="center" style={{marginBottom: "17px"}}>
+            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '40px', fontSize: "14px"}}> 
+            Cycle  {presentCycles.map((cycle) => (
+         <div style={{ marginLeft: "5px", display:'flex',
+          alignItems: 'center',
+          justifyContent: 'left'
+      }}
+      ><div
+          style={{
+            width: '10px',
+            height: '3px',
+            backgroundColor: colors[cycle],
+            display: 'inline-block',
+            alignItems: 'center',
+            justifyContent: 'center'        
+          }}
+        > </div> 
+        <Typography style={{  marginLeft: '2px'}}
+                  fontSize={14}
+                > {cycle} </Typography>
+        </div>
+      ))}
+      </Typography>
+      
+    </Box>
+    <Button
               variant="contained"
               startIcon={<SaveAltIcon />}
-              onClick={() => downloadSVGElement(lineref, "lineplot.svg")}
+              onClick={() => downloadSVGElement(barref, "barplot.svg")}
+              sx={{
+                borderRadius: "20px",
+                backgroundColor: "#8169BF",
+                color: "white",
+                marginTop: "20px",
+              }}
+            >
+              Download Bar Plot
+            </Button>
+
+            <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
+              <Group left={isMobile ? 0 : margin.left} top={margin.top}>
+              <Button
+              variant="contained"
+              startIcon={<SaveAltIcon />}
+              onClick={() => downloadSVGElement(barref, "barplot.svg")}
               sx={{
                 borderRadius: "20px",
                 backgroundColor: "#8169BF",
@@ -602,10 +652,8 @@ const DeepLearnedSelexMotif: React.FC<{
                 marginTop: "10px",
               }}
             >
-              Download Line Plot
+              Download Bar Plot
             </Button>
-            <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
-              <Group left={isMobile ? 0 : margin.left} top={margin.top}>
                 <AxisLeft
                   scale={barYScale}
                   label="Fractional Enrichment"
@@ -615,6 +663,8 @@ const DeepLearnedSelexMotif: React.FC<{
                     textAnchor: "middle",
                     transform: "translate(-60, 0) rotate(-90)",
                   }}
+                  strokeWidth={3}
+                  tickValues={[0, data[data.length-1].fractional_enrichment*0.5, data[data.length-1].fractional_enrichment, data[data.length-1].fractional_enrichment*1.5]}
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -627,6 +677,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   scale={barXScale}
                   top={barGraphHeight - margin.bottom}
                   label="Cycle"
+                  strokeWidth={3}
                   labelProps={{
                     fontSize: 12,
                     fill: "black",
@@ -639,6 +690,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     textAnchor: "middle",
                     dy: "0.25em",
                   })}
+                
                 />
                 {data.map((d, i) => (
                   <React.Fragment key={i}>
@@ -650,8 +702,9 @@ const DeepLearnedSelexMotif: React.FC<{
                         margin.bottom -
                         barYScale(d.fractional_enrichment)
                       }
-                      width={barXScale.bandwidth()}
+                      width={ barXScale.bandwidth()}
                       fill={colors[d.selex_round]}
+                      
                     />
                     <Text
                       x={barXScale(d.selex_round)! + barXScale.bandwidth() / 2}
@@ -665,8 +718,8 @@ const DeepLearnedSelexMotif: React.FC<{
                   </React.Fragment>
                 ))}
                 <Text
-                  x={220}
-                  y={370}
+                  x={100}
+                  y={270}
                   fontSize={14}
                   textAnchor="middle"
                   fill="black"
@@ -674,8 +727,8 @@ const DeepLearnedSelexMotif: React.FC<{
                   Cycle
                 </Text>
                 <Text
-                  x={-170}
-                  y={-30}
+                  x={-135}
+                  y={-40}
                   fontSize={14}
                   textAnchor="middle"
                   fill="black"
@@ -685,30 +738,29 @@ const DeepLearnedSelexMotif: React.FC<{
                 </Text>
               </Group>
             </svg>
-            <Box sx={{ display: "flex", marginTop: 1 }}>
-              {presentCycles.map((cycle) => (
-                <Typography
-                  key={cycle}
-                  variant="body1"
-                  sx={{ color: colors[cycle], marginRight: 2 }}
-                >
-                  Cycle {cycle}
-                </Typography>
-              ))}
-            </Box>
-            <Button
-              variant="contained"
-              startIcon={<SaveAltIcon />}
-              onClick={() => downloadSVGElement(barref, "barplot.svg")}
-              sx={{
-                borderRadius: "20px",
-                backgroundColor: "#8169BF",
-                color: "white",
-                marginTop: "10px",
-              }}
-            >
-              Download Bar Plot
-            </Button>
+            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',  marginLeft: '20px', fontSize: "14px"}}>
+      Cycle  {[2, 3, 4].map((cycle, index) => (
+         <div style={{ marginLeft: "5px", display:'flex',
+          alignItems: 'center',
+          justifyContent: 'left',
+          }}
+      ><div
+          style={{
+            width: '10px',
+            height: '8px',
+            backgroundColor: colors[cycle],
+            display: 'inline-block',
+            alignItems: 'center',
+            justifyContent: 'center'        
+          }}
+        > </div> 
+        <Typography style={{  marginLeft: '2px'}}
+                  fontSize={14}
+                > {cycle} </Typography>
+        </div>
+      ))}
+    </Typography>
+           
           </Box>
         </Grid>
       </Grid>
