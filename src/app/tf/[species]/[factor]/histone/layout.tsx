@@ -1,7 +1,7 @@
 'use client'
 
 import React from "react";
-import ExperimentSelectionLayout from "../_utility/experimentSelectionLayout";
+import ExperimentPanelLayout from "../_utility/ExperimentPanelLayout";
 
 /**
  * Provides left side panel for biosample selection
@@ -13,8 +13,8 @@ export default function EpigeneticProfileLayout({
 }) {
 
   return (
-    <ExperimentSelectionLayout mode="EpigeneticProfile">
+    <ExperimentPanelLayout mode="EpigeneticProfile">
       {children}
-    </ExperimentSelectionLayout>
+    </ExperimentPanelLayout>
   )
 }

@@ -17,7 +17,7 @@ import ExperimentSelectionPanel, { Dataset } from "./ExperimentSelectionPanel/Ex
 /**
  * Provides left side panel for biosample selection on motif enrichemnt and epigenetic profiles
  */
-export default function ExperimentSelectionLayout({
+export default function ExperimentPanelLayout({
   children,
   mode
 }: {
@@ -37,7 +37,7 @@ export default function ExperimentSelectionLayout({
 
   const handleExperimentChange = (experiment: Dataset) => {
     router.push(
-      `/tf/${species}/${factor}/${mode === "MotifEnrichment" ? "motif" : "histone"}/${experiment.accession}`
+      `/tf/${species}/${factor}/${detail}/${experiment.accession}`
     );
   };
 
@@ -72,9 +72,7 @@ export default function ExperimentSelectionLayout({
           </IconButton>
         </Tooltip>
       )}
-
       {/* Left-side Drawer */}
-      {/** @todo this looks terrible on mobile, fix */}
       <Box
         sx={{
           width: drawerOpen ? { xs: "100%", md: "25%" } : 0, // Same width as before
