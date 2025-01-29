@@ -12,7 +12,11 @@ import {
 } from "@mui/material";
 import Stack from "@mui/material/Stack";
 
-const MotifSearchbar: React.FC = () => {
+interface MotifSearchBarProps {
+  dark?: boolean;
+}
+
+const MotifSearchbar: React.FC<MotifSearchBarProps> = ({dark}) => {
   const theme = useTheme();
   const [val, setVal] = React.useState<String>("");
   const [validSearch, setValidSearch] = useState(false);
@@ -45,10 +49,10 @@ const MotifSearchbar: React.FC = () => {
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ color: "white" }} />
+                <SearchIcon sx={{ color: dark ? "grey" : "white" }} />
               </InputAdornment>
             ),
-            style: { textAlign: "center", color: "white" },
+            style: { textAlign: "center", color: dark ? "grey" : "white" },
           }}
           InputLabelProps={{
             style: { width: "100%" },
@@ -59,7 +63,11 @@ const MotifSearchbar: React.FC = () => {
           onKeyDown={(event: any) => {
             if (event.key === "Enter" && val !== " " && val !== "" && validSearch) {
               event.preventDefault();
-              window.open(`/motifscatalog/human/${val}`, "_self");
+              sessionStorage.setItem(
+                "motifSearch",
+                JSON.stringify(val)
+              );
+              window.open(`/motif/human/meme-search/${val}`, "_self");
             }
           }}
           sx={{
@@ -67,15 +75,16 @@ const MotifSearchbar: React.FC = () => {
               height: "40px",
               borderRadius: "24px",
               paddingLeft: "12px",
+              backgroundColor: dark ? "#EDE7F6" : "transparent",
               "& fieldset": {
-                borderColor: "white", // Default border color
+                borderColor: dark ? "grey" : "white", // Default border color
               },
               "&:hover fieldset": {
                 borderColor: validSearch || val === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
               },
             },
             "& .MuiInputBase-input::placeholder": {
-              color: "white",
+              color: dark ? "grey" : "white",
               opacity: 1,
             },
           }}
@@ -85,8 +94,11 @@ const MotifSearchbar: React.FC = () => {
           color="primary"
           disabled={!validSearch && val !== ""}
           onClick={() => {
-            window.open(`/motifscatalog/human/${val}`, "_self")
-
+            sessionStorage.setItem(
+              "motifSearch",
+              JSON.stringify(val)
+            );
+            window.open(`/motif/human/meme-search/${val}`, "_self");
           }}
           sx={{
             padding: "8px 24px",

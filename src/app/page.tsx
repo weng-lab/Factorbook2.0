@@ -326,7 +326,7 @@ const Homepage = () => {
         imageSrc="/Motifs.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
-        buttonHref="/motifscatalog"
+        buttonHref="/motif/human/meme-search"
         reverse={true}
       />
 
