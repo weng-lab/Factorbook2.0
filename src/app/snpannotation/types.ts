@@ -178,3 +178,10 @@ export type AnnotatedLogoProps = {
         frequency: number;
     }[];
 };
+
+export type DisequilibriumDetails = {
+    selected: boolean;
+    population: string;
+    subpopulation: string;
+    rSquaredThreshold: number;
+}

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Dialog, DialogTitle, DialogContent, Typography } from "@mui/material";
 
 import { readBed } from "./bedreader";
-import { GenomicRange } from "@/app/annotationsvariants/types";
+import { GenomicRange } from "@/app/snpannotation/types";
 
 type FileMergerProps = {
   files: FileList | File[];

@@ -1,7 +1,7 @@
 import { inflate } from "pako";
 
 import { parseBed } from "@/utilities/parsebed";
-import { GenomicRange } from "@/app/annotationsvariants/types";
+import { GenomicRange } from "@/app/snpannotation/types";
 
 export function readBed(
   file: File,

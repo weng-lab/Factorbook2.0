@@ -21,7 +21,6 @@ import Config from "../../config.json";
 import ClearIcon from '@mui/icons-material/Clear';
 
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
-import Link from "next/link";
 
 const SNP_AUTOCOMPLETE_QUERY = `
     query suggestions($assembly: String!, $snpid: String!) {
@@ -44,6 +43,7 @@ type Snp = {
 
 interface SnpSearchbarProps {
   textColor?: string;
+  handleSubmit: (snpValue: string) => void;
 }
 
 // Custom styled Autocomplete textField
@@ -55,7 +55,7 @@ const StyledAutocomplete = styled(Autocomplete)(() => ({
   },
 }));
 
-const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor}) => {
+const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) => {
   const theme = useTheme();
 
   const [snpValue, setSnpValue] = useState(null);
@@ -63,8 +63,6 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor}) => {
   const [options, setOptions] = useState<string[]>([]);
   const [snpids, setSnpIds] = useState<Snp[]>([]);
   const [validSearch, setValidSearch] = useState<boolean>(false)
-
-  
 
   const onSearchChange = async (value: string) => {
     setOptions([]);
@@ -131,7 +129,7 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor}) => {
             onKeyDown={(event: any) => {
               if (event.key === "Enter" && snpValue && validSearch) {
                 event.preventDefault();
-                window.open(snpValue ? `/annotationsvariants/GRCh38/${snpValue}` : "", "_self");
+                handleSubmit(snpValue)
               }
             }}
             popupIcon={<ArrowDropDown sx={{ color: "gray" }} />}
@@ -209,7 +207,6 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor}) => {
             }} theme={theme} />
         </FormControl>
         <Button
-          LinkComponent={Link}
           variant="contained"
           color="primary"
           disabled={!validSearch || inputValue === ""}
@@ -225,7 +222,11 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor}) => {
               opacity: "75%"
             },
           }}
-          href={snpValue && validSearch ? `/annotationsvariants/GRCh38/${snpValue}` : ""}
+          onClick={() => {
+            if (snpValue && validSearch) {
+              handleSubmit(snpValue)
+            }
+          }}
         >
           Go
         </Button>
