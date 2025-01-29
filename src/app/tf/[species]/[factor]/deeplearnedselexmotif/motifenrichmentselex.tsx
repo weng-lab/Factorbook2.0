@@ -533,7 +533,7 @@ const DeepLearnedSelexMotif: React.FC<{
                 
                 <AxisLeft
                   scale={yScale}
-                  label="1-Sensitivity"
+                  label="1-Specificity"
                   labelProps={{
                     fontSize: 12,
                     fill: "black",
@@ -596,7 +596,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   fill="black"
                   transform="rotate(-90)"
                 >
-                  1-Sensitivity
+                  1-Specificity
                 </Text>
               </Group>
             </svg>
