@@ -55,7 +55,7 @@ export type Dataset = {
 
 const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticProfile">(props: ExperimentSelectionPanelProps<Mode>) => {
   const [searchTerm, setSearchTerm] = useState<string>("")
-  const [expanded, setExpanded] = useState<string | false>('panel0') // default to first accordion
+  const [expanded, setExpanded] = useState<string | false>(false) // default to first accordion
 
   console.log("rerendering ExperimentSelectionPanel")
 
