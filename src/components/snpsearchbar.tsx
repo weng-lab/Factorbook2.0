@@ -23,19 +23,6 @@ import ClearIcon from '@mui/icons-material/Clear';
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import Link from "next/link";
 
-// Custom styled Autocomplete textField
-const StyledAutocomplete = styled(Autocomplete)(() => ({
-  "& .MuiOutlinedInput-root": {
-    height: "40px",
-    borderRadius: "24px",
-    paddingLeft: "12px",
-  },
-  "& .MuiInputBase-input::placeholder": {
-    color: "white", // Placeholder color
-    opacity: 1,
-  },
-}));
-
 const SNP_AUTOCOMPLETE_QUERY = `
     query suggestions($assembly: String!, $snpid: String!) {
         snpAutocompleteQuery(assembly: $assembly, snpid: $snpid) {
@@ -54,7 +41,21 @@ type Snp = {
   start: number;
   end: number;
 };
-const SnpSearchbar: React.FC = () => {
+
+interface SnpSearchbarProps {
+  textColor?: string;
+}
+
+// Custom styled Autocomplete textField
+const StyledAutocomplete = styled(Autocomplete)(() => ({
+  "& .MuiOutlinedInput-root": {
+    height: "40px",
+    borderRadius: "24px",
+    paddingLeft: "12px",
+  },
+}));
+
+const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor}) => {
   const theme = useTheme();
 
   const [snpValue, setSnpValue] = useState(null);
@@ -62,6 +63,8 @@ const SnpSearchbar: React.FC = () => {
   const [options, setOptions] = useState<string[]>([]);
   const [snpids, setSnpIds] = useState<Snp[]>([]);
   const [validSearch, setValidSearch] = useState<boolean>(false)
+
+  
 
   const onSearchChange = async (value: string) => {
     setOptions([]);
@@ -150,7 +153,7 @@ const SnpSearchbar: React.FC = () => {
               <TextField
                 color="primary"
                 error={!validSearch && inputValue !== ""}
-                label={validSearch || inputValue === "" ? "" : "Invalid TF"}
+                label={validSearch || inputValue === "" ? "" : "Invalid ID"}
                 {...params}
                 placeholder="Enter rsID"
                 fullWidth
@@ -158,10 +161,10 @@ const SnpSearchbar: React.FC = () => {
                   ...params.InputProps,
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "white" }} />
+                      <SearchIcon sx={{ color: textColor ? textColor : "white" }} />
                     </InputAdornment>
                   ),
-                  style: { textAlign: "center", color: "white" },
+                  style: { textAlign: "center", color: textColor ? textColor : "white" },
                 }}
                 InputLabelProps={{
                   style: { width: "100%" },
@@ -173,6 +176,10 @@ const SnpSearchbar: React.FC = () => {
                     },
                     "&:hover fieldset": {
                       borderColor: validSearch || inputValue === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
+                    },
+                    "& .MuiInputBase-input::placeholder": {
+                      color: textColor ? textColor : "white", // Placeholder color
+                      opacity: 1,
                     },
                   }
                 }}
@@ -205,7 +212,7 @@ const SnpSearchbar: React.FC = () => {
           LinkComponent={Link}
           variant="contained"
           color="primary"
-          disabled={!validSearch && inputValue !== ""}
+          disabled={!validSearch || inputValue === ""}
           sx={{
             padding: "8px 24px",
             borderRadius: "24px",
