@@ -42,8 +42,8 @@ import ATACPlot from "../../../../../../components/motifmeme/atacplot";
 import ConservationPlot from "../../../../../../components/motifmeme/conservationplot";
 import { TOMTOMMessage } from "../../../../../../components/motifmeme/tomtommessage";
 import { HelpRounded } from "@mui/icons-material";
-import { Dataset } from "../../_ExperimentSelectionPanel/ExperimentSelectionPanel";
-import { DATASETS_QUERY } from "../../_ExperimentSelectionPanel/queries";
+import { Dataset } from "../../_utility/ExperimentSelectionPanel/ExperimentSelectionPanel";
+import { DATASETS_QUERY } from "../../_utility/ExperimentSelectionPanel/queries";
 
 // Helper function to convert numbers to scientific notation
 function toScientificNotationElement(
@@ -125,7 +125,7 @@ export default function MotifEnrichmentPage({
   /**
    * This is needed since the data fetch needs the file ID and the URL only contains the experiment accession.
    * This is needed to extract the file ID from the experiment array
-   * @todo would be more appropriate to pass selected dataset down in context from the layout versus fetching and metching up
+   * @todo maybe would be more appropriate to pass selected dataset down in context from the layout versus fetching and metching up
    * the file ID here
    */
   const { data, loading, error } = useQuery(DATASETS_QUERY, {

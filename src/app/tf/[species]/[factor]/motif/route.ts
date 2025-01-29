@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { query } from "../../../../../../lib/client";
-import { DATASETS_QUERY } from "../_ExperimentSelectionPanel/queries";
+import { DATASETS_QUERY } from "../_utility/ExperimentSelectionPanel/queries";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
 
 /**

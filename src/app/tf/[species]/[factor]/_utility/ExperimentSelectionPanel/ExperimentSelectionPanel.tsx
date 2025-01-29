@@ -57,8 +57,6 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
   const [searchTerm, setSearchTerm] = useState<string>("")
   const [expanded, setExpanded] = useState<string | false>(false) // default to first accordion
 
-  console.log("rerendering ExperimentSelectionPanel")
-
   const handleChange = (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
     setExpanded(newExpanded ? panel : false);
   }

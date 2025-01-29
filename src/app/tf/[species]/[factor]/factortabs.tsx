@@ -6,7 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { includeTargetTypes, excludeTargetTypes } from "@/consts";
 import { useQuery } from "@apollo/client";
-import { DATASETS_QUERY, EPIGENETIC_PROFILE_ACCESSIONS } from "./_ExperimentSelectionPanel/queries";
+import { DATASETS_QUERY, EPIGENETIC_PROFILE_ACCESSIONS } from "./_utility/ExperimentSelectionPanel/queries";
 
 interface FactorTabsProps {
   species: string;
