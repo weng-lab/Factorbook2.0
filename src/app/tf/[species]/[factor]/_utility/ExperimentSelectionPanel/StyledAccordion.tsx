@@ -8,7 +8,7 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import { ArrowForwardIosSharp } from '@mui/icons-material';
 
 export const Accordion = styled((props: AccordionProps) => (
-  <MuiAccordion disableGutters elevation={0} square {...props} />
+  <MuiAccordion disableGutters elevation={0} square slotProps={{ transition: { unmountOnExit: true } }} {...props} />
 ))(({ theme }) => ({
   borderBottom: `1px solid ${theme.palette.divider}`,
   '&:is(:last-child)': {
@@ -26,7 +26,6 @@ export const AccordionSummary = styled((props: AccordionSummaryProps) => (
     {...props}
   />
 ))(({ theme }) => ({
-  // backgroundColor: 'rgba(0, 0, 0, .03)',
   flexDirection: 'row-reverse',
   [`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]:
     {
