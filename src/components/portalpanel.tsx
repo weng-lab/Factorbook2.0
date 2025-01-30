@@ -44,8 +44,9 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
         flexDirection: "column",
         width: "100vw",
         margin: "0 auto",
-        p: "5% 10%",
+        py: "5%",
         overflow: "hidden",
+        maxWidth: "1300px"
       }}
     >
       <Grid2 container spacing={2} alignItems="center">

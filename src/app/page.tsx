@@ -82,7 +82,7 @@ const Homepage = () => {
             justifyContent: "space-between",
             alignItems: isSmallScreen ? "center" : "flex-start",
             width: "100%",
-            maxWidth: "1500px", // Set the max width for content
+            maxWidth: "1300px", // Set the max width for content
           }}
         >
           {isSmallScreen && (
