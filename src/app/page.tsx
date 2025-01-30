@@ -29,7 +29,7 @@ const Homepage = () => {
   const router = useRouter();
 
   const [imageSrc, setImageSrc] = React.useState<string>("/Face.png");
-  const [selectedValue, setSelectedValue] = React.useState<string>("");
+  const [selectedValue, setSelectedValue] = React.useState<string>("human");
   const [selectedPortal, setSelectedPortal] = React.useState<string>(
     "Human Transcription Factors"
   );
