@@ -64,11 +64,8 @@ const Homepage = () => {
       <Box
         sx={{
           display: "flex",
-          flexDirection: isSmallScreen ? "column" : "row",
-          justifyContent: isSmallScreen ? "center" : "space-between",
-          alignItems: isSmallScreen ? "center" : "flex-start",
-          backgroundColor:
-            "var(--material-theme-ref-neutral-neutral17, #2A2A2D)",
+          justifyContent: "center", // Center the inner box
+          backgroundColor: "var(--material-theme-ref-neutral-neutral17, #2A2A2D)",
           width: "100vw",
           height: "auto",
           margin: "0 auto",
@@ -78,27 +75,36 @@ const Homepage = () => {
           position: "relative",
         }}
       >
-        {isSmallScreen && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              width: "100%",
-              height: "100%",
-              zIndex: 0,
-              opacity: 0.5,
-            }}
-          >
-            <Image
-              src="/Factorbook.png"
-              alt="Background Illustration"
-              layout="fill"
-              objectFit="cover"
-            />
-          </Box>
-        )}
-        <Stack direction={"row"} justifyContent={"space-between"} width={"90vw"} maxWidth={10000}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: isSmallScreen ? "column" : "row",
+            justifyContent: "space-between",
+            alignItems: isSmallScreen ? "center" : "flex-start",
+            width: "100%",
+            maxWidth: "1500px", // Set the max width for content
+          }}
+        >
+          {isSmallScreen && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                zIndex: 0,
+                opacity: 0.5,
+              }}
+            >
+              <Image
+                src="/Factorbook.png"
+                alt="Background Illustration"
+                layout="fill"
+                objectFit="cover"
+              />
+            </Box>
+          )}
           <Box
             sx={{
               flex: 1,
@@ -305,7 +311,7 @@ const Homepage = () => {
               />
             </Box>
           )}
-        </Stack>
+        </Box>
       </Box>
       <Header />
 
