@@ -46,6 +46,7 @@ import { HelpRounded } from "@mui/icons-material";
 import { Dataset } from "../../_ExperimentSelectionPanel/ExperimentSelectionPanel";
 import { DATASETS_QUERY } from "../../_ExperimentSelectionPanel/queries";
 import createFullScreenDialog from "./genomicsites";
+import FullScreenDialog from "./genomicsites";
 
 // Helper function to convert numbers to scientific notation
 function toScientificNotationElement(
@@ -126,7 +127,7 @@ export default function MotifEnrichmentPage({
   // ) {
   //   return <Slide direction="up" ref={ref} {...props} />;
   // });
-  
+
   const handleSetSelectedDataset = (newDataset: Dataset) => {
     setSelectedDataset(newDataset)
   }
@@ -156,7 +157,7 @@ export default function MotifEnrichmentPage({
       include_investigatedas: includeTargetTypes,
       exclude_investigatedas: excludeTargetTypes,
     },
-    onCompleted: (d) => {
+    onCompleted: (d: any) => {
       //if there's a url experiment passed, initialize selectedDataset with that, else set to first
       if (!selectedDataset) {
         console.log("running")
@@ -168,7 +169,7 @@ export default function MotifEnrichmentPage({
         } else {
           const firstExperiment = partitionedBiosamples
             .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name)) //sort alphabetically
-            [0].datasets[0] //extract first experiment
+          [0].datasets[0] //extract first experiment
           handleSetSelectedDataset(firstExperiment as Dataset)
         }
       }
@@ -180,7 +181,7 @@ export default function MotifEnrichmentPage({
     loading: motifLoading,
     error: motifError,
   } = useQuery<MotifResponse>(MOTIF_QUERY, {
-    variables: { peaks_accession: [selectedPeakID]},
+    variables: { peaks_accession: [selectedPeakID] },
     skip: !selectedPeakID,
   });
 
@@ -238,18 +239,16 @@ export default function MotifEnrichmentPage({
     setIsDialogOpen(false);
   };
 
-  const GenomePopUp = createFullScreenDialog();
-
   // Sort the motifs so that those with either poor peak centrality or enrichment are at the bottom
   const sortedMotifs = [...(motifData?.meme_motifs || [])].sort((a, b) => b.flank_z_score + b.shuffled_z_score - a.flank_z_score - a.shuffled_z_score);
-  
+
   // Map meme_motifs with target_motifs (tomtomMatch) by index
   const motifsWithMatches = sortedMotifs.map((motif, index) => ({
     ...motif,
     tomtomMatch:
-    motifData?.target_motifs && motifData.target_motifs[index]
-    ? motifData.target_motifs.filter(tm=>tm.motifid===motif.id).slice().sort((a, b) => a.e_value - b.e_value)[0]
-    : undefined, // Change `null` to `undefined`
+      motifData?.target_motifs && motifData.target_motifs[index]
+        ? motifData.target_motifs.filter(tm => tm.motifid === motif.id).slice().sort((a, b) => a.e_value - b.e_value)[0]
+        : undefined, // Change `null` to `undefined`
   }));
 
   if (loading || !selectedPeakID) return <CircularProgress />;
@@ -450,7 +449,7 @@ export default function MotifEnrichmentPage({
                   >
                     Reverse Complement
                   </Button>
-                  <GenomePopUp
+                  <FullScreenDialog
                     species={species}
                     consensusRegex={motif.consensus_regex}
                     experimentID={selectedExperimentID}
