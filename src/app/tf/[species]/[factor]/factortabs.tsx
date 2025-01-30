@@ -67,7 +67,7 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
         )
       })
     })
-    .filter(biosample => biosample.datasets.length > 0) //filter out empty biosamples
+      .filter(biosample => biosample.datasets.length > 0) //filter out empty biosamples
   }, [allExperiments, histoneAccessionsData])
 
   const isCurrentTab = (tab: string): boolean => {
@@ -99,45 +99,35 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
   }, [validHistoneExperiments, histoneAccession, accession])
 
   return (
-    <Box display="flex" alignItems="center">
+    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
       <Tabs
         value={detail}
-        indicatorColor="primary"
-        textColor="primary"
         variant="scrollable"
-        scrollButtons
+        scrollButtons={"auto"}
         allowScrollButtonsMobile
-        sx={{ flex: 1 }}
+        sx={{
+          '& .MuiTabs-scrollButtons.Mui-disabled': {
+            opacity: 0.3 //grey out diabled scroll button instead of hide
+          }
+        }}
       >
         <Tab
           label="Function"
           value="function"
           component={Link}
           href={`/tf/${species}/${factor}/function`}
-          sx={{
-            color: detail === "function" ? "#8169BF" : "inherit",
-            textTransform: "capitalize",
-          }}
         />
         <Tab
           label="Expression (RNA-seq)"
           value="geneexpression"
           component={Link}
           href={`/tf/${species}/${factor}/geneexpression`}
-          sx={{
-            color: detail === "geneexpression" ? "#8169BF" : "inherit",
-            textTransform: "capitalize",
-          }}
         />
         <Tab
           label="Motif Enrichment (MEME, ChIP-seq)"
           value="motif"
           component={Link}
           href={`/tf/${species}/${factor}/motif/${motifAccession}`}
-          sx={{
-            color: detail === "motif" ? "#8169BF" : "inherit",
-            textTransform: "capitalize",
-          }}
         />
         {/* Conditionally render SELEX tab */}
         {hasSelexData && (
@@ -146,10 +136,6 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
             value="deeplearnedselexmotif"
             component={Link}
             href={`/tf/${species}/${factor}/deeplearnedselexmotif`}
-            sx={{
-              color: detail === "deeplearnedselexmotif" ? "#8169BF" : "inherit",
-              textTransform: "capitalize",
-            }}
           />
         )}
         <Tab
@@ -157,20 +143,12 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
           value="histone"
           component={Link}
           href={`/tf/${species}/${factor}/histone/${histoneAccession}`}
-          sx={{
-            color: detail === "histone" ? "#8169BF" : "inherit",
-            textTransform: "capitalize",
-          }}
         />
         <Tab
           label={`Search ${factor} peaks by region`}
           value="regions"
           component={Link}
           href={`/tf/${species}/${factor}/regions`}
-          sx={{
-            color: detail === "regions" ? "#8169BF" : "inherit",
-            textTransform: "capitalize",
-          }}
         />
       </Tabs>
     </Box>

@@ -83,6 +83,13 @@ const theme = createTheme({
       defaultProps: {
         elevation: 0
       }
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "none"
+        }
+      }
     }
   },
 });

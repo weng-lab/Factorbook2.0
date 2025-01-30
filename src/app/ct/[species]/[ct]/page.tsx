@@ -39,6 +39,9 @@ const months = [
 ];
 const CelltypeDetailsPage = () => {
   const { species, ct } = useParams<{ species: string; ct: string }>();
+
+  const celltype = ct.replaceAll('%20', ' ')
+
   const theme = useTheme()
   const references = [
     {
@@ -61,7 +64,7 @@ const CelltypeDetailsPage = () => {
     {
       variables: {
         assembly: species.toLowerCase() === "human" ? "GRCh38" : "mm10",
-        name: [ct],
+        name: [celltype],
       },
     }
   );
@@ -70,7 +73,7 @@ const CelltypeDetailsPage = () => {
   const { data, loading } = useQuery<DatasetQueryResponse>(DATASET_QUERY, {
     variables: {
       processed_assembly: species.toLowerCase() === "human" ? "GRCh38" : "mm10",
-      biosample: ct,
+      biosample: celltype,
       replicated_peaks: true,
       include_investigatedas: includeTargetTypes,
       exclude_investigatedas: excludeTargetTypes,
@@ -113,7 +116,7 @@ const CelltypeDetailsPage = () => {
           }}
         >
           <Typography variant="h4">
-            {ct}
+            {celltype}
           </Typography>
           <ReferenceSection title="References" sources={references} />
         </Stack>
@@ -185,7 +188,7 @@ const CelltypeDetailsPage = () => {
                 datasets: undefined,
               }}
               factor={""}
-              ct={ct}
+              ct={celltype}
             />
           )}
         </Box>

@@ -58,7 +58,7 @@ export type DatasetQueryResponse = {
 
 export type FunctionPageProps = {
   factor: string;
-  assembly: string;
+  assembly: "GRCh38" | "mm10";
 };
 
 export type TFInfoQueryResponse = {

@@ -9,8 +9,8 @@ import {
   Paper,
   Stack,
   useTheme,
-  Link,
   Divider,
+  Link as MuiLink
 } from "@mui/material";
 import {
   FACTOR_DESCRIPTION_QUERY,
@@ -30,6 +30,7 @@ import {
 } from "@weng-lab/psychscreen-ui-components";
 import CtDetails from "@/components/celltype/ctdetails";
 import { BiosamplePartitionedDatasetCollection } from "@/components/types";
+import Link from "next/link";
 
 /** Utility to check if a description has biological information */
 const looksBiological = (value: string): boolean => {
@@ -39,7 +40,6 @@ const looksBiological = (value: string): boolean => {
 
 const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   const { species, factor } = useParams<{ species: string; factor: string }>();
-  const [imageVisible, setImageVisible] = useState(true);
 
   const theme = useTheme()
 
@@ -83,50 +83,21 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   const biosampleCount =
     datasetData?.peakDataset.partitionByBiosample?.length || 0;
 
-  /** Reference links */
-  const references = useMemo(
-    () => [
+  const referenceLinks = useMemo(() => {
+    return (
       {
-        name: "ENCODE",
-        url: `https://www.encodeproject.org/search/?searchTerm=${factorForUrl}&type=Experiment&assembly=${
-          props.assembly === "GRCh38" ? "GRCh38" : "mm10"
-        }&assay_title=TF+ChIP-seq&files.output_type=optimal+IDR+thresholded+peaks&files.output_type=pseudoreplicated+IDR+thresholded+peaks&status=released`,
-      },
-      {
-        name: "Ensembl",
-        url: `http://www.ensembl.org/Human/Search/Results?q=${factorForUrl}`,
-      },
-      {
-        name: "GO",
-        url: `http://amigo.geneontology.org/amigo/search/bioentity?q=${factorForUrl}`,
-      },
-      {
-        name: "GeneCards",
-        url: `http://www.genecards.org/cgi-bin/carddisp.pl?gene=${factorForUrl}`,
-      },
-      {
-        name: "HGNC",
-        url: `https://genenames.org/tools/search/#!/?query=${factorForUrl}`,
-      },
-      {
-        name: "RefSeq",
-        url: `http://www.ncbi.nlm.nih.gov/nuccore/?term=${factorForUrl}+AND+${
-          props.assembly.toLowerCase() !== "mm10"
-            ? '"Homo sapiens"[porgn:__txid9606]'
-            : '"Mus musculus"[porgn]'
-        }`,
-      },
-      {
-        name: "UniProt",
-        url: `http://www.uniprot.org/uniprot/?query=${factorForUrl}`,
-      },
-      {
-        name: "Wikipedia",
-        url: `https://en.wikipedia.org/wiki/${factorForUrl}`,
-      },
-    ],
-    [props.assembly, factorForUrl]
-  );
+        ENCODE: `https://www.encodeproject.org/search/?searchTerm=${factorForUrl}&type=Experiment&assembly=${props.assembly}&assay_title=TF+ChIP-seq&files.output_type=optimal+IDR+thresholded+peaks&files.output_type=pseudoreplicated+IDR+thresholded+peaks&status=released`,
+        Ensembl: `http://www.ensembl.org/Human/Search/Results?q=${factorForUrl}`,
+        GO: `http://amigo.geneontology.org/amigo/search/bioentity?q=${factorForUrl}`,
+        GeneCards: `http://www.genecards.org/cgi-bin/carddisp.pl?gene=${factorForUrl}`,
+        HGNC: `https://genenames.org/tools/search/#!/?query=${factorForUrl}`,
+        RefSeq: `http://www.ncbi.nlm.nih.gov/nuccore/?term=${factorForUrl}+AND+${props.assembly.toLowerCase() !== "mm10" ? '"Homo sapiens"[porgn:__txid9606]' : '"Mus musculus"[porgn]'}`,
+        UniProt: `http://www.uniprot.org/uniprot/?query=${factorForUrl}`,
+        Wikipedia: `https://en.wikipedia.org/wiki/${factorForUrl}`,
+        NCBI: `https://www.ncbi.nlm.nih.gov/search/all/?term=${factorForUrl}`
+      }
+    )
+  }, [factorForUrl]) 
 
   /** Columns for the experiment DataTable */
   const datasetColumns = (species: string): DataTableColumn<any>[] => [
@@ -134,14 +105,32 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       header: "Experiment Accession",
       value: (row) => row.accession,
       render: (row) => (
-        <a href={`/tf/human/${factor}/motif?experiment=${row.accession}`}>{row.accession}</a>
+        <MuiLink
+          component={Link}
+          color={"black"}
+          underline="hover"
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`/tf/human/${factor}/motif/${row.accession}`}
+        >
+          {row.accession}
+        </MuiLink>
       ),
     },
     {
       header: "Cell Type",
       value: (row) => row.biosample,
       render: (row) => (
-        <a href={`/celltype/${species}/${row.biosample}`}>{row.biosample}</a>
+        <MuiLink
+          component={Link}
+          color={"black"}
+          underline="hover"
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`/ct/${species}/${row.biosample}`}
+        >
+          {row.biosample}
+        </MuiLink>
       ),
     },
     {
@@ -162,11 +151,16 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       header: "Replicated Peak File Accession",
       value: (row) => row.replicated_peaks[0].accession,
       render: (row) => (
-        <a
+        <MuiLink
+          component={Link}
+          color={"black"}
+          underline="hover"
+          target="_blank"
+          rel="noopener noreferrer"
           href={`https://www.encodeproject.org/files/${row.replicated_peaks[0].accession}`}
         >
           {row.replicated_peaks[0].accession}
-        </a>
+        </MuiLink>
       ),
     },
   ];
@@ -180,9 +174,18 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       value: (row) => row.biosample.name,
       render: (row) => (
         <Box>
-          <Typography variant="body1" fontWeight="bold">
-            {row.biosample.name}
-          </Typography>
+          <MuiLink
+            component={Link}
+            href={`/ct/${species}/${row.biosample.name}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            underline="hover"
+            color={"black"}
+            variant="body1"
+            display="block"
+          >
+            <b>{row.biosample.name}</b>
+          </MuiLink>
           {row.datasets && row.datasets.length > 0 ? (
             <Typography variant="caption">
               {`${row.datasets.length} experiments found`}
@@ -223,35 +226,45 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       </Alert>
     );
 
-  /** Rendering Information Cards */
-  const renderInfoCards = () => (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+  const InfoCards = () => (
+    <>
       {factorDetails?.ncbi_data && (
-        <ContentCard title="NCBI" description={factorDetails.ncbi_data} />
+        <ContentCard
+          title="NCBI"
+          titleLink={referenceLinks.NCBI}
+          description={factorDetails.ncbi_data}
+        />
       )}
       {factorDetails?.uniprot_data && (
-        <ContentCard title="UniProt" description={factorDetails.uniprot_data} />
+        <ContentCard
+          title="UniProt"
+          titleLink={referenceLinks.UniProt}
+          description={factorDetails.uniprot_data}
+        />
       )}
       {factorDetails?.factor_wiki &&
         looksBiological(factorDetails.factor_wiki) && (
           <ContentCard
             title="Wikipedia"
+            titleLink={referenceLinks.Wikipedia}
             description={factorDetails.factor_wiki}
           />
         )}
       {factorDetails?.hgnc_data && (
         <ContentCard
           title="HGNC"
+          titleLink={referenceLinks.HGNC}
           description={`HGNC ID: ${factorDetails.hgnc_data.hgnc_id}\nLocus Type: ${factorDetails.hgnc_data.locus_type}\nChromosomal Location: ${factorDetails.hgnc_data.location}`}
         />
       )}
       {factorDetails?.ensemble_data && (
         <ContentCard
           title="Ensembl"
+          titleLink={referenceLinks.Ensembl}
           description={`Gene Type: ${factorDetails.ensemble_data.biotype}\nDescription: ${factorDetails.ensemble_data.description}`}
         />
       )}
-    </Box>
+    </>
   );
 
   return (
@@ -259,14 +272,14 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       sx={{
         display: "flex",
         flexDirection: "row",
-        gap: theme.spacing(2),
+        gap: 3,
         color: "white"
       }}
     >
       <Stack
         component={Paper}
-        gap={theme.spacing(2)}
-        p={theme.spacing(2)}
+        gap={3}
+        p={3}
         sx={{
           background: "#494A50",
           width: "300px",
@@ -286,11 +299,10 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
             style={{ borderRadius: theme.shape.borderRadius }}
           />
         )}
-        <ReferenceSection title="References" sources={references} />
+        <ReferenceSection title="References" sources={Object.entries(referenceLinks).map(([name, url]) => ({ name, url }))} />
       </Stack>
-      <Box sx={{ flex: 1 }}>
-        {renderInfoCards()}
-        <Box mt={2}>
+      <Stack flex={1} gap={3}>
+          <InfoCards />
           {datasetData && (
             <DataTable
               tableTitle={`${experimentCount} experiments performed`}
@@ -301,13 +313,14 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
               sortColumn={2}
               sortDescending
               headerColor={{
-                backgroundColor: "#7151A1",
-                textColor: "#EDE7F6",
+                /**
+                 * @todo this is dumb. When datatable types are changed for this prop, change. https://github.com/weng-lab/psychscreen-ui-components/issues/51
+                 */
+                backgroundColor: theme.palette.primary.main as "#",
+                textColor: "#FFF",
               }}
             />
           )}
-        </Box>
-        <Box mt={2}>
           {datasetData?.peakDataset.partitionByBiosample && (
             <DataTable
               tableTitle={`${biosampleCount} biosamples profiled`}
@@ -319,12 +332,11 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
               itemsPerPage={5}
               headerColor={{
                 backgroundColor: "#7151A1",
-                textColor: "#EDE7F6",
+                textColor: "#FFF",
               }}
             />
           )}
-        </Box>
-      </Box>
+      </Stack>
     </Box>
   );
 };
