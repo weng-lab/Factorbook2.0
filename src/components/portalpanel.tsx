@@ -48,15 +48,15 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
         overflow: "hidden",
       }}
     >
-      <Grid2 container spacing={2} alignItems="center" justifyContent={"space-between"}>
+      <Grid2 container spacing={2} alignItems="center">
         <Grid2
           xs={12}
           sm={6}
           sx={{
             display: "flex",
             order: isSmallScreen ? 0 : reverse ? 1 : 0,
+            justifyContent: "center",
           }}
-          justifyContent={reverse ? "flex-end" : "flex-start"}
         >
           <Image
             src={imageSrc}
@@ -73,7 +73,7 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
             textAlign: isSmallScreen ? "center" : "left",
             display: "flex",
             flexDirection: "column",
-            alignItems: isSmallScreen ? "center" : reverse ? "flex-start" : "flex-end",
+            alignItems: "center",
             order: isSmallScreen ? 1 : reverse ? 0 : 1,
           }}
         >
