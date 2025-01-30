@@ -153,9 +153,6 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
         <FormControl fullWidth>
           <InputLabel id="motif-select-label">Select Motif</InputLabel>
           <Select
-            MenuProps={{
-              disableScrollLock: true,
-            }}
             labelId="motif-select-label"
             value={motif ?? ""}
             label="Select Motif"

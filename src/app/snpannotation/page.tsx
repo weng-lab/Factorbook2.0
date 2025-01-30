@@ -211,9 +211,6 @@ const AnnotationsVariants = () => {
                       Select a Population:
                     </Typography>
                     <SmallSelect
-                      MenuProps={{
-                        disableScrollLock: true,
-                      }}
                       value={population}
                       onChange={handlePopulationChange}
                       defaultValue={POPULATIONS[0].value}
@@ -228,9 +225,6 @@ const AnnotationsVariants = () => {
                       Select a Subpopulation:
                     </Typography>
                     <SmallSelect
-                      MenuProps={{
-                        disableScrollLock: true,
-                      }}
                       value={disequilibriumDetails.subpopulation}
                       onChange={handleSubpopulationChange}
                     >
