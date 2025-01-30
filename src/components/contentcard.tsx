@@ -26,7 +26,6 @@ const ContentCard: React.FC<ContentCardProps> = ({
         gap: 4,
         p: 3,
         width: "100%",
-        borderRadius: 2,
         backgroundColor: "#EDE7F6",
         boxShadow: "none",
         ...sx,

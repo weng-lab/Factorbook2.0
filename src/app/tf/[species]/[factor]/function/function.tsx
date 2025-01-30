@@ -5,11 +5,13 @@ import {
   Box,
   CircularProgress,
   Typography,
-  IconButton,
   Alert,
+  Paper,
+  Stack,
+  useTheme,
+  Link,
+  Divider,
 } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import {
   FACTOR_DESCRIPTION_QUERY,
   DATASETS_QUERY,
@@ -38,6 +40,8 @@ const looksBiological = (value: string): boolean => {
 const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   const { species, factor } = useParams<{ species: string; factor: string }>();
   const [imageVisible, setImageVisible] = useState(true);
+
+  const theme = useTheme()
 
   // Define factorForUrl to be uppercase if species is human, or capitalize the first letter if species is mouse
   const factorForUrl =
@@ -255,60 +259,35 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       sx={{
         display: "flex",
         flexDirection: "row",
-        padding: "20px",
-        minHeight: "100vh",
+        gap: theme.spacing(2),
+        color: "white"
       }}
     >
-      <Box
+      <Stack
+        component={Paper}
+        gap={theme.spacing(2)}
+        p={theme.spacing(2)}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
           background: "#494A50",
-          padding: "16px",
-          borderRadius: "8px",
-          marginRight: "20px",
           width: "300px",
-          minHeight: "calc(100vh - 80px)",
           position: "sticky",
-          top: "0",
+          top: "10px",
           height: "fit-content",
+          color: "inherit"
         }}
       >
-        <Typography variant="h4" sx={{ color: "white", marginBottom: "20px" }}>
+        <Typography variant="h4">
           {factorForUrl}
         </Typography>
-        {imageVisible && imageUrl && (
-          <Box position="relative" mb={2}>
-            <img
-              src={imageUrl}
-              alt={factorDetails?.name}
-              style={{ width: "200px", borderRadius: "15px" }}
-            />
-            <IconButton
-              onClick={() => setImageVisible(!imageVisible)}
-              sx={{
-                position: "absolute",
-                top: "0",
-                right: "-40px",
-                color: "white",
-              }}
-            >
-              <ArrowDropUpIcon />
-            </IconButton>
-          </Box>
-        )}
-        {!imageVisible && (
-          <IconButton
-            onClick={() => setImageVisible(!imageVisible)}
-            sx={{ color: "white" }}
-          >
-            <ArrowDropDownIcon />
-          </IconButton>
+        {imageUrl && (
+          <img
+            src={imageUrl}
+            alt={factorDetails?.name}
+            style={{ borderRadius: theme.shape.borderRadius }}
+          />
         )}
         <ReferenceSection title="References" sources={references} />
-      </Box>
-
+      </Stack>
       <Box sx={{ flex: 1 }}>
         {renderInfoCards()}
         <Box mt={2}>

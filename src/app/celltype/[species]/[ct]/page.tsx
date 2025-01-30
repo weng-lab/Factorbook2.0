@@ -8,7 +8,7 @@ import { CellTypeDescription, DatasetQueryResponse } from "./types";
 import { CELLTYPE_DESCRIPTION_QUERY, DATASET_QUERY } from "./queries";
 import dynamic from "next/dynamic";
 import ContentCard from "@/components/contentcard";
-import { Box, Typography, Card, CardContent, Link } from "@mui/material";
+import { Box, Typography, Card, CardContent, Link, Stack, Paper, useTheme } from "@mui/material";
 const TfDetails = dynamic(() => import("@/components/tf/tfdetails"));
 
 const includeTargetTypes = [
@@ -39,6 +39,7 @@ const months = [
 ];
 const CelltypeDetailsPage = () => {
   const { species, ct } = useParams<{ species: string; ct: string }>();
+  const theme = useTheme()
   const references = [
     {
       name: "ENCODE",
@@ -89,38 +90,33 @@ const CelltypeDetailsPage = () => {
   );
 
   return (
-    <>
       <Box
         sx={{
           display: "flex",
           flexDirection: "row",
-          padding: "20px",
-          //minHeight: "100vh",
-          width: "100%",
+          gap: theme.spacing(2),
+          margin: theme.spacing(2),
+          color: "white"
         }}
       >
-        <Box
+        <Stack
+          component={Paper}
+          gap={theme.spacing(2)}
+          p={theme.spacing(2)}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            background: "var(--grey-500, #494A50)",
-            padding: "16px",
-            borderRadius: "8px",
-            marginRight: "20px",
+            background: "#494A50",
             width: "300px",
+            position: "sticky",
+            top: "10px",
+            height: "fit-content",
+            color: "inherit"
           }}
         >
-          <Typography
-            variant="h4"
-            sx={{ color: "white", marginBottom: "20px" }}
-          >
+          <Typography variant="h4">
             {ct}
           </Typography>
-
           <ReferenceSection title="References" sources={references} />
-        </Box>
-
+        </Stack>
         <Box sx={{ flex: 1 }}>
           {renderCards()}
           {data && !loading && (
@@ -194,7 +190,6 @@ const CelltypeDetailsPage = () => {
           )}
         </Box>
       </Box>
-    </>
   );
 };
 

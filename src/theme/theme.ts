@@ -36,7 +36,7 @@ const theme = createTheme({
     },
   },
   shape: {
-    borderRadius: 24
+    borderRadius: 20
   },
   components: {
     // Customize Table styles
@@ -70,9 +70,20 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: 'none',
+          borderRadius: '20px'
         }
       },
     },
+    MuiMenu: {
+      defaultProps: {
+        disableScrollLock: true
+      }
+    },
+    MuiPaper: {
+      defaultProps: {
+        elevation: 0
+      }
+    }
   },
 });
 
