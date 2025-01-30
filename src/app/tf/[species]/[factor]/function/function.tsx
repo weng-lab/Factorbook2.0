@@ -9,8 +9,11 @@ import {
   Paper,
   Stack,
   useTheme,
-  Divider,
-  Link as MuiLink
+  Link as MuiLink,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  useMediaQuery
 } from "@mui/material";
 import {
   FACTOR_DESCRIPTION_QUERY,
@@ -31,6 +34,7 @@ import {
 import CtDetails from "@/components/celltype/ctdetails";
 import { BiosamplePartitionedDatasetCollection } from "@/components/types";
 import Link from "next/link";
+import { ExpandMore } from "@mui/icons-material";
 
 /** Utility to check if a description has biological information */
 const looksBiological = (value: string): boolean => {
@@ -42,6 +46,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   const { species, factor } = useParams<{ species: string; factor: string }>();
 
   const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   // Define factorForUrl to be uppercase if species is human, or capitalize the first letter if species is mouse
   const factorForUrl =
@@ -267,14 +272,13 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     </>
   );
 
+
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-        gap: 3,
-        color: "white"
-      }}
+    <Stack
+      gap={3}
+      direction={isMobile ? "column" : "row"}
+      color="white"
     >
       <Stack
         component={Paper}
@@ -282,8 +286,8 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         p={3}
         sx={{
           background: "#494A50",
-          width: "300px",
-          position: "sticky",
+          width: isMobile ? "auto" : "300px",
+          position: isMobile ? "inherit" : "sticky",
           top: "10px",
           height: "fit-content",
           color: "inherit"
@@ -292,13 +296,28 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         <Typography variant="h4">
           {factorForUrl}
         </Typography>
-        {imageUrl && (
+        {imageUrl && isMobile ?
+          <div>
+            <Accordion sx={{ background: "#6B6C74", color: "inherit" }}>
+              <AccordionSummary expandIcon={<ExpandMore htmlColor="white" />}>
+                Show Structure
+              </AccordionSummary>
+              <AccordionDetails>
+                <img
+                  src={imageUrl}
+                  alt={factorDetails?.name}
+                  style={{ borderRadius: theme.shape.borderRadius }}
+                />
+              </AccordionDetails>
+            </Accordion>
+          </div>
+          :
           <img
             src={imageUrl}
             alt={factorDetails?.name}
             style={{ borderRadius: theme.shape.borderRadius }}
           />
-        )}
+        }
         <ReferenceSection title="References" sources={Object.entries(referenceLinks).map(([name, url]) => ({ name, url }))} />
       </Stack>
       <Stack flex={1} gap={3}>
@@ -337,7 +356,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
             />
           )}
       </Stack>
-    </Box>
+    </Stack>
   );
 };
 
