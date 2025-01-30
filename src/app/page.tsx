@@ -226,6 +226,7 @@ const Homepage = () => {
                 IconComponent={ArrowDropDownIcon}
                 onChange={handleChange}
                 MenuProps={{
+                  disableScrollLock: true,
                   PaperProps: {
                     sx: {
                       bgcolor: "white",

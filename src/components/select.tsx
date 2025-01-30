@@ -90,6 +90,9 @@ const SelectComponent: React.FC<SelectComponentProps> = ({
         >
           <InputLabel>Select species</InputLabel>
           <Select
+            MenuProps={{
+              disableScrollLock: true,
+            }}
             label="Select species"
             value={selectedValue}
             IconComponent={ArrowDropDownIcon}

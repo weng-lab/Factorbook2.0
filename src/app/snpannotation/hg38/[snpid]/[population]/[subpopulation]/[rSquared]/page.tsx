@@ -97,6 +97,9 @@ const AnnotationDetailLD = () => {
         </Grid>
         <Grid item>
           <Select
+            MenuProps={{
+              disableScrollLock: true,
+            }}
             value={annotationType}
             onChange={(e) => setAnnotationType(e.target.value)}
             sx={{

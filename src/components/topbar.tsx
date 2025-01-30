@@ -238,6 +238,7 @@ const Topbar: React.FC = () => {
                           MenuListProps={{
                             "aria-labelledby": "portals-button",
                           }}
+                          disableScrollLock={true}
                         >
                           {item.subItems.map((subItem) => (
                             <MenuItem
