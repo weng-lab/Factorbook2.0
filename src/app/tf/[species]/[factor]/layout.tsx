@@ -23,6 +23,7 @@ import FactorTabs from "./factortabs";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
 import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./queries";
 import { ChevronRight, NavigateNext } from "@mui/icons-material";
+import Loading from "./loading";
 
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
@@ -120,7 +121,7 @@ export default function FactorDetailsLayout({
 
   const TFregion = data?.factor[0].coordinates ? `${data.factor[0].coordinates.chromosome}:${data.factor[0].coordinates.start.toLocaleString()}-${data.factor[0].coordinates.end.toLocaleString()}` : ''
 
-  if (loading) return <CircularProgress />;
+  if (loading) return Loading();
   if (error) return <p>Error: {error.message}</p>;
 
   // Compute Label
