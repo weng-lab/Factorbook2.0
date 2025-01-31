@@ -2,6 +2,9 @@
 import { createTheme } from '@mui/material/styles';
 
 declare module '@mui/material/styles/createPalette' {
+  /**
+   * @todo are these the reason why declaring color="black" doesn't work as expected?
+   */
   interface Palette {
     gray: Palette['primary'];
     link: Palette['primary'];
@@ -36,7 +39,7 @@ const theme = createTheme({
     },
   },
   shape: {
-    borderRadius: 24
+    borderRadius: 20
   },
   components: {
     // Customize Table styles
@@ -69,10 +72,33 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none',
+          textTransform: 'none'
         }
       },
     },
+    MuiMenu: {
+      defaultProps: {
+        disableScrollLock: true
+      }
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "none"
+        }
+      }
+    },
+    MuiAlert: {
+      styleOverrides: {
+        standardInfo: {
+          backgroundColor: "#F2F0FF",
+          color: "#5056A9",
+          "& .MuiAlert-icon": {
+            color: "#5056A9",
+          },
+        },
+      }
+    }
   },
 });
 

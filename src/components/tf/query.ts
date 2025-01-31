@@ -133,12 +133,14 @@ export const TF_INFO_QUERY = gql`
     query Datasets3(
         $processed_assembly: String
         $replicated_peaks: Boolean
+        $biosample: String
         $include_investigatedas: [String]
         $exclude_investigatedas: [String]
     ) {
         peakDataset(
             processed_assembly: $processed_assembly
             replicated_peaks: $replicated_peaks
+            biosample: $biosample
             exclude_investigatedas: $exclude_investigatedas
             include_investigatedas: $include_investigatedas
         ) {
