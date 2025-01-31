@@ -23,6 +23,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
         backgroundColor: "#EDE7F6",
         ...sx,
       }}
+      elevation={0}
     >
       <CardContent sx={{padding: 3, display: "flex", flexDirection: "column", gap: 1}}>
         {titleLink ?

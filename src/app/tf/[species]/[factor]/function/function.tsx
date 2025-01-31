@@ -282,6 +282,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     >
       <Stack
         component={Paper}
+        elevation={0}
         gap={3}
         p={3}
         sx={{

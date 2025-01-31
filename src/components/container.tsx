@@ -16,6 +16,7 @@ const ReferenceSection: React.FC<ReferenceProps> = ({ title, sources }) => {
   return (
     <Stack
       component={Paper}
+      elevation={0}
       sx={{ background: "#6B6C74" }}
       p={theme.spacing(2)}
       gap={theme.spacing(2)}
