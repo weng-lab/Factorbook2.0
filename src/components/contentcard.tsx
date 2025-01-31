@@ -28,11 +28,11 @@ const ContentCard: React.FC<ContentCardProps> = ({
       <CardContent sx={{padding: 3, display: "flex", flexDirection: "column", gap: 1}}>
         {titleLink ?
           <Typography variant="h6" href={titleLink} target="_blank" rel="noopener noreferrer" component={Link} color={theme => theme.palette.black.main} underline="hover">
-            {title}
+            <b>{title}</b>
           </Typography>
           :
           <Typography variant="h6" color={theme => theme.palette.black.main}>
-            {title}
+            <b>{title}</b>
           </Typography>
         }
         <Typography>
