@@ -99,20 +99,20 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
     () =>
       data
         ? assays
-            .map((a) =>
-              studies.map((s) => {
-                const motifs = data.deep_learned_motifs.filter(
-                  (m) => m.source === s && m.assay === a
-                );
-                const proteinTypes = motifs.map((m) => m.protein_type);
-                return [...new Set(proteinTypes)].map((pt) => ({
-                  protein_type: pt,
-                  study: s,
-                  assay: a,
-                }));
-              })
-            )
-            .flat(2)
+          .map((a) =>
+            studies.map((s) => {
+              const motifs = data.deep_learned_motifs.filter(
+                (m) => m.source === s && m.assay === a
+              );
+              const proteinTypes = motifs.map((m) => m.protein_type);
+              return [...new Set(proteinTypes)].map((pt) => ({
+                protein_type: pt,
+                study: s,
+                assay: a,
+              }));
+            })
+          )
+          .flat(2)
         : [],
     [data, assays, studies]
   );
@@ -145,22 +145,30 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
     key: `${s.protein_type}:${s.study}:${s.assay}`,
     value: `${s.protein_type}:${s.study}:${s.assay}`,
     text: `${s.study} - ${s.assay} - ${s.protein_type}`,
+    content: (
+      <>
+        <Typography mr={2}><b>Study:</b> {s.study} - <b>Assay:</b> {s.assay} - <b>Protein Type:</b> {s.protein_type}</Typography>
+      </>
+    ),
   }));
 
   return (
     <Box sx={{ padding: "1em", marginTop: "1em", marginLeft: "2em" }}>
       {dropDownOptions.length > 0 && (
-        <FormControl fullWidth>
+        <FormControl>
           <InputLabel id="motif-select-label">Select Motif</InputLabel>
           <Select
             labelId="motif-select-label"
             value={motif ?? ""}
             label="Select Motif"
             onChange={handleMotifChange}
+            sx={{
+              borderRadius: "24px",
+            }}
           >
             {dropDownOptions.map((option) => (
               <MenuItem key={option.key} value={option.value}>
-                {option.text}
+                {option.content}
               </MenuItem>
             ))}
           </Select>
@@ -268,8 +276,8 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
   };
 
   return (
-    <Box sx={{ textAlign: "center", marginBottom: 2, padding: "2p"}}>
-      <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center", gap: 2}}>
+    <Box sx={{ textAlign: "center", marginBottom: 2, padding: "2p" }}>
+      <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center", gap: 2 }}>
         <Button
           variant="contained"
           startIcon={<SaveAltIcon />}
@@ -403,7 +411,7 @@ const DeepLearnedSelexMotif: React.FC<{
   const lineGraphWidth = 300;
   const barGraphHeight = 300;
   const barGraphWidth = 300;
-  const margin = {top: 20, right: 90, bottom: 70, left: 70 };
+  const margin = { top: 20, right: 90, bottom: 70, left: 70 };
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -464,12 +472,14 @@ const DeepLearnedSelexMotif: React.FC<{
 
   return (
     <Box sx={{ padding: "1em" }}>
-      <Typography variant="h5" align="center">
-        {assay.replaceAll("-", " ")} motifs for{" "}
-        {protein_type === "full"
-          ? " full length protein"
-          : " DNA binding domain protein"}{" "}
-        found in {study.replace("_", " ")} study
+      <Typography variant="h5" align="left" mt={2} gutterBottom>
+        <b>
+          {assay.replaceAll("-", " ")} motifs for{" "}
+          {protein_type === "full"
+            ? " full length protein"
+            : " DNA binding domain protein"}{" "}
+          found in {study.replace("_", " ")} study
+        </b>
       </Typography>
       <Grid container spacing={3}>
         <Grid >
@@ -481,7 +491,7 @@ const DeepLearnedSelexMotif: React.FC<{
               {d.ppm && d.ppm.length > 0 && (
                 <>
                   <DownloadableMotif ppm={d.ppm} name={study} />
-            
+
                 </>
               )}
             </Box>
@@ -497,7 +507,7 @@ const DeepLearnedSelexMotif: React.FC<{
               marginBottom: "20px"
             }}
           >
-             <Button
+            <Button
               variant="contained"
               startIcon={<SaveAltIcon />}
               onClick={() => downloadSVGElement(lineref, "lineplot.svg")}
@@ -508,9 +518,9 @@ const DeepLearnedSelexMotif: React.FC<{
               Download Line Plot
             </Button>
             <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
-              
+
               <Group left={isMobile ? 0 : margin.left} top={margin.top}>
-                
+
                 <AxisLeft
                   scale={yScale}
                   label="1-Specificity"
@@ -566,7 +576,7 @@ const DeepLearnedSelexMotif: React.FC<{
                   textAnchor="middle"
                   fill="black"
                 >
-                 Sensitivity
+                  Sensitivity
                 </Text>
                 <Text
                   x={-125}
@@ -580,32 +590,33 @@ const DeepLearnedSelexMotif: React.FC<{
                 </Text>
               </Group>
             </svg>
-            <Box display="flex" alignItems="center" style={{marginBottom: "17px"}}>
-            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '40px', fontSize: "14px"}}> 
-            Cycle  {presentCycles.map((cycle) => (
-         <div style={{ marginLeft: "5px", display:'flex',
-          alignItems: 'center',
-          justifyContent: 'left'
-      }}
-      ><div
-          style={{
-            width: '10px',
-            height: '3px',
-            backgroundColor: colors[cycle],
-            display: 'inline-block',
-            alignItems: 'center',
-            justifyContent: 'center'        
-          }}
-        > </div> 
-        <Typography style={{  marginLeft: '2px'}}
-                  fontSize={14}
-                > {cycle} </Typography>
-        </div>
-      ))}
-      </Typography>
-      
-    </Box>
-    <Button
+            <Box display="flex" alignItems="center" style={{ marginBottom: "17px" }}>
+              <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '40px', fontSize: "14px" }}>
+                Cycle  {presentCycles.map((cycle) => (
+                  <div style={{
+                    marginLeft: "5px", display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'left'
+                  }}
+                  ><div
+                    style={{
+                      width: '10px',
+                      height: '3px',
+                      backgroundColor: colors[cycle],
+                      display: 'inline-block',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  > </div>
+                    <Typography style={{ marginLeft: '2px' }}
+                      fontSize={14}
+                    > {cycle} </Typography>
+                  </div>
+                ))}
+              </Typography>
+
+            </Box>
+            <Button
               variant="contained"
               startIcon={<SaveAltIcon />}
               onClick={() => downloadSVGElement(barref, "barplot.svg")}
@@ -628,7 +639,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     transform: "translate(-60, 0) rotate(-90)",
                   }}
                   strokeWidth={3}
-                  tickValues={[0, data[data.length-1].fractional_enrichment*0.5, data[data.length-1].fractional_enrichment, data[data.length-1].fractional_enrichment*1.5]}
+                  tickValues={[0, data[data.length - 1].fractional_enrichment * 0.5, data[data.length - 1].fractional_enrichment, data[data.length - 1].fractional_enrichment * 1.5]}
                   tickLabelProps={() => ({
                     fontSize: 10,
                     fill: "black",
@@ -654,7 +665,7 @@ const DeepLearnedSelexMotif: React.FC<{
                     textAnchor: "middle",
                     dy: "0.25em",
                   })}
-                
+
                 />
                 {data.map((d, i) => (
                   <React.Fragment key={i}>
@@ -666,9 +677,9 @@ const DeepLearnedSelexMotif: React.FC<{
                         margin.bottom -
                         barYScale(d.fractional_enrichment)
                       }
-                      width={ barXScale.bandwidth()}
+                      width={barXScale.bandwidth()}
                       fill={colors[d.selex_round]}
-                      
+
                     />
                     <Text
                       x={barXScale(d.selex_round)! + barXScale.bandwidth() / 2}
@@ -702,29 +713,30 @@ const DeepLearnedSelexMotif: React.FC<{
                 </Text>
               </Group>
             </svg>
-            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center',  marginLeft: '20px', fontSize: "14px"}}>
-      Cycle  {[2, 3, 4].map((cycle, index) => (
-         <div style={{ marginLeft: "5px", display:'flex',
-          alignItems: 'center',
-          justifyContent: 'left',
-          }}
-      ><div
-          style={{
-            width: '10px',
-            height: '8px',
-            backgroundColor: colors[cycle],
-            display: 'inline-block',
-            alignItems: 'center',
-            justifyContent: 'center'        
-          }}
-        > </div> 
-        <Typography style={{  marginLeft: '2px'}}
-                  fontSize={14}
-                > {cycle} </Typography>
-        </div>
-      ))}
-    </Typography>
-           
+            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '20px', fontSize: "14px" }}>
+              Cycle  {[2, 3, 4].map((cycle, index) => (
+                <div style={{
+                  marginLeft: "5px", display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'left',
+                }}
+                ><div
+                  style={{
+                    width: '10px',
+                    height: '8px',
+                    backgroundColor: colors[cycle],
+                    display: 'inline-block',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                > </div>
+                  <Typography style={{ marginLeft: '2px' }}
+                    fontSize={14}
+                  > {cycle} </Typography>
+                </div>
+              ))}
+            </Typography>
+
           </Box>
         </Grid>
       </Grid>
