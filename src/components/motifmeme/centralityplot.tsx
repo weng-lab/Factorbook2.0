@@ -14,6 +14,31 @@ interface CentralityPlotProps {
   width?: number;
   height?: number;
 }
+function toScientificNotationElement(
+  num: number,
+  variant:
+    | "body1"
+    | "h1"
+    | "h2"
+    | "h3"
+    | "h4"
+    | "h5"
+    | "h6"
+    | "subtitle1"
+    | "subtitle2"
+    | "caption"
+    | "overline" = "body1",
+  sigFigs = 2
+) {
+  const scientific = num.toExponential(sigFigs);
+  const [coefficient, exponent] = scientific.split("e");
+  return (
+    <Typography variant={variant}>
+      {coefficient}&nbsp;×&nbsp;10<sup>{exponent}</sup>
+    </Typography>
+  );
+}
+
 
 const CentralityPlot: React.FC<CentralityPlotProps> = ({
   peak_centrality,
@@ -26,6 +51,7 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({
     () =>
       Object.keys(peak_centrality)
         .map((s) => +s)
+        .filter((m: number) => m >= -300 && m <= 300)
         .sort((a, b) => a - b),
     [peak_centrality]
   );
@@ -64,12 +90,12 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({
     const index = pcX.indexOf(xValue);
 
     if (index !== -1) {
-      const yValue = parseFloat(pcY[index].toFixed(2));
+      const yValue = pcY[index]
       if (!isNaN(yValue)) {
         showTooltip({
           tooltipData: { xValue, yValue },
           tooltipLeft: x,
-          tooltipTop: yScale(yValue) + 20,
+          tooltipTop: yScale(pcY[index]) + 20,
         });
       }
     }
@@ -107,7 +133,7 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({
             scale={xScale}
             top={height - 80}
             label="Distance from Peak Summit (bp)"
-            labelOffset={40}
+            labelOffset={20}
           />
           <rect
             width={width - 120}
@@ -120,11 +146,12 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({
       </svg>
       {tooltipData && (
         <TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
-          <div style={{ fontSize: "12px", color: "black" }}>
+          <div style={{ fontSize: "16px", color: "black" }}>
             <strong>X:</strong> {tooltipData.xValue}
           </div>
-          <div style={{ fontSize: "12px", color: "black" }}>
-            <strong>Density:</strong> {tooltipData.yValue}
+          <div style={{ fontSize: "16px", color: "black" }}>
+            <strong>Density:</strong> 
+            <>{toScientificNotationElement(tooltipData.yValue,"subtitle2")}</>
           </div>
         </TooltipWithBounds>
       )}

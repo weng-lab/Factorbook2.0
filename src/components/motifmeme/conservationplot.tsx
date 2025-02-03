@@ -97,17 +97,17 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
     const { x } = localPoint(event) || { x: 0 };
     const svgRect = svgRef.current?.getBoundingClientRect();
     const graphX = x - (svgRect?.left || 0) - 60;
-    const xValue = xScale.invert(graphX);
+    const xValue =  Math.round(xScale.invert(x - 60)); // xScale.invert(graphX);
 
     const index = Math.floor(xValue + data.length / 2);
 
     if (index >= 0 && index < data.length) {
       const proximal = parseFloat(data[index].toFixed(2));
       const distal = parseFloat(data[data.length - 1 - index].toFixed(2));
-
+      
       showTooltip({
         tooltipData: { xValue, proximal, distal },
-        tooltipLeft: graphX + 60,
+        tooltipLeft: x,//  graphX + 60,
         tooltipTop: yScale(proximal) + 30,
       });
     } else {
@@ -152,12 +152,12 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
             scale={xScale}
             top={height - 80}
             label="Distance from Motif (bp)"
-            labelOffset={40}
+            labelOffset={20}
           />
           <g
             transform={`translate(${
               xScale(0) - (pwm.length * (xScale(1) - xScale(0))) / 2
-            }, ${yScale(0) - 100})`}
+            }, ${yScale(0) - 100}) scale(1,0.2)`}
           >
             <RawLogo
               values={pwm}
@@ -165,7 +165,7 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
               x={0}
               y={0}
               glyphWidth={xScale(1) - xScale(0)}
-              stackHeight={100}
+              stackHeight={500}
             />
           </g>
           <rect
@@ -183,11 +183,9 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
             <strong>X:</strong> {Math.round(tooltipData.xValue)}
           </div>
           <div style={{ fontSize: "12px", color: "black" }}>
-            <strong>Proximal:</strong> {tooltipData.proximal}
+            <strong>Score:</strong> {tooltipData.proximal}
           </div>
-          <div style={{ fontSize: "12px", color: "black" }}>
-            <strong>Distal:</strong> {tooltipData.distal}
-          </div>
+          
         </TooltipWithBounds>
       )}
       <Box display="flex" justifyContent="start" mt={1} ml={7}>
