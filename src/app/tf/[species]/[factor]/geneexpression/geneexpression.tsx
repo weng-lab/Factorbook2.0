@@ -5,7 +5,6 @@ import {
   Tab,
   Box,
   Typography,
-  CircularProgress,
   Paper,
   MenuItem,
   Grid,
@@ -28,6 +27,7 @@ import {
 import ViolinPlot from "./_violin/violin";
 import StyledButton from "@/components/styledbutton";
 import { groupBy } from "queryz";
+import LoadingExpression from "./loading";
 
 const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const [value, setValue] = useState(0);
@@ -198,7 +198,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   };
 
   return loading ? (
-    <CircularProgress style={{ marginTop: "7em" }} />
+    LoadingExpression()
   ) : (
     <Box sx={{ width: "100%" }}>
       {assayTermNames.size > 1 && (

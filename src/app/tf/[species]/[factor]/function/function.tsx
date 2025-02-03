@@ -28,7 +28,7 @@ import {
 } from "@weng-lab/psychscreen-ui-components";
 import CtDetails from "@/components/celltype/ctdetails";
 import { BiosamplePartitionedDatasetCollection } from "@/components/types";
-import Loading from "./loading";
+import LoadingFunction from "./loading";
 
 /** Utility to check if a description has biological information */
 const looksBiological = (value: string): boolean => {
@@ -206,7 +206,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   ];
 
   /** Error or Loading State Handling */
-  if (factorLoading || datasetLoading ) return Loading();
+  if (factorLoading || datasetLoading ) return LoadingFunction();
   if (factorError)
     return (
       <Alert severity="error">

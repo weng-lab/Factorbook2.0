@@ -23,7 +23,7 @@ import FactorTabs from "./factortabs";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
 import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./queries";
 import { ChevronRight, NavigateNext } from "@mui/icons-material";
-import Loading from "./loading";
+import Loading from "./loadinglayout";
 
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 

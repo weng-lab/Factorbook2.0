@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import {
-  CircularProgress,
   Typography,
   Chip,
   Box,
@@ -44,6 +43,7 @@ import { TOMTOMMessage } from "../../../../../../components/motifmeme/tomtommess
 import { HelpRounded } from "@mui/icons-material";
 import { Dataset } from "../../_utility/ExperimentSelectionPanel/ExperimentSelectionPanel";
 import { DATASETS_QUERY } from "../../_utility/ExperimentSelectionPanel/queries";
+import LoadingMotif from "../loading";
 
 // Helper function to convert numbers to scientific notation
 function toScientificNotationElement(
@@ -229,7 +229,7 @@ export default function MotifEnrichmentPage({
     : undefined, // Change `null` to `undefined`
   }));
 
-  if (loading || !selectedPeakID) return <CircularProgress />;
+  if (loading || !selectedPeakID) return LoadingMotif();
   if (error) return <p>Error: {error.message}</p>;
 
   return (
@@ -240,6 +240,7 @@ export default function MotifEnrichmentPage({
       }}
       divider={<Divider />}
     >
+      {motifLoading && LoadingMotif()}
       <Typography variant="h5" m={2}>
         <span style={{ fontWeight: "bold" }}>
           De novo motif discovery in{" "}
@@ -247,7 +248,6 @@ export default function MotifEnrichmentPage({
           ({selectedExperimentID || "Unknown"}) by MEME
         </span>
       </Typography>
-      {motifLoading && <CircularProgress />}
       {motifError && <p>Error: {motifError.message}</p>}
       {motifsWithMatches.length > 0 && (
         <Stack
