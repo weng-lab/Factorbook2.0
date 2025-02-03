@@ -5,25 +5,26 @@ import {
   AppBar,
   Box,
   Toolbar,
-  Typography,
   Button,
   IconButton,
   Drawer,
   List,
   ListItemText,
-  Collapse,
   Divider,
   Grid,
   useMediaQuery,
   ListItemButton,
   Menu,
   MenuItem,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
   Close as CloseIcon,
   Home as HomeIcon,
-  MenuBook as MenuBookIcon,
   ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
@@ -34,20 +35,36 @@ const navItems = [
   { title: "Home", href: "/", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
   {
     title: "Portals",
-    subItems: [
+    dropdownLinks: [
       {
-        text: "Transcription Factors in Humans",
-        href: "/tf/human",
+        text: "Transcription Factors",
+        subItems: [
+          {
+            text: "Human",
+            href: "/tf/human",
+          },
+          {
+            text: "Mouse",
+            href: "/tf/mouse",
+          },
+        ]
       },
       {
-        text: "Transcription Factors in Mouse",
-        href: "/tf/mouse",
+        text: "Motif Catalog",
+        href: "/motif/human/meme-search"
       },
-      { text: "Motif Catalog", href: "/motif/human/meme-search" },
-      { text: "Annotations", href: "/snpannotation" },
+      {
+        text: "Annotations",
+        href: "/snpannotation"
+      },
+      {
+        text: "FactorChat",
+        href: "/factorchat"
+      }
     ],
   },
   { title: "Downloads", href: "/downloads" },
+  { title: "FactorChat", href: "/factorchat" }
 ];
 
 const Topbar: React.FC = () => {
@@ -101,33 +118,40 @@ const Topbar: React.FC = () => {
       <List>
         {navItems.map((item, index) => (
           <React.Fragment key={item.title}>
-            {item.subItems ? (
-              <>
-                <ListItemButton onClick={handlePortalsClick}>
-                  <ListItemText primary={item.title} />
-                  <ExpandMoreIcon sx={{ color: "#8169BF" }} />
-                </ListItemButton>
-                <Collapse
-                  in={Boolean(portalsAnchorEl)}
-                  timeout="auto"
-                  unmountOnExit
-                >
-                  <List component="div" disablePadding>
-                    {item.subItems.map((subItem) => (
-                      <ListItemButton
-                        key={subItem.text}
-                        component={Link}
-                        href={subItem.href}
-                      >
-                        <ListItemText
-                          primary={subItem.text}
-                          sx={{ paddingLeft: "16px" }}
-                        />
-                      </ListItemButton>
-                    ))}
-                  </List>
-                </Collapse>
-              </>
+            {item.dropdownLinks ? (
+                <Accordion elevation={0} sx={{color: theme => theme.palette.primary.main}}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon color="primary"/>} >
+                    {item.title}
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <List disablePadding>
+                      {item.dropdownLinks.map((dropdownLink) => (
+                        dropdownLink.subItems ?
+                          <div>
+                            <ListItemText sx={{ textAlign: 'left', py: 1, px: 2 }}>{dropdownLink.text}</ListItemText>
+                            {dropdownLink.subItems.map(subItem => (
+                              <ListItemButton
+                                key={subItem.text}
+                                component={Link}
+                                href={subItem.href}
+                                sx={{pl: 4}}
+                              >
+                                <ListItemText primary={subItem.text} color="primary" />
+                              </ListItemButton>
+                            ))}
+                          </div>
+                          :
+                          <ListItemButton
+                            key={dropdownLink.text}
+                            component={Link}
+                            href={dropdownLink.href}
+                          >
+                            <ListItemText primary={dropdownLink.text} />
+                          </ListItemButton>
+                      ))}
+                    </List>
+                  </AccordionDetails>
+                </Accordion>
             ) : (
               <ListItemButton component={Link} href={item.href}>
                 <ListItemText primary={item.title} />
@@ -211,7 +235,7 @@ const Topbar: React.FC = () => {
                   }}
                 >
                   {navItems.map((item) =>
-                    item.subItems ? (
+                    item.dropdownLinks ? (
                       <React.Fragment key={item.title}>
                         <Button
                           aria-controls={
@@ -240,14 +264,29 @@ const Topbar: React.FC = () => {
                             "aria-labelledby": "portals-button",
                           }}
                         >
-                          {item.subItems.map((subItem) => (
-                            <MenuItem
-                              key={subItem.text}
-                              component={Link}
-                              href={subItem.href}
-                            >
-                              {subItem.text}
-                            </MenuItem>
+                          {item.dropdownLinks.map((dropdownLink) => (
+                            dropdownLink.subItems ?
+                              <div>
+                                <Typography px={2} py={1}>{dropdownLink.text}</Typography>
+                                {dropdownLink.subItems.map(subItem => (
+                                  <MenuItem
+                                    key={subItem.text}
+                                    component={Link}
+                                    href={subItem.href}
+                                    sx={{pl: 4}}
+                                  >
+                                    {subItem.text}
+                                  </MenuItem>
+                                ))}
+                              </div>
+                              :
+                              <MenuItem
+                                key={dropdownLink.text}
+                                component={Link}
+                                href={dropdownLink.href}
+                              >
+                                {dropdownLink.text}
+                              </MenuItem>
                           ))}
                         </Menu>
                       </React.Fragment>

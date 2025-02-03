@@ -1,4 +1,5 @@
 'use client'
+
 import { Chat, Close, CloseFullscreen, CropSquare, Download, DragIndicator, InfoOutlined, Minimize, Refresh, Send } from "@mui/icons-material";
 import { Box, Button, Divider, Fab, Fade, IconButton, Paper, Stack, SxProps, TextField, Theme, Tooltip, Typography, useTheme } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
@@ -133,11 +134,13 @@ export default function ChatComponenet() {
   }
 
   const isMaximized =
-    position.width >= window.innerWidth - 30
+    typeof window !== 'undefined' 
+    && position.width >= window.innerWidth - 30
     && position.height >= window.innerHeight - 30
     
   const isDefaultPosition =
-    position.width === 600
+    typeof window !== 'undefined'
+    && position.width === 600
     && position.height === 600
     && position.x === window.innerWidth - 600 - 15
     && position.y === window.innerHeight - 600 - 15
