@@ -80,7 +80,7 @@ const MotifDetails = () => {
                 </Grid>
             </Grid>
 
-            <Divider sx={{ my: isMobile ? 2 : 4 }} />
+            <Divider sx={{ mt: isMobile ? 2 : 4 }} />
 
             <Box sx={{ padding: isMobile ? 2 : 4 }}>
                 <RegexSearchResults regex={regex} />

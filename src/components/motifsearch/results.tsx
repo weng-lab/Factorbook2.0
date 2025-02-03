@@ -65,6 +65,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
       container
       spacing={isMobile ? 1 : 2}
       direction={isMobile ? "column" : "row"}
+      alignItems={"center"}
     >
       {/* SVG Visualization */}
       <Grid
@@ -164,11 +165,11 @@ const MotifResult: React.FC<MotifResultProps> = ({
         )}
       </Grid>
 
-      <Grid item xs={12} md={2} sx={{ textAlign: isMobile ? "center" : "left", display: "flex", gap: 1 }}>
+      <Grid item xs={12} md={2} sx={{ textAlign: isMobile ? "center" : "left", display: "flex", gap: 1 }} alignItems={"center"}>
         <Tooltip title="Euclidean Distance" arrow>
           <InfoOutlined fontSize="small" sx={{ cursor: "pointer" }} />
         </Tooltip>
-        <Typography>Distance: {distance.toFixed(2)}</Typography>
+        <Typography><b>Distance:{" "}</b>{distance.toFixed(2)}</Typography>
       </Grid>
 
       {/* TOMTOM Match information */}
