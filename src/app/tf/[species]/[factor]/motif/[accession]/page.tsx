@@ -28,7 +28,6 @@ import {
 } from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { MOTIF_QUERY } from "../../queries";
 import { MotifResponse } from "@/components/motifmeme/types";
@@ -41,7 +40,7 @@ import CentralityPlot from "../../../../../../components/motifmeme/centralityplo
 import ATACPlot from "../../../../../../components/motifmeme/atacplot";
 import ConservationPlot from "../../../../../../components/motifmeme/conservationplot";
 import { TOMTOMMessage } from "../../../../../../components/motifmeme/tomtommessage";
-import { HelpRounded } from "@mui/icons-material";
+import { HelpRounded, Visibility, VisibilityOff } from "@mui/icons-material";
 import { Dataset } from "../../_utility/ExperimentSelectionPanel/ExperimentSelectionPanel";
 import { DATASETS_QUERY } from "../../_utility/ExperimentSelectionPanel/queries";
 
@@ -243,7 +242,7 @@ export default function MotifEnrichmentPage({
     <Stack
       sx={{
         flexGrow: 1,
-        height: '100vh',
+        maxHeight: '100%',
       }}
       divider={<Divider />}
     >
@@ -414,12 +413,6 @@ export default function MotifEnrichmentPage({
                   <Button
                     variant="contained"
                     startIcon={<SaveAltIcon />}
-                    sx={{
-                      borderRadius: "20px",
-                      backgroundColor: "#8169BF",
-                      color: "white",
-                      flex: 1,
-                    }}
                     onClick={() => setIsDialogOpen(true)}
                   >
                     Download
@@ -427,27 +420,13 @@ export default function MotifEnrichmentPage({
                   <Button
                     variant="outlined"
                     startIcon={<SwapHorizIcon />}
-                    sx={{
-                      borderRadius: "20px",
-                      borderColor: "#8169BF",
-                      color: "#8169BF",
-                      backgroundColor: "white",
-                      flex: 1,
-                    }}
                     onClick={() => handleReverseComplement(index)}
                   >
                     Reverse Complement
                   </Button>
                   <Button
                     variant="outlined"
-                    startIcon={<VisibilityIcon />}
-                    sx={{
-                      borderRadius: "20px",
-                      borderColor: "#8169BF",
-                      color: "#8169BF",
-                      backgroundColor: "white",
-                      flex: 1,
-                    }}
+                    startIcon={showQCStates[motif.id] ? <VisibilityOff /> : <Visibility />}
                     onClick={() => toggleShowQC(motif.id)}
                   >
                     {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
@@ -485,7 +464,7 @@ export default function MotifEnrichmentPage({
                     </Grid>
                   </Box>
                 )}
-
+                {/** @todo deduplicate with download dialog in motifenrichmentselex.tsx */}
                 <Dialog
                   open={isDialogOpen}
                   onClose={() => setIsDialogOpen(false)}
@@ -494,7 +473,7 @@ export default function MotifEnrichmentPage({
                     backdrop: {
                       sx: {
                         backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        backdropFilter: "blur(10px)",
+                        backdropFilter: "blur(2px)",
                       },
                     },
                   }}
@@ -502,7 +481,6 @@ export default function MotifEnrichmentPage({
                     sx: {
                       width: "25vw",
                       maxWidth: "90%",
-                      borderRadius: 6
                     },
                   }}
                 >
@@ -548,11 +526,11 @@ export default function MotifEnrichmentPage({
                   <DialogActions>
                     <Button
                       onClick={() => setIsDialogOpen(false)}
-                      sx={{ color: "#8169BF" }}
                     >
                       Cancel
                     </Button>
                     <Button
+                      variant="contained"
                       onClick={() => {
                         if (exportMotif) {
                           handleDownload(
@@ -579,11 +557,6 @@ export default function MotifEnrichmentPage({
                           );
                         }
                         setIsDialogOpen(false);
-                      }}
-                      sx={{
-                        borderRadius: "20px",
-                        backgroundColor: "#8169BF",
-                        color: "white",
                       }}
                     >
                       Download

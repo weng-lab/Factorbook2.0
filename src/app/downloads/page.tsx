@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Container,
   Box,
@@ -11,15 +11,14 @@ import {
   AccordionDetails,
   Tabs,
   Tab,
-  useTheme,
   Stack,
   Divider,
+  Alert,
+  Tooltip,
 } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import InfoIcon from "@mui/icons-material/Info";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import StyledButton from "../../components/styledbutton";
 import Grid2 from "@mui/material/Unstable_Grid2";
 
@@ -61,26 +60,11 @@ function formatSuperscript(text: string) {
 }
 
 const DownloadPage: React.FC = () => {
-  const [value, setValue] = React.useState(0);
-  const theme = useTheme()
-  const isMobile = theme.breakpoints.down('sm');
-  const [expandedAccordions, setExpandedAccordions] = React.useState({
-    panel1: false,
-    panel2: false,
-  });
-  const [accordionOpen, setAccordionOpen] = useState(true);
+  const [tabValue, setTabValue] = React.useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
   };
-
-  const handleAccordionChange =
-    (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-      setExpandedAccordions((prevState) => ({
-        ...prevState,
-        [panel]: isExpanded,
-      }));
-    };
 
   return (
     <Container sx={{ mb: 4 }}>
@@ -95,7 +79,7 @@ const DownloadPage: React.FC = () => {
 
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs value={value} onChange={handleChange} aria-label="download tabs" variant="fullWidth" >
+        <Tabs value={tabValue} onChange={handleTabChange} aria-label="download tabs" variant="fullWidth" >
           <Tab label="TF Motif Catalog" {...a11yProps(0)} sx={{ textTransform: "none" }} />
           <Tab label="Genomic Motif Sites" {...a11yProps(1)} sx={{ textTransform: "none" }} />
           <Tab label="Heritability Models" {...a11yProps(2)} sx={{ textTransform: "none" }} />
@@ -103,8 +87,7 @@ const DownloadPage: React.FC = () => {
       </Box>
 
       {/* Tab Content */}
-      <TabPanel value={value} index={0}>
-
+      <TabPanel value={tabValue} index={0}>
         <Box>
           <Typography
             variant="h4"
@@ -126,7 +109,15 @@ const DownloadPage: React.FC = () => {
             <Stack spacing={2}>
               <Typography variant="h6">
                 MEME ChIP-seq Catalog
-                <InfoIcon sx={{ ml: 1 }} />
+                <Tooltip
+                  title={`
+                    These motifs were identified by applying MEME to the top 500 IDR thresholded ChIP-seq peaks from more than 3,000 ENCODE
+                    ChIP-seq experiments. Five motifs were identified per experiment; these were subsequently filtered for quality using peak
+                    centrality and enrichment metrics
+                  `}
+                >
+                  <InfoIcon sx={{ ml: 1 }} />
+                </Tooltip>
               </Typography>
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body2">
@@ -164,7 +155,15 @@ const DownloadPage: React.FC = () => {
             <Stack spacing={2}>
               <Typography variant="h6">
                 HT-SELEX Catalog
-                <InfoIcon sx={{ ml: 1 }} />
+                <Tooltip
+                  title={`
+                    These motifs were identified by applying the ZMotif neural network to reads from HT-SELEX experiments and negative reads generated
+                    by dinucleotide shuffling of true positive reads. The motif identified by the network as most predictive of positive reads for each
+                    experiment is contained in this set. HDF5 format motifs can be loaded into Python for application in new models.
+                  `}
+                >
+                  <InfoIcon sx={{ ml: 1 }} />
+                </Tooltip>
               </Typography>
               <Stack direction={"row"} spacing={2}>
                 <Typography variant="body2">
@@ -190,7 +189,7 @@ const DownloadPage: React.FC = () => {
       </TabPanel>
 
       {/* Genomic Motif Sites Tab */}
-      <TabPanel value={value} index={1}>
+      <TabPanel value={tabValue} index={1}>
         <Typography
           variant="h4"
           component="h1"
@@ -213,80 +212,42 @@ const DownloadPage: React.FC = () => {
         <Divider />
 
         {/* Info Box */}
-        <Box
-          sx={{
-            backgroundColor: "#F3F0FF",
-            borderRadius: 2,
-            padding: 2,
-            display: "flex",
-            alignItems: "center",
-            my: 4,
-          }}
-        >
-          <InfoIcon color="primary" sx={{ mr: 1 }}/>
-          <Typography variant="body2" color="textPrimary">
-            <b>This page offers downloads of the complete motif site catalog.</b> To
-            download genomic sites for an individual motif, you can use the
-            buttons available through the TF search or motif search on the home
-            page.
-          </Typography>
-        </Box>
-
+        <Alert severity="info" sx={{my: 4}}>
+          <b>This page offers downloads of the complete motif site catalog.</b>
+          To download genomic sites for an individual motif, you can use the
+          buttons available through the TF search or motif search on the home
+          page.
+        </Alert>
+          
         {/* Accordion for ChIP-seq Peak Motif Site Catalog */}
-        <Accordion
-          expanded={expandedAccordions.panel1}
-          onChange={handleAccordionChange("panel1")}
-          sx={{
-            marginBottom: 2,
-          }}
-        >
+        <div style={{marginBottom: '16px'}}> {/* div wrapper allows for proper border radius */}
+        <Accordion>
           <AccordionSummary
-            expandIcon={
-              expandedAccordions.panel1 ? (
-                <ExpandLessIcon />
-              ) : (
-                <ExpandMoreIcon />
-              )
-            }
+            expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
             id="panel1-header"
           >
             <Typography variant="h6">
               ChIP-seq Peak Motif Site Catalog
             </Typography>
-            <InfoIcon sx={{ ml: 1 }} />
           </AccordionSummary>
           <AccordionDetails>
-            {/* Message Box with ReportProblemIcon */}
-            <Box
-              sx={{
-                backgroundColor: "#FFF7E6",
-                borderRadius: 2,
-                padding: 2,
-                display: "flex",
-                alignItems: "center",
-                my: 3,
-                color: "#663C00",
-              }}
-            >
-              <ReportProblemIcon sx={{ mr: 1 }} />
-              <Typography variant="body2" sx={{ color: "#663C00" }}>
-                <b>This catalog contains sites of MEME motifs from ChIP-seq
-                datasets identified within ChIP-seq peaks using FIMO.</b>{" "}
-                <a href="#" style={{textDecoration: "underline"}}>See here</a> for a list of cell types in which these
-                ChIP-seq peaks were identified. <b>Regulatory motif sites in cell
-                types biologically distinct from well-profiled cell types might
-                not be contained in this catalog!</b>
-              </Typography>
-            </Box>
             <Stack spacing={2}>
+              <Alert severity="warning">
+                <b>This catalog contains sites of MEME motifs from ChIP-seq
+                  datasets identified within ChIP-seq peaks using FIMO.</b>{" "}
+                <a href="#" style={{ textDecoration: "underline" }}>See here</a> for a list of cell types in which these
+                ChIP-seq peaks were identified. <b>Regulatory motif sites in cell
+                  types biologically distinct from well-profiled cell types might
+                  not be contained in this catalog!</b>
+              </Alert>
               <Typography
                 variant="subtitle2"
                 sx={{ textTransform: "uppercase" }}
               >
                 Download merged motif sites
               </Typography>
-              <Grid2 container spacing={2}>
+              <Grid2 container columnSpacing={2}>
                 <Grid2 xs={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.merged.bed.gz"
@@ -354,7 +315,7 @@ const DownloadPage: React.FC = () => {
               >
                 Download all motif sites
               </Typography>
-              <Grid2 container spacing={2}>
+              <Grid2 container columnSpacing={2}>
                 <Grid2 xs={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.bed.gz"
@@ -419,51 +380,27 @@ const DownloadPage: React.FC = () => {
             </Stack>
           </AccordionDetails>
         </Accordion>
-
+        </div>
         {/* Accordion for rDHS Motif Site Catalog */}
-        <Accordion
-          expanded={expandedAccordions.panel2}
-          onChange={handleAccordionChange("panel2")}
-        >
+        <div> {/* div wrapper allows for proper border radius */}
+        <Accordion>
           <AccordionSummary
-            expandIcon={
-              expandedAccordions.panel2 ? (
-                <ExpandLessIcon />
-              ) : (
-                <ExpandMoreIcon />
-              )
-            }
+            expandIcon={<ExpandMoreIcon />}
             aria-controls="panel2-content"
             id="panel2-header"
           >
             <Typography variant="h6">
               Representative DNase Hypersensitive Site (rDHS) Motif Site Catalog
             </Typography>
-            <InfoIcon sx={{ ml: 1 }} />
           </AccordionSummary>
           <AccordionDetails>
-            {/* Message Box with ReportProblemIcon */}
-            <Box
-              sx={{
-                backgroundColor: "#FFF7E6",
-                borderRadius: 2,
-                padding: 2,
-                display: "flex",
-                alignItems: "center",
-                my: 3,
-                color: "#663C00",
-              }}
-            >
-              <ReportProblemIcon sx={{ mr: 1 }} />
-              <Typography variant="body2" sx={{ color: "#663C00" }}>
+            <Stack spacing={2}>
+              <Alert severity="warning">
                 <b>This catalog contains sites of MEME motifs and HT-SELEX motifs
                 identified within rDHSs from the ENCODE Registry of cCREs using
                 FIMO.</b> <a href="#" style={{ textDecoration: "underline" }}>Click here</a> for more information on the
                 Registry of cCREs.
-              </Typography>
-            </Box>
-
-            <Stack spacing={2}>
+              </Alert>
               <Typography
                 variant="subtitle2"
                 sx={{ textTransform: "uppercase" }}
@@ -716,11 +653,12 @@ const DownloadPage: React.FC = () => {
               </Grid2>
             </Stack>
           </AccordionDetails>
-        </Accordion>
+        </Accordion>     
+        </div>
       </TabPanel>
 
       {/* Heritability Models Tab */}
-      <TabPanel value={value} index={2}>
+      <TabPanel value={tabValue} index={2}>
         <Box>
           <Typography
             variant="h4"
@@ -741,9 +679,9 @@ const DownloadPage: React.FC = () => {
           <Divider sx={{mb: 2}}/>
 
           {/* Accordion - Getting Started */}
+          <div style={{marginBottom: '16px'}}>
           <Accordion
             defaultExpanded
-            onChange={(event, isExpanded) => setAccordionOpen(isExpanded)}
           >
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="h6">Getting Started</Typography>
@@ -776,7 +714,7 @@ const DownloadPage: React.FC = () => {
                 sx={{
                   backgroundColor: "#f3f3f3",
                   padding: 2,
-                  borderRadius: 2,
+                  borderRadius: 1,
                   overflowX: "auto",
                 }}
               >
@@ -807,8 +745,9 @@ const DownloadPage: React.FC = () => {
               </Typography>
             </AccordionDetails>
           </Accordion>
-
+          </div>
           {/* Accordion - View and Download Models */}
+          <div>
           <Accordion>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
               <Typography variant="h6">View and Download Models</Typography>
@@ -826,7 +765,7 @@ const DownloadPage: React.FC = () => {
                         backgroundColor: "#333",
                         color: "#fff",
                         padding: 3,
-                        borderRadius: 6,
+                        borderRadius: 1,
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
@@ -856,7 +795,7 @@ const DownloadPage: React.FC = () => {
                         backgroundColor: "#333",
                         color: "#fff",
                         padding: 3,
-                        borderRadius: 6,
+                        borderRadius: 1,
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
@@ -882,6 +821,7 @@ const DownloadPage: React.FC = () => {
               </Box>
             </AccordionDetails>
           </Accordion>
+          </div>
         </Box>
       </TabPanel>
     </Container>
