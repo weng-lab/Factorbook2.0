@@ -98,6 +98,7 @@ export const MotifSearchResultSet: React.FC<{
               <MotifResult
                 species="human"
                 peak_accession={m.motif.peaks_accession}
+                distance={m.distance}
                 alignment={alignment}
                 query={pwm}
                 tomtom_match={
