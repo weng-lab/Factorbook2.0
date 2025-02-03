@@ -29,29 +29,16 @@ interface TFSearchBarProps {
   assembly: string;
 }
 
-// Custom styled Autocomplete with theme-based border and focus colors
-const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
+// Custom styled Autocomplete textField
+const StyledAutocomplete = styled(Autocomplete)(() => ({
   "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "white", // Default border color when not focused
-    },
-    "&:hover fieldset": {
-      borderColor: "white", // Hover border color when not focused
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.main, // Border color on focus (primary color)
-      borderWidth: 2, // Thicker border when focused
-    },
+    height: "40px",
+    borderRadius: "24px",
+    paddingLeft: "12px",
   },
-  "& .MuiAutocomplete-endAdornment": {
-    color: "white", // Dropdown arrow icon color when not focused
-  },
-}));
-
-// Custom styled FormControl with theme-based focus color
-const StyledFormControl = styled(FormControl)(({ theme }) => ({
-  "& .MuiInputLabel-root.Mui-focused": {
-    color: theme.palette.primary.main, // Label color when focused
+  "& .MuiInputBase-input::placeholder": {
+    color: "white", // Placeholder color
+    opacity: 1,
   },
 }));
 
@@ -60,7 +47,6 @@ const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   const [snpValue, setSnpValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -189,7 +175,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   return (
     <Box>
       <Stack direction={isMobile ? "column" : "row"} spacing={2}>
-        <StyledFormControl fullWidth variant="outlined">
+        <FormControl fullWidth variant="outlined">
           <StyledAutocomplete
             options={options}
             freeSolo
@@ -198,34 +184,17 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 event.preventDefault();
                 window.open(
                   snpValue
-                    ? `/transcriptionfactor/${assembly === "GRCh38" ? "human" : "mouse"
+                    ? `/tf/${assembly === "GRCh38" ? "human" : "mouse"
                     }/${snpValue}/function`
                     : "",
                   "_self"
                 );
               }
             }}
-            popupIcon={<ArrowDropDown sx={{ color: "white" }} />} // Arrow icon white when not focused
-            clearIcon={<ClearIcon sx={{ color: "white" }} // Clear icon white when not focused
+            popupIcon={<ArrowDropDown sx={{ color: "white" }} />}
+            clearIcon={<ClearIcon sx={{ color: "white" }}
               onClick={() => { handleReset() }}
             />}
-            sx={{
-              "& .MuiOutlinedInput-root": {
-                height: "40px",
-                borderRadius: "24px",
-                paddingLeft: "12px",
-              },
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "white", // White border when not focused
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: theme.palette.primary.main, // Primary border when focused
-              },
-              "& .MuiInputBase-input::placeholder": {
-                color: "gray", // Placeholder color
-                opacity: 1,
-              },
-            }}
             value={snpValue && formatFactorName(snpValue, assembly)}
             onChange={(_, newValue: any) => setSnpValue(newValue)}
             inputValue={inputValue}
@@ -238,6 +207,9 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
             noOptionsText="Example: CTCF"
             renderInput={(params) => (
               <TextField
+                color="primary"
+                error={!validSearch && inputValue !== ""}
+                label={validSearch || inputValue === "" ? "" : "Invalid TF"}
                 {...params}
                 placeholder="Enter TF Name"
                 fullWidth
@@ -246,13 +218,22 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                   startAdornment: (
                     <InputAdornment position="start">
                       <SearchIcon sx={{ color: "white" }} />{" "}
-                      {/* Search icon in white */}
                     </InputAdornment>
                   ),
-                  style: { textAlign: "center", color: "white" }, // Ensures text is white and visible
+                  style: { textAlign: "center", color: "white" },
                 }}
                 InputLabelProps={{
-                  style: { textAlign: "center", width: "100%", color: "gray" },
+                  style: { width: "100%", color: "#ee725f" },
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "white", // Default border color
+                    },
+                    "&:hover fieldset": {
+                      borderColor: validSearch || inputValue === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
+                    },
+                  }
                 }}
               />
             )}
@@ -276,11 +257,11 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
               );
             }}
           />
-        </StyledFormControl>
+        </FormControl>
         <Button
           LinkComponent={Link}
           variant="contained"
-          disabled={!validSearch && inputValue !== ""}
+          disabled={!validSearch}
           sx={{
             padding: "8px 24px",
             borderRadius: "24px",
@@ -295,12 +276,12 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
           }}
           href={
             snpValue && validSearch
-              ? `/transcriptionfactor/${assembly === "GRCh38" ? "human" : "mouse"
+              ? `/tf/${assembly === "GRCh38" ? "human" : "mouse"
               }/${snpValue}/function`
               : ""
           }
         >
-          Search
+          Go
         </Button>
 
       </Stack>

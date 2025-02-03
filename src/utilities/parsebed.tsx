@@ -1,4 +1,4 @@
-import { GenomicRange } from "@/app/annotationsvariants/types";
+import { GenomicRange } from "@/app/snpannotation/types";
 
 export const parseBed = (e: string): GenomicRange[] => {
   const lines: string[] = e.split("\n");

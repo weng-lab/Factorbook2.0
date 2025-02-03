@@ -1,8 +1,6 @@
 "use client";
 
-import { debounce } from "lodash";
-import React, { useState, useCallback } from "react";
-
+import React, { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
@@ -10,104 +8,119 @@ import {
   TextField,
   Button,
   InputAdornment,
+  useTheme,
 } from "@mui/material";
-
-
 import Stack from "@mui/material/Stack";
-import Config from "../../config.json";
 
+interface MotifSearchBarProps {
+  dark?: boolean;
+}
 
-const MotifSearchbar: React.FC = () => {
-  
-  const [val, setVal] = React.useState<String | null >(null);
-  
-  
+const MotifSearchbar: React.FC<MotifSearchBarProps> = ({dark}) => {
+  const theme = useTheme();
+  const [val, setVal] = React.useState<String>("");
+  const [validSearch, setValidSearch] = useState(false);
+
+  const handleChange = (input: string) => {
+    setVal(input);
+
+    // Regex to validate allowed characters and closed brackets
+    const regex = /^[acgtwsmkrybdhvn\[\]]*$/i; // Match allowed letters and brackets
+    const bracketBalanced = (input.match(/\[/g)?.length || 0) === (input.match(/\]/g)?.length || 0);
+
+    if (regex.test(input) && bracketBalanced) {
+      setValidSearch(true);
+    } else {
+      setValidSearch(false);
+    }
+  };
+
   return (
     <Box>
-                <Stack direction="row" spacing={2}>
-                  
-                  <TextField
+      <Stack direction="row" spacing={2}>
+        <TextField
+          autoComplete="off"
+          error={!validSearch && val !== ""}
+          label={validSearch || val === "" ? "" : "Invalid Sequence"}
+          color="primary"
           variant="outlined"
           placeholder={"enter sequence or regex"}
           fullWidth
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ color: "gray" }} />
+                <SearchIcon sx={{ color: dark ? "grey" : "white" }} />
               </InputAdornment>
             ),
-            style: {
-              height: "40px",
-              borderRadius: "24px",
-              color: "gray", // Text color
-            },
+            style: { textAlign: "center", color: dark ? "grey" : "white" },
           }}
           InputLabelProps={{
-            style: {
-              color: "gray", // Placeholder color
-            },
+            style: { width: "100%" },
           }}
-          onChange={(e)=>{           
-
-            setVal(e.target.value)
-           }}
+          onChange={(e) => {
+            handleChange(e.target.value)
+          }}
+          onKeyDown={(event: any) => {
+            if (event.key === "Enter" && val !== " " && val !== "" && validSearch) {
+              event.preventDefault();
+              sessionStorage.setItem(
+                "motifSearch",
+                JSON.stringify(val)
+              );
+              window.open(`/motif/human/meme-search/${val}`, "_self");
+            }
+          }}
           sx={{
             "& .MuiOutlinedInput-root": {
               height: "40px",
               borderRadius: "24px",
-              borderColor: "gray",
+              paddingLeft: "12px",
+              backgroundColor: dark ? "#EDE7F6" : "transparent",
+              "& fieldset": {
+                borderColor: dark ? "grey" : "white", // Default border color
+              },
               "&:hover fieldset": {
-                borderColor: "gray",
+                borderColor: validSearch || val === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
               },
-              "&.Mui-focused fieldset": {
-                borderColor: "gray",
-              },
-            },
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: "gray",
             },
             "& .MuiInputBase-input::placeholder": {
-              color: "gray", // Placeholder color
-              opacity: 1, // Ensure placeholder text is fully opaque
-            }
+              color: dark ? "grey" : "white",
+              opacity: 1,
+            },
           }}
         />
-         <Button
-                    variant="contained"
-                    color="secondary"
-                  //  onClick={handleSubmit}
-                  onClick={()=>{
-                    window.open(`/motifscatalog/human/${val}`, "_self")
-                    
-                  }}
-                    sx={{
-                      width: "100px",
-                      height: "41px",
-                      padding: "8px 24px",
-                      borderRadius: "24px",
-                      backgroundColor: "#8169BF",
-                      color: "white",
-                      fontFeatureSettings: "'clig' off, 'liga' off",
-                      fontSize: "15px",
-                      fontStyle: "normal",
-                      fontWeight: 500,
-                      lineHeight: "26px",
-                      letterSpacing: "0.46px",
-                      textTransform: "none",
-                      "&:hover": {
-                        backgroundColor: "#7151A1",
-                      },
-                    }}
-                   // href={snpValue ? str : ""}
-                  >
-                    Search
-                  </Button>
-                </Stack>
-                <Box sx={{ marginLeft: "10px" }}>
-                  <Typography variant="caption" sx={{ color: "gray" }}>
-                  Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
-                  </Typography>
-                </Box>
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={!validSearch && val !== ""}
+          onClick={() => {
+            sessionStorage.setItem(
+              "motifSearch",
+              JSON.stringify(val)
+            );
+            window.open(`/motif/human/meme-search/${val}`, "_self");
+          }}
+          sx={{
+            padding: "8px 24px",
+            borderRadius: "24px",
+            fontSize: "15px",
+            lineHeight: "26px",
+            textTransform: "none",
+            "&:disabled": {
+              backgroundColor: "#8169BF",
+              color: "white",
+              opacity: "75%"
+            },
+          }}
+        >
+          Search
+        </Button>
+      </Stack>
+      <Box sx={{ marginLeft: "10px" }}>
+        <Typography variant="caption" sx={{ color: "gray" }}>
+          Examples: cca[cg]cag[ag]gggcgc or ccascagrgggcgc
+        </Typography>
+      </Box>
     </Box>
   );
 };

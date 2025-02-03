@@ -50,8 +50,12 @@ const Homepage = () => {
 
   const handleGoClick = () => {
     if (selectedValue) {
-      router.push(`/transcriptionfactor/${selectedValue}`);
+      router.push(`/tf/${selectedValue}`);
     }
+  };
+
+  const handleSubmit = (snpValue: string) => {
+      router.push(`/snpannotation/hg38/${snpValue}`)
   };
 
   return (
@@ -264,6 +268,7 @@ const Homepage = () => {
                 padding: "9px 9px 8px 10px",
                 marginLeft: "-10px",
                 width: "550px",
+                zIndex: 1
               }}
             >
               {selectedPortal === "Human Transcription Factors" ||
@@ -276,7 +281,7 @@ const Homepage = () => {
                   }
                 />
               ) : selectedPortal === "Annotate Variants" ? (
-                <SnpSearchBar />
+                <SnpSearchBar handleSubmit={handleSubmit}/>
               ) : (
                 <MotifSearchbar />
               )}
@@ -326,7 +331,7 @@ const Homepage = () => {
         imageSrc="/Motifs.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
-        buttonHref="/motifscatalog"
+        buttonHref="/motif/human/meme-search"
         reverse={true}
       />
 
@@ -336,7 +341,7 @@ const Homepage = () => {
         imageSrc="/Human.png"
         imageAlt="Annotate Variants"
         buttonText="Explore Annotations"
-        buttonHref="/annotationsvariants"
+        buttonHref="/snpannotation"
         reverse={false}
       />
     </>

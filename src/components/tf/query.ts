@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const EXPERIMENT_QUERY = gql`
-    query Experiment($accession: [String]) {
+    query Experiment2($accession: [String]) {
         peakDataset(accession: $accession) {
             datasets {
                 lab {
@@ -130,15 +130,17 @@ export const FACTOR_DESCRIPTION_QUERY = gql`
 `;
 
 export const TF_INFO_QUERY = gql`
-    query Datasets(
+    query Datasets3(
         $processed_assembly: String
         $replicated_peaks: Boolean
+        $biosample: String
         $include_investigatedas: [String]
         $exclude_investigatedas: [String]
     ) {
         peakDataset(
             processed_assembly: $processed_assembly
             replicated_peaks: $replicated_peaks
+            biosample: $biosample
             exclude_investigatedas: $exclude_investigatedas
             include_investigatedas: $include_investigatedas
         ) {

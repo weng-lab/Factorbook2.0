@@ -1,11 +1,15 @@
 "use client";
 
 import React from "react";
-import { Box, Typography, SvgIcon } from "@mui/material";
+import { Box, Typography } from "@mui/material";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { IconButton } from '@mui/material';
 
 const Header: React.FC = () => {
+
   return (
     <Box
+      id="target-section"
       component="header"
       sx={{
         display: "flex",
@@ -64,16 +68,20 @@ const Header: React.FC = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          mt: "-10px",
+          mt: "-18px",
         }}
       >
-        <SvgIcon viewBox="0 0 24 24" sx={{ width: 24, height: 24 }}>
-          <path
-            d="M15.88 9.28957L12 13.1696L8.11998 9.28957C7.72998 8.89957 7.09998 8.89957 6.70998 9.28957C6.31998 9.67957 6.31998 10.3096 6.70998 10.6996L11.3 15.2896C11.69 15.6796 12.32 15.6796 12.71 15.2896L17.3 10.6996C17.69 10.3096 17.69 9.67957 17.3 9.28957C16.91 8.90957 16.27 8.89957 15.88 9.28957Z"
-            fill="black"
-            fillOpacity="0.54"
-          />
-        </SvgIcon>
+        <IconButton 
+          onClick={() => {
+            const targetElement = document.getElementById('target-section');
+            if (targetElement) {
+              targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
+          }} 
+          sx={{color:"#757575"}}
+          aria-label="Scroll down">
+          <ExpandMoreIcon />
+        </IconButton>
       </Box>
     </Box>
   );

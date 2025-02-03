@@ -11,7 +11,7 @@ import {
 
 const MOTIFS_PER_PAGE = 3;
 
-const RegexSearchResults: React.FC<{ regex: string }> = ({ regex }) => {
+const RegexSearchResults: React.FC<{ regex?: string, pwm?: number[][] }> = ({ regex, pwm }) => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
 
@@ -27,7 +27,7 @@ const RegexSearchResults: React.FC<{ regex: string }> = ({ regex }) => {
     <>
       <MotifSearchResultSet
         assembly={"GRCh38"}
-        pwm={regexToPWM(regex)}
+        pwm={pwm ? pwm : regexToPWM(regex)}
         offset={+(page || "1") - 1}
         onResultsLoaded={setTotal}
       />
