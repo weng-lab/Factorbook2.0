@@ -1,19 +1,12 @@
-"use client";
-
 import "./globals.css";
 import { ReactNode } from "react";
 import Topbar from "@/components/topbar";
 import Footer from "@/components/footer";
 import { ApolloWrapper } from "../../lib/apollo-wrapper";
-import { ApiContext, apiContextValue } from "@/apicontext";
-import { AppProvider } from "@/appcontext";
 import ChatComponenet from "@/components/factorchat/ChatComponent";
-import dynamic from "next/dynamic";
-const ClientThemeProvider = dynamic(
-  () => import("../components/clientthemeprovider"),
-  { ssr: false }
-);
 import { Hind } from 'next/font/google'
+import ClientThemeProvider from "@/components/clientthemeprovider";
+import { Metadata } from "next";
 
 type LayoutProps = {
   children: ReactNode;
@@ -24,21 +17,40 @@ const hind = Hind({
   subsets: ["latin"]
 })
 
+export const metadata: Metadata = {
+  title: "Factorbook",
+  description: 
+    `Factorbook is a resource for human and mouse transcription factors, 
+    focusing on their binding specificities and regulatory roles in gene 
+    expression across cell types. Factorbook integrates public data, 
+    especially ENCODE, to provide a wide-ranging motif catalog.`,
+  icons: {
+    icon: [
+      {
+        media: "(prefers-color-scheme: light)",
+        url: '/images/iconLight.png',
+        href: '/images/iconLight.png'
+      },
+      {
+        media: "(prefers-color-scheme: dark)",
+        url: '/images/iconDark.png',
+        href: '/images/iconDark.png'
+      }
+    ]
+  }
+}
+
 export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en" className={hind.className}>
       <body>
         <ApolloWrapper>
-          <ApiContext.Provider value={apiContextValue}>
-            <AppProvider>
-              <ClientThemeProvider>
-                <Topbar />
-                {children}
-                <Footer />
-                <ChatComponenet />
-              </ClientThemeProvider>
-            </AppProvider>
-          </ApiContext.Provider>
+          <ClientThemeProvider>
+            <Topbar />
+            {children}
+            <Footer />
+            <ChatComponenet />
+          </ClientThemeProvider>
         </ApolloWrapper>
       </body>
     </html>
