@@ -150,10 +150,6 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
               <InputAdornment position="end">
                 <Search />
               </InputAdornment>
-            ,
-            sx: {
-              borderRadius: (theme) => theme.shape.borderRadius,
-            },
           }}
         />
         <Tooltip title="Collapse Experiment Selection" placement="top">

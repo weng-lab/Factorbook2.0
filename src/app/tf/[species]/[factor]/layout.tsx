@@ -136,8 +136,8 @@ export default function FactorDetailsLayout({
           : "Non-sequence-specific TF";
 
   return (
-    <Stack direction="column" m={2}>
-      <Stack direction={{xs: "column", md: "row"}} justifyContent={"space-between"} m={1} spacing={{xs: 2, md: 0}}>
+    <Stack direction="column" m={4} gap={1}>
+      <Stack direction={{xs: "column", md: "row"}} justifyContent={"space-between"} spacing={2}>
         {/* Breadcrumb */}
         <Breadcrumbs separator={<NavigateNext fontSize="small" />} id="breadcrumbs">
           <MuiLink underline="hover" color={'inherit'} component={Link} href="/">Home</MuiLink>

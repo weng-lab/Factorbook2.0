@@ -269,31 +269,20 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
 
   return (
     <Box sx={{ textAlign: "center", marginBottom: 2, padding: "2p"}}>
-      <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center"}}>
-        <Button
-          variant="outlined"
-          startIcon={<SwapHorizIcon />}
-          onClick={() => setReverseComplement(!reverseComplement)}
-          sx={{
-            borderRadius: "20px",
-            borderColor: "#8169BF",
-            color: "#8169BF",
-            marginRight: 2,
-          }}
-        >
-          Reverse Complement
-        </Button>
+      <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center", gap: 2}}>
         <Button
           variant="contained"
           startIcon={<SaveAltIcon />}
           onClick={() => setIsDialogOpen(true)}
-          sx={{
-            borderRadius: "20px",
-            backgroundColor: "#8169BF",
-            color: "white",
-          }}
         >
           Export
+        </Button>
+        <Button
+          variant="outlined"
+          startIcon={<SwapHorizIcon />}
+          onClick={() => setReverseComplement(!reverseComplement)}
+        >
+          Reverse Complement
         </Button>
       </Box>
       <Logo
@@ -303,7 +292,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         width={300}
         height={300}
       />
-      
+      {/** @todo deduplicate with download dialog in motif/[accession]/page.tsx */}
       <Dialog
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
@@ -312,7 +301,6 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
           sx: {
             width: "25vw",
             maxWidth: "90%",
-            borderRadius: 6
           },
         }}
       >
@@ -344,17 +332,12 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         <DialogActions>
           <Button
             onClick={() => setIsDialogOpen(false)}
-            sx={{ color: "#8169BF" }}
           >
             Cancel
           </Button>
           <Button
             onClick={handleExport}
-            sx={{
-              borderRadius: "20px",
-              backgroundColor: "#8169BF",
-              color: "white",
-            }}
+            variant="contained"
           >
             Export
           </Button>
@@ -519,9 +502,6 @@ const DeepLearnedSelexMotif: React.FC<{
               startIcon={<SaveAltIcon />}
               onClick={() => downloadSVGElement(lineref, "lineplot.svg")}
               sx={{
-                borderRadius: "20px",
-                backgroundColor: "#8169BF",
-                color: "white",
                 marginTop: "20px",
               }}
             >
@@ -630,9 +610,6 @@ const DeepLearnedSelexMotif: React.FC<{
               startIcon={<SaveAltIcon />}
               onClick={() => downloadSVGElement(barref, "barplot.svg")}
               sx={{
-                borderRadius: "20px",
-                backgroundColor: "#8169BF",
-                color: "white",
                 marginTop: "20px",
               }}
             >
@@ -641,19 +618,6 @@ const DeepLearnedSelexMotif: React.FC<{
 
             <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
               <Group left={isMobile ? 0 : margin.left} top={margin.top}>
-              <Button
-              variant="contained"
-              startIcon={<SaveAltIcon />}
-              onClick={() => downloadSVGElement(barref, "barplot.svg")}
-              sx={{
-                borderRadius: "20px",
-                backgroundColor: "#8169BF",
-                color: "white",
-                marginTop: "10px",
-              }}
-            >
-              Download Bar Plot
-            </Button>
                 <AxisLeft
                   scale={barYScale}
                   label="Fractional Enrichment"

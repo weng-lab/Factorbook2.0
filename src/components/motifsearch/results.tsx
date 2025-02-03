@@ -143,7 +143,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
               style={{ color: "#8169BF" }}
               rel="noopener noreferrer"
               target="_blank"
-              href={`/celltype/human/${data.peakDataset.datasets[0].biosample}`}
+              href={`/ct/human/${data.peakDataset.datasets[0].biosample}`}
             >
               <strong>{data.peakDataset.datasets[0].biosample}</strong>
             </Link>
