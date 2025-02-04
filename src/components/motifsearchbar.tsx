@@ -102,10 +102,6 @@ const MotifSearchbar: React.FC<MotifSearchBarProps> = ({dark}) => {
           }}
           sx={{
             padding: "8px 24px",
-            borderRadius: "24px",
-            fontSize: "15px",
-            lineHeight: "26px",
-            textTransform: "none",
             "&:disabled": {
               backgroundColor: "#8169BF",
               color: "white",

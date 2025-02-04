@@ -265,8 +265,7 @@ const Homepage = () => {
 
             <Box
               sx={{
-                padding: "9px 9px 8px 10px",
-                marginLeft: "-10px",
+                padding: "9px 9px 8px 0px",
                 width: "550px",
                 zIndex: 1
               }}
