@@ -6,35 +6,43 @@ import { fetchGenomicObject } from './hooks';
 import { Autocomplete, TextField } from '@mui/material';
 
 const SearchBox: React.FC<SearchBoxProps> = props => {
-    const [searchVal, setSearchVal] = useState<string | undefined>();
-    const [selectedSearchVal, setSelectedsearchVal] = useState<Result | undefined>();
     const [results, setResults] = useState<Result[]>();
+    const [isResultSelected, setIsResultSelected] = useState(false);
 
-    const onSubmit = useCallback(async () => {
-        if (searchVal && isCoordinate(searchVal)) {
-            props.onSearchSubmit && props.onSearchSubmit(searchVal);
-            return;
+    const onSubmit = useCallback((value: Result) => {
+        let domainString = ""
+        switch (value.type) {
+            case 'gene':
+                domainString = value.description.split('\n')[1]
+                break
+            case 'snp':
+                domainString = value.description
+                break
+            case 'coordinate':
+                domainString = value.title || ""
+                break
         }
-        const coordinates = selectedSearchVal ? null : await fetchGenomicObject(searchVal || "---", "GRCh38");
-        const gene = selectedSearchVal ? selectedSearchVal : results && results[0];
-        if (!coordinates) {
-            if (gene === undefined) return;
-            const coords = gene.description.split('\n');
-            props.onSearchSubmit &&
-                isCoordinate(coords.length === 2 ? coords[1] : coords[0]) &&
-                props.onSearchSubmit(coords.length === 2 ? coords[1] : coords[0], gene.title, !(coords.length === 2));
-        } else
-            props.onSearchSubmit && props.onSearchSubmit(`${coordinates.chromosome}:${coordinates.start}-${coordinates.end}`);
-    }, [searchVal, results, props, selectedSearchVal]);
+        const chromosome = domainString.split(':')[0]
+        let start = parseInt(domainString.split(':')[1].split('-')[0])
+        let end = parseInt(domainString.split(':')[1].split('-')[1])
+        if (value.type === 'snp' || value.type === 'gene') {
+            const center = Math.floor((start + end) / 2)
+            const halfWindow = 2500
+            start = center - halfWindow
+            end = center + halfWindow
+        }
+
+        props.onSearchSubmit && props.onSearchSubmit({ chromosome, start, end });
+    }, [props.onSearchSubmit])
 
     const onSearchChange = useCallback(
-        async (event: React.SyntheticEvent, { value }: { value: string }) => {
+        async (_event: React.SyntheticEvent, { value }: { value: string }) => {
             const val: string = value.toLowerCase();
             let rs: Result[] = [];
-            setSearchVal(value);
             if (val.startsWith('rs') && props.assembly === 'GRCh38') {
                 const response = await fetch('https://ga.staging.wenglab.org/graphql', {
                     method: 'POST',
+
                     body: JSON.stringify({
                         query: SNP_AUTOCOMPLETE_QUERY,
                         variables: { snpid: value, assembly: 'hg38', limit: 3 },
@@ -80,18 +88,17 @@ const SearchBox: React.FC<SearchBoxProps> = props => {
             const res: Result[] | undefined = genesRes && genesRes.length === 0 && rs.length > 0 ? undefined : uniq(genesRes, value);
             const list = rs ? (res ? [...rs, ...res] : rs) : res
             list?.forEach(item => {
-                item.type = item.title?.startsWith('rs') ? 'snp' : 'gene'
+                if (item.title?.startsWith('rs')) {
+                    item.type = 'snp';
+                } else if (item.title?.startsWith('chr')) {
+                    item.type = 'coordinate';
+                } else {
+                    item.type = 'gene';
+                }
             })
             setResults(list);
         }, [props.assembly]
     );
-    const onResultSelect = useCallback((_e: any, d: { result: React.SetStateAction<Result | undefined>; }) => {
-        setSelectedsearchVal(d.result);
-    }, []);
-
-    useEffect(() => {
-        console.log(results)
-    }, [results])
 
     return (
         <>
@@ -100,7 +107,7 @@ const SearchBox: React.FC<SearchBoxProps> = props => {
                 getOptionLabel={(option: Result) => option.title || ''}
                 groupBy={(option: Result) => option.type || ''}
                 renderOption={(props, option: Result) => (
-                    <li {...props}>
+                    <li {...props} key={option.title}>
                         <div>
                             <strong>{option.title}</strong>
                             <br />
@@ -108,7 +115,28 @@ const SearchBox: React.FC<SearchBoxProps> = props => {
                         </div>
                     </li>
                 )}
-                renderInput={(params) => <TextField {...params} label="Search" onChange={(e) => onSearchChange(e, { value: e.target.value })} />}
+                onChange={(_event, value) => {
+                    console.log(value)
+                    if (value) {
+                        setIsResultSelected(true);
+                        onSubmit(value);
+                    }
+                }}
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        label="Search"
+                        onChange={(e) => {
+                            onSearchChange(e, { value: e.target.value });
+                            setIsResultSelected(false);
+                        }}
+                        sx={{
+                            '& .MuiInputBase-input': {
+                                color: isResultSelected ? 'green' : 'gray',
+                            }
+                        }}
+                    />
+                )}
                 style={{ width: 300 }}
             />
         </>

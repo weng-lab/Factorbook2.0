@@ -1,9 +1,12 @@
 'use client'
 
 import { gql, useQuery } from '@apollo/client'
-import { GenomeBrowser, useBrowserState, InitialState, DefaultBigWig, BigWigTrackProps, ImportanceTrackProps, DefaultImportance, DisplayMode, TrackType, GQLWrapper, BrowserActionType, DefaultTranscript, TranscriptTrackProps, TranscriptMouseVersion, TranscriptHumanVersion, TrackProps, DefaultMotif, MotifTrackProps, Controls } from '@weng-lab/genomebrowser'
-import { useEffect } from 'react'
+import { GenomeBrowser, useBrowserState, InitialState, DefaultBigWig, BigWigTrackProps, ImportanceTrackProps, DefaultImportance, DisplayMode, TrackType, GQLWrapper, BrowserActionType, DefaultTranscript, TranscriptTrackProps, TranscriptMouseVersion, TranscriptHumanVersion, TrackProps, DefaultMotif, MotifTrackProps, Controls, BrowserAction, BrowserState, GQLCytobands } from '@weng-lab/genomebrowser'
+import { Dispatch, useEffect } from 'react'
 import SearchBox from './search';
+import { Button, TextField } from '@mui/material';
+import { IconButton } from '@mui/material';
+import { Search } from '@mui/icons-material';
 
 const FILES_QUERY = gql`
 query signal($accession: [String], $assembly: String) {
@@ -61,7 +64,7 @@ function generateTracks(species: string, experimentID: string): TrackProps[] {
     const file = data.peakDataset.datasets[0].files[0]
     const url = `https://www.encodeproject.org/files/${file.accession}/@@download/${file.accession}.bigWig`
     const tracks = [] as TrackProps[]
-    const bigWig = { ...DefaultBigWig, id: 'peak-signal-bw', title: "", height: 100, color: "#3287a8", url: url } as BigWigTrackProps
+    const bigWig = { ...DefaultBigWig, id: 'peak-signal-bw', title: "ChIP-seq signal (" + file.accession + ")", height: 100, color: "#3287a8", url: url } as BigWigTrackProps
     tracks.push(bigWig)
     return tracks
 }
@@ -70,7 +73,7 @@ export default function Browser({ species, consensusRegex, experimentID }: { spe
     const domain = { chromosome: 'chr18', start: 35494852, end: 35514000 }
 
     const specificTracks = generateTracks(species, experimentID)
-
+    const assembly = species.toLowerCase() === "human" ? "hg38" : "mm10"
     const initialState = {
         domain,
         width: 1500,
@@ -80,7 +83,6 @@ export default function Browser({ species, consensusRegex, experimentID }: { spe
     const [state, dispatch] = useBrowserState(initialState)
 
     useEffect(() => {
-        console.log(state.domain)
         if (state.domain.end - state.domain.start <= 2000) {
             dispatch({ type: BrowserActionType.ADD_TRACK, track: importanceTrack })
         }
@@ -97,15 +99,94 @@ export default function Browser({ species, consensusRegex, experimentID }: { spe
         }
     }, [specificTracks])
 
-    const onSearchSubmit = (domain: string, name?: string, isSnp?: boolean) => {
-        console.log(domain, name, isSnp)
+    const onSearchSubmit = (domain: Domain) => {
+        dispatch({ type: BrowserActionType.SET_LOADING })
+        dispatch({ type: BrowserActionType.SET_DOMAIN, domain })
     }
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Controls domain={state.domain} dispatch={dispatch} />
+            <svg id="cytobands" width={"700px"} height={20}>
+                <GQLCytobands assembly={assembly} chromosome={domain.chromosome} currentDomain={state.domain} />
+            </svg>
+            <ControlDiv domain={state.domain} dispatch={dispatch} />
             <SearchBox assembly={species.toLowerCase() === "human" ? "GRCh38" : "mm10"} onSearchSubmit={onSearchSubmit} />
             <GenomeBrowser width={"95%"} browserState={state} browserDispatch={dispatch} />
         </div>
+    )
+}
+
+type Domain = {
+    chromosome?: string;
+    start: number;
+    end: number;
+}
+
+function ControlDiv({ domain, dispatch }: { domain: Domain, dispatch: Dispatch<BrowserAction> }) {
+    return (
+        <div style={{ width: "100%" }}>
+            <Controls
+                inputButtonComponent={
+                    <IconButton type="button" sx={{
+                        color: "black",
+                        maxHeight: "100%",
+                        padding: "4px"
+                    }}>
+                        <Search fontSize="small" />
+                    </IconButton>
+                }
+                inputComponent={SearchInput(domain.chromosome + ":" + domain.start + "-" + domain.end)}
+                buttonComponent={
+                    <Button
+                        variant="outlined"
+
+                        sx={{
+                            minWidth: "0px",
+                            width: { xs: "100%", sm: "80%" },
+                            maxWidth: "120px",
+                            fontSize: "0.8rem",
+                            padding: "4px 8px"
+                        }}
+                    />
+                }
+                domain={domain}
+                dispatch={dispatch}
+                withInput={false}
+                style={{
+                    paddingBottom: "4px",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: "4px",
+                    width: "100%"
+                }}
+            />
+        </div>
+    )
+}
+function SearchInput(placeholder: string) {
+    return (
+        <TextField
+            variant="outlined"
+            id="region-input"
+            label="Enter a genomic region"
+            placeholder={placeholder}
+            InputLabelProps={{
+                shrink: true,
+                htmlFor: "region-input",
+                style: {
+                    color: '#000F9F',
+                    fontSize: "0.8rem"
+                },
+            }}
+            sx={{
+                mr: { xs: "0.5rem", sm: "0.5rem" },
+                minWidth: { xs: "100%", sm: "14rem" },
+                maxWidth: "250px",
+                fieldset: { borderColor: "#000F9F" },
+                height: "30px",
+                mb: "5px"
+            }}
+            size="small"
+        />
     )
 }

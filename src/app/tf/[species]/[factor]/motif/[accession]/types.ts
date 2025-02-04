@@ -4,10 +4,17 @@ export type GenomicRange = {
     end?: number;
 };
 
+type Domain = {
+    chromosome?: string;
+    start: number;
+    end: number;
+}
+
 export type SearchBoxProps = {
     assembly: string;
-    onSearchSubmit: (domain: string, name?: string, isSnp?: boolean) => void;
+    onSearchSubmit: (domain: Domain) => void;
 };
+
 
 export type RefSeqSearchBoxProps = {
     assembly: string;

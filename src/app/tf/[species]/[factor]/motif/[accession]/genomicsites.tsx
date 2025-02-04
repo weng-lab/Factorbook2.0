@@ -1,4 +1,4 @@
-import React, { useState, SetStateAction, useMemo } from "react";
+import React, { useState, SetStateAction, useMemo, Dispatch } from "react";
 import Dialog from '@mui/material/Dialog';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -25,23 +25,32 @@ import { TransitionProps } from '@mui/material/transitions';
 import Browser from "./browser";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { GQLWrapper } from "@weng-lab/genomebrowser";
+import { BrowserAction, BrowserState, Controls, GQLWrapper } from "@weng-lab/genomebrowser";
 import {
   DataTable,
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
 import { useQuery } from "@apollo/client";
 import { MEMEOCCU_QUERY } from "../../queries";
+import { Search } from "@mui/icons-material";
+
+type Domain = {
+  chromosome: string;
+  start: number;
+  end: number;
+}
 
 type MEMEOCCURESULT = {
-genomic_region: {    chromosome: string;
+  genomic_region: {
+    chromosome: string;
     start: number;
-    end: number;};
+    end: number;
+  };
 
-    consensus_regex: string;
-    q_value: number;
-    peaks_accession: string;
-    strand: string;
+  consensus_regex: string;
+  q_value: number;
+  peaks_accession: string;
+  strand: string;
 }
 const MEME_OCCU_COLUMNS = (): DataTableColumn<MEMEOCCURESULT>[] => {
   const cols: DataTableColumn<MEMEOCCURESULT>[] = [
@@ -82,7 +91,7 @@ const MEME_OCCU_COLUMNS = (): DataTableColumn<MEMEOCCURESULT>[] => {
       value: (row: MEMEOCCURESULT) => row.q_value.toFixed(2),
     },
   ];
- 
+
   return cols;
 };
 
@@ -174,18 +183,18 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
   const formattedRegions = useMemo(
     () => regions.map(x => ({ chromosome: x.chromosome!, start: x.start!, end: x.end! })),
     [regions]
-);
+  );
 
-const { data: memeOccuData, loading, error } = useQuery(MEMEOCCU_QUERY, {
-  
-  variables: {
+  const { data: memeOccuData, loading, error } = useQuery(MEMEOCCU_QUERY, {
+
+    variables: {
       peaks_accession: fileID,
       range: formattedRegions,
       consensus_regex: consensusRegex,
-  },
-  skip: formattedRegions.length === 0,
-});
-console.log(memeOccuData)
+    },
+    skip: formattedRegions.length === 0,
+  });
+  console.log(memeOccuData)
   const handleChange = (event: {
     target: { value: SetStateAction<string> };
   }) => {
@@ -248,152 +257,152 @@ console.log(memeOccuData)
           </TabPanel>
           <TabPanel value={popupTab} index={1}>
             <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
-            <Typography variant="h4" gutterBottom>
-                {`Searching ${fileID} motif sites`} 
+              <Typography variant="h4" gutterBottom>
+                {`Searching ${fileID} motif sites`}
               </Typography>
               <br />
-              {regions.length===0 && <>
-              <Typography variant="h6" gutterBottom>
-                {`Enter genomic coordinates (${species.toLowerCase() === "human" ? "GRCh38" : "mm10"
-                  }):`}
-              </Typography>
-              <StyledSearchBox>
-                <LargeTextField
-                onKeyDown={(event) => {
-                  if (event.key === "Tab" && !value) {
-                     const defaultGenomicRegion = `chr2:${(100000000).toLocaleString()}-${(100101000).toLocaleString()}`;
-                     setValue(defaultGenomicRegion);
-                   }
-                 }}
-                 placeholder="Enter a genomic region"
-                 onChange={handleChange}
-                 id="region-input"
-                 value={value}
-                />{" "}
-                <Button
-                  variant="contained"
-                  sx={{
-                    margin: "auto",
-                    backgroundColor: theme.palette.primary.main,
-                    borderRadius: "24px",
-                    textTransform: "none",
-                    fontWeight: "medium",
-                    color: "#FFFFFF",
-                    "&:focus, &:hover, &:active": {
-                      backgroundColor: theme.palette.primary.main,
-                    },
-                  }}
-                  onClick={() => {
-                    const chromosome = value.split(":")[0];
-                    const start = +value
-                      .split(":")[1]
-                      .split("-")[0]
-                      .replaceAll(",", "");
-                    const end = +value
-                      .split(":")[1]
-                      .split("-")[1]
-                      .replaceAll(",", "");
-                    setRegions([
-                      { chromosome: chromosome, start: start!!, end: end!! },
-                    ]);
-                    //setFileUpload(false)
-                  }}
-                >
-                  Search
-                </Button>
-                <br />
-                <Typography variant="body2" sx={{ marginLeft: "8px" }}>
-                  example: chr2:100,000,000-100,101,000
+              {regions.length === 0 && <>
+                <Typography variant="h6" gutterBottom>
+                  {`Enter genomic coordinates (${species.toLowerCase() === "human" ? "GRCh38" : "mm10"
+                    }):`}
                 </Typography>
-              </StyledSearchBox>
-              <br/>
-              {(
-                <>
-                  <Typography variant="h6" gutterBottom>
-                    You could also upload .bed files here
-                  </Typography>
-                  <UploadBox
-                    onDragOver={handleDragOver}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                    isDragging={isDragging}
+                <StyledSearchBox>
+                  <LargeTextField
+                    onKeyDown={(event) => {
+                      if (event.key === "Tab" && !value) {
+                        const defaultGenomicRegion = `chr2:${(100000000).toLocaleString()}-${(100101000).toLocaleString()}`;
+                        setValue(defaultGenomicRegion);
+                      }
+                    }}
+                    placeholder="Enter a genomic region"
+                    onChange={handleChange}
+                    id="region-input"
+                    value={value}
+                  />{" "}
+                  <Button
+                    variant="contained"
+                    sx={{
+                      margin: "auto",
+                      backgroundColor: theme.palette.primary.main,
+                      borderRadius: "24px",
+                      textTransform: "none",
+                      fontWeight: "medium",
+                      color: "#FFFFFF",
+                      "&:focus, &:hover, &:active": {
+                        backgroundColor: theme.palette.primary.main,
+                      },
+                    }}
+                    onClick={() => {
+                      const chromosome = value.split(":")[0];
+                      const start = +value
+                        .split(":")[1]
+                        .split("-")[0]
+                        .replaceAll(",", "");
+                      const end = +value
+                        .split(":")[1]
+                        .split("-")[1]
+                        .replaceAll(",", "");
+                      setRegions([
+                        { chromosome: chromosome, start: start!!, end: end!! },
+                      ]);
+                      //setFileUpload(false)
+                    }}
                   >
-                    <DriveFolderUploadIcon fontSize="large" />
-                    <Typography variant="body1" sx={{ mt: 2 }}>
-                      Drag and drop .bed files here
-                      <br />
-                      or
+                    Search
+                  </Button>
+                  <br />
+                  <Typography variant="body2" sx={{ marginLeft: "8px" }}>
+                    example: chr2:100,000,000-100,101,000
+                  </Typography>
+                </StyledSearchBox>
+                <br />
+                {(
+                  <>
+                    <Typography variant="h6" gutterBottom>
+                      You could also upload .bed files here
                     </Typography>
-                    <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                      <input
-                        type="file"
-                        id="file-input"
-                        hidden
-                        onChange={handleFileChange}
-                      />
-                      <label htmlFor="file-input">
-                        <Button
-                          variant="contained"
-                          component="span"
-                          sx={{
-                            display: "block",
-                            padding: "8px 16px",
-                            backgroundColor: "#8169BF",
-                            borderRadius: "24px",
-                            textTransform: "none",
-                            fontWeight: "medium",
-                            color: "#FFFFFF",
-                            "&:focus, &:hover, &:active": {
-                              backgroundColor: "#8169BF",
-                            },
-                          }}
-                        >
-                          Browse Computer
-                        </Button>
-                      </label>
-                    </Box>
-                    {selectedFile && (
-                      <Typography variant="body2" sx={{ mt: 2 }}>
-                        Selected file: {selectedFile.name}
-                      </Typography>
-                    )}
-                  </UploadBox>
-                  <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        margin: "auto",
-                        backgroundColor: "#8169BF",
-                        borderRadius: "24px",
-                        textTransform: "none",
-                        fontWeight: "medium",
-                        color: "#FFFFFF",
-                        "&:focus, &:hover, &:active": {
-                          backgroundColor: "#8169BF",
-                        },
-                      }}
-                      // onClick={() => handleFileUpload()}
-                      disabled={!selectedFile}
+                    <UploadBox
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                      isDragging={isDragging}
                     >
-                      Upload File
-                    </Button>
-                  </Box>
-                </>
-              )}
+                      <DriveFolderUploadIcon fontSize="large" />
+                      <Typography variant="body1" sx={{ mt: 2 }}>
+                        Drag and drop .bed files here
+                        <br />
+                        or
+                      </Typography>
+                      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                        <input
+                          type="file"
+                          id="file-input"
+                          hidden
+                          onChange={handleFileChange}
+                        />
+                        <label htmlFor="file-input">
+                          <Button
+                            variant="contained"
+                            component="span"
+                            sx={{
+                              display: "block",
+                              padding: "8px 16px",
+                              backgroundColor: "#8169BF",
+                              borderRadius: "24px",
+                              textTransform: "none",
+                              fontWeight: "medium",
+                              color: "#FFFFFF",
+                              "&:focus, &:hover, &:active": {
+                                backgroundColor: "#8169BF",
+                              },
+                            }}
+                          >
+                            Browse Computer
+                          </Button>
+                        </label>
+                      </Box>
+                      {selectedFile && (
+                        <Typography variant="body2" sx={{ mt: 2 }}>
+                          Selected file: {selectedFile.name}
+                        </Typography>
+                      )}
+                    </UploadBox>
+                    <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          margin: "auto",
+                          backgroundColor: "#8169BF",
+                          borderRadius: "24px",
+                          textTransform: "none",
+                          fontWeight: "medium",
+                          color: "#FFFFFF",
+                          "&:focus, &:hover, &:active": {
+                            backgroundColor: "#8169BF",
+                          },
+                        }}
+                        // onClick={() => handleFileUpload()}
+                        disabled={!selectedFile}
+                      >
+                        Upload File
+                      </Button>
+                    </Box>
+                  </>
+                )}
               </>}
               {memeOccuData && memeOccuData.meme_occurrences && (
-        <Box sx={{ mx: "auto", alignItems: "center" }}>
-          <DataTable
-            key="meme_occu"
-            columns={MEME_OCCU_COLUMNS()}
-            rows={memeOccuData.meme_occurrences}
-            itemsPerPage={10}
-            sortColumn={1}
-            searchable
-            tableTitle={`${memeOccuData.meme_occurrences.length} ${fileID} ChIP-seq peak motif sites matched your input:`}
-          />
-        </Box>
-      )}
+                <Box sx={{ mx: "auto", alignItems: "center" }}>
+                  <DataTable
+                    key="meme_occu"
+                    columns={MEME_OCCU_COLUMNS()}
+                    rows={memeOccuData.meme_occurrences}
+                    itemsPerPage={10}
+                    sortColumn={1}
+                    searchable
+                    tableTitle={`${memeOccuData.meme_occurrences.length} ${fileID} ChIP-seq peak motif sites matched your input:`}
+                  />
+                </Box>
+              )}
             </Box>
           </TabPanel>
         </Box>
