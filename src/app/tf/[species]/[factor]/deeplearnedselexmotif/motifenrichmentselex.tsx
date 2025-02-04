@@ -261,8 +261,15 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
   };
 
   return (
-    <Box sx={{ textAlign: "center", marginBottom: 2, padding: "2p" }}>
-      <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center", gap: 2 }}>
+    <Box sx={{ textAlign: "center", marginBottom: 2 }}>
+      <Logo
+        ppm={motifppm}
+        alphabet={DNAAlphabet}
+        ref={svgRef as MutableRefObject<SVGSVGElement>}
+        width={300}
+        height={300}
+      />
+      <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
         <Button
           variant="contained"
           startIcon={<SaveAltIcon />}
@@ -278,13 +285,6 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
           Reverse Complement
         </Button>
       </Box>
-      <Logo
-        ppm={motifppm}
-        alphabet={DNAAlphabet}
-        ref={svgRef as MutableRefObject<SVGSVGElement>}
-        width={300}
-        height={300}
-      />
       {/** @todo deduplicate with download dialog in motif/[accession]/page.tsx */}
       <Dialog
         open={isDialogOpen}
@@ -352,7 +352,6 @@ const DeepLearnedSelexMotif: React.FC<{
     selex?: any;
   }[];
 }> = ({ study, assay, protein_type, data }) => {
-  const theme = useTheme();
 
   const downloadSVGElement = (
     ref: MutableRefObject<SVGSVGElement | null>,
@@ -398,7 +397,7 @@ const DeepLearnedSelexMotif: React.FC<{
           {data.map((d, i) => (
             <Grid xs={3}>
               <Box key={`logo${i}`} sx={{ textAlign: "center" }}>
-                <Typography variant="h6" sx={{ color: "brown" }}>
+                <Typography variant="h6">
                   Cycle {d.selex_round}
                 </Typography>
                 {d.ppm && d.ppm.length > 0 && (
