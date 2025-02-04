@@ -1,5 +1,4 @@
 'use client'
-
 import { Button, Stack, TextField, Tooltip, Typography } from "@mui/material";
 import { Refresh, Download, Send } from "@mui/icons-material";
 import { FactorChatMessage } from "./types";
