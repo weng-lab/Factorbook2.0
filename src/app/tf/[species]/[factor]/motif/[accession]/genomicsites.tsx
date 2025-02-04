@@ -1,14 +1,11 @@
 import React, { useState, SetStateAction, useMemo } from "react";
 import Dialog from '@mui/material/Dialog';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItem from '@mui/material/ListItem';
-import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import {
   Box,
   Typography,
@@ -17,6 +14,7 @@ import {
   useTheme,
   TextField,
   Link,
+  Grid,
 } from '@mui/material/';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
@@ -32,6 +30,7 @@ import {
 } from "@weng-lab/psychscreen-ui-components";
 import { useQuery } from "@apollo/client";
 import { MEMEOCCU_QUERY } from "../../queries";
+import { parseBedFile } from "../../regions/peaksearch";
 
 type MEMEOCCURESULT = {
 genomic_region: {    chromosome: string;
@@ -149,8 +148,10 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [value, setValue] = useState("");
   const [regions, setRegions] = useState<GenomicRange[]>([]);
+ const [isFileUpload, setFileUpload] = useState<boolean>(false)
   const theme = useTheme();
 
+  
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragging(true);
@@ -170,6 +171,14 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
+  };
+
+  const handleFileUpload = async () => {
+    if (selectedFile) {
+      const parsed = await parseBedFile(selectedFile);
+      setRegions(parsed);
+      setFileUpload(true);
+    }
   };
   const formattedRegions = useMemo(
     () => regions.map(x => ({ chromosome: x.chromosome!, start: x.start!, end: x.end! })),
@@ -247,10 +256,49 @@ console.log(memeOccuData)
             </GQLWrapper>
           </TabPanel>
           <TabPanel value={popupTab} index={1}>
-            <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
-            <Typography variant="h4" gutterBottom>
-                {`Searching ${fileID} motif sites`} 
-              </Typography>
+            <Box sx={{ mt: 4, mx: "auto", maxWidth: "2000px" }}>
+            
+        <>
+          <Grid container alignItems="center" justifyContent="space-between">
+            <Grid item>              
+                <Typography variant="h4">
+                  {`Searching ${fileID} motif sites`}
+                </Typography>                               
+            </Grid>
+            <Grid item>
+              <Button
+                onClick={() => {
+                  setRegions([]);
+                }}
+                variant="contained"
+                color="secondary"
+                sx={{
+                  width: "220px",
+                  height: "41px",
+                  padding: "8px 24px",
+                  borderRadius: "24px",
+                  backgroundColor: "#8169BF",
+                  color: "white",
+                  fontFeatureSettings: "'clig' off, 'liga' off",
+                  fontSize: "15px",
+                  fontStyle: "normal",
+                  fontWeight: 500,
+                  letterSpacing: "0.46px",
+                  textTransform: "none",
+                  "&:hover": {
+                    backgroundColor: "#7151A1",
+                  },
+                }}
+              >
+                <NavigateBeforeIcon />
+                Perform New Search
+              </Button>
+            </Grid>
+          </Grid>
+
+          <Divider sx={{ my: 4 }} />
+        </>
+      
               <br />
               {regions.length===0 && <>
               <Typography variant="h6" gutterBottom>
@@ -372,7 +420,7 @@ console.log(memeOccuData)
                           backgroundColor: "#8169BF",
                         },
                       }}
-                      // onClick={() => handleFileUpload()}
+                     onClick={() => handleFileUpload()}
                       disabled={!selectedFile}
                     >
                       Upload File
@@ -382,18 +430,18 @@ console.log(memeOccuData)
               )}
               </>}
               {memeOccuData && memeOccuData.meme_occurrences && (
-        <Box sx={{ mx: "auto", alignItems: "center" }}>
-          <DataTable
-            key="meme_occu"
-            columns={MEME_OCCU_COLUMNS()}
-            rows={memeOccuData.meme_occurrences}
-            itemsPerPage={10}
-            sortColumn={1}
-            searchable
-            tableTitle={`${memeOccuData.meme_occurrences.length} ${fileID} ChIP-seq peak motif sites matched your input:`}
-          />
-        </Box>
-      )}
+                <Box sx={{ mx: "auto", alignItems: "center" }}>
+                  <DataTable
+                    key="meme_occu"
+                    columns={MEME_OCCU_COLUMNS()}
+                    rows={memeOccuData.meme_occurrences}
+                    itemsPerPage={10}
+                    sortColumn={1}
+                    searchable
+                    tableTitle={`${memeOccuData.meme_occurrences.length} ${fileID} ChIP-seq peak motif sites matched your input:`}
+                  />
+                </Box>
+              )}
             </Box>
           </TabPanel>
         </Box>

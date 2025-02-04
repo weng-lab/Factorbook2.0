@@ -84,7 +84,7 @@ export type GenomicRange = {
   end?: number;
 };
 
-const parseBedFile = async (file: File | null): Promise<GenomicRange[]> => {
+export const parseBedFile = async (file: File | null): Promise<GenomicRange[]> => {
   const reader = new FileReader();
   const ret: GenomicRange[] = await new Promise((resolve, reject) => {
     reader.onload = () => {
