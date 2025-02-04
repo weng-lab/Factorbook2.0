@@ -162,7 +162,7 @@ const CelltypeDetailsPage = () => {
               ]}
               tableTitle={` ${data.peakDataset.counts.total} experiment${
                 data.peakDataset.counts.total !== 1 ? "s" : ""
-              } performed`}
+              } `}
               rows={data.peakDataset.datasets}
               itemsPerPage={5}
               searchable
