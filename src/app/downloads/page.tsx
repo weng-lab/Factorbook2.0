@@ -257,15 +257,7 @@ const DownloadPage: React.FC = () => {
                         <strong>Lenient set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-4 (46 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-4</sup> (46 MB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -277,15 +269,7 @@ const DownloadPage: React.FC = () => {
                         <strong>Moderate set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-5 (45 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup> (45 MB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -297,15 +281,7 @@ const DownloadPage: React.FC = () => {
                         <strong>Stringent set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-6 (44 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (44 MB)</p>}
                   />
                 </Grid2>
               </Grid2>
@@ -325,15 +301,7 @@ const DownloadPage: React.FC = () => {
                         <strong>Lenient set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-4 (758 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-4</sup> (758 MB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -345,15 +313,7 @@ const DownloadPage: React.FC = () => {
                         <strong>Moderate set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-5 (684 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup> (684 MB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -365,15 +325,7 @@ const DownloadPage: React.FC = () => {
                         <strong>Stringent set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-6 (653 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (653 MB)</p>}
                   />
                 </Grid2>
               </Grid2>
@@ -417,15 +369,7 @@ const DownloadPage: React.FC = () => {
                         <strong>MEME: Lenient set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-6 (47 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (47 MB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -437,15 +381,7 @@ const DownloadPage: React.FC = () => {
                         <strong>MEME: Moderate set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-7 (19 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-7</sup> (19 MB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -457,15 +393,7 @@ const DownloadPage: React.FC = () => {
                         <strong>MEME: Stringent set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-8 (11 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-8</sup> (11 MB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -477,15 +405,7 @@ const DownloadPage: React.FC = () => {
                         <strong>HT-SELEX: Lenient set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-5 (57 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup> (57 MB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -497,15 +417,7 @@ const DownloadPage: React.FC = () => {
                         <strong>HT-SELEX: Moderate set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-6 (12 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (12 MB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -517,15 +429,7 @@ const DownloadPage: React.FC = () => {
                         <strong>HT-SELEX: Stringent set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-7 (2 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-7</sup> (2 MB)</p>}
                   />
                 </Grid2>
               </Grid2>
@@ -545,15 +449,7 @@ const DownloadPage: React.FC = () => {
                         <strong>Lenient set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-6 (2.9 GB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (2.9 GB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -565,15 +461,7 @@ const DownloadPage: React.FC = () => {
                         <strong>Moderate set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-7 (1.5 GB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-7</sup> (1.5 GB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -585,15 +473,7 @@ const DownloadPage: React.FC = () => {
                         <strong>Stringent set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript(
-                            "FIMO p-value < 10^-8 (885 MB)"
-                          ),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-8</sup> (885 MB)</p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -605,13 +485,7 @@ const DownloadPage: React.FC = () => {
                         <strong>HT-SELEX: Lenient set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript("FIMO p-value < 10^-5"),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup></p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -623,13 +497,7 @@ const DownloadPage: React.FC = () => {
                         <strong>HT-SELEX: Moderate set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript("FIMO p-value < 10^-6"),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup></p>}
                   />
                 </Grid2>
                 <Grid2 xs={4}>
@@ -641,13 +509,7 @@ const DownloadPage: React.FC = () => {
                         <strong>HT-SELEX: Stringent set</strong>
                       </>
                     }
-                    secondaryText={
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: formatSuperscript("FIMO p-value < 10^-7"),
-                        }}
-                      />
-                    }
+                    secondaryText={<p>FIMO p-value {'<'} 10<sup>-7</sup></p>}
                   />
                 </Grid2>
               </Grid2>
