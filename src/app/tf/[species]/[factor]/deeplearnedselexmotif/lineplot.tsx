@@ -20,7 +20,7 @@ const colors: { [key: number]: string } = {
     7: "#90EE90",
 };
 
-const SelexLinePlot: React.FC<PlotProps> = ({data, downloadSVGElement}) => {
+const SelexLinePlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const lineref = useRef<SVGSVGElement | null>(null);
@@ -80,19 +80,9 @@ const SelexLinePlot: React.FC<PlotProps> = ({data, downloadSVGElement}) => {
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                alignItems: isMobile ? "flex-start" : "center",
+                alignItems: "center",
             }}
         >
-            <Button
-                variant="contained"
-                startIcon={<SaveAltIcon />}
-                onClick={() => downloadSVGElement(lineref, "lineplot.svg")}
-                sx={{
-                    marginTop: "20px",
-                }}
-            >
-                Download Line Plot
-            </Button>
             <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
 
                 <Group left={isMobile ? 0 : margin.left} top={margin.top}>
@@ -152,7 +142,7 @@ const SelexLinePlot: React.FC<PlotProps> = ({data, downloadSVGElement}) => {
                         textAnchor="middle"
                         fill="black"
                     >
-                        Sensitivity
+                        1-Specificity
                     </Text>
                     <Text
                         x={-125}
@@ -162,36 +152,40 @@ const SelexLinePlot: React.FC<PlotProps> = ({data, downloadSVGElement}) => {
                         fill="black"
                         transform="rotate(-90)"
                     >
-                        1-Specificity
+                        Sensitivity
                     </Text>
                 </Group>
             </svg>
-            <Box display="flex" alignItems="center" style={{ marginBottom: "17px" }}>
-                <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '40px', fontSize: "14px" }}>
-                    Cycle  {presentCycles.map((cycle) => (
-                        <div style={{
-                            marginLeft: "5px", display: 'flex',
+            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: "14px" }} gutterBottom>
+                Cycle  {presentCycles.map((cycle) => (
+                    <div style={{
+                        marginLeft: "5px", 
+                        display: 'flex',
+                        alignItems: 'center',
+                    }}
+                    ><div
+                        style={{
+                            width: '10px',
+                            height: '3px',
+                            backgroundColor: colors[cycle],
+                            display: 'inline-block',
                             alignItems: 'center',
-                            justifyContent: 'left'
+                            justifyContent: 'center'
                         }}
-                        ><div
-                            style={{
-                                width: '10px',
-                                height: '3px',
-                                backgroundColor: colors[cycle],
-                                display: 'inline-block',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}
-                        > </div>
-                            <Typography style={{ marginLeft: '2px' }}
-                                fontSize={14}
-                            > {cycle} </Typography>
-                        </div>
-                    ))}
-                </Typography>
-
-            </Box>
+                    > </div>
+                        <Typography style={{ marginLeft: '2px' }}
+                            fontSize={14}
+                        > {cycle} </Typography>
+                    </div>
+                ))}
+            </Typography>
+            <Button
+                variant="contained"
+                startIcon={<SaveAltIcon />}
+                onClick={() => downloadSVGElement(lineref, "lineplot.svg")}
+            >
+                Download Line Plot
+            </Button>
         </Box>
     );
 };

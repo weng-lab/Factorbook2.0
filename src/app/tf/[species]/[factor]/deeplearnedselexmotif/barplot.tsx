@@ -24,7 +24,8 @@ const colors: { [key: number]: string } = {
 const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
+    const barref = useRef<SVGSVGElement | null>(null);
+    
     const barplotDomain = useMemo(
         () => ({
             x: {
@@ -63,27 +64,16 @@ const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
         [barplotDomain, barGraphHeight, margin]
     );
 
-    const barref = useRef<SVGSVGElement | null>(null);
+    const presentCycles = data.map((d) => d.selex_round);
 
     return (
         <Box
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                alignItems: isMobile ? "flex-start" : "center",
+                alignItems: "center",
             }}
         >
-            <Button
-                variant="contained"
-                startIcon={<SaveAltIcon />}
-                onClick={() => downloadSVGElement(barref, "barplot.svg")}
-                sx={{
-                    marginTop: "20px",
-                }}
-            >
-                Download Bar Plot
-            </Button>
-
             <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
                 <Group left={isMobile ? 0 : margin.left} top={margin.top}>
                     <AxisLeft
@@ -170,8 +160,8 @@ const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
                     </Text>
                 </Group>
             </svg>
-            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginLeft: '20px', fontSize: "14px" }}>
-                Cycle  {[2, 3, 4].map((cycle, index) => (
+            <Typography variant="caption" component="div" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: "14px" }} gutterBottom>
+                Cycle  {presentCycles.map((cycle, index) => (
                     <div style={{
                         marginLeft: "5px", display: 'flex',
                         alignItems: 'center',
@@ -180,7 +170,7 @@ const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
                     ><div
                         style={{
                             width: '10px',
-                            height: '8px',
+                            height: '3px',
                             backgroundColor: colors[cycle],
                             display: 'inline-block',
                             alignItems: 'center',
@@ -193,6 +183,13 @@ const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
                     </div>
                 ))}
             </Typography>
+            <Button
+                variant="contained"
+                startIcon={<SaveAltIcon />}
+                onClick={() => downloadSVGElement(barref, "barplot.svg")}
+            >
+                Download Bar Plot
+            </Button>
         </Box>
     );
 };

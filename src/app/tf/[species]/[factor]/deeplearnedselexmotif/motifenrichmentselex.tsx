@@ -138,7 +138,7 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
   }));
 
   return (
-    <Box sx={{ padding: "1em", marginTop: "1em", marginLeft: "2em" }}>
+    <Box>
       {dropDownOptions.length > 0 && (
         <FormControl>
           <InputLabel id="motif-select-label">Select Motif</InputLabel>
@@ -261,14 +261,16 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
   };
 
   return (
-    <Box sx={{ textAlign: "center", marginBottom: 2 }}>
+    <Box sx={{ justifyContent: "center", marginBottom: 2, marginTop: 1 }}>
+      <Box sx={{ justifyContent: "center"}}>
       <Logo
         ppm={motifppm}
         alphabet={DNAAlphabet}
         ref={svgRef as MutableRefObject<SVGSVGElement>}
         width={300}
-        height={300}
+        height={200}
       />
+      </Box>
       <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
         <Button
           variant="contained"
@@ -364,28 +366,19 @@ const DeepLearnedSelexMotif: React.FC<{
 
   return (
     <Box>
-      <Typography variant="h5" align="left" mt={2} gutterBottom>
-        <b>
-          {assay.replaceAll("-", " ")} motifs for{" "}
-          {protein_type === "full"
-            ? " full length protein"
-            : " DNA binding domain protein"}{" "}
-          found in {study.replace("_", " ")} study
-        </b>
-      </Typography>
       <Stack
-        divider={<Divider />}
+        divider={<Divider sx={{marginY: 2}}/>}
       >
         <Grid container spacing={3}>
           {/* LINE PLOT */}
-          <Grid xs={3}>
+          <Grid xs={12} sm={6} md={3}>
             <SelexLinePlot
               data={data}
               downloadSVGElement={downloadSVGElement}
             />
           </Grid>
           {/* BAR PLOT */}
-          <Grid xs={3}>
+          <Grid xs={12} sm={6} md={3}>
             <SelexBarPlot
               data={data}
               downloadSVGElement={downloadSVGElement}
@@ -395,7 +388,7 @@ const DeepLearnedSelexMotif: React.FC<{
         {/* CYCLES */}
         <Grid container spacing={3}>
           {data.map((d, i) => (
-            <Grid xs={3}>
+            <Grid xs={12} sm={6} md={3}>
               <Box key={`logo${i}`} sx={{ textAlign: "center" }}>
                 <Typography variant="h6">
                   Cycle {d.selex_round}
