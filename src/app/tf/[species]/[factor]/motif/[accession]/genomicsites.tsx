@@ -4,8 +4,8 @@ import Divider from '@mui/material/Divider';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import {
   Box,
   Typography,
@@ -30,7 +30,6 @@ import {
 } from "@weng-lab/psychscreen-ui-components";
 import { useQuery } from "@apollo/client";
 import { MEMEOCCU_QUERY } from "../../queries";
-import { Search } from "@mui/icons-material";
 import { parseBedFile } from "../../regions/peaksearch";
 
 type Domain = {
@@ -157,7 +156,9 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [value, setValue] = useState("");
   const [regions, setRegions] = useState<GenomicRange[]>([]);
+  const [isFileUpload, setFileUpload] = useState<boolean>(false)
   const theme = useTheme();
+
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
