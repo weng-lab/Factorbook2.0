@@ -28,6 +28,7 @@ import {
   SelectChangeEvent,
   useTheme,
   Stack,
+  Skeleton,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid2 for MUI v2
 import { ApiContext } from "@/apicontext";
@@ -114,16 +115,35 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
     setMotif(event.target.value);
   };
 
-  if (loading || !data)
+  if (loading ||  !data)
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
-        <CircularProgress />
-      </Box>
+      <>
+        {/* HEADER */}
+        <Skeleton variant="rounded" width={"30%"} height="57px" />
+        <br />
+        <Stack divider={<Divider sx={{ marginY: 2 }} />} spacing={3}>
+
+          {/* LINE & BAR PLOTS */}
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "flex-start" }}>
+            <Box>
+              <Skeleton variant="rounded" width={300} height={300} />
+            </Box>
+            <Box>
+              <Skeleton variant="rounded" width={300} height={300} />
+            </Box>
+          </Box>
+
+          {/* CYCLES */}
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "space-between" }}>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Box key={i} sx={{ flex: "1 1 auto", textAlign: "flex-start" }}>
+                <Skeleton variant="text" width={100} height={30} />
+                <Skeleton variant="rounded" width={300} height={200} />
+              </Box>
+            ))}
+          </Box>
+        </Stack>
+      </>
     );
 
   const dropDownOptions = selexMotifs.map((s) => ({
@@ -197,14 +217,29 @@ const SelexMotifsForAssayStudyAndProteinType: React.FC<{
 
   if (loading || !data)
     return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
-        <CircularProgress />
-      </Box>
+      <>
+        <Stack divider={<Divider sx={{ marginY: 2 }} />} spacing={3} mt={2}>
+          {/* LINE & BAR PLOTS */}
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "flex-start" }}>
+            <Box>
+              <Skeleton variant="rounded" width={300} height={300} />
+            </Box>
+            <Box>
+              <Skeleton variant="rounded" width={300} height={300} />
+            </Box>
+          </Box>
+
+          {/* CYCLES */}
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "space-between" }}>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Box key={i} sx={{ flex: "1 1 auto", textAlign: "flex-start" }}>
+                <Skeleton variant="text" width={100} height={30} />
+                <Skeleton variant="rounded" width={300} height={200} />
+              </Box>
+            ))}
+          </Box>
+        </Stack>
+      </>
     );
 
   return (
@@ -271,7 +306,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
         height={200}
       />
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-start", gap: 2 }}>
         <Button
           variant="contained"
           startIcon={<SaveAltIcon />}
@@ -365,45 +400,26 @@ const DeepLearnedSelexMotif: React.FC<{
   };
 
   return (
-    <Box>
-      <Stack
-        divider={<Divider sx={{marginY: 2}}/>}
-      >
-        <Grid container spacing={3}>
-          {/* LINE PLOT */}
-          <Grid xs={12} sm={6} md={3}>
-            <SelexLinePlot
-              data={data}
-              downloadSVGElement={downloadSVGElement}
-            />
-          </Grid>
-          {/* BAR PLOT */}
-          <Grid xs={12} sm={6} md={3}>
-            <SelexBarPlot
-              data={data}
-              downloadSVGElement={downloadSVGElement}
-            />
-          </Grid>
-        </Grid>
-        {/* CYCLES */}
-        <Grid container spacing={3}>
-          {data.map((d, i) => (
-            <Grid xs={12} sm={6} md={3}>
-              <Box key={`logo${i}`} sx={{ textAlign: "center" }}>
-                <Typography variant="h6">
-                  Cycle {d.selex_round}
-                </Typography>
-                {d.ppm && d.ppm.length > 0 && (
-                  <>
-                    <DownloadableMotif ppm={d.ppm} name={study} />
-                  </>
-                )}
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-      </Stack>
-    </Box>
+    <Stack divider={<Divider sx={{ marginY: 2 }} />} spacing={3}>
+      {/* LINE & BAR PLOTS */}
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "flex-start" }}>
+        <Box>
+          <SelexLinePlot data={data} downloadSVGElement={downloadSVGElement} />
+        </Box>
+        <Box>
+          <SelexBarPlot data={data} downloadSVGElement={downloadSVGElement} />
+        </Box>
+      </Box>
+      {/* CYCLES */}
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "space-between" }}>
+        {data.map((d, i) => (
+          <Box key={`logo${i}`} sx={{ flex: "1 1 auto", textAlign: "flex-start" }}>
+            <Typography variant="h6">Cycle {d.selex_round}</Typography>
+            {d.ppm && d.ppm.length > 0 && <DownloadableMotif ppm={d.ppm} name={study} />}
+          </Box>
+        ))}
+      </Box>
+    </Stack>
   );
 };
 

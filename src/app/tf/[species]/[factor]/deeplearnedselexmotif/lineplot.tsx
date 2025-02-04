@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Button, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Text } from "@visx/text";
 import { Group } from "@visx/group";
@@ -21,8 +21,6 @@ const colors: { [key: number]: string } = {
 };
 
 const SelexLinePlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const lineref = useRef<SVGSVGElement | null>(null);
     const margin = { top: 20, right: 90, bottom: 70, left: 70 };
 
@@ -61,9 +59,9 @@ const SelexLinePlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
         () =>
             scaleLinear({
                 domain: [domain.x.start, domain.x.end],
-                range: [3, lineGraphWidth - (isMobile ? 0 : margin.right)],
+                range: [3, lineGraphWidth - (margin.right)],
             }),
-        [domain, lineGraphWidth, margin, isMobile]
+        [domain, lineGraphWidth, margin]
     );
 
     const yScale = useMemo(
@@ -85,7 +83,7 @@ const SelexLinePlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
         >
             <svg ref={lineref} width={lineGraphWidth} height={lineGraphHeight}>
 
-                <Group left={isMobile ? 0 : margin.left} top={margin.top}>
+                <Group left={margin.left} top={margin.top}>
 
                     <AxisLeft
                         scale={yScale}

@@ -7,6 +7,7 @@ import LoadingExpression from "./geneexpression/loading";
 import LoadingMotif from "./motif/loading";
 import LoadingHistone from "./histone/loading";
 import LoadingRegions from "./regions/loading";
+import LoadingSelex from "./deeplearnedselexmotif/loading";
 
 export default function Loading() {
   const tab = usePathname().split('/')[4];
@@ -33,6 +34,8 @@ export default function Loading() {
           );
         case "regions":
           return LoadingRegions();
+        case "deeplearnedselexmotif":
+          return LoadingSelex();
       default:
         return <Skeleton variant="rectangular" width="100%" height={200} />;
     }

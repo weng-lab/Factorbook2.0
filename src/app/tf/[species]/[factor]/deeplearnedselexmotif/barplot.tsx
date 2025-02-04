@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Button, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Button, Typography} from "@mui/material";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Text } from "@visx/text";
 import { Group } from "@visx/group";
@@ -22,8 +22,6 @@ const colors: { [key: number]: string } = {
 };
 
 const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const barref = useRef<SVGSVGElement | null>(null);
     
     const barplotDomain = useMemo(
@@ -48,11 +46,11 @@ const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
         () =>
             scaleBand({
                 domain: data.map((d) => d.selex_round),
-                range: [0, barGraphWidth - (isMobile ? 0 : margin.right)],
+                range: [0, barGraphWidth - (margin.right)],
                 paddingInner: 0.5,
                 paddingOuter: 0.3,
             }),
-        [data, barGraphWidth, margin, isMobile]
+        [data, barGraphWidth, margin]
     );
 
     const barYScale = useMemo(
@@ -75,7 +73,7 @@ const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
             }}
         >
             <svg ref={barref} width={barGraphWidth} height={barGraphHeight}>
-                <Group left={isMobile ? 0 : margin.left} top={margin.top}>
+                <Group left={margin.left} top={margin.top}>
                     <AxisLeft
                         scale={barYScale}
                         label="Fractional Enrichment"
