@@ -20,17 +20,21 @@ query signal($accession: [String], $assembly: String) {
 }
 `;
 
-export const importanceTrack: ImportanceTrackProps = {
-    ...DefaultImportance,
-    signalURL: "gs://gcp.wenglab.org/hg38.phyloP100way.bigWig",
-    id: "importance",
-    title: "importance",
-    height: 100,
-    color: "#ffaa33",
-    displayMode: DisplayMode.FULL,
-    trackType: TrackType.IMPORTANCE,
-    url: "gs://gcp.wenglab.org/hg38.2bit"
+export const importanceTrack = (assembly: string): ImportanceTrackProps => {
+    return {
+        ...DefaultImportance,
+        signalURL: assembly === "hg38" ? "gs://gcp.wenglab.org/factorbook-download/phyloP-100-way.hg38.bigWig" : "gs://gcp.wenglab.org/factorbook-download/phyloP-60-way.mm10.bigWig",
+        id: "importance",
+        title: "importance",
+        height: 100,
+        color: "#ffaa33",
+
+        displayMode: DisplayMode.FULL,
+        trackType: TrackType.IMPORTANCE,
+        url: assembly === "hg38" ? "gs://gcp.wenglab.org/hg38.2bit" : "gs://gcp.wenglab.org/mm10.2bit"
+    }
 }
+
 
 function defaultHumanTracks(regex: string, accession: string) {
     return [
@@ -43,7 +47,7 @@ function defaultHumanTracks(regex: string, accession: string) {
 
 function defaultMouseTracks(regex: string, accession: string) {
     return [
-        { ...DefaultTranscript, id: 'default-transcript', title: 'GENCODE v47 genes', height: 100, color: "#8b0000", assembly: "mm10", queryType: "gene", version: TranscriptMouseVersion.V36 } as TranscriptTrackProps,
+        { ...DefaultTranscript, id: 'default-transcript', title: 'GENCODE v36 genes', height: 100, color: "#8b0000", assembly: "mm10", queryType: "gene", version: TranscriptMouseVersion.V36 } as TranscriptTrackProps,
         { ...DefaultBigWig, id: 'default-phylo-p', title: 'PhyloP 60-way', height: 100, color: "#000088", url: 'gs://gcp.wenglab.org/factorbook-download/phyloP-60-way.mm10.bigWig' } as BigWigTrackProps,
         { ...DefaultBigWig, id: 'default-dnase', title: 'Aggregated DNAse signal across all ENCODE biosamples', height: 100, color: "#06DA93", url: 'gs://data.genomealmanac.org/dnase.mm10.sum.bigWig' } as BigWigTrackProps,
         { ...DefaultMotif, id: 'default-motif', title: 'ChIP-seq peaks with motif sites', height: 100, rowHeight: 12, color: "#000088", assembly: "mm10", consensusRegex: regex, peaksAccession: accession, occurences: false } as MotifTrackProps
@@ -60,8 +64,9 @@ function generateTracks(species: string, experimentID: string): TrackProps[] {
 
     if (loading) return []
     if (error) return []
-
+    console.log(data)
     const file = data.peakDataset.datasets[0].files[0]
+    if (!file) return []
     const url = `https://www.encodeproject.org/files/${file.accession}/@@download/${file.accession}.bigWig`
     const tracks = [] as TrackProps[]
     const bigWig = { ...DefaultBigWig, id: 'peak-signal-bw', title: "ChIP-seq signal (" + file.accession + ")", height: 100, color: "#3287a8", url: url } as BigWigTrackProps
@@ -84,7 +89,7 @@ export default function Browser({ species, consensusRegex, experimentID }: { spe
 
     useEffect(() => {
         if (state.domain.end - state.domain.start <= 2000) {
-            dispatch({ type: BrowserActionType.ADD_TRACK, track: importanceTrack })
+            dispatch({ type: BrowserActionType.ADD_TRACK, track: importanceTrack(assembly) })
         }
         else {
             dispatch({ type: BrowserActionType.DELETE_TRACK, id: 'default-importance' })
