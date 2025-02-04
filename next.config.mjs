@@ -9,9 +9,6 @@ const nextConfig = {
         permanent: true,
       },
     ]
-  },
-  env: {
-    enableFactorChat: 'true'
   }
 };
 

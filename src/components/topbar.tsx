@@ -56,20 +56,16 @@ let navItems = [
       {
         title: "Annotations",
         href: "/snpannotation"
-      }
+      },
+      {
+        title: "FactorChat",
+        href: "/factorchat"
+      },
     ]
   },
-  { title: "Downloads", href: "/downloads" }
+  { title: "Downloads", href: "/downloads" },
+  { title: "FactorChat", href: "/factorchat" }
 ];
-
-/**
- * Add links to FactorChat if enabled
- */
-if (process.env.enableFactorChat === 'true') {
-  const link = { title: "FactorChat", href: "/factorchat" }
-  navItems.push(link);
-  navItems[1].dropdownLinks?.push(link)
-}
 
 const Topbar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
