@@ -18,7 +18,7 @@ import Link from "next/link";
 import { ApiContext } from "@/apicontext";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
-import { useParams, usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import FactorTabs from "./factortabs";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
 import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./queries";
@@ -135,8 +135,8 @@ export default function FactorDetailsLayout({
           : "Non-sequence-specific TF";
 
   return (
-    <Stack direction="column" m={2}>
-      <Stack direction={{xs: "column", md: "row"}} justifyContent={"space-between"} m={1} spacing={{xs: 2, md: 0}}>
+    <Stack direction="column" m={4} gap={1}>
+      <Stack direction={{xs: "column", md: "row"}} justifyContent={"space-between"} spacing={2}>
         {/* Breadcrumb */}
         <Breadcrumbs separator={<NavigateNext fontSize="small" />} id="breadcrumbs">
           <MuiLink underline="hover" color={'inherit'} component={Link} href="/">Home</MuiLink>

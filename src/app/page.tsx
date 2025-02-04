@@ -54,6 +54,10 @@ const Homepage = () => {
     }
   };
 
+  const handleSubmit = (snpValue: string) => {
+      router.push(`/snpannotation/hg38/${snpValue}`)
+  };
+
   return (
     <>
       <Box
@@ -191,7 +195,7 @@ const Homepage = () => {
             Factorbook is a resource for human and mouse transcription factors,
             focusing on their binding specificities and regulatory roles in gene
             expression across cell types. Factorbook integrates public data,
-            especially ENCODE, to provide a wide-ranging motif catalog.
+            especially ENCODE data, to provide a wide-ranging motif catalog and transcription factor binding sites.
           </Typography>
           <Box
             sx={{
@@ -261,9 +265,9 @@ const Homepage = () => {
 
             <Box
               sx={{
-                padding: "9px 9px 8px 10px",
-                marginLeft: "-10px",
+                padding: "9px 9px 8px 0px",
                 width: "550px",
+                zIndex: 1
               }}
             >
               {selectedPortal === "Human Transcription Factors" ||
@@ -276,7 +280,7 @@ const Homepage = () => {
                   }
                 />
               ) : selectedPortal === "Annotate Variants" ? (
-                <SnpSearchBar />
+                <SnpSearchBar handleSubmit={handleSubmit}/>
               ) : (
                 <MotifSearchbar />
               )}
@@ -326,7 +330,7 @@ const Homepage = () => {
         imageSrc="/Motifs.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
-        buttonHref="/motifscatalog"
+        buttonHref="/motif/human/meme-search"
         reverse={true}
       />
 
@@ -336,7 +340,7 @@ const Homepage = () => {
         imageSrc="/Human.png"
         imageAlt="Annotate Variants"
         buttonText="Explore Annotations"
-        buttonHref="/annotationsvariants"
+        buttonHref="/snpannotation"
         reverse={false}
       />
     </>

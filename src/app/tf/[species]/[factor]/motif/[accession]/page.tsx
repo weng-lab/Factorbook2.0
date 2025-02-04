@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import { useQuery } from "@apollo/client";
+import { from, useQuery } from "@apollo/client";
 import {
   CircularProgress,
   Typography,
@@ -28,7 +28,6 @@ import {
 } from "@mui/material";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import LanguageIcon from '@mui/icons-material/Language';
 import { MOTIF_QUERY } from "../../queries";
@@ -38,15 +37,18 @@ import { DNALogo, DNAAlphabet } from "logojs-react";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/motifsearch/motifutil";
-import CentralityPlot from "../../../../../../components/motifmeme/centralityplot";
-import ATACPlot from "../../../../../../components/motifmeme/atacplot";
-import ConservationPlot from "../../../../../../components/motifmeme/conservationplot";
-import { TOMTOMMessage } from "../../../../../../components/motifmeme/tomtommessage";
-import { HelpRounded } from "@mui/icons-material";
-import { Dataset } from "../../_ExperimentSelectionPanel/ExperimentSelectionPanel";
-import { DATASETS_QUERY } from "../../_ExperimentSelectionPanel/queries";
+import { HelpRounded, Visibility, VisibilityOff } from "@mui/icons-material";
 import createFullScreenDialog from "./genomicsites";
 import FullScreenDialog from "./genomicsites";
+import { Dataset } from "../../_utility/ExperimentSelectionPanel/ExperimentSelectionPanel";
+import { DATASETS_QUERY } from "../../_utility/ExperimentSelectionPanel/queries";
+import CentralityPlo from "@/components/motifmeme/centralityplot";
+import ATACPlot from "@/components/motifmeme/atacplot";
+import ConservationPlot from "@/components/motifmeme/conservationplot";
+import { TOMTOMMessage } from "@/components/motifmeme/tomtommessage";
+import CentralityPlot from "@/components/motifmeme/centralityplot";
+
+
 
 // Helper function to convert numbers to scientific notation
 function toScientificNotationElement(
@@ -86,6 +88,13 @@ const poorPeakCentrality = (motif: any): boolean =>
 const poorPeakEnrichment = (motif: any): boolean =>
   motif.shuffled_z_score < 0 || motif.shuffled_p_value > 0.05;
 
+function logLikelihood(backgroundFrequencies: number[]): (r: number[]) => number[] {
+  return (r: number[]): number[] => {
+    let sum = 0.0;
+    r.map((x, i) => (sum += x === 0 ? 0 : x * Math.log2(x / (backgroundFrequencies[i] || 0.01))));
+    return r.map(x => x * sum);
+  };
+}
 interface MotifEnrichmentMEMEProps {
   factor: string;
   species: string;
@@ -146,7 +155,7 @@ export default function MotifEnrichmentPage({
   /**
    * This is needed since the data fetch needs the file ID and the URL only contains the experiment accession.
    * This is needed to extract the file ID from the experiment array
-   * @todo would be more appropriate to pass selected dataset down in context from the layout versus fetching and metching up
+   * @todo maybe would be more appropriate to pass selected dataset down in context from the layout versus fetching and metching up
    * the file ID here
    */
   const { data, loading, error } = useQuery(DATASETS_QUERY, {
@@ -160,7 +169,6 @@ export default function MotifEnrichmentPage({
     onCompleted: (d: any) => {
       //if there's a url experiment passed, initialize selectedDataset with that, else set to first
       if (!selectedDataset) {
-        console.log("running")
         const urlExp = accession
         const partitionedBiosamples = [...d.peakDataset.partitionByBiosample]
         const foundDataset = urlExp && partitionedBiosamples.flatMap((b) => b.datasets).find((d) => d.accession === urlExp)
@@ -258,7 +266,7 @@ export default function MotifEnrichmentPage({
     <Stack
       sx={{
         flexGrow: 1,
-        height: '100vh',
+        maxHeight: '100%',
       }}
       divider={<Divider />}
     >
@@ -277,10 +285,14 @@ export default function MotifEnrichmentPage({
           divider={<Divider />}
         >
           {motifsWithMatches.map((motif, index) => {
+
+
             const motifppm = reverseComplements[index]
               ? rc(motif.pwm)
               : motif.pwm;
-
+            const backgroundFrequencies = motif.background_frequencies || motifppm[0].map(_ => 1.0 / motifppm[0].length);
+            const ll = logLikelihood(backgroundFrequencies);
+            const pwm = motifppm.map(ll);
             const isGreyedOut =
               poorPeakCentrality(motif) || poorPeakEnrichment(motif);
 
@@ -425,12 +437,6 @@ export default function MotifEnrichmentPage({
                   <Button
                     variant="contained"
                     startIcon={<SaveAltIcon />}
-                    sx={{
-                      borderRadius: "20px",
-                      backgroundColor: "#8169BF",
-                      color: "white",
-                      flex: 1,
-                    }}
                     onClick={() => setIsDialogOpen(true)}
                   >
                     Download
@@ -438,13 +444,6 @@ export default function MotifEnrichmentPage({
                   <Button
                     variant="outlined"
                     startIcon={<SwapHorizIcon />}
-                    sx={{
-                      borderRadius: "20px",
-                      borderColor: "#8169BF",
-                      color: "#8169BF",
-                      backgroundColor: "white",
-                      flex: 1,
-                    }}
                     onClick={() => handleReverseComplement(index)}
                   >
                     Reverse Complement
@@ -457,14 +456,7 @@ export default function MotifEnrichmentPage({
                   />
                   <Button
                     variant="outlined"
-                    startIcon={<VisibilityIcon />}
-                    sx={{
-                      borderRadius: "20px",
-                      borderColor: "#8169BF",
-                      color: "#8169BF",
-                      backgroundColor: "white",
-                      flex: 1,
-                    }}
+                    startIcon={showQCStates[motif.id] ? <VisibilityOff /> : <Visibility />}
                     onClick={() => toggleShowQC(motif.id)}
                   >
                     {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
@@ -481,22 +473,20 @@ export default function MotifEnrichmentPage({
                           height={isMobile ? 150 : 300}
                         />
                       </Grid>
-                      {motif.atac_data &&
-                        Array.isArray(motif.atac_data) &&
-                        motif.atac_data.length > 0 && (
-                          <Grid item xs={12} md={6}>
-                            <ATACPlot
-                              name={motif.name}
-                              accession={selectedPeakID}
-                              pwm={motifppm}
-                            />
-                          </Grid>
-                        )}
+
+                      {0 > 1 && <Grid item xs={12} md={6}>
+                        <ATACPlot
+                          name={motif.name}
+                          accession={selectedPeakID}
+                          pwm={pwm}
+                        />
+                      </Grid>}
+
                       <Grid item xs={12} md={6}>
                         <ConservationPlot
                           name={motif.name}
                           accession={selectedPeakID}
-                          pwm={motifppm}
+                          pwm={pwm}
                           width={isMobile ? 300 : 500}
                           height={isMobile ? 150 : 300}
                         />
@@ -504,7 +494,7 @@ export default function MotifEnrichmentPage({
                     </Grid>
                   </Box>
                 )}
-
+                {/** @todo deduplicate with download dialog in motifenrichmentselex.tsx */}
                 <Dialog
                   open={isDialogOpen}
                   onClose={() => setIsDialogOpen(false)}
@@ -513,7 +503,7 @@ export default function MotifEnrichmentPage({
                     backdrop: {
                       sx: {
                         backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        backdropFilter: "blur(10px)",
+                        backdropFilter: "blur(2px)",
                       },
                     },
                   }}
@@ -521,7 +511,6 @@ export default function MotifEnrichmentPage({
                     sx: {
                       width: "25vw",
                       maxWidth: "90%",
-                      borderRadius: 6
                     },
                   }}
                 >
@@ -567,11 +556,11 @@ export default function MotifEnrichmentPage({
                   <DialogActions>
                     <Button
                       onClick={() => setIsDialogOpen(false)}
-                      sx={{ color: "#8169BF" }}
                     >
                       Cancel
                     </Button>
                     <Button
+                      variant="contained"
                       onClick={() => {
                         if (exportMotif) {
                           handleDownload(
@@ -598,11 +587,6 @@ export default function MotifEnrichmentPage({
                           );
                         }
                         setIsDialogOpen(false);
-                      }}
-                      sx={{
-                        borderRadius: "20px",
-                        backgroundColor: "#8169BF",
-                        color: "white",
                       }}
                     >
                       Download

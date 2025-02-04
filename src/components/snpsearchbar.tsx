@@ -21,20 +21,6 @@ import Config from "../../config.json";
 import ClearIcon from '@mui/icons-material/Clear';
 
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
-import Link from "next/link";
-
-// Custom styled Autocomplete textField
-const StyledAutocomplete = styled(Autocomplete)(() => ({
-  "& .MuiOutlinedInput-root": {
-    height: "40px",
-    borderRadius: "24px",
-    paddingLeft: "12px",
-  },
-  "& .MuiInputBase-input::placeholder": {
-    color: "white", // Placeholder color
-    opacity: 1,
-  },
-}));
 
 const SNP_AUTOCOMPLETE_QUERY = `
     query suggestions($assembly: String!, $snpid: String!) {
@@ -54,7 +40,22 @@ type Snp = {
   start: number;
   end: number;
 };
-const SnpSearchbar: React.FC = () => {
+
+interface SnpSearchbarProps {
+  textColor?: string;
+  handleSubmit: (snpValue: string) => void;
+}
+
+// Custom styled Autocomplete textField
+const StyledAutocomplete = styled(Autocomplete)(() => ({
+  "& .MuiOutlinedInput-root": {
+    height: "40px",
+    borderRadius: "24px",
+    paddingLeft: "12px",
+  },
+}));
+
+const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) => {
   const theme = useTheme();
 
   const [snpValue, setSnpValue] = useState(null);
@@ -128,7 +129,7 @@ const SnpSearchbar: React.FC = () => {
             onKeyDown={(event: any) => {
               if (event.key === "Enter" && snpValue && validSearch) {
                 event.preventDefault();
-                window.open(snpValue ? `/annotationsvariants/GRCh38/${snpValue}` : "", "_self");
+                handleSubmit(snpValue)
               }
             }}
             popupIcon={<ArrowDropDown sx={{ color: "gray" }} />}
@@ -150,7 +151,7 @@ const SnpSearchbar: React.FC = () => {
               <TextField
                 color="primary"
                 error={!validSearch && inputValue !== ""}
-                label={validSearch || inputValue === "" ? "" : "Invalid TF"}
+                label={validSearch || inputValue === "" ? "" : "Invalid ID"}
                 {...params}
                 placeholder="Enter rsID"
                 fullWidth
@@ -158,10 +159,10 @@ const SnpSearchbar: React.FC = () => {
                   ...params.InputProps,
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "white" }} />
+                      <SearchIcon sx={{ color: textColor ? textColor : "white" }} />
                     </InputAdornment>
                   ),
-                  style: { textAlign: "center", color: "white" },
+                  style: { textAlign: "center", color: textColor ? textColor : "white" },
                 }}
                 InputLabelProps={{
                   style: { width: "100%" },
@@ -173,6 +174,10 @@ const SnpSearchbar: React.FC = () => {
                     },
                     "&:hover fieldset": {
                       borderColor: validSearch || inputValue === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
+                    },
+                    "& .MuiInputBase-input::placeholder": {
+                      color: textColor ? textColor : "white", // Placeholder color
+                      opacity: 1,
                     },
                   }
                 }}
@@ -202,23 +207,22 @@ const SnpSearchbar: React.FC = () => {
             }} theme={theme} />
         </FormControl>
         <Button
-          LinkComponent={Link}
           variant="contained"
           color="primary"
-          disabled={!validSearch && inputValue !== ""}
+          disabled={!validSearch || inputValue === ""}
           sx={{
             padding: "8px 24px",
-            borderRadius: "24px",
-            fontSize: "15px",
-            lineHeight: "26px",
-            textTransform: "none",
             "&:disabled": {
               backgroundColor: "#8169BF",
               color: "white",
               opacity: "75%"
             },
           }}
-          href={snpValue && validSearch ? `/annotationsvariants/GRCh38/${snpValue}` : ""}
+          onClick={() => {
+            if (snpValue && validSearch) {
+              handleSubmit(snpValue)
+            }
+          }}
         >
           Go
         </Button>

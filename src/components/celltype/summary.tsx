@@ -47,7 +47,7 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species }) => {
         biosample: { name: string };
         counts: { total: number; targets: number };
       }) => (
-        <LinkWrapper url={`/celltype/${species}/${row.biosample.name}`}>
+        <LinkWrapper url={`/ct/${species}/${row.biosample.name}`}>
           <Box>
             <Typography variant="h6" style={{ fontWeight: "bold" }}>
               {row.biosample.name}
@@ -69,7 +69,7 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species }) => {
       header: "Description",
       value: (row: { biosample: { name: string } }) => row.biosample.name,
       render: (row: { biosample: { name: string } }) => (
-        <LinkWrapper url={`/celltype/${species}/${row.biosample.name}`}>
+        <LinkWrapper url={`/ct/${species}/${row.biosample.name}`}>
           <CtDetails species={species} celltype={row.biosample.name} />
         </LinkWrapper>
       ),
