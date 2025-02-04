@@ -1,4 +1,5 @@
 'use client'
+
 import ChatDisplay from "@/components/factorchat/ChatDisplay"
 import { Box, Divider, Stack, Typography } from "@mui/material"
 import { useRouter } from "next/navigation"
