@@ -328,7 +328,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
           itemsPerPage={5}
           sortColumn={1}
           searchable={true}
-          tableTitle={ct ? `${rows.length} factors profiled` : ``}
+          tableTitle={ct ? `${rows.length} factors` : ``}
           headerColor={
             ct
               ? {

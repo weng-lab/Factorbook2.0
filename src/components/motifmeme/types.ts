@@ -14,6 +14,7 @@ export type MotifResponse = {
     flank_p_value: number;
     shuffled_occurrences_ratio: number;
     shuffled_z_score: number;
+    background_frequencies?: number[];
     shuffled_p_value: number;
     peak_centrality: { [key: string]: number };
     id: string;

@@ -81,10 +81,12 @@ export const MotifSearchResultSet: React.FC<{
     }
   }, [data, onResultsLoaded]);
 
+  console.log(data,"motif search")
   return (
     <Box sx={{ padding: isMobile ? 2 : isTablet ? 3 : 4 }}>
       {data &&
         data.meme_motif_search[0].results.map((m: any, i: number) => {
+          
           const rpwm = m.motif.pwm.map(logLikelihood([0.25, 0.25, 0.25, 0.25]));
           const alignment = {
             ...m,
