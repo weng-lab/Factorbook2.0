@@ -402,7 +402,7 @@ const DeepLearnedSelexMotif: React.FC<{
   return (
     <Stack divider={<Divider sx={{ marginY: 2 }} />} spacing={3}>
       {/* LINE & BAR PLOTS */}
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "flex-start" }}>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "flex-start" }}>
         <Box>
           <SelexLinePlot data={data} downloadSVGElement={downloadSVGElement} />
         </Box>
@@ -411,9 +411,9 @@ const DeepLearnedSelexMotif: React.FC<{
         </Box>
       </Box>
       {/* CYCLES */}
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "space-between" }}>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "flex-start" }}>
         {data.map((d, i) => (
-          <Box key={`logo${i}`} sx={{ flex: "1 1 auto", textAlign: "flex-start" }}>
+          <Box key={`logo${i}`} sx={{ textAlign: "flex-start" }}>
             <Typography variant="h6">Cycle {d.selex_round}</Typography>
             {d.ppm && d.ppm.length > 0 && <DownloadableMotif ppm={d.ppm} name={study} />}
           </Box>
