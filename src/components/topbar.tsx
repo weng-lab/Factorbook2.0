@@ -31,41 +31,45 @@ import { useTheme } from "@mui/material/styles";
 import styles from "./topbar.module.css";
 import Link from "next/link";
 
-const navItems = [
+let navItems = [
   { title: "Home", href: "/", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
   {
     title: "Portals",
     dropdownLinks: [
       {
-        text: "Transcription Factors",
+        title: "Transcription Factors",
         subItems: [
           {
-            text: "Human",
+            title: "Human",
             href: "/tf/human",
           },
           {
-            text: "Mouse",
+            title: "Mouse",
             href: "/tf/mouse",
           },
         ]
       },
       {
-        text: "Motif Catalog",
+        title: "Motif Catalog",
         href: "/motif/human/meme-search"
       },
       {
-        text: "Annotations",
+        title: "Annotations",
         href: "/snpannotation"
-      },
-      {
-        text: "FactorChat",
-        href: "/factorchat"
       }
-    ],
+    ]
   },
-  { title: "Downloads", href: "/downloads" },
-  { title: "FactorChat", href: "/factorchat" }
+  { title: "Downloads", href: "/downloads" }
 ];
+
+/**
+ * Add links to FactorChat if enabled
+ */
+if (process.env.enableFactorChat === 'true') {
+  const link = { title: "FactorChat", href: "/factorchat" }
+  navItems.push(link);
+  navItems[1].dropdownLinks?.push(link)
+}
 
 const Topbar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
@@ -125,28 +129,28 @@ const Topbar: React.FC = () => {
                   </AccordionSummary>
                   <AccordionDetails>
                     <List disablePadding>
-                      {item.dropdownLinks.map((dropdownLink) => (
+                      {item.dropdownLinks.map((dropdownLink, i) => (
                         dropdownLink.subItems ?
-                          <div>
-                            <ListItemText sx={{ textAlign: 'left', py: 1, px: 2 }}>{dropdownLink.text}</ListItemText>
+                          <div key={i}>
+                            <ListItemText sx={{ textAlign: 'left', py: 1, px: 2 }}>{dropdownLink.title}</ListItemText>
                             {dropdownLink.subItems.map(subItem => (
                               <ListItemButton
-                                key={subItem.text}
+                                key={subItem.title}
                                 component={Link}
                                 href={subItem.href}
                                 sx={{pl: 4}}
                               >
-                                <ListItemText primary={subItem.text} color="primary" />
+                                <ListItemText primary={subItem.title} color="primary" />
                               </ListItemButton>
                             ))}
                           </div>
                           :
                           <ListItemButton
-                            key={dropdownLink.text}
+                            key={dropdownLink.title}
                             component={Link}
                             href={dropdownLink.href}
                           >
-                            <ListItemText primary={dropdownLink.text} />
+                            <ListItemText primary={dropdownLink.title} />
                           </ListItemButton>
                       ))}
                     </List>
@@ -264,28 +268,28 @@ const Topbar: React.FC = () => {
                             "aria-labelledby": "portals-button",
                           }}
                         >
-                          {item.dropdownLinks.map((dropdownLink) => (
+                          {item.dropdownLinks.map((dropdownLink, i) => (
                             dropdownLink.subItems ?
-                              <div>
-                                <Typography px={2} py={1}>{dropdownLink.text}</Typography>
+                              <div key={i}>
+                                <Typography px={2} py={1}>{dropdownLink.title}</Typography>
                                 {dropdownLink.subItems.map(subItem => (
                                   <MenuItem
-                                    key={subItem.text}
+                                    key={subItem.title}
                                     component={Link}
                                     href={subItem.href}
                                     sx={{pl: 4}}
                                   >
-                                    {subItem.text}
+                                    {subItem.title}
                                   </MenuItem>
                                 ))}
                               </div>
                               :
                               <MenuItem
-                                key={dropdownLink.text}
+                                key={dropdownLink.title}
                                 component={Link}
                                 href={dropdownLink.href}
                               >
-                                {dropdownLink.text}
+                                {dropdownLink.title}
                               </MenuItem>
                           ))}
                         </Menu>

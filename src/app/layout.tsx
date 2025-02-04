@@ -49,7 +49,6 @@ export default function RootLayout({ children }: LayoutProps) {
             <Topbar />
             {children}
             <Footer />
-            <ChatComponenet />
           </ClientThemeProvider>
         </ApolloWrapper>
       </body>

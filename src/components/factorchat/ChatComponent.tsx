@@ -1,18 +1,19 @@
 'use client'
 
-import { Chat, Close, CloseFullscreen, CropSquare, Download, DragIndicator, InfoOutlined, Minimize, Refresh, Send } from "@mui/icons-material";
-import { Box, Button, Divider, Fab, Fade, IconButton, Paper, Stack, SxProps, TextField, Theme, Tooltip, Typography, useTheme } from "@mui/material";
+/**
+ * This file is currently not being used. Saving in case we need to use it later
+ */
+
+import { Chat, Close, CloseFullscreen, CropSquare, DragIndicator, Minimize } from "@mui/icons-material";
+import { Box, Button, Divider, Fab, Fade, IconButton, Paper, Stack, Tooltip, Typography, useTheme } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { Rnd, RndDragCallback, RndResizeCallback } from "react-rnd";
-import { useFactorChat } from "./useFactorChat";
-import { FactorChatMessage } from "./types";
-import { Message } from "./Message";
-import { LoadingMessage } from "./LoadingMessage";
+import ChatDisplay from "./ChatDisplay";
 
-export default function ChatComponenet() {
-  const { input, handleInputChange, handleSubmit, messages, setMessages, loading } = useFactorChat();
+export default function ChatComponent() {
   const [open, setOpen] = useState(false);
-  // Start with null or consistent initial position to 
+  //This is needed to reset the state of the ChatDisplay component when closing the window
+  const [chatKey, setChatKey] = useState(Math.random())
   const [position, setPosition] = useState({
     x: 0,
     y: 0,
@@ -20,7 +21,6 @@ export default function ChatComponenet() {
     height: 600
   });
 
-  // Sets position/size to default bottom left corner
   const handleResetPosition = () => {
     setPosition({
       width: 600,
@@ -30,15 +30,9 @@ export default function ChatComponenet() {
     });
   }
 
-  // Calculate position after initial render
   useEffect(() => {
-    // Run on initial render
     handleResetPosition();
-
-    // Add event listener for window resize
     window.addEventListener('resize', handleResetPosition);
-
-    // Cleanup listener when component unmounts
     return () => {
       window.removeEventListener('resize', handleResetPosition);
     };
@@ -48,17 +42,15 @@ export default function ChatComponenet() {
     setOpen(true);
   }
 
-  // Minimize window, reset position, and clear messages
   const handleClose = () => {
     setOpen(false);
     //needed to use timeout here since the position was being reset before the transition to closed would happen
     setTimeout(() => {
       handleResetPosition();
-      setMessages([]);
+      setChatKey(Math.random());
     }, 300);
   };
 
-  // Minimize chat window and reset position
   const handleMinimize = () => {
     setOpen(false)
     setTimeout(() => {
@@ -66,55 +58,18 @@ export default function ChatComponenet() {
     }, 300);
   }
 
-  // Maximize window, set position to fill screen
   const handleMaximize = () => {
     setPosition({
       x: 15,
       y: 15,
       width: window.innerWidth - 30,
       height: window.innerHeight - 30
-  })
+    })
   }
-
-  const messageRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  //Focus input when chat window opened
-  useEffect(() => {
-    if (open && inputRef.current) {
-      inputRef.current.focus()
-    }
-  }, [open])
-
-  //Move scroll position along with new messages if scroll close to bottom
-  useEffect(() => {
-    const container = messageRef.current
-    if (!container) return;
-    
-    const shouldScroll = messages.at(-1)?.origin === "user"
-    if (shouldScroll) container.scrollTop = container.scrollHeight;
-  }, [messages])
-
-  const handleClearMessages = () => {
-    setMessages([])
-  }
-
-  //this is giving security warnings
-  const handleDownloadMessages = () => {
-    const element = document.createElement("a");
-    const jsonData = JSON.stringify({ messages }, null, 2);
-    const file = new Blob([jsonData], { type: 'application/json;charset=utf-8' });
-    element.href = URL.createObjectURL(file);
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    element.download = `messages_${timestamp}.json`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-  };
 
   const theme = useTheme()
 
-  const paperStyle: SxProps<Theme> = {
+  const paperStyle = {
     boxSizing: "border-box",
     width: '100%',
     height: '100%',
@@ -161,15 +116,11 @@ export default function ChatComponenet() {
       >
         {/* Fade does not work when parent of Rnd, so setting pointerEvents to none on Rnd when not open */}
         <Fade in={open}>
-          <Paper elevation={5}  sx={{ ...paperStyle }} >
-            {/* <Stack> */}
+          <Paper elevation={5} sx={{ ...paperStyle }}>
             <Stack direction={"row"} ml={0.5} mr={0.5}>
               <Typography variant="h5" display={"flex"} alignItems={"center"} flexGrow={1} className='drag-surface' sx={{ cursor: "move" }} onDoubleClick={isMaximized ? handleResetPosition : handleMaximize}>
                 <DragIndicator />
                 FactorChat
-                {/* <Tooltip title="Here is some information on how FactorChat works" placement="top">
-                  <InfoOutlined sx={{ ml: 0.5 }} fontSize="small" />
-                </Tooltip> */}
               </Typography>
               <Tooltip title="Minimize" placement="bottom" enterDelay={2000}>
                 <IconButton onClick={handleMinimize}>
@@ -196,63 +147,14 @@ export default function ChatComponenet() {
               </Tooltip>
             </Stack>
             <Divider />
-            {/* The Chat */}
-            <Stack ref={messageRef} gap={2} flexGrow={1} overflow={"auto"}>
-              {messages.map((message: FactorChatMessage, i) => {
-                return (
-                  <Message {...message} key={"message-" + i} />
-                )
-              })}
-              {loading && <LoadingMessage />}
-            </Stack>
-            {/* The Input */}
-            <form
-              onSubmit={handleSubmit}
-              style={{
-                marginLeft: theme.spacing(0.5),
-                marginRight: theme.spacing(0.5),
-              }}
-            >
-              <TextField
-                inputRef={inputRef}
-                placeholder={"Ask a question to FactorChat"}
-                fullWidth
-                multiline
-                value={input}
-                onChange={handleInputChange}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    handleSubmit(e)
-                  }
-                }}
-              />
-              <Stack direction={"row"} justifyContent={"space-between"} mt={1}>
-                <Button variant="contained" type="submit" disabled={!input} endIcon={<Send />} sx={{ textTransform: "none" }}>
-                  Send Message
-                </Button>
-                <div>
-                  <Tooltip title="Reset Conversation" placement="top">
-                    {/* span necessary since Tooltip needs to listen to child's events and disabled buttons do not fire events */}
-                    <span>
-                      <IconButton onClick={handleClearMessages} disabled={messages.length === 0}>
-                        <Refresh />
-                      </IconButton>
-                    </span>
-                  </Tooltip>
-                  <Tooltip title="Download Conversation" placement="top">
-                    <span>
-                      <IconButton onClick={handleDownloadMessages} disabled={messages.length === 0}>
-                        <Download />
-                      </IconButton>
-                    </span>
-                  </Tooltip>
-                </div>
-              </Stack>
-            </form>
+            {/* TODO figure out why overflow="hidden" is necessary. It feels like it shouldn't be */}
+            <Box flexGrow={1} overflow={"hidden"}>
+              {/* The actual chat */}
+              <ChatDisplay key={chatKey} mode="window"/>
+            </Box>
           </Paper>
         </Fade>
       </Rnd>
-      {/* Icon to open chat */}
       <Fade in={!open}>
         <Tooltip title="Ask FactorChat" placement="left">
           <Fab

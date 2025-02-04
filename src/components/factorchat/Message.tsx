@@ -39,12 +39,12 @@ export const Message = (message: FactorChatMessage) => {
     fetchFileSizes()
   }, [files])
 
-  //temporarily forcing all links to open in new tab, since existing links will be broken on the new site
-  // Override <a> with Next.js <Link> to avoid hard navigation
+  // Override <a> with Next.js <Link> to avoid hard navigation. I think it's useless when opening in new tab, though.
   const LinkOpenInNew = (props: LinkProps) => {
     const isInternalLink = props.href?.includes("https://factorbook2-0.vercel.app")
     const href = isInternalLink ? props.href?.replace('https://factorbook2-0.vercel.app/', '/') : props.href
-    const modifiedProps = {...props, href}
+    const target = "_blank"
+    const modifiedProps = {...props, href, target}
     return (
       <Link component={NextLink} {...modifiedProps} />
     )

@@ -10,6 +10,9 @@ const nextConfig = {
       },
     ]
   },
+  env: {
+    enableFactorChat: 'true'
+  }
 };
 
 export default nextConfig;

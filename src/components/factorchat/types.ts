@@ -1,9 +1,9 @@
 export type FactorChatResponse = {
-  text: string //how to parse markdown?
+  text: string
   files: {description: string, url: string}[]
   tool_generated: boolean,
   thoughts: string,
-  figures: FactorChatFigure[], //add future figure types here
+  figures: FactorChatFigure[],
   error?: string
 }
 

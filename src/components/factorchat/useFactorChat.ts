@@ -3,6 +3,9 @@ import { FactorChatMessage, FactorChatResponse } from "./types";
 
 export function useFactorChat() {
   const [messages, setMessages] = useState<FactorChatMessage[]>([])
+  /**
+   * I could prepend a message here explaining everything
+   */
   const [input, setInput] = useState<string>('')
   const [loading, setLoading] = useState(false)
 
@@ -58,5 +61,31 @@ export function useFactorChat() {
     setLoading(false)
   }
 
-  return {input, handleInputChange, handleSubmit, messages, setMessages, loading}
+  const handleClearMessages = () => {
+    setMessages([])
+  }
+
+  //this is giving security warnings
+  const handleDownloadMessages = () => {
+    const element = document.createElement("a");
+    const jsonData = JSON.stringify({ messages }, null, 2);
+    const file = new Blob([jsonData], { type: 'application/json;charset=utf-8' });
+    element.href = URL.createObjectURL(file);
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    element.download = `messages_${timestamp}.json`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
+  return {
+    input,
+    handleInputChange,
+    handleSubmit,
+    messages,
+    setMessages,
+    handleClearMessages,
+    handleDownloadMessages,
+    loading
+  }
 }
