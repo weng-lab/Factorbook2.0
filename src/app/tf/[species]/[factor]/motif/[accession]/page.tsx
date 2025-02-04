@@ -82,6 +82,13 @@ const poorPeakCentrality = (motif: any): boolean =>
 const poorPeakEnrichment = (motif: any): boolean =>
   motif.shuffled_z_score < 0 || motif.shuffled_p_value > 0.05;
 
+function logLikelihood(backgroundFrequencies: number[]): (r: number[]) => number[] {
+  return (r: number[]): number[] => {
+      let sum = 0.0;
+      r.map((x, i) => (sum += x === 0 ? 0 : x * Math.log2(x / (backgroundFrequencies[i] || 0.01))));
+      return r.map(x => x * sum);
+  };
+}
 interface MotifEnrichmentMEMEProps {
   factor: string;
   species: string;
@@ -254,10 +261,14 @@ export default function MotifEnrichmentPage({
           divider={<Divider />}
         >
           {motifsWithMatches.map((motif, index) => {
+
+            
             const motifppm = reverseComplements[index]
               ? rc(motif.pwm)
               : motif.pwm;
-
+            const backgroundFrequencies = motif.background_frequencies || motifppm[0].map(_ => 1.0 / motifppm[0].length);
+            const ll = logLikelihood(backgroundFrequencies);
+            const pwm = motifppm.map(ll);
             const isGreyedOut =
               poorPeakCentrality(motif) || poorPeakEnrichment(motif);
 
@@ -432,22 +443,20 @@ export default function MotifEnrichmentPage({
                           height={isMobile ? 150 : 300}
                         />
                       </Grid>
-                      {motif.atac_data &&
-                        Array.isArray(motif.atac_data) &&
-                        motif.atac_data.length > 0 && (
-                          <Grid item xs={12} md={6}>
+                      
+                      {0>1 && <Grid item xs={12} md={6}>
                             <ATACPlot
                               name={motif.name}
                               accession={selectedPeakID}
-                              pwm={motifppm}
+                              pwm={pwm}
                             />
-                          </Grid>
-                        )}
+                      </Grid>}
+                        
                       <Grid item xs={12} md={6}>
                         <ConservationPlot
                           name={motif.name}
                           accession={selectedPeakID}
-                          pwm={motifppm}
+                          pwm={pwm}
                           width={isMobile ? 300 : 500}
                           height={isMobile ? 150 : 300}
                         />
