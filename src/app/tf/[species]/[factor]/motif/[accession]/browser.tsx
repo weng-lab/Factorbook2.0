@@ -3,6 +3,7 @@
 import { gql, useQuery } from '@apollo/client'
 import { GenomeBrowser, useBrowserState, InitialState, DefaultBigWig, BigWigTrackProps, ImportanceTrackProps, DefaultImportance, DisplayMode, TrackType, GQLWrapper, BrowserActionType, DefaultTranscript, TranscriptTrackProps, TranscriptMouseVersion, TranscriptHumanVersion, TrackProps, DefaultMotif, MotifTrackProps, Controls } from '@weng-lab/genomebrowser'
 import { useEffect } from 'react'
+import SearchBox from './search';
 
 const FILES_QUERY = gql`
 query signal($accession: [String], $assembly: String) {
@@ -96,9 +97,14 @@ export default function Browser({ species, consensusRegex, experimentID }: { spe
         }
     }, [specificTracks])
 
+    const onSearchSubmit = (domain: string, name?: string, isSnp?: boolean) => {
+        console.log(domain, name, isSnp)
+    }
+
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Controls domain={state.domain} dispatch={dispatch} />
+            <SearchBox assembly={species.toLowerCase() === "human" ? "GRCh38" : "mm10"} onSearchSubmit={onSearchSubmit} />
             <GenomeBrowser width={"95%"} browserState={state} browserDispatch={dispatch} />
         </div>
     )
