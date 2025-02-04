@@ -84,9 +84,9 @@ const poorPeakEnrichment = (motif: any): boolean =>
 
 function logLikelihood(backgroundFrequencies: number[]): (r: number[]) => number[] {
   return (r: number[]): number[] => {
-      let sum = 0.0;
-      r.map((x, i) => (sum += x === 0 ? 0 : x * Math.log2(x / (backgroundFrequencies[i] || 0.01))));
-      return r.map(x => x * sum);
+    let sum = 0.0;
+    r.map((x, i) => (sum += x === 0 ? 0 : x * Math.log2(x / (backgroundFrequencies[i] || 0.01))));
+    return r.map(x => x * sum);
   };
 }
 interface MotifEnrichmentMEMEProps {
@@ -239,38 +239,40 @@ export default function MotifEnrichmentPage({
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <Stack
-      sx={{
-        flexGrow: 1,
-        maxHeight: '100%',
-      }}
-      divider={<Divider />}
-    >
-      <Typography variant="h5" m={2}>
-        <span style={{ fontWeight: "bold" }}>
-          De novo motif discovery in{" "}
-          {selectedBiosample || "Unknown"}{" "}
-          ({selectedExperimentID || "Unknown"}) by MEME
-        </span>
-      </Typography>
-      {motifLoading && <CircularProgress />}
-      {motifError && <p>Error: {motifError.message}</p>}
-      {motifsWithMatches.length > 0 && (
+    <>
+      {motifLoading && LoadingMotif()}
+      {!motifLoading && motifData && (
         <Stack
-          sx={{ overflowY: "scroll" }}
+          sx={{
+            flexGrow: 1,
+            maxHeight: '100%',
+          }}
           divider={<Divider />}
         >
-          {motifsWithMatches.map((motif, index) => {
+          <Typography variant="h5" m={2}>
+            <span style={{ fontWeight: "bold" }}>
+              De novo motif discovery in{" "}
+              {selectedBiosample || "Unknown"}{" "}
+              ({selectedExperimentID || "Unknown"}) by MEME
+            </span>
+          </Typography>
+          {motifError && <p>Error: {motifError.message}</p>}
+          {motifsWithMatches.length > 0 && (
+            <Stack
+              sx={{ overflowY: "scroll" }}
+              divider={<Divider />}
+            >
+              {motifsWithMatches.map((motif, index) => {
 
-            
-            const motifppm = reverseComplements[index]
-              ? rc(motif.pwm)
-              : motif.pwm;
-            const backgroundFrequencies = motif.background_frequencies || motifppm[0].map(_ => 1.0 / motifppm[0].length);
-            const ll = logLikelihood(backgroundFrequencies);
-            const pwm = motifppm.map(ll);
-            const isGreyedOut =
-              poorPeakCentrality(motif) || poorPeakEnrichment(motif);
+
+                const motifppm = reverseComplements[index]
+                  ? rc(motif.pwm)
+                  : motif.pwm;
+                const backgroundFrequencies = motif.background_frequencies || motifppm[0].map(_ => 1.0 / motifppm[0].length);
+                const ll = logLikelihood(backgroundFrequencies);
+                const pwm = motifppm.map(ll);
+                const isGreyedOut =
+                  poorPeakCentrality(motif) || poorPeakEnrichment(motif);
 
                 return (
                   <Box key={motif.id} m={2}>
@@ -433,145 +435,146 @@ export default function MotifEnrichmentPage({
                       </Button>
                     </Box>
 
-                {showQCStates[motif.id] && selectedPeakID && (
-                  <Box mt={3}>
-                    <Grid container spacing={2} mt={3}>
-                      <Grid item xs={12} md={6}>
-                        <CentralityPlot
-                          peak_centrality={motif.peak_centrality}
-                          width={isMobile ? 300 : 500}
-                          height={isMobile ? 150 : 300}
-                        />
-                      </Grid>
-                      
-                      {0>1 && <Grid item xs={12} md={6}>
+                    {showQCStates[motif.id] && selectedPeakID && (
+                      <Box mt={3}>
+                        <Grid container spacing={2} mt={3}>
+                          <Grid item xs={12} md={6}>
+                            <CentralityPlot
+                              peak_centrality={motif.peak_centrality}
+                              width={isMobile ? 300 : 500}
+                              height={isMobile ? 150 : 300}
+                            />
+                          </Grid>
+
+                          {0 > 1 && <Grid item xs={12} md={6}>
                             <ATACPlot
                               name={motif.name}
                               accession={selectedPeakID}
                               pwm={pwm}
                             />
-                      </Grid>}
-                        
-                      <Grid item xs={12} md={6}>
-                        <ConservationPlot
-                          name={motif.name}
-                          accession={selectedPeakID}
-                          pwm={pwm}
-                          width={isMobile ? 300 : 500}
-                          height={isMobile ? 150 : 300}
-                        />
-                      </Grid>
-                    </Grid>
-                  </Box>
-                )}
-                {/** @todo deduplicate with download dialog in motifenrichmentselex.tsx */}
-                <Dialog
-                  open={isDialogOpen}
-                  onClose={() => setIsDialogOpen(false)}
-                  aria-labelledby="export-dialog-title"
-                  slotProps={{
-                    backdrop: {
-                      sx: {
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        backdropFilter: "blur(2px)",
-                      },
-                    },
-                  }}
-                  PaperProps={{
-                    sx: {
-                      width: "25vw",
-                      maxWidth: "90%",
-                    },
-                  }}
-                >
-                  <DialogTitle id="export-dialog-title">
-                    Download as
-                  </DialogTitle>
-                  <DialogContent>
-                    <Stack>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={exportMotif}
-                            onChange={(e) => setExportMotif(e.target.checked)}
-                            sx={{ color: "#8169BF" }}
-                          />
-                        }
-                        label="Motif (MEME)"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={exportLogo}
-                            onChange={(e) => setExportLogo(e.target.checked)}
-                            sx={{ color: "#8169BF" }}
-                          />
-                        }
-                        label="Logo"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={exportPeakSites}
-                            onChange={(e) =>
-                              setExportPeakSites(e.target.checked)
-                            }
-                            sx={{ color: "#8169BF" }}
-                          />
-                        }
-                        label="Peak Sites"
-                      />
-                    </Stack>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button
-                      onClick={() => setIsDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="contained"
-                      onClick={() => {
-                        if (exportMotif) {
-                          handleDownload(
-                            motif.id,
-                            motifppm,
-                            svgRefs.current[index]
-                          );
-                        }
-                        if (exportPeakSites) {
-                          const speciesGenome = species === "Human" ? "hg38" : "mm10";
-                          /**
-                           * @todo figure out if this is the correct API url
-                           */
-                          const downloadUrl = `https://screen-beta-api.wenglab.org/factorbook_downloads/hq-occurrences/${selectedPeakID}_${motif.name}.gz`;
-                          const link = document.createElement("a");
-                          link.href = downloadUrl;
-                          link.download = `${selectedPeakID}_${motif.name}_${speciesGenome}.gz`;
-                          link.click();
-                        }
-                        if (exportLogo && svgRefs.current[index]) {
-                          downloadSVGElementAsSVG(
-                            { current: svgRefs.current[index] },
-                            `${motif.name}-logo.svg`
-                          );
-                        }
-                        setIsDialogOpen(false);
+                          </Grid>}
+
+                          <Grid item xs={12} md={6}>
+                            <ConservationPlot
+                              name={motif.name}
+                              accession={selectedPeakID}
+                              pwm={pwm}
+                              width={isMobile ? 300 : 500}
+                              height={isMobile ? 150 : 300}
+                            />
+                          </Grid>
+                        </Grid>
+                      </Box>
+                    )}
+                    {/** @todo deduplicate with download dialog in motifenrichmentselex.tsx */}
+                    <Dialog
+                      open={isDialogOpen}
+                      onClose={() => setIsDialogOpen(false)}
+                      aria-labelledby="export-dialog-title"
+                      slotProps={{
+                        backdrop: {
+                          sx: {
+                            backgroundColor: "rgba(255, 255, 255, 0.1)",
+                            backdropFilter: "blur(2px)",
+                          },
+                        },
+                      }}
+                      PaperProps={{
+                        sx: {
+                          width: "25vw",
+                          maxWidth: "90%",
+                        },
                       }}
                     >
-                      Download
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-              </Box>
-            );
-          })}
+                      <DialogTitle id="export-dialog-title">
+                        Download as
+                      </DialogTitle>
+                      <DialogContent>
+                        <Stack>
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={exportMotif}
+                                onChange={(e) => setExportMotif(e.target.checked)}
+                                sx={{ color: "#8169BF" }}
+                              />
+                            }
+                            label="Motif (MEME)"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={exportLogo}
+                                onChange={(e) => setExportLogo(e.target.checked)}
+                                sx={{ color: "#8169BF" }}
+                              />
+                            }
+                            label="Logo"
+                          />
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={exportPeakSites}
+                                onChange={(e) =>
+                                  setExportPeakSites(e.target.checked)
+                                }
+                                sx={{ color: "#8169BF" }}
+                              />
+                            }
+                            label="Peak Sites"
+                          />
+                        </Stack>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button
+                          onClick={() => setIsDialogOpen(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            if (exportMotif) {
+                              handleDownload(
+                                motif.id,
+                                motifppm,
+                                svgRefs.current[index]
+                              );
+                            }
+                            if (exportPeakSites) {
+                              const speciesGenome = species === "Human" ? "hg38" : "mm10";
+                              /**
+                               * @todo figure out if this is the correct API url
+                               */
+                              const downloadUrl = `https://screen-beta-api.wenglab.org/factorbook_downloads/hq-occurrences/${selectedPeakID}_${motif.name}.gz`;
+                              const link = document.createElement("a");
+                              link.href = downloadUrl;
+                              link.download = `${selectedPeakID}_${motif.name}_${speciesGenome}.gz`;
+                              link.click();
+                            }
+                            if (exportLogo && svgRefs.current[index]) {
+                              downloadSVGElementAsSVG(
+                                { current: svgRefs.current[index] },
+                                `${motif.name}-logo.svg`
+                              );
+                            }
+                            setIsDialogOpen(false);
+                          }}
+                        >
+                          Download
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                  </Box>
+                );
+              })}
+            </Stack>
+          )}
         </Stack>
       )}
       {!motifLoading && !motifData && (
         <Typography>Select a peak to view motif data</Typography>
       )}
-
     </>
   )
 }
