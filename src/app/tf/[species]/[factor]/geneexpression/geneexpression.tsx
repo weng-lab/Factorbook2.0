@@ -168,8 +168,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
       const tissue = subGrouped.get(x)![0]["tissue"];
       return [
         x,
-      tissueColors[tissue] ?? tissueColors.missing
-          
+        tissueColors[tissue] ?? tissueColors.missing
+
       ];
     })
   );
@@ -197,7 +197,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     setValue(newValue);
   };
 
-  return loading ? (
+  return toPlot.size <= 0 ? (
     LoadingExpression()
   ) : (
     <Box sx={{ width: "100%" }}>
@@ -295,77 +295,58 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                   : RNA-seq
                 </Typography>
                 <br />
-                {toPlot.size > 0 ? (
-                    <>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "flex-start",
-                          gap: 5
-                        }}
-                      >
-                        <StyledButton
-                          startIcon={<SaveAltIcon />}
-                          text={`Download all ${[...assayTermNames][value]
-                            } expression data for ${props.gene_name}`}
-                          href="#"
-                          onClick={download}
-                          sx={{
-                            display: "flex",
-                            maxWidth: "100%",
-                          }}
-                        />
-                        <StyledButton
-                          startIcon={<SaveAltIcon />}
-                          text="Export plot as SVG"
-                          href="#"
-                          onClick={() =>
-                            ref.current &&
-                            downloadSVG(ref, `${props.gene_name}-gene-expression.svg`)
-                          }
-                          sx={{
-                            display: "flex",
-                            maxWidth: "100%"
-                          }}
-                        />
-                      </Box>
-                      <svg
-                        viewBox={`0 0 ${width} ${(width / 3) + (height)}`}
-                        style={{ width: "100%", marginTop: "1em" }}
-                        ref={ref}
-                      >
-                        <ViolinPlot
-                          data={toPlot}
-                          title="log₁₀ TPM"
-                          width={width}
-                          height={width / 2}
-                          colors={tissueCol}
-                          domain={domain}
-                          tKeys={28}
-                          onViolinMousedOut={() =>
-                            setMousedOver({ inner: null, outer: null })
-                          }
-                          onViolinMousedOver={setMousedOver}
-                          mousedOver={mousedOver}
-                        />
-                      </svg>
-                    </>
-                ) : (
-                  <Paper
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-start",
+                    gap: 5
+                  }}
+                >
+                  <StyledButton
+                    startIcon={<SaveAltIcon />}
+                    text={`Download all ${[...assayTermNames][value]
+                      } expression data for ${props.gene_name}`}
+                    href="#"
+                    onClick={download}
                     sx={{
-                      marginLeft: { xs: "0", sm: "6.5em" },
-                      width: "70%",
-                      padding: "0.5em",
+                      display: "flex",
+                      maxWidth: "100%",
                     }}
-                  >
-                    <Typography variant="body1" color="error">
-                      There is no expression data available for the assay and
-                      biosample combination you have selected. Please use the
-                      menus above and to the left of this message to select a
-                      different combination.
-                    </Typography>
-                  </Paper>
-                )}
+                  />
+                  <StyledButton
+                    startIcon={<SaveAltIcon />}
+                    text="Export plot as SVG"
+                    href="#"
+                    onClick={() =>
+                      ref.current &&
+                      downloadSVG(ref, `${props.gene_name}-gene-expression.svg`)
+                    }
+                    sx={{
+                      display: "flex",
+                      maxWidth: "100%"
+                    }}
+                  />
+                </Box>
+                <svg
+                  viewBox={`0 0 ${width} ${(width / 3) + (height)}`}
+                  style={{ width: "100%", marginTop: "1em" }}
+                  ref={ref}
+                >
+                  <ViolinPlot
+                    data={toPlot}
+                    title="log₁₀ TPM"
+                    width={width}
+                    height={width / 2}
+                    colors={tissueCol}
+                    domain={domain}
+                    tKeys={28}
+                    onViolinMousedOut={() =>
+                      setMousedOver({ inner: null, outer: null })
+                    }
+                    onViolinMousedOver={setMousedOver}
+                    mousedOver={mousedOver}
+                  />
+                </svg>
               </Paper>
             </Stack>
           </Grid>
