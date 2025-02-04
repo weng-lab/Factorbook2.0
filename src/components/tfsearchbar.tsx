@@ -170,7 +170,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   };
 
   // Debouncing the search input change
-  const debounceFn = useCallback(debounce(onSearchChange, 300), []);
+  const debounceFn = useCallback(debounce(onSearchChange, 300), [assembly]);
 
   return (
     <Box>
@@ -284,7 +284,11 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
 
       <Box sx={{ marginLeft: "10px" }}>
         <Typography variant="caption" sx={{ color: "white" }}>
-          Example: CTCF, ATF3
+          {assembly === "GRCh38" ?
+            "Example: CTCF, ATF3"
+            :
+            "Example: Ctcf, Chd2"
+          }
         </Typography>
       </Box>
     </Box>
