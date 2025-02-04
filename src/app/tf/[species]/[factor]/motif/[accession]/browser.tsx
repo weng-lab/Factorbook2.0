@@ -1,7 +1,7 @@
 'use client'
 
 import { gql, useQuery } from '@apollo/client'
-import { GenomeBrowser, useBrowserState, InitialState, DefaultBigWig, BigWigTrackProps, ImportanceTrackProps, DefaultImportance, DisplayMode, TrackType, GQLWrapper, BrowserActionType, DefaultTranscript, TranscriptTrackProps, TranscriptMouseVersion, TranscriptHumanVersion, TrackProps, DefaultMotif, MotifTrackProps, Controls, BrowserAction, BrowserState, GQLCytobands } from '@weng-lab/genomebrowser'
+import { GenomeBrowser, useBrowserState, InitialState, DefaultBigWig, BigWigTrackProps, ImportanceTrackProps, DefaultImportance, DisplayMode, TrackType, BrowserActionType, DefaultTranscript, TranscriptTrackProps, TranscriptMouseVersion, TranscriptHumanVersion, TrackProps, DefaultMotif, MotifTrackProps, Controls, BrowserAction, GQLCytobands } from '@weng-lab/genomebrowser'
 import { Dispatch, useEffect } from 'react'
 import SearchBox from './search';
 import { Button, TextField } from '@mui/material';
