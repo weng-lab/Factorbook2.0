@@ -29,7 +29,6 @@ import {
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
-import LanguageIcon from '@mui/icons-material/Language';
 import { MOTIF_QUERY } from "../../queries";
 import { MotifResponse } from "@/components/motifmeme/types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";

@@ -216,7 +216,6 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
           borderColor: "#8169BF",
           color: "#8169BF",
           backgroundColor: "white",
-          flex: 1,
         }}
         onClick={() => setSitesOpen(true)}
       >
