@@ -298,7 +298,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         <Typography variant="h4">
           {factorForUrl}
         </Typography>
-        {imageUrl && isMobile ?
+        {imageUrl && (isMobile ?
           <div>
             <Accordion sx={{ background: "#6B6C74", color: "inherit" }}>
               <AccordionSummary expandIcon={<ExpandMore htmlColor="white" />}>
@@ -319,7 +319,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
             alt={factorDetails?.name}
             style={{ borderRadius: theme.shape.borderRadius }}
           />
-        }
+        )}
         <ReferenceSection title="References" sources={Object.entries(referenceLinks).map(([name, url]) => ({ name, url }))} />
       </Stack>
       <Stack flex={1} gap={3}>

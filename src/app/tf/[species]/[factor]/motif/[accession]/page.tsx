@@ -89,10 +89,6 @@ function logLikelihood(backgroundFrequencies: number[]): (r: number[]) => number
     return r.map(x => x * sum);
   };
 }
-interface MotifEnrichmentMEMEProps {
-  factor: string;
-  species: string;
-}
 
 export default function MotifEnrichmentPage({
   params: { species, factor, accession },
@@ -274,166 +270,162 @@ export default function MotifEnrichmentPage({
                 const isGreyedOut =
                   poorPeakCentrality(motif) || poorPeakEnrichment(motif);
 
-                return (
-                  <Box key={motif.id} m={2}>
-                    <Grid container spacing={2} alignItems="center">
-                      <Grid item xs={12} sm={12} md={12} lg={7} xl={6}>
-                        {poorPeakCentrality(motif) && (
-                          <Chip
-                            icon={<HelpOutlineIcon />}
-                            label="Poor Peak Centrality"
-                            sx={{
-                              backgroundColor: "rgba(255, 165, 0, 0.1)",
-                              color: "#FFA500",
-                              fontWeight: "bold",
-                              borderRadius: "16px",
-                              padding: "5px",
-                              marginBottom: "8px",
-                            }}
-                          />
-                        )}
-                        {poorPeakEnrichment(motif) && (
-                          <Chip
-                            icon={<HelpOutlineIcon />}
-                            label="Poor Peak Enrichment"
-                            sx={{
-                              backgroundColor: "rgba(75, 0, 130, 0.1)",
-                              color: "#4B0082",
-                              fontWeight: "bold",
-                              borderRadius: "16px",
-                              padding: "5px",
-                              marginBottom: "8px",
-                              marginLeft: "8px",
-                            }}
-                          />
-                        )}
-                        <Box
-                          sx={{
-                            opacity: isGreyedOut ? 0.5 : 1,
-                            filter: isGreyedOut ? "brightness(50%)" : "none",
-                          }}
-                        >
-                          <DNALogo
-                            ppm={motifppm}
-                            alphabet={DNAAlphabet}
-                            ref={(el: SVGSVGElement | null) =>
-                              (svgRefs.current[index] = el)
-                            }
-                            width={
-                              (isXS || isSM) ? 290
-                                : isMD ? 348
-                                  : isLG ? 406
-                                    : 522
-                            }
-                            height={
-                              (isXS || isSM) ? 127
-                                : isMD ? 152
-                                  : isLG ? 178
-                                    : 229
-                            }
-                          />
-                        </Box>
-                      </Grid>
-                      <Grid item xs={12} sm={12} md={12} lg={5} xl={6}>
-                        <Paper
-                          elevation={2}
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            flexDirection: "column",
-                            borderRadius: "16px",
-                          }}
-                        >
-                          <Table sx={{ border: 0 }}>
-                            <TableBody>
-                              <TableRow>
-                                <TableCell>
-                                  <Box display="flex" alignItems="center">
-                                    <Tooltip
-                                      title={
-                                        <Typography>
-                                          The statistical significance of the
-                                          motif. The E-value is an estimate of the
-                                          expected number that one would find in a
-                                          similarly sized set of random sequences.
-                                        </Typography>
-                                      }
-                                    >
-                                      <HelpRounded sx={{ mr: 1 }} htmlColor="grey" />
-                                    </Tooltip>
-                                    <Typography
-                                      variant="body1"
-                                      sx={{ fontWeight: "bold" }}
-                                    >
-                                      E-value
-                                    </Typography>
-                                  </Box>
-                                </TableCell>
-                                <TableCell align="right">
-                                  {motif.e_value ? toScientificNotationElement(motif.e_value) : <div style={{ "display": "inline-flex" }}>{'<'}&nbsp;{toScientificNotationElement(+1e-300)}</div>}
-                                </TableCell>
-                              </TableRow>
-                              <TableRow>
-                                <TableCell sx={{ border: 0 }}>
-                                  <Box display="flex" alignItems="center">
-                                    <Tooltip
-                                      title={
-                                        <Typography sx={{ fontSize: "1rem" }}>
-                                          The number of optimal IDR thresholded
-                                          peaks which contained at least one
-                                          occurrence of this motif according to
-                                          FIMO.
-                                        </Typography>
-                                      }
-                                    >
-                                      <HelpRounded htmlColor="grey" sx={{ marginRight: 1 }} />
-                                    </Tooltip>
-                                    <Typography
-                                      variant="body1"
-                                      sx={{ fontWeight: "bold" }}
-                                    >
-                                      Occurrences
-                                    </Typography>
-                                  </Box>
-                                </TableCell>
-                                <TableCell align="right" sx={{ border: 0 }}>
-                                  {motif.original_peaks_occurrences.toLocaleString()}{" "}
-                                  / {motif.original_peaks.toLocaleString()} peaks
-                                </TableCell>
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                        </Paper>
-                      </Grid>
-                    </Grid>
-                    <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
+            return (
+              <Box key={motif.id} m={2}>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12} sm={12} md={12} lg={7} xl={6}>
+                    {poorPeakCentrality(motif) && (
+                      <Chip
+                        icon={<HelpOutlineIcon />}
+                        label="Poor Peak Centrality"
+                        sx={{
+                          backgroundColor: "rgba(255, 165, 0, 0.1)",
+                          color: "#FFA500",
+                          fontWeight: "bold",
+                          borderRadius: "16px",
+                          padding: "5px",
+                          marginBottom: "8px",
+                        }}
+                      />
+                    )}
+                    {poorPeakEnrichment(motif) && (
+                      <Chip
+                        icon={<HelpOutlineIcon />}
+                        label="Poor Peak Enrichment"
+                        sx={{
+                          backgroundColor: "rgba(75, 0, 130, 0.1)",
+                          color: "#4B0082",
+                          fontWeight: "bold",
+                          borderRadius: "16px",
+                          padding: "5px",
+                          marginBottom: "8px",
+                          marginLeft: "8px",
+                        }}
+                      />
+                    )}
                     <Box
-                      display="flex"
-                      mt={2}
-                      gap={2}
+                      sx={{
+                        opacity: isGreyedOut ? 0.5 : 1,
+                        filter: isGreyedOut ? "brightness(50%)" : "none",
+                      }}
                     >
-                      <Button
-                        variant="contained"
-                        startIcon={<SaveAltIcon />}
-                        onClick={() => setIsDialogOpen(true)}
-                      >
-                        Download
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<SwapHorizIcon />}
-                        onClick={() => handleReverseComplement(index)}
-                      >
-                        Reverse Complement
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={showQCStates[motif.id] ? <VisibilityOff /> : <Visibility />}
-                        onClick={() => toggleShowQC(motif.id)}
-                      >
-                        {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
-                      </Button>
+                      <DNALogo
+                        ppm={motifppm}
+                        alphabet={DNAAlphabet}
+                        ref={(el: SVGSVGElement | null) =>
+                          (svgRefs.current[index] = el)
+                        }
+                        width={
+                          (isXS || isSM) ? 232
+                            : 325
+                        }
+                        height={
+                          (isXS || isSM) ? 102
+                            : 183
+                        }
+                      />
                     </Box>
+                  </Grid>
+                  <Grid item xs={12} sm={12} md={12} lg={5} xl={6}>
+                    <Paper
+                      elevation={2}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        flexDirection: "column",
+                        borderRadius: "16px",
+                      }}
+                    >
+                      <Table sx={{ border: 0 }}>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell>
+                              <Box display="flex" alignItems="center">
+                                <Tooltip
+                                  title={
+                                    <Typography>
+                                      The statistical significance of the
+                                      motif. The E-value is an estimate of the
+                                      expected number that one would find in a
+                                      similarly sized set of random sequences.
+                                    </Typography>
+                                  }
+                                >
+                                  <HelpRounded sx={{ mr: 1 }} htmlColor="grey" />
+                                </Tooltip>
+                                <Typography
+                                  variant="body1"
+                                  sx={{ fontWeight: "bold" }}
+                                >
+                                  E-value
+                                </Typography>
+                              </Box>
+                            </TableCell>
+                            <TableCell align="right">
+                              {motif.e_value ? toScientificNotationElement(motif.e_value) : <div style={{ "display": "inline-flex" }}>{'<'}&nbsp;{toScientificNotationElement(+1e-300)}</div>}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell sx={{ border: 0 }}>
+                              <Box display="flex" alignItems="center">
+                                <Tooltip
+                                  title={
+                                    <Typography sx={{ fontSize: "1rem" }}>
+                                      The number of optimal IDR thresholded
+                                      peaks which contained at least one
+                                      occurrence of this motif according to
+                                      FIMO.
+                                    </Typography>
+                                  }
+                                >
+                                  <HelpRounded htmlColor="grey" sx={{ marginRight: 1 }} />
+                                </Tooltip>
+                                <Typography
+                                  variant="body1"
+                                  sx={{ fontWeight: "bold" }}
+                                >
+                                  Occurrences
+                                </Typography>
+                              </Box>
+                            </TableCell>
+                            <TableCell align="right" sx={{ border: 0 }}>
+                              {motif.original_peaks_occurrences.toLocaleString()}{" "}
+                              / {motif.original_peaks.toLocaleString()} peaks
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </Paper>
+                  </Grid>
+                </Grid>
+                <TOMTOMMessage tomtomMatch={motif.tomtomMatch} />
+                <Box
+                  display="flex"
+                  mt={2}
+                  gap={2}
+                >
+                  <Button
+                    variant="contained"
+                    startIcon={<SaveAltIcon />}
+                    onClick={() => setIsDialogOpen(true)}
+                  >
+                    Download
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    startIcon={<SwapHorizIcon />}
+                    onClick={() => handleReverseComplement(index)}
+                  >
+                    Reverse Complement
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    startIcon={showQCStates[motif.id] ? <VisibilityOff /> : <Visibility />}
+                    onClick={() => toggleShowQC(motif.id)}
+                  >
+                    {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
+                  </Button>
+                </Box>
 
                     {showQCStates[motif.id] && selectedPeakID && (
                       <Box mt={3}>
