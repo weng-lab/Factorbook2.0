@@ -1,13 +1,10 @@
 import React, { useState, SetStateAction, useMemo, Dispatch } from "react";
 import Dialog from '@mui/material/Dialog';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItem from '@mui/material/ListItem';
-import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
+import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import {
   Box,
@@ -17,6 +14,7 @@ import {
   useTheme,
   TextField,
   Link,
+  Grid,
 } from '@mui/material/';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
@@ -33,6 +31,7 @@ import {
 import { useQuery } from "@apollo/client";
 import { MEMEOCCU_QUERY } from "../../queries";
 import { Search } from "@mui/icons-material";
+import { parseBedFile } from "../../regions/peaksearch";
 
 type Domain = {
   chromosome: string;
@@ -180,6 +179,12 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
   };
+  const handleFileUpload = async () => {
+    if (selectedFile) {
+      const parsed = await parseBedFile(selectedFile);
+      setRegions(parsed);
+    }
+  };
   const formattedRegions = useMemo(
     () => regions.map(x => ({ chromosome: x.chromosome!, start: x.start!, end: x.end! })),
     [regions]
@@ -256,10 +261,48 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
             </GQLWrapper>
           </TabPanel>
           <TabPanel value={popupTab} index={1}>
-            <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
-              <Typography variant="h4" gutterBottom>
-                {`Searching ${fileID} motif sites`}
-              </Typography>
+            <Box sx={{ mt: 4, mx: "auto", maxWidth: "2000px" }}>
+              <>
+                <Grid container alignItems="center" justifyContent="space-between">
+                  <Grid item>
+                    <Typography variant="h4">
+                      {`Searching ${fileID} motif sites`}
+                    </Typography>
+                  </Grid>
+                  <Grid item>
+                    <Button
+                      onClick={() => {
+                        setRegions([]);
+                      }}
+                      variant="contained"
+                      color="secondary"
+                      sx={{
+                        width: "220px",
+                        height: "41px",
+                        padding: "8px 24px",
+                        borderRadius: "24px",
+                        backgroundColor: "#8169BF",
+                        color: "white",
+                        fontFeatureSettings: "'clig' off, 'liga' off",
+                        fontSize: "15px",
+                        fontStyle: "normal",
+                        fontWeight: 500,
+                        letterSpacing: "0.46px",
+                        textTransform: "none",
+                        "&:hover": {
+                          backgroundColor: "#7151A1",
+                        },
+                      }}
+                    >
+                      <NavigateBeforeIcon />
+                      Perform New Search
+                    </Button>
+                  </Grid>
+                </Grid>
+
+                <Divider sx={{ my: 4 }} />
+              </>
+
               <br />
               {regions.length === 0 && <>
                 <Typography variant="h6" gutterBottom>
@@ -381,7 +424,7 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
                             backgroundColor: "#8169BF",
                           },
                         }}
-                        // onClick={() => handleFileUpload()}
+                        onClick={() => handleFileUpload()}
                         disabled={!selectedFile}
                       >
                         Upload File
@@ -433,3 +476,4 @@ function TabPanel(props: {
     </div>
   );
 }
+
