@@ -453,6 +453,7 @@ export default function MotifEnrichmentPage({
                     species={species}
                     consensusRegex={motif.consensus_regex}
                     experimentID={selectedExperimentID}
+                    fileID={selectedPeakID}
                   />
                   <Button
                     variant="outlined"

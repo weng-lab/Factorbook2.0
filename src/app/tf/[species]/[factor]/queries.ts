@@ -61,6 +61,22 @@ export const PEAK_QUERY = gql`
     }
 `;
 
+export const MEMEOCCU_QUERY = gql`
+    query occurrences($range: [GenomicRegionInput!], $peaks_accession: String, $consensus_regex: String) {
+        meme_occurrences(genomic_region: $range, peaks_accession: $peaks_accession, consensus_regex: $consensus_regex) {
+            peaks_accession
+            strand
+            q_value
+            consensus_regex
+            genomic_region {
+                chromosome
+                start
+                end
+            }
+        }
+    }
+`;
+
 
 export const MOTIFS_QUERY = gql`
     query motifsInPeak($genomic_region: [GenomicRegionInput!]!) {

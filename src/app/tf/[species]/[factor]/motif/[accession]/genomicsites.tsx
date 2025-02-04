@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, SetStateAction, useMemo } from "react";
 import Dialog from '@mui/material/Dialog';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -26,7 +26,71 @@ import Browser from "./browser";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { GQLWrapper } from "@weng-lab/genomebrowser";
+import {
+  DataTable,
+  DataTableColumn,
+} from "@weng-lab/psychscreen-ui-components";
+import { useQuery } from "@apollo/client";
+import { MEMEOCCU_QUERY } from "../../queries";
 
+type MEMEOCCURESULT = {
+genomic_region: {    chromosome: string;
+    start: number;
+    end: number;};
+
+    consensus_regex: string;
+    q_value: number;
+    peaks_accession: string;
+    strand: string;
+}
+const MEME_OCCU_COLUMNS = (): DataTableColumn<MEMEOCCURESULT>[] => {
+  const cols: DataTableColumn<MEMEOCCURESULT>[] = [
+    {
+      header: "Chromosome",
+      value: (row: MEMEOCCURESULT) => row.genomic_region.chromosome,
+    },
+    {
+      header: "Start",
+      value: (row: MEMEOCCURESULT) => row.genomic_region.start,
+      render: (row: MEMEOCCURESULT) => row.genomic_region.start.toLocaleString(),
+    },
+    {
+      header: "End",
+      value: (row: MEMEOCCURESULT) => row.genomic_region.end,
+      render: (row: MEMEOCCURESULT) => row.genomic_region.end.toLocaleString(),
+    },
+    {
+      header: "Consensus Regex ",
+      value: (row: MEMEOCCURESULT) => row.consensus_regex,
+    },
+    {
+      header: "Peaks Accession",
+      value: (row: MEMEOCCURESULT) => row.peaks_accession,
+      render: (row: MEMEOCCURESULT) => (
+        <Link
+          style={{ color: "#8169BF" }}
+          rel="noopener noreferrer"
+          target="_blank"
+          href={`https://www.encodeproject.org/files/${row.peaks_accession}/`}
+        >
+          {row.peaks_accession}
+        </Link>
+      ),
+    },
+    {
+      header: "q value",
+      value: (row: MEMEOCCURESULT) => row.q_value.toFixed(2),
+    },
+  ];
+ 
+  return cols;
+};
+
+export type GenomicRange = {
+  chromosome?: string;
+  start?: number;
+  end?: number;
+};
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -74,14 +138,17 @@ const UploadBox = styled(Box, {
 interface FullScreenDialogProps {
   species: string,
   consensusRegex: string,
-  experimentID: string | null
+  experimentID: string | null,
+  fileID: string | null
 }
 
-export default function FullScreenDialog({ species, consensusRegex, experimentID }: FullScreenDialogProps) {
+export default function FullScreenDialog({ species, consensusRegex, experimentID, fileID }: FullScreenDialogProps) {
   const [sitesOpen, setSitesOpen] = useState(false); // for show genome sites button
   const [popupTab, setPopupTab] = useState<number>(0); // for popup tabs
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [value, setValue] = useState("");
+  const [regions, setRegions] = useState<GenomicRange[]>([]);
   const theme = useTheme();
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
@@ -104,7 +171,26 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
     const file = event.target.files?.[0] || null;
     setSelectedFile(file);
   };
+  const formattedRegions = useMemo(
+    () => regions.map(x => ({ chromosome: x.chromosome!, start: x.start!, end: x.end! })),
+    [regions]
+);
 
+const { data: memeOccuData, loading, error } = useQuery(MEMEOCCU_QUERY, {
+  
+  variables: {
+      peaks_accession: fileID,
+      range: formattedRegions,
+      consensus_regex: consensusRegex,
+  },
+  skip: formattedRegions.length === 0,
+});
+console.log(memeOccuData)
+  const handleChange = (event: {
+    target: { value: SetStateAction<string> };
+  }) => {
+    setValue(event.target.value);
+  };
   return (
     <>
       <Button
@@ -162,23 +248,27 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
           </TabPanel>
           <TabPanel value={popupTab} index={1}>
             <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
+            <Typography variant="h4" gutterBottom>
+                {`Searching ${fileID} motif sites`} 
+              </Typography>
               <br />
+              {regions.length===0 && <>
               <Typography variant="h6" gutterBottom>
                 {`Enter genomic coordinates (${species.toLowerCase() === "human" ? "GRCh38" : "mm10"
                   }):`}
               </Typography>
               <StyledSearchBox>
                 <LargeTextField
-                // onKeyDown={(event) => {
-                //   if (event.key === "Tab" && !value) {
-                //     const defaultGenomicRegion = `chr1:${(100000000).toLocaleString()}-${(100101000).toLocaleString()}`;
-                //     setValue(defaultGenomicRegion);
-                //   }
-                // }}
-                // placeholder="Enter a genomic region"
-                // onChange={handleChange}
-                // id="region-input"
-                // value={value}
+                onKeyDown={(event) => {
+                  if (event.key === "Tab" && !value) {
+                     const defaultGenomicRegion = `chr2:${(100000000).toLocaleString()}-${(100101000).toLocaleString()}`;
+                     setValue(defaultGenomicRegion);
+                   }
+                 }}
+                 placeholder="Enter a genomic region"
+                 onChange={handleChange}
+                 id="region-input"
+                 value={value}
                 />{" "}
                 <Button
                   variant="contained"
@@ -193,14 +283,30 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
                       backgroundColor: theme.palette.primary.main,
                     },
                   }}
+                  onClick={() => {
+                    const chromosome = value.split(":")[0];
+                    const start = +value
+                      .split(":")[1]
+                      .split("-")[0]
+                      .replaceAll(",", "");
+                    const end = +value
+                      .split(":")[1]
+                      .split("-")[1]
+                      .replaceAll(",", "");
+                    setRegions([
+                      { chromosome: chromosome, start: start!!, end: end!! },
+                    ]);
+                    //setFileUpload(false)
+                  }}
                 >
                   Search
                 </Button>
                 <br />
                 <Typography variant="body2" sx={{ marginLeft: "8px" }}>
-                  example: chr1:100,000,000-100,101,000
+                  example: chr2:100,000,000-100,101,000
                 </Typography>
               </StyledSearchBox>
+              <br/>
               {(
                 <>
                   <Typography variant="h6" gutterBottom>
@@ -274,6 +380,20 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
                   </Box>
                 </>
               )}
+              </>}
+              {memeOccuData && memeOccuData.meme_occurrences && (
+        <Box sx={{ mx: "auto", alignItems: "center" }}>
+          <DataTable
+            key="meme_occu"
+            columns={MEME_OCCU_COLUMNS()}
+            rows={memeOccuData.meme_occurrences}
+            itemsPerPage={10}
+            sortColumn={1}
+            searchable
+            tableTitle={`${memeOccuData.meme_occurrences.length} ${fileID} ChIP-seq peak motif sites matched your input:`}
+          />
+        </Box>
+      )}
             </Box>
           </TabPanel>
         </Box>
