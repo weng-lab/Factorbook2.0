@@ -27,7 +27,7 @@ const ATACPlot: React.FC<{
         setLimit(limit);
     }, []);
 
-    console.log(data && data[name],"data")
+    
   
   if (loading) return <CircularProgress />;
 

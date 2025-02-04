@@ -195,7 +195,7 @@ const Homepage = () => {
             Factorbook is a resource for human and mouse transcription factors,
             focusing on their binding specificities and regulatory roles in gene
             expression across cell types. Factorbook integrates public data,
-            especially ENCODE, to provide a wide-ranging motif catalog.
+            especially ENCODE data, to provide a wide-ranging motif catalog and transcription factor binding sites.
           </Typography>
           <Box
             sx={{

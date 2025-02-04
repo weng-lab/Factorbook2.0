@@ -180,7 +180,7 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
       {tooltipData && (
         <TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
           <div style={{ fontSize: "12px", color: "black" }}>
-            <strong>X:</strong> {Math.round(tooltipData.xValue)}
+            <strong>Distance:</strong> {Math.round(tooltipData.xValue)}
           </div>
           <div style={{ fontSize: "12px", color: "black" }}>
             <strong>Score:</strong> {tooltipData.proximal}

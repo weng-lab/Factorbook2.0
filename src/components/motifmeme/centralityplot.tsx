@@ -147,7 +147,7 @@ const CentralityPlot: React.FC<CentralityPlotProps> = ({
       {tooltipData && (
         <TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
           <div style={{ fontSize: "16px", color: "black" }}>
-            <strong>X:</strong> {tooltipData.xValue}
+            <strong>Distance:</strong> {tooltipData.xValue}
           </div>
           <div style={{ fontSize: "16px", color: "black" }}>
             <strong>Density:</strong> 

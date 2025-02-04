@@ -262,7 +262,7 @@ export default function MotifEnrichmentPage({
         >
           {motifsWithMatches.map((motif, index) => {
 
-            console.log("motif.atac_data",motif.atac_data)
+            
             const motifppm = reverseComplements[index]
               ? rc(motif.pwm)
               : motif.pwm;

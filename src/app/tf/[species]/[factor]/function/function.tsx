@@ -325,7 +325,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
           <InfoCards />
           {datasetData && (
             <DataTable
-              tableTitle={`${experimentCount} experiments performed`}
+              tableTitle={`${experimentCount} Experiments`}
               columns={datasetColumns(species)}
               rows={datasetData.peakDataset.datasets}
               searchable
@@ -343,7 +343,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
           )}
           {datasetData?.peakDataset.partitionByBiosample && (
             <DataTable
-              tableTitle={`${biosampleCount} biosamples profiled`}
+              tableTitle={`${biosampleCount} Biosamples`}
               downloadFileName={`${factor}_profiled_biosamples.tsv`}
               columns={biosampleColumns(species)}
               rows={datasetData.peakDataset.partitionByBiosample}
