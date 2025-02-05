@@ -29,7 +29,6 @@ import {
   useTheme,
   Stack,
   Skeleton,
-  Skeleton,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid2 for MUI v2
 import { ApiContext } from "@/apicontext";
@@ -47,8 +46,6 @@ import {
 import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
 import { meme, MMotif } from "@/components/motifsearch/motifutil";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
-import SelexLinePlot from "./lineplot";
-import SelexBarPlot from "./barplot";
 import SelexLinePlot from "./lineplot";
 import SelexBarPlot from "./barplot";
 
@@ -129,35 +126,7 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
   };
 
   if (loading ||  !data)
-  if (loading ||  !data)
     return (
-      <>
-        {/* HEADER */}
-        <Skeleton variant="rounded" width={"30%"} height="57px" />
-        <br />
-        <Stack divider={<Divider sx={{ marginY: 2 }} />} spacing={3}>
-
-          {/* LINE & BAR PLOTS */}
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "flex-start" }}>
-            <Box>
-              <Skeleton variant="rounded" width={300} height={300} />
-            </Box>
-            <Box>
-              <Skeleton variant="rounded" width={300} height={300} />
-            </Box>
-          </Box>
-
-          {/* CYCLES */}
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "space-between" }}>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Box key={i} sx={{ flex: "1 1 auto", textAlign: "flex-start" }}>
-                <Skeleton variant="text" width={100} height={30} />
-                <Skeleton variant="rounded" width={300} height={200} />
-              </Box>
-            ))}
-          </Box>
-        </Stack>
-      </>
       <>
         {/* HEADER */}
         <Skeleton variant="rounded" width={"30%"} height="57px" />
@@ -258,29 +227,6 @@ const SelexMotifsForAssayStudyAndProteinType: React.FC<{
 
   if (loading || !data)
     return (
-      <>
-        <Stack divider={<Divider sx={{ marginY: 2 }} />} spacing={3} mt={2}>
-          {/* LINE & BAR PLOTS */}
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "flex-start" }}>
-            <Box>
-              <Skeleton variant="rounded" width={300} height={300} />
-            </Box>
-            <Box>
-              <Skeleton variant="rounded" width={300} height={300} />
-            </Box>
-          </Box>
-
-          {/* CYCLES */}
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, justifyContent: "space-between" }}>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Box key={i} sx={{ flex: "1 1 auto", textAlign: "flex-start" }}>
-                <Skeleton variant="text" width={100} height={30} />
-                <Skeleton variant="rounded" width={300} height={200} />
-              </Box>
-            ))}
-          </Box>
-        </Stack>
-      </>
       <>
         <Stack divider={<Divider sx={{ marginY: 2 }} />} spacing={3} mt={2}>
           {/* LINE & BAR PLOTS */}
