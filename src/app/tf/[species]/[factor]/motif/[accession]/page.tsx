@@ -49,14 +49,6 @@ import MotifTile from "./motifTile";
 DNAAlphabet[0].color = "#228b22";
 DNAAlphabet[3].color = "red";
 
-// Check for poor peak centrality based on motif properties
-export const poorPeakCentrality = (motif: any): boolean =>
-  motif.flank_z_score < 0 || motif.flank_p_value > 0.05;
-
-// Check for poor peak enrichment based on motif properties
-export const poorPeakEnrichment = (motif: any): boolean =>
-  motif.shuffled_z_score < 0 || motif.shuffled_p_value > 0.05;
-
 export default function MotifEnrichmentPage({
   params: { species, factor, accession },
 }: {
