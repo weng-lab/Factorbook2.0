@@ -53,6 +53,16 @@ import SelexBarPlot from "./barplot";
 DNAAlphabet[0].color = "#228b22";
 DNAAlphabet[3].color = "red";
 
+export const colors: { [key: number]: string } = {
+  1: "#e6725f",
+  2: "#46d29a",
+  3: "#e09b50",
+  4: "#a84ddb",
+  5: "#A52A2A",
+  6: "#FFD700",
+  7: "#90EE90",
+};
+
 const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
   factor,
   species,
@@ -390,6 +400,12 @@ const DeepLearnedSelexMotif: React.FC<{
   }[];
 }> = ({ study, assay, protein_type, data }) => {
 
+  const [hoveredCycle, setHoveredCycle] = useState<number | null>(null);
+
+  const onHover = (cycle: number | null) => {
+    setHoveredCycle(cycle);
+  };
+
   const downloadSVGElement = (
     ref: MutableRefObject<SVGSVGElement | null>,
     filename: string
@@ -404,16 +420,25 @@ const DeepLearnedSelexMotif: React.FC<{
       {/* LINE & BAR PLOTS */}
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "flex-start" }}>
         <Box>
-          <SelexLinePlot data={data} downloadSVGElement={downloadSVGElement} />
+          <SelexLinePlot data={data} downloadSVGElement={downloadSVGElement} onHover={onHover} />
         </Box>
         <Box>
-          <SelexBarPlot data={data} downloadSVGElement={downloadSVGElement} />
+          <SelexBarPlot data={data} downloadSVGElement={downloadSVGElement} onHover={onHover} />
         </Box>
       </Box>
       {/* CYCLES */}
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "flex-start" }}>
         {data.map((d, i) => (
-          <Box key={`logo${i}`} sx={{ textAlign: "flex-start" }}>
+          <Box 
+            key={`logo${i}`} 
+            sx={{
+              textAlign: "flex-start",
+              backgroundColor: hoveredCycle === d.selex_round ? `${colors[d.selex_round]}40` : "transparent",
+              transition: "background-color 0.3s ease-in-out",
+              p: 1,
+              borderRadius: 1,
+            }}
+          >
             <Typography variant="h6">Cycle {d.selex_round}</Typography>
             {d.ppm && d.ppm.length > 0 && <DownloadableMotif ppm={d.ppm} name={study} />}
           </Box>

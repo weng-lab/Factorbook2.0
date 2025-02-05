@@ -9,18 +9,9 @@ import { LinePath } from "@visx/shape";
 import { useMemo, useRef } from "react";
 import { scaleLinear } from "@visx/scale";
 import { PlotProps } from "./types";
+import { colors } from "./motifenrichmentselex";
 
-const colors: { [key: number]: string } = {
-    1: "#FFA500",
-    2: "#FF0000",
-    3: "#008000",
-    4: "#0000FF",
-    5: "#A52A2A",
-    6: "#FFD700",
-    7: "#90EE90",
-};
-
-const SelexLinePlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
+const SelexLinePlot: React.FC<PlotProps> = ({ data, downloadSVGElement, onHover }) => {
     const lineref = useRef<SVGSVGElement | null>(null);
     const margin = { top: 20, right: 90, bottom: 70, left: 70 };
 
@@ -123,16 +114,33 @@ const SelexLinePlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
                             dy: "0.25em",
                         })}
                     />
-                    {data.map((d, i) => (
-                        <LinePath
-                            key={i}
-                            data={points.filter((p) => p.round === d.selex_round)}
-                            x={(p) => xScale(p.x)}
-                            y={(p) => yScale(p.y)}
-                            stroke={colors[d.selex_round]}
-                            strokeWidth={2}
-                        />
-                    ))}
+                    {data.map((d, i) => {
+                        const lineData = points.filter((p) => p.round === d.selex_round);
+                        return (
+                            <g key={i}>
+                                {/* Invisible wider path to capture hover */}
+                                <LinePath
+                                    data={lineData}
+                                    x={(p) => xScale(p.x)}
+                                    y={(p) => yScale(p.y)}
+                                    stroke="transparent"
+                                    strokeWidth={10} // Ensures better hover detection
+                                    style={{ pointerEvents: "stroke" }} // Ensures only the stroke captures events
+                                    onMouseEnter={() => onHover(d.selex_round)}
+                                    onMouseLeave={() => onHover(null)}
+                                />
+                                {/* Visible actual line */}
+                                <LinePath
+                                    data={lineData}
+                                    x={(p) => xScale(p.x)}
+                                    y={(p) => yScale(p.y)}
+                                    stroke={colors[d.selex_round]}
+                                    strokeWidth={2}
+                                    pointerEvents="none" // Prevents interference with the hover detection
+                                />
+                            </g>
+                        );
+                    })}
                     <Text
                         x={105}
                         y={270}

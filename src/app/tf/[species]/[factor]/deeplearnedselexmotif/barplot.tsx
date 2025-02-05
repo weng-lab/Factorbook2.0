@@ -10,18 +10,9 @@ import { useMemo, useRef } from "react";
 import { scaleLinear, scaleBand } from "@visx/scale";
 import { PlotProps } from "./types";
 import React from "react";
+import { colors } from "./motifenrichmentselex";
 
-const colors: { [key: number]: string } = {
-    1: "#FFA500",
-    2: "#FF0000",
-    3: "#008000",
-    4: "#0000FF",
-    5: "#A52A2A",
-    6: "#FFD700",
-    7: "#90EE90",
-};
-
-const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
+const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement, onHover }) => {
     const barref = useRef<SVGSVGElement | null>(null);
     
     const barplotDomain = useMemo(
@@ -124,6 +115,8 @@ const SelexBarPlot: React.FC<PlotProps> = ({ data, downloadSVGElement }) => {
                                 }
                                 width={barXScale.bandwidth()}
                                 fill={colors[d.selex_round]}
+                                onMouseEnter={() => onHover(d.selex_round)}
+                                onMouseLeave={() => onHover(null)}
 
                             />
                             <Text
