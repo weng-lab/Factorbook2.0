@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, SetStateAction, useMemo } from "react";
-import { Grid, Pagination, PaginationItem, Divider } from "@mui/material";
+import { Grid, Pagination, PaginationItem, Divider, Skeleton } from "@mui/material";
 import {
   Box,
   Typography,
@@ -775,6 +775,11 @@ const PeakSearch: React.FC = () => {
               </Box>
             </>
           )}
+        </Box>
+      )}
+      {loading && (
+        <Box sx={{ mx: "auto", alignItems: "center", maxWidth: "1000px" }}>
+          <Skeleton variant="rounded" width={"100%"} height={"650px"} />
         </Box>
       )}
       {peaksData && peaksData.peaksrange.data && (
