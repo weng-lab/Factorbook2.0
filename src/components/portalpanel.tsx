@@ -44,8 +44,9 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
         flexDirection: "column",
         width: "100vw",
         margin: "0 auto",
-        p: "5% 10%",
+        py: "5%",
         overflow: "hidden",
+        maxWidth: "1300px"
       }}
     >
       <Grid2 container spacing={2} alignItems="center">
@@ -54,8 +55,8 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
           sm={6}
           sx={{
             display: "flex",
-            justifyContent: isSmallScreen ? "center" : reverse ? "flex-start" : "center",
             order: isSmallScreen ? 0 : reverse ? 1 : 0,
+            justifyContent: "center",
           }}
         >
           <Image
@@ -73,7 +74,7 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
             textAlign: isSmallScreen ? "center" : "left",
             display: "flex",
             flexDirection: "column",
-            alignItems: isSmallScreen ? "center" : reverse ? "center" : "flex-start",
+            alignItems: "center",
             order: isSmallScreen ? 1 : reverse ? 0 : 1,
           }}
         >
@@ -110,6 +111,7 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
                 text={buttonText}
                 href={buttonHref}
                 sx={{
+                  width:"auto",
                   display: isSmallScreen ? "block" : "inline-block",
                   ml: isSmallScreen ? 0 : 2,
                 }}

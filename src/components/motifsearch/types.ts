@@ -19,6 +19,7 @@ export type MotifSearchResult = {
 
 export type MotifResultProps = {
     query: number[][];
+    distance: number;
     alignment: MotifSearchResult;
     peak_accession: string;
     species: string;
