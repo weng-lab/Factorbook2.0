@@ -94,10 +94,6 @@ function logLikelihood(backgroundFrequencies: number[]): (r: number[]) => number
     return r.map(x => x * sum);
   };
 }
-interface MotifEnrichmentMEMEProps {
-  factor: string;
-  species: string;
-}
 
 export default function MotifEnrichmentPage({
   params: { species, factor, accession },
@@ -341,16 +337,12 @@ export default function MotifEnrichmentPage({
                           (svgRefs.current[index] = el)
                         }
                         width={
-                          (isXS || isSM) ? 290
-                            : isMD ? 348
-                              : isLG ? 406
-                                : 522
+                          (isXS || isSM) ? 232
+                            : 325
                         }
                         height={
-                          (isXS || isSM) ? 127
-                            : isMD ? 152
-                              : isLG ? 178
-                                : 229
+                          (isXS || isSM) ? 102
+                            : 183
                         }
                       />
                     </Box>

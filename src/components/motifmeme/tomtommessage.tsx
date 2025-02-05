@@ -4,6 +4,11 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"; // 
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline"; // For no match
 import { TOMTOMMessageProps } from "./types";
 
+/**
+ * 
+ * @todo this would be more appropriately handled with an MUI <Alert> component. Not sure why it was manually reconstructed.
+ */
+
 export const TOMTOMMessage: React.FC<TOMTOMMessageProps> = ({
   tomtomMatch,
 }) => {
@@ -14,7 +19,6 @@ export const TOMTOMMessage: React.FC<TOMTOMMessageProps> = ({
       sx={{
         display: "flex", // Align icon and text horizontally
         alignItems: "center", // Vertically center icon and text
-        marginTop: "1em",
         padding: "1em",
         borderRadius: "16px", // Rounded box
         backgroundColor: hasValidMatch
