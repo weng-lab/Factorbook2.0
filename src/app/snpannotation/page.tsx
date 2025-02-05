@@ -146,7 +146,7 @@ const AnnotationsVariants = () => {
       disequilibriumDetails.rSquaredThreshold
       : "/snpannotation/hg38/" + snpValue;
 
-      window.open(snpValue ? url : "", "_self");
+    window.open(snpValue ? url : "", "_self");
   };
 
   const annotationsContent = `Genetic variants in regulatory elements of the human genome play a critical role in influencing traits and disease susceptibility by modifying transcription factor (TF) binding and gene expression. Often identified in genome-wide association studies, these variants can disrupt gene regulatory networks, leading to varied phenotypic effects or predispositions to diseases. Factorbook offers a comprehensive resource of TF binding motifs and sites, enabling researchers to predict the impact of genetic variants on TF binding and gene regulation, providing valuable insights into the functional consequences of these variants.`;
@@ -187,7 +187,7 @@ const AnnotationsVariants = () => {
               Annotate a variant of interest using peaks and motif sites
             </Typography>
             <StyledBox>
-              <SnpSearchBar textColor="gray" handleSubmit={handleSubmit}/>
+              <SnpSearchBar textColor="gray" handleSubmit={handleSubmit} />
             </StyledBox>
             <Box sx={{ mt: 4 }}>
               <Typography variant="h6" gutterBottom>

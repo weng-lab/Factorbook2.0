@@ -19,8 +19,8 @@ export function readBed(
           onComplete(
             parseBed(new TextDecoder().decode(inflate(e.target.result)))
           );
-        } catch (e) {
-          onError(e);
+        } catch (error) {
+          onError(error);
         }
       };
       binaryReader.readAsBinaryString(file);
