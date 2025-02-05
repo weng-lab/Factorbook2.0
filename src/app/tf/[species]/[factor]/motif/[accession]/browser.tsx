@@ -1,9 +1,16 @@
 'use client'
 
 import { gql, useQuery } from '@apollo/client'
-import { GenomeBrowser, useBrowserState, InitialState, DefaultBigWig, BigWigTrackProps, ImportanceTrackProps, DefaultImportance, DisplayMode, TrackType, BrowserActionType, DefaultTranscript, TranscriptTrackProps, TranscriptMouseVersion, TranscriptHumanVersion, TrackProps, DefaultMotif, MotifTrackProps, Controls, BrowserAction, GQLCytobands } from '@weng-lab/genomebrowser'
+import {
+    GenomeBrowser, useBrowserState, InitialState,
+    DefaultBigWig, BigWigTrackProps, ImportanceTrackProps,
+    DefaultImportance, DisplayMode, TrackType, BrowserActionType,
+    DefaultTranscript, TranscriptTrackProps, TranscriptMouseVersion,
+    TranscriptHumanVersion, TrackProps, DefaultMotif, MotifTrackProps,
+    Controls, BrowserAction, GQLCytobands
+} from '@weng-lab/genomebrowser'
 import { Dispatch, useEffect } from 'react'
-import SearchBox from './search';
+import SearchBox from './autoComplete';
 import { Button, TextField } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Search } from '@mui/icons-material';

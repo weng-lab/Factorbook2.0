@@ -1,47 +1,18 @@
 'use client'
 
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import { from, useQuery } from "@apollo/client";
+import React, { useState, useMemo } from "react";
+import { useQuery } from "@apollo/client";
 import {
   Typography,
-  Chip,
-  Box,
-  Paper,
-  Button,
-  Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  FormControlLabel,
-  Checkbox,
-  Tooltip,
   Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  useMediaQuery,
-  useTheme,
   Stack
 } from "@mui/material";
-import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import { MOTIF_QUERY } from "../../queries";
 import { MotifResponse } from "@/components/motifmeme/types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
-import { DNALogo, DNAAlphabet } from "logojs-react";
-import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
-import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
-import { meme, MMotif } from "@/components/motifsearch/motifutil";
-import { HelpRounded, Visibility, VisibilityOff } from "@mui/icons-material";
-import createFullScreenDialog from "./genomicsites";
-import FullScreenDialog from "./genomicsites";
+import { DNAAlphabet } from "logojs-react";
 import { Dataset } from "../../_utility/ExperimentSelectionPanel/ExperimentSelectionPanel";
 import { DATASETS_QUERY } from "../../_utility/ExperimentSelectionPanel/queries";
-import ATACPlot from "@/components/motifmeme/atacplot";
-import ConservationPlot from "@/components/motifmeme/conservationplot";
-import { TOMTOMMessage } from "@/components/motifmeme/tomtommessage";
-import CentralityPlot from "@/components/motifmeme/centralityplot";
 import LoadingMotif from "../loading";
 import MotifTile from "./motifTile";
 
@@ -58,23 +29,6 @@ export default function MotifEnrichmentPage({
   const selectedPeakID = useMemo(() => selectedDataset && selectedDataset.replicated_peaks[0].accession, [selectedDataset]);
   const selectedExperimentID = useMemo(() => selectedDataset && selectedDataset.accession, [selectedDataset]);
   const selectedBiosample = useMemo(() => { return selectedDataset?.biosample }, [selectedDataset]);
-
-  // const handleClickOpen = () => {
-  //   setOpen(true);
-  // };
-
-  // const handleClose = () => {
-  //   setOpen(false);
-  // };
-
-  // const Transition = React.forwardRef(function Transition(
-  //   props: TransitionProps & {
-  //     children: React.ReactElement<unknown>;
-  //   },
-  //   ref: React.Ref<unknown>,
-  // ) {
-  //   return <Slide direction="up" ref={ref} {...props} />;
-  // });
 
   const handleSetSelectedDataset = (newDataset: Dataset) => {
     setSelectedDataset(newDataset)
@@ -132,46 +86,45 @@ export default function MotifEnrichmentPage({
     tomtomMatch:
       motifData?.target_motifs && motifData.target_motifs[index]
         ? motifData.target_motifs.filter(tm => tm.motifid === motif.id).slice().sort((a, b) => a.e_value - b.e_value)[0]
-        : undefined, // Change `null` to `undefined`
+        : undefined,
   }));
 
-  if (loading || !selectedPeakID) return LoadingMotif();
+  if (loading || !selectedPeakID || motifLoading) return LoadingMotif();
   if (error) return <p>Error: {error.message}</p>;
+  if (!motifData) return <Typography>Select a peak to view motif data</Typography>
 
   return (
-    <>
-      {motifLoading && LoadingMotif()}
-      {!motifLoading && motifData && (
+    <Stack
+      sx={{
+        flexGrow: 1,
+        maxHeight: '100%',
+      }}
+      divider={<Divider />}
+    >
+      <Typography variant="h5" m={2}>
+        <span style={{ fontWeight: "bold" }}>
+          De novo motif discovery in{" "}
+          {selectedBiosample || "Unknown"}{" "}
+          ({selectedExperimentID || "Unknown"}) by MEME
+        </span>
+      </Typography>
+      {motifError && <p>Error: {motifError.message}</p>}
+      {motifsWithMatches.length > 0 && (
         <Stack
-          sx={{
-            flexGrow: 1,
-            maxHeight: '100%',
-          }}
+          sx={{ overflowY: "scroll" }}
           divider={<Divider />}
         >
-          <Typography variant="h5" m={2}>
-            <span style={{ fontWeight: "bold" }}>
-              De novo motif discovery in{" "}
-              {selectedBiosample || "Unknown"}{" "}
-              ({selectedExperimentID || "Unknown"}) by MEME
-            </span>
-          </Typography>
-          {motifError && <p>Error: {motifError.message}</p>}
-          {motifsWithMatches.length > 0 && (
-            <Stack
-              sx={{ overflowY: "scroll" }}
-              divider={<Divider />}
-            >
-              {motifsWithMatches.map((motif, index) => {
-                return <MotifTile key={motif.id} motif={motif} index={index} species={species} selectedExperimentID={selectedExperimentID || "Unknown"} selectedPeakID={selectedPeakID} />
-              })}
-            </Stack>
-          )}
+          {motifsWithMatches.map((motif) => {
+            return <MotifTile
+              key={motif.id}
+              motif={motif}
+              species={species}
+              selectedExperimentID={selectedExperimentID || "Unknown"}
+              selectedPeakID={selectedPeakID}
+            />
+          })}
         </Stack>
       )}
-      {!motifLoading && !motifData && (
-        <Typography>Select a peak to view motif data</Typography>
-      )}
-    </>
+    </Stack>
   )
 }

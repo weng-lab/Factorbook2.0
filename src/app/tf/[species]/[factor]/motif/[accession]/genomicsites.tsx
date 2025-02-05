@@ -1,18 +1,14 @@
-import React, { useState, SetStateAction, useMemo, Dispatch } from "react";
+import React, { useState, useMemo } from "react";
 import Dialog from '@mui/material/Dialog';
 import Divider from '@mui/material/Divider';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import {
   Box,
   Typography,
   Button,
-  styled,
-  useTheme,
-  TextField,
   Link,
   Grid,
 } from '@mui/material/';
@@ -23,20 +19,14 @@ import { TransitionProps } from '@mui/material/transitions';
 import Browser from "./browser";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { BrowserAction, BrowserState, Controls, GQLWrapper } from "@weng-lab/genomebrowser";
+import { GQLWrapper } from "@weng-lab/genomebrowser";
 import {
   DataTable,
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
 import { useQuery } from "@apollo/client";
 import { MEMEOCCU_QUERY } from "../../queries";
-import { parseBedFile } from "../../regions/peaksearch";
-
-type Domain = {
-  chromosome: string;
-  start: number;
-  end: number;
-}
+import SearchBox from "./searchBox";
 
 type MEMEOCCURESULT = {
   genomic_region: {
@@ -108,40 +98,6 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const StyledSearchBox = styled(Box)({
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#EDE7F6",
-  },
-});
-const LargeTextField = styled(TextField)(({ theme }) => ({
-  minWidth: "700px",
-  "& .MuiInputBase-root": {
-    height: "32px",
-  },
-  "& .MuiOutlinedInput-root": {
-    backgroundColor: "#EDE7F6",
-    height: "40px",
-    borderRadius: "24px",
-    paddingLeft: "5px",
-    "&:hover fieldset": {
-      borderColor: theme.palette.primary.main,
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.main,
-    },
-  },
-}));
-const UploadBox = styled(Box, {
-  shouldForwardProp: (prop) => prop !== "isDragging",
-})<{ isDragging: boolean }>(({ isDragging }) => ({
-  padding: "16px",
-  border: "2px dashed #ccc",
-  borderRadius: "8px",
-  backgroundColor: isDragging ? "#e0d4f7" : "#F3E8FF",
-  textAlign: "center",
-  marginTop: "16px",
-}));
-
 interface FullScreenDialogProps {
   species: string,
   consensusRegex: string,
@@ -151,41 +107,9 @@ interface FullScreenDialogProps {
 
 export default function FullScreenDialog({ species, consensusRegex, experimentID, fileID }: FullScreenDialogProps) {
   const [sitesOpen, setSitesOpen] = useState(false); // for show genome sites button
-  const [popupTab, setPopupTab] = useState<number>(0); // for popup tabs
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [value, setValue] = useState("");
+  const [currentTab, setcurrentTab] = useState<number>(0); // for popup tabs
   const [regions, setRegions] = useState<GenomicRange[]>([]);
-  const [isFileUpload, setFileUpload] = useState<boolean>(false)
-  const theme = useTheme();
 
-
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    setIsDragging(false);
-    const file = event.dataTransfer.files[0];
-    setSelectedFile(file);
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
-    setSelectedFile(file);
-  };
-  const handleFileUpload = async () => {
-    if (selectedFile) {
-      const parsed = await parseBedFile(selectedFile);
-      setRegions(parsed);
-    }
-  };
   const formattedRegions = useMemo(
     () => regions.map(x => ({ chromosome: x.chromosome!, start: x.start!, end: x.end! })),
     [regions]
@@ -200,11 +124,7 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
     },
     skip: formattedRegions.length === 0,
   });
-  const handleChange = (event: {
-    target: { value: SetStateAction<string> };
-  }) => {
-    setValue(event.target.value);
-  };
+
   return (
     <>
       <Button
@@ -244,8 +164,8 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
 
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Tabs
-            value={popupTab}
-            onChange={(_, newValue) => setPopupTab(newValue)}
+            value={currentTab}
+            onChange={(_, newValue) => setcurrentTab(newValue)}
             aria-label="genomic sites tabs"
           >
             <Tab label="Genome Browser" />
@@ -254,12 +174,12 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
         </Box>
 
         <Box sx={{ p: 3 }}>
-          <TabPanel value={popupTab} index={0}>
+          <TabPanel value={currentTab} index={0}>
             <GQLWrapper>
               <Browser species={species} consensusRegex={consensusRegex} experimentID={experimentID || ""} />
             </GQLWrapper>
           </TabPanel>
-          <TabPanel value={popupTab} index={1}>
+          <TabPanel value={currentTab} index={1}>
             <Box sx={{ mt: 4, mx: "auto", maxWidth: "2000px" }}>
               <>
                 <Grid container alignItems="center" justifyContent="space-between">
@@ -298,140 +218,10 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
                     </Button>
                   </Grid>
                 </Grid>
-
                 <Divider sx={{ my: 4 }} />
               </>
-
               <br />
-              {regions.length === 0 && <>
-                <Typography variant="h6" gutterBottom>
-                  {`Enter genomic coordinates (${species.toLowerCase() === "human" ? "GRCh38" : "mm10"
-                    }):`}
-                </Typography>
-                <StyledSearchBox>
-                  <LargeTextField
-                    onKeyDown={(event) => {
-                      if (event.key === "Tab" && !value) {
-                        const defaultGenomicRegion = `chr2:${(100000000).toLocaleString()}-${(100101000).toLocaleString()}`;
-                        setValue(defaultGenomicRegion);
-                      }
-                    }}
-                    placeholder="Enter a genomic region"
-                    onChange={handleChange}
-                    id="region-input"
-                    value={value}
-                  />{" "}
-                  <Button
-                    variant="contained"
-                    sx={{
-                      margin: "auto",
-                      backgroundColor: theme.palette.primary.main,
-                      borderRadius: "24px",
-                      textTransform: "none",
-                      fontWeight: "medium",
-                      color: "#FFFFFF",
-                      "&:focus, &:hover, &:active": {
-                        backgroundColor: theme.palette.primary.main,
-                      },
-                    }}
-                    onClick={() => {
-                      const chromosome = value.split(":")[0];
-                      const start = +value
-                        .split(":")[1]
-                        .split("-")[0]
-                        .replaceAll(",", "");
-                      const end = +value
-                        .split(":")[1]
-                        .split("-")[1]
-                        .replaceAll(",", "");
-                      setRegions([
-                        { chromosome: chromosome, start: start!!, end: end!! },
-                      ]);
-                      //setFileUpload(false)
-                    }}
-                  >
-                    Search
-                  </Button>
-                  <br />
-                  <Typography variant="body2" sx={{ marginLeft: "8px" }}>
-                    example: chr2:100,000,000-100,101,000
-                  </Typography>
-                </StyledSearchBox>
-                <br />
-                {(
-                  <>
-                    <Typography variant="h6" gutterBottom>
-                      You could also upload .bed files here
-                    </Typography>
-                    <UploadBox
-                      onDragOver={handleDragOver}
-                      onDragLeave={handleDragLeave}
-                      onDrop={handleDrop}
-                      isDragging={isDragging}
-                    >
-                      <DriveFolderUploadIcon fontSize="large" />
-                      <Typography variant="body1" sx={{ mt: 2 }}>
-                        Drag and drop .bed files here
-                        <br />
-                        or
-                      </Typography>
-                      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                        <input
-                          type="file"
-                          id="file-input"
-                          hidden
-                          onChange={handleFileChange}
-                        />
-                        <label htmlFor="file-input">
-                          <Button
-                            variant="contained"
-                            component="span"
-                            sx={{
-                              display: "block",
-                              padding: "8px 16px",
-                              backgroundColor: "#8169BF",
-                              borderRadius: "24px",
-                              textTransform: "none",
-                              fontWeight: "medium",
-                              color: "#FFFFFF",
-                              "&:focus, &:hover, &:active": {
-                                backgroundColor: "#8169BF",
-                              },
-                            }}
-                          >
-                            Browse Computer
-                          </Button>
-                        </label>
-                      </Box>
-                      {selectedFile && (
-                        <Typography variant="body2" sx={{ mt: 2 }}>
-                          Selected file: {selectedFile.name}
-                        </Typography>
-                      )}
-                    </UploadBox>
-                    <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                      <Button
-                        variant="contained"
-                        sx={{
-                          margin: "auto",
-                          backgroundColor: "#8169BF",
-                          borderRadius: "24px",
-                          textTransform: "none",
-                          fontWeight: "medium",
-                          color: "#FFFFFF",
-                          "&:focus, &:hover, &:active": {
-                            backgroundColor: "#8169BF",
-                          },
-                        }}
-                        onClick={() => handleFileUpload()}
-                        disabled={!selectedFile}
-                      >
-                        Upload File
-                      </Button>
-                    </Box>
-                  </>
-                )}
-              </>}
+              {regions.length === 0 && <SearchBox species={species} setRegions={setRegions} />}
               {memeOccuData && memeOccuData.meme_occurrences && (
                 <Box sx={{ mx: "auto", alignItems: "center" }}>
                   <DataTable
@@ -475,4 +265,3 @@ function TabPanel(props: {
     </div>
   );
 }
-

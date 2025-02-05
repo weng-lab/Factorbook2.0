@@ -1,8 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { GENE_AUTOCOMPLETE_QUERY, SNP_AUTOCOMPLETE_QUERY } from './queries';
-import { uniq, isCoordinate } from './utils';
+import { uniq } from './utils';
 import { SearchBoxProps, Result } from './types';
-import { fetchGenomicObject } from './hooks';
 import { Autocomplete, TextField } from '@mui/material';
 
 const SearchBox: React.FC<SearchBoxProps> = props => {
