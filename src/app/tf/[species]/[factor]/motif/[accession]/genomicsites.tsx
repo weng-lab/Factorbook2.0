@@ -200,7 +200,6 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
     },
     skip: formattedRegions.length === 0,
   });
-  console.log(memeOccuData)
   const handleChange = (event: {
     target: { value: SetStateAction<string> };
   }) => {
