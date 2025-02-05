@@ -33,6 +33,7 @@ import {
 } from "@weng-lab/psychscreen-ui-components";
 import CtDetails from "@/components/celltype/ctdetails";
 import { BiosamplePartitionedDatasetCollection } from "@/components/types";
+import LoadingFunction from "./loading";
 import Link from "next/link";
 import { ExpandMore } from "@mui/icons-material";
 
@@ -217,7 +218,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   ];
 
   /** Error or Loading State Handling */
-  if (factorLoading || datasetLoading) return <CircularProgress />;
+  if (factorLoading || datasetLoading ) return LoadingFunction();
   if (factorError)
     return (
       <Alert severity="error">

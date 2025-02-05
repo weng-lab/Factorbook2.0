@@ -143,7 +143,7 @@ const PEAKS_COLUMNS = (): DataTableColumn<PeakResult>[] => {
       ),
     },
     {
-      header: "q value",
+      header: "log₁₀(q value)",
       value: (row: PeakResult) => row.q_value.toFixed(2),
     },
   ];

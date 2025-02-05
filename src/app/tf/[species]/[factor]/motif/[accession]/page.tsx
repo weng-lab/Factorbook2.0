@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { from, useQuery } from "@apollo/client";
 import {
-  CircularProgress,
   Typography,
   Chip,
   Box,
@@ -41,13 +40,11 @@ import createFullScreenDialog from "./genomicsites";
 import FullScreenDialog from "./genomicsites";
 import { Dataset } from "../../_utility/ExperimentSelectionPanel/ExperimentSelectionPanel";
 import { DATASETS_QUERY } from "../../_utility/ExperimentSelectionPanel/queries";
-import CentralityPlo from "@/components/motifmeme/centralityplot";
 import ATACPlot from "@/components/motifmeme/atacplot";
 import ConservationPlot from "@/components/motifmeme/conservationplot";
 import { TOMTOMMessage } from "@/components/motifmeme/tomtommessage";
 import CentralityPlot from "@/components/motifmeme/centralityplot";
-
-
+import LoadingMotif from "../loading";
 
 // Helper function to convert numbers to scientific notation
 function toScientificNotationElement(
@@ -254,34 +251,34 @@ export default function MotifEnrichmentPage({
         : undefined, // Change `null` to `undefined`
   }));
 
-  if (loading || !selectedPeakID) return <CircularProgress />;
+  if (loading || !selectedPeakID) return LoadingMotif();
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <Stack
-      sx={{
-        flexGrow: 1,
-        maxHeight: '100%',
-      }}
-      divider={<Divider />}
-    >
-      <Typography variant="h5" m={2}>
-        <span style={{ fontWeight: "bold" }}>
-          De novo motif discovery in{" "}
-          {selectedBiosample || "Unknown"}{" "}
-          ({selectedExperimentID || "Unknown"}) by MEME
-        </span>
-      </Typography>
-      {motifLoading && <CircularProgress />}
-      {motifError && <p>Error: {motifError.message}</p>}
-      {motifsWithMatches.length > 0 && (
+    <>
+      {motifLoading && LoadingMotif()}
+      {!motifLoading && motifData && (
         <Stack
-          sx={{ overflowY: "scroll" }}
+          sx={{
+            flexGrow: 1,
+            maxHeight: '100%',
+          }}
           divider={<Divider />}
         >
-          {motifsWithMatches.map((motif, index) => {
-
-
+          <Typography variant="h5" m={2}>
+            <span style={{ fontWeight: "bold" }}>
+              De novo motif discovery in{" "}
+              {selectedBiosample || "Unknown"}{" "}
+              ({selectedExperimentID || "Unknown"}) by MEME
+            </span>
+          </Typography>
+          {motifError && <p>Error: {motifError.message}</p>}
+          {motifsWithMatches.length > 0 && (
+            <Stack
+              sx={{ overflowY: "scroll" }}
+              divider={<Divider />}
+            >
+              {motifsWithMatches.map((motif, index) => {
             const motifppm = reverseComplements[index]
               ? rc(motif.pwm)
               : motif.pwm;
@@ -453,7 +450,6 @@ export default function MotifEnrichmentPage({
                     {showQCStates[motif.id] ? "Hide QC" : "Show QC"}
                   </Button>
                 </Box>
-
                 {showQCStates[motif.id] && selectedPeakID && (
                   <Box mt={3}>
                     <Grid container spacing={2} mt={3}>
@@ -516,82 +512,82 @@ export default function MotifEnrichmentPage({
                             checked={exportMotif}
                             onChange={(e) => setExportMotif(e.target.checked)}
                             sx={{ color: "#8169BF" }}
+                            label="Motif (MEME)"
                           />
-                        }
-                        label="Motif (MEME)"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={exportLogo}
-                            onChange={(e) => setExportLogo(e.target.checked)}
-                            sx={{ color: "#8169BF" }}
-                          />
-                        }
-                        label="Logo"
-                      />
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            checked={exportPeakSites}
-                            onChange={(e) =>
-                              setExportPeakSites(e.target.checked)
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={exportLogo}
+                                onChange={(e) => setExportLogo(e.target.checked)}
+                                sx={{ color: "#8169BF" }}
+                              />
                             }
-                            sx={{ color: "#8169BF" }}
+                            label="Logo"
                           />
-                        }
-                        label="Peak Sites"
-                      />
-                    </Stack>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button
-                      onClick={() => setIsDialogOpen(false)}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      variant="contained"
-                      onClick={() => {
-                        if (exportMotif) {
-                          handleDownload(
-                            motif.id,
-                            motifppm,
-                            svgRefs.current[index]
-                          );
-                        }
-                        if (exportPeakSites) {
-                          const speciesGenome = species === "Human" ? "hg38" : "mm10";
-                          /**
-                           * @todo figure out if this is the correct API url
-                           */
-                          const downloadUrl = `https://screen-beta-api.wenglab.org/factorbook_downloads/hq-occurrences/${selectedPeakID}_${motif.name}.gz`;
-                          const link = document.createElement("a");
-                          link.href = downloadUrl;
-                          link.download = `${selectedPeakID}_${motif.name}_${speciesGenome}.gz`;
-                          link.click();
-                        }
-                        if (exportLogo && svgRefs.current[index]) {
-                          downloadSVGElementAsSVG(
-                            { current: svgRefs.current[index] },
-                            `${motif.name}-logo.svg`
-                          );
-                        }
-                        setIsDialogOpen(false);
-                      }}
-                    >
-                      Download
-                    </Button>
-                  </DialogActions>
-                </Dialog>
-              </Box>
-            );
-          })}
+                          <FormControlLabel
+                            control={
+                              <Checkbox
+                                checked={exportPeakSites}
+                                onChange={(e) =>
+                                  setExportPeakSites(e.target.checked)
+                                }
+                                sx={{ color: "#8169BF" }}
+                              />
+                            }
+                            label="Peak Sites"
+                          />
+                        </Stack>
+                      </DialogContent>
+                      <DialogActions>
+                        <Button
+                          onClick={() => setIsDialogOpen(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            if (exportMotif) {
+                              handleDownload(
+                                motif.id,
+                                motifppm,
+                                svgRefs.current[index]
+                              );
+                            }
+                            if (exportPeakSites) {
+                              const speciesGenome = species === "Human" ? "hg38" : "mm10";
+                              /**
+                               * @todo figure out if this is the correct API url
+                               */
+                              const downloadUrl = `https://screen-beta-api.wenglab.org/factorbook_downloads/hq-occurrences/${selectedPeakID}_${motif.name}.gz`;
+                              const link = document.createElement("a");
+                              link.href = downloadUrl;
+                              link.download = `${selectedPeakID}_${motif.name}_${speciesGenome}.gz`;
+                              link.click();
+                            }
+                            if (exportLogo && svgRefs.current[index]) {
+                              downloadSVGElementAsSVG(
+                                { current: svgRefs.current[index] },
+                                `${motif.name}-logo.svg`
+                              );
+                            }
+                            setIsDialogOpen(false);
+                          }}
+                        >
+                          Download
+                        </Button>
+                      </DialogActions>
+                    </Dialog>
+                  </Box>
+                );
+              })}
+            </Stack>
+          )}
         </Stack>
       )}
       {!motifLoading && !motifData && (
         <Typography>Select a peak to view motif data</Typography>
       )}
-    </Stack>
+    </>
   )
 }
