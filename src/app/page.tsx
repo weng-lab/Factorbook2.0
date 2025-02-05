@@ -331,7 +331,7 @@ const Homepage = () => {
 
       <PortalPanel
         title="Motif Site Catalog"
-        description="Transcription factors (TFs) are pivotal proteins regulating cellular functions by binding to specific DNA sequences. With around 1800 unique TFs in the human genome, they control gene transcription, crucial for processes like development and cell cycle."
+        description="Sequence motifs of transcription factors (TFs) are specific, short DNA sequences that TFs recognize and bind to. These motif sites, typically ranging from 6 to 20 base pairs, are essential for the precise regulation of gene expression. The diversity and specificity of these motifs underlie the complexity of gene regulation."
         imageSrc="/Motifs.png"
         imageAlt="Motif Site Catalog"
         buttonText="Explore Motifs"
