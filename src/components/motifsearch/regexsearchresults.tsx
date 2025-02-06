@@ -35,9 +35,8 @@ const RegexSearchResults: React.FC<{ regex?: string, pwm?: number[][] }> = ({ re
         <Box
           sx={{
             display: "flex",
-            justifyContent: isMobile ? "center" : "flex-start",
+            justifyContent: "center",
             marginTop: isMobile ? "16px" : "24px",
-            marginLeft: isMobile ? "0px" : "450px",
           }}
         >
           <Pagination

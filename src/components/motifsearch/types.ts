@@ -1,3 +1,5 @@
+import { ReactElement, ReactNode } from "react";
+
 export type TOMTOMMatch = {
     e_value: number;
     target_id: string;
@@ -24,4 +26,14 @@ export type MotifResultProps = {
     peak_accession: string;
     species: string;
     tomtom_match?: TOMTOMMatch;
+};
+
+export type MotifTableProps = {
+    motifRows: MotifTableRow[];
+    // onPageChane: (event: React.ChangeEvent<unknown>, value: number) => void;
+};
+
+export type MotifTableRow = {
+    distance: number;
+    info: ReactElement;
 };

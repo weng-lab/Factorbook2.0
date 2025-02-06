@@ -1,10 +1,12 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useMemo } from "react";
 import { ApiContext } from "@/apicontext";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
 import { Divider, Box, useMediaQuery, useTheme } from "@mui/material";
 import MotifResult from "./results";
 import { logLikelihood } from "./motifutil";
+import { MotifTableRow } from "./types";
+import MotifTable from "./motifsearchtable";
 
 const MOTIFS_PER_PAGE = 3;
 
@@ -78,41 +80,51 @@ export const MotifSearchResultSet: React.FC<{
   useEffect(() => {
     if (data && onResultsLoaded) {
       onResultsLoaded(data.meme_motif_search[0].total);
+      console.log(data)
     }
   }, [data, onResultsLoaded]);
 
-  console.log(data,"motif search")
+  const motifRows: MotifTableRow[] = useMemo(() => {
+    if (!data?.meme_motif_search[0]) return [];
+  
+    return data.meme_motif_search[0].results.map((m: any, i: number) => {
+      const rpwm = m.motif.pwm.map(logLikelihood([0.25, 0.25, 0.25, 0.25]));
+      const alignment = {
+        ...m,
+        motif: {
+          ...m.motif,
+          pwm: m.reverseComplement ? reverseComplement(rpwm) : rpwm,
+        },
+      };
+  
+      return {
+        distance: m.distance,
+        info: (
+          <MotifResult
+            key={i} // Ensure each component has a unique key
+            species="human"
+            peak_accession={m.motif.peaks_accession}
+            distance={m.distance}
+            alignment={alignment}
+            query={pwm}
+            tomtom_match={
+              m.motif.tomtom_matches
+                ?.slice()
+                .sort((a: any, b: any) => a.e_value - b.e_value)[0]
+            }
+          />
+        ),
+      };
+    });
+  }, [data]);  
+
   return (
     <Box sx={{ padding: isMobile ? 2 : isTablet ? 3 : 4 }}>
       {data &&
-        data.meme_motif_search[0].results.map((m: any, i: number) => {
-          
-          const rpwm = m.motif.pwm.map(logLikelihood([0.25, 0.25, 0.25, 0.25]));
-          const alignment = {
-            ...m,
-            motif: {
-              ...m.motif,
-              pwm: m.reverseComplement ? reverseComplement(rpwm) : rpwm,
-            },
-          };
-          return (
-            <Box key={i} sx={{ marginBottom: isMobile ? 2 : 4 }}>
-              <MotifResult
-                species="human"
-                peak_accession={m.motif.peaks_accession}
-                distance={m.distance}
-                alignment={alignment}
-                query={pwm}
-                tomtom_match={
-                  m.motif.tomtom_matches
-                    ?.slice()
-                    .sort((a: any, b: any) => a.e_value - b.e_value)[0]
-                }
-              />
-              <Divider style={{ margin: "20px 0" }} />
-            </Box>
-          );
-        })}
+        <MotifTable
+          motifRows={motifRows}
+        />
+      }
     </Box>
   );
 };
