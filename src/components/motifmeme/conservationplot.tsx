@@ -13,10 +13,12 @@ import { curveBasis } from "d3-shape";
 import { scaleLinear } from "@visx/scale";
 import { AxisLeft, AxisBottom } from "@visx/axis";
 import { Group } from "@visx/group";
-import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
+import { useTooltip, TooltipWithBounds as VisxTooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { RawLogo, DNAAlphabet } from "logojs-react";
 import { downloadSVG } from "@/utilities/svgdata";
+import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
+const TooltipWithBounds: React.FC<TooltipProps> = (props) => <TooltipWithBounds {...props} />
 
 interface ConservationPlotProps {
   name: string;
@@ -97,14 +99,14 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
     const { x } = localPoint(event) || { x: 0 };
     const svgRect = svgRef.current?.getBoundingClientRect();
     const graphX = x - (svgRect?.left || 0) - 60;
-    const xValue =  Math.round(xScale.invert(x - 60)); // xScale.invert(graphX);
+    const xValue = Math.round(xScale.invert(x - 60)); // xScale.invert(graphX);
 
     const index = Math.floor(xValue + data.length / 2);
 
     if (index >= 0 && index < data.length) {
       const proximal = parseFloat(data[index].toFixed(2));
       const distal = parseFloat(data[data.length - 1 - index].toFixed(2));
-      
+
       showTooltip({
         tooltipData: { xValue, proximal, distal },
         tooltipLeft: x,//  graphX + 60,
@@ -155,9 +157,8 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
             labelOffset={20}
           />
           <g
-            transform={`translate(${
-              xScale(0) - (pwm.length * (xScale(1) - xScale(0))) / 2
-            }, ${yScale(0) - 100}) scale(1,0.2)`}
+            transform={`translate(${xScale(0) - (pwm.length * (xScale(1) - xScale(0))) / 2
+              }, ${yScale(0) - 100}) scale(1,0.2)`}
           >
             <RawLogo
               values={pwm}
@@ -185,7 +186,7 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
           <div style={{ fontSize: "12px", color: "black" }}>
             <strong>Score:</strong> {tooltipData.proximal}
           </div>
-          
+
         </TooltipWithBounds>
       )}
       <Box display="flex" justifyContent="start" mt={1} ml={7}>
