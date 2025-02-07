@@ -16,8 +16,8 @@ import {
   FormControl,
   styled,
   Stack,
+  Grid2
 } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
 import Config from "../../config.json";
 import { inflate } from "pako";
 import { associateBy } from "queryz";

@@ -11,6 +11,6 @@ export default function GeneExpressionPage_({
     /**
      * @todo this species === "human" ? "GRCh38" : "mm10" is used many places, define utlity shared
      */
-    <GeneExpressionPage gene_name={factor} assembly={species === "human" ? "GRCh38" : "mm10"} />
-  )
+    (<GeneExpressionPage gene_name={factor} assembly={species === "human" ? "GRCh38" : "mm10"} />)
+  );
 }

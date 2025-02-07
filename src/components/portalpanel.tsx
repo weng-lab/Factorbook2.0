@@ -1,8 +1,7 @@
 "use client";
 
 import React, { isValidElement, cloneElement, ReactElement } from "react";
-import { Box, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
-import Grid2 from "@mui/material/Unstable_Grid2";
+import { Box, Stack, Typography, useMediaQuery, useTheme, Grid2 } from "@mui/material";
 import Image from "next/image";
 import StyledButton from "@/components/styledbutton";
 import { SelectComponentProps } from "@/components/select";
@@ -38,7 +37,7 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
       : selectComponent;
 
   return (
-    <Box
+    (<Box
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -51,14 +50,15 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
     >
       <Grid2 container spacing={2} alignItems="center">
         <Grid2
-          xs={12}
-          sm={6}
           sx={{
             display: "flex",
             order: isSmallScreen ? 0 : reverse ? 1 : 0,
             justifyContent: "center",
           }}
-        >
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Image
             src={imageSrc}
             alt={imageAlt}
@@ -68,8 +68,6 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
           />
         </Grid2>
         <Grid2
-          xs={12}
-          sm={6}
           sx={{
             textAlign: isSmallScreen ? "center" : "left",
             display: "flex",
@@ -77,7 +75,10 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
             alignItems: "center",
             order: isSmallScreen ? 1 : reverse ? 0 : 1,
           }}
-        >
+          size={{
+            xs: 12,
+            sm: 6
+          }}>
           <Stack
             sx={{
               alignItems: isSmallScreen ? "center" : "flex-start",
@@ -121,7 +122,7 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
           </Stack>
         </Grid2>
       </Grid2>
-    </Box>
+    </Box>)
   );
 };
 

@@ -23,6 +23,7 @@ import {
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
 import Link from "next/link";
+import theme from "@/theme/theme";
 
 function f(coordinates: GenomicRange): {
   chrom: string;
@@ -95,7 +96,7 @@ const COMPLETE_PEAK_TABLE_COLUMNS: DataTableColumn<PeakWithSNP>[] = [
       x.dataset?.target ? (
         <Link
           href={tfRoute("human", x.dataset.target)}
-          style={{ color: "purple" }}
+          style={{ color: theme.palette.link.main }}
         >
           {x.dataset.target}
         </Link>
@@ -110,7 +111,7 @@ const COMPLETE_PEAK_TABLE_COLUMNS: DataTableColumn<PeakWithSNP>[] = [
       x.experiment_accession ? (
         <a
           href={`https://www.encodeproject.org/experiments/${x.experiment_accession}`}
-          style={{ color: "purple" }}
+          style={{ color: theme.palette.link.main  }}
         >
           {x.experiment_accession}
         </a>

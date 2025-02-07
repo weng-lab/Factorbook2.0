@@ -11,7 +11,6 @@ import React, {
 import { useQuery } from "@apollo/client";
 import {
   Box,
-  CircularProgress,
   Typography,
   Select,
   MenuItem,
@@ -26,11 +25,9 @@ import {
   Checkbox,
   Divider,
   SelectChangeEvent,
-  useTheme,
   Stack,
   Skeleton,
 } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2"; // Grid2 for MUI v2
 import { ApiContext } from "@/apicontext";
 import { Logo, DNAAlphabet } from "logojs-react";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
