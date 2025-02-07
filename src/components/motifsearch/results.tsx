@@ -5,8 +5,9 @@ import { TOMTOMMessage } from "../motifmeme/tomtommessage";
 import { ApiContext } from "@/apicontext";
 import { useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
-import { Grid, useMediaQuery, useTheme } from "@mui/material";
+import { Grid, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { MotifResultProps } from "./types";
+import { InfoOutlined } from "@mui/icons-material";
 
 // Set custom DNA alphabet colors
 DNAAlphabet[0].color = "#228b22";
@@ -29,6 +30,7 @@ export const DATASET_QUERY = gql`
 
 const MotifResult: React.FC<MotifResultProps> = ({
   peak_accession,
+  distance,
   query,
   alignment,
   tomtom_match,
@@ -63,6 +65,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
       container
       spacing={isMobile ? 1 : 2}
       direction={isMobile ? "column" : "row"}
+      alignItems={"center"}
     >
       {/* SVG Visualization */}
       <Grid
@@ -123,7 +126,7 @@ const MotifResult: React.FC<MotifResultProps> = ({
       <Grid
         item
         xs={12}
-        md={3}
+        md={2}
         sx={{
           textAlign: isMobile ? "center" : "left",
         }}
@@ -162,8 +165,15 @@ const MotifResult: React.FC<MotifResultProps> = ({
         )}
       </Grid>
 
+      <Grid item xs={12} md={2} sx={{ textAlign: isMobile ? "center" : "left", display: "flex", gap: 1 }} alignItems={"center"}>
+        <Tooltip title="Euclidean Distance" arrow>
+          <InfoOutlined fontSize="small" sx={{ cursor: "pointer" }} />
+        </Tooltip>
+        <Typography><b>Distance:{" "}</b>{distance.toFixed(2)}</Typography>
+      </Grid>
+
       {/* TOMTOM Match information */}
-      <Grid item xs={12} md={4}>
+      <Grid item xs={12} md={3}>
         <TOMTOMMessage tomtomMatch={tomtom_match} />
       </Grid>
     </Grid>

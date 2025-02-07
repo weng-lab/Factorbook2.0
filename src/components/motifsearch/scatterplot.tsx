@@ -5,21 +5,26 @@ import React, {
   useEffect,
   MutableRefObject,
   useRef,
+  ElementType,
 } from "react";
 import { Group } from "@visx/group";
 import { scaleLinear } from "@visx/scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Circle, LinePath } from "@visx/shape";
 import { localPoint } from "@visx/event";
-import { Tooltip } from "@visx/tooltip";
+import { Tooltip as VisxTooltip } from "@visx/tooltip";
 import { Text } from "@visx/text";
 import { useDrag } from "@visx/drag";
 import { HandlerArgs } from "@visx/drag/lib/useDrag";
 import CircularProgress from "@mui/material/CircularProgress";
 import { curveBasis } from "@visx/curve";
-import { Zoom } from "@visx/zoom";
+import { Zoom as VisxZoom } from "@visx/zoom";
 import { createPortal } from "react-dom";
 import zIndex from "@mui/material/styles/zIndex";
+import { ZoomProps } from "@visx/zoom/lib/Zoom";
+import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
+const Tooltip: React.FC<TooltipProps> = (props) => <Tooltip {...props} />
+const Zoom: React.FC<ZoomProps<ElementType>> = (props) => <Zoom {...props} />
 
 /*
     All information given to a point on the plot, including its coordinates(x and y), its radius, color, and opacity, and its metadata information
@@ -114,8 +119,8 @@ export const Chart = <T extends MetaData>({
   const boundedHeight = boundedWidth;
   const hoveredPoint = tooltipData
     ? umapData.find(
-        (point) => point.x === tooltipData.x && point.y === tooltipData.y
-      )
+      (point) => point.x === tooltipData.x && point.y === tooltipData.y
+    )
     : null;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -393,8 +398,8 @@ export const Chart = <T extends MetaData>({
                           ? "none"
                           : "default"
                         : zoom.isDragging
-                        ? "grabbing"
-                        : "grab",
+                          ? "grabbing"
+                          : "grab",
                     userSelect: "none",
                     position: "absolute",
                     top: margin.top,
@@ -414,8 +419,8 @@ export const Chart = <T extends MetaData>({
                           ? "none"
                           : "default"
                         : zoom.isDragging
-                        ? "grabbing"
-                        : "grab",
+                          ? "grabbing"
+                          : "grab",
                     userSelect: "none",
                   }}
                   onMouseMove={(e) => handleMouseMove(e, zoom)}
@@ -497,9 +502,9 @@ export const Chart = <T extends MetaData>({
                       onMouseUp={
                         selectionType === "select"
                           ? (event) => {
-                              dragEnd(event);
-                              onDragEnd(zoom);
-                            }
+                            dragEnd(event);
+                            onDragEnd(zoom);
+                          }
                           : zoom.dragEnd
                       }
                       onMouseMove={
@@ -515,9 +520,9 @@ export const Chart = <T extends MetaData>({
                       onTouchEnd={
                         selectionType === "select"
                           ? (event) => {
-                              dragEnd(event);
-                              onDragEnd(zoom);
-                            }
+                            dragEnd(event);
+                            onDragEnd(zoom);
+                          }
                           : zoom.dragEnd
                       }
                       onTouchMove={
@@ -719,8 +724,8 @@ export const Chart = <T extends MetaData>({
                               {typeof value === "string"
                                 ? value.length > 45
                                   ? `${value
-                                      .replace(/_/g, " ")
-                                      .slice(0, 45)}...`
+                                    .replace(/_/g, " ")
+                                    .slice(0, 45)}...`
                                   : value.replace(/_/g, " ")
                                 : String(value)}
                             </div>

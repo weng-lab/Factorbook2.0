@@ -33,6 +33,7 @@ import {
 } from "@weng-lab/psychscreen-ui-components";
 import CtDetails from "@/components/celltype/ctdetails";
 import { BiosamplePartitionedDatasetCollection } from "@/components/types";
+import LoadingFunction from "./loading";
 import Link from "next/link";
 import { ExpandMore } from "@mui/icons-material";
 
@@ -217,7 +218,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   ];
 
   /** Error or Loading State Handling */
-  if (factorLoading || datasetLoading) return <CircularProgress />;
+  if (factorLoading || datasetLoading ) return LoadingFunction();
   if (factorError)
     return (
       <Alert severity="error">
@@ -297,7 +298,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         <Typography variant="h4">
           {factorForUrl}
         </Typography>
-        {imageUrl && isMobile ?
+        {imageUrl && (isMobile ?
           <div>
             <Accordion sx={{ background: "#6B6C74", color: "inherit" }}>
               <AccordionSummary expandIcon={<ExpandMore htmlColor="white" />}>
@@ -318,7 +319,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
             alt={factorDetails?.name}
             style={{ borderRadius: theme.shape.borderRadius }}
           />
-        }
+        )}
         <ReferenceSection title="References" sources={Object.entries(referenceLinks).map(([name, url]) => ({ name, url }))} />
       </Stack>
       <Stack flex={1} gap={3}>

@@ -4,13 +4,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import {
   Box,
-  Button,
   Typography,
-  Divider,
   Select,
   MenuItem,
-  Breadcrumbs,
-  Link,
   Grid,
   CircularProgress,
   useMediaQuery,
@@ -20,8 +16,6 @@ import PeakIntersectionView from "./peakintersection";
 import MotifIntersectionView from "./motifintersection";
 import { useSNPData } from "../../hooks";
 import { ChainFile } from "liftover";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import { chainFileFetch } from "./chainfilefetch";
 
 const AnnotationDetailPage = () => {

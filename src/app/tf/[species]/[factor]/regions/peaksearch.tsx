@@ -84,7 +84,7 @@ export type GenomicRange = {
   end?: number;
 };
 
-const parseBedFile = async (file: File | null): Promise<GenomicRange[]> => {
+export const parseBedFile = async (file: File | null): Promise<GenomicRange[]> => {
   const reader = new FileReader();
   const ret: GenomicRange[] = await new Promise((resolve, reject) => {
     reader.onload = () => {
@@ -143,7 +143,7 @@ const PEAKS_COLUMNS = (): DataTableColumn<PeakResult>[] => {
       ),
     },
     {
-      header: "q value",
+      header: "log₁₀(q value)",
       value: (row: PeakResult) => row.q_value.toFixed(2),
     },
   ];
@@ -598,7 +598,7 @@ const PeakSearch: React.FC = () => {
         <>
           <Grid container alignItems="center" justifyContent="space-between">
             <Grid item>
-              { isFileUpload ? 
+              {isFileUpload ?
                 <Typography variant="h4">
                   {peaksData && peaksData.peaksrange.data
                     ? `Showing ${factor} ChIP-seq peaks`
@@ -649,9 +649,8 @@ const PeakSearch: React.FC = () => {
         <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px" }}>
           <br />
           <Typography variant="h6" gutterBottom>
-            {`Enter genomic coordinates (${
-              species.toLowerCase() === "human" ? "GRCh38" : "mm10"
-            }):`}
+            {`Enter genomic coordinates (${species.toLowerCase() === "human" ? "GRCh38" : "mm10"
+              }):`}
           </Typography>
           <StyledSearchBox>
             <LargeTextField

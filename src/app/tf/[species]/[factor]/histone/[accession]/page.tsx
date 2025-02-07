@@ -27,6 +27,7 @@ import { useParams } from "next/navigation";
 import { useTheme, useMediaQuery } from "@mui/material";
 import JSZip from "jszip";
 import { Download } from "@mui/icons-material";
+import LoadingHistone from "../loading";
 
 // Utility to download ZIP
 const downloadZip = async (zip: JSZip, filename: string) => {
@@ -91,7 +92,7 @@ const EpigeneticProfilePage = () => {
   );
 
   const isLoading = aggregateLoading || metadataLoading || histoneLoading;
-  if (isLoading) return <CircularProgress />;
+  if (isLoading) return LoadingHistone();
 
   const biosample =
     metadataData?.peakDataset?.datasets?.find(
