@@ -23,8 +23,11 @@ import { createPortal } from "react-dom";
 import zIndex from "@mui/material/styles/zIndex";
 import { ZoomProps } from "@visx/zoom/lib/Zoom";
 import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
-const Tooltip: React.FC<TooltipProps> = (props) => <Tooltip {...props} />
-const Zoom: React.FC<ZoomProps<ElementType>> = (props) => <Zoom {...props} />
+
+// const Tooltip: React.FC<TooltipProps> = (props) => <Tooltip {...props} />
+// const Zoom: React.FC<ZoomProps<ElementType>> = (props) => <Zoom {...props} />
+const Tooltip: React.FC<TooltipProps> = VisxTooltip;
+const Zoom: React.FC<ZoomProps<SVGElement>> = VisxZoom;
 
 /*
     All information given to a point on the plot, including its coordinates(x and y), its radius, color, and opacity, and its metadata information
