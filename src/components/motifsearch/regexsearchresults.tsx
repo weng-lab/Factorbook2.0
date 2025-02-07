@@ -9,7 +9,7 @@ import {
   Box,
 } from "@mui/material";
 
-const MOTIFS_PER_PAGE = 3;
+const MOTIFS_PER_PAGE = 5;
 
 const RegexSearchResults: React.FC<{ regex?: string, pwm?: number[][] }> = ({ regex, pwm }) => {
   const [total, setTotal] = useState(0);

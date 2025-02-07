@@ -21,12 +21,19 @@ export type MotifSearchResult = {
 
 export type MotifResultProps = {
     query: number[][];
-    distance: number;
     alignment: MotifSearchResult;
-    peak_accession: string;
-    species: string;
-    tomtom_match?: TOMTOMMatch;
 };
+
+export type MotifInfoProps = {
+    target: string;
+    biosample: string;
+    labName: string;
+    accession: string
+};
+
+export type MotifMatchProps = {
+    tomtom_match: TOMTOMMatch;
+}
 
 export type MotifTableProps = {
     motifRows: MotifTableRow[];
@@ -35,5 +42,7 @@ export type MotifTableProps = {
 
 export type MotifTableRow = {
     distance: number;
+    motif: ReactElement;
     info: ReactElement;
+    match: ReactElement;
 };
