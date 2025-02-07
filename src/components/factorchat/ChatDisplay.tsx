@@ -36,7 +36,7 @@ export default function ChatDisplay(props: ChatDisplayProps) {
   }, [messages]);
 
   const initialMessage = 
-    `######What is FactorChat?\nFactorchat is a tool-augmented LLM that can help you answer questions about transcription factors and navigate FactorBook. It has access to tools to find motifs, binding sites, and RNA expression levels. For questions it cannot answer using these tools, it will attempt to answer using its general knowledge. Responses are flagged depending on which approach was taken.`
+    `######Hi there!\nI am FactorChat, a tool-augmented LLM that can help you answer questions about transcription factors and navigate FactorBook. It has access to tools to find motifs, binding sites, and RNA expression levels of transcription factors. For questions that I cannot answer using these tools, I will attempt to answer using my general knowledge. Responses are annotated depending on which tool I used to generate the response.`
 
   return (
     <Stack height="100%">
