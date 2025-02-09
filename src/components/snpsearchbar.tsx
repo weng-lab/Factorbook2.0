@@ -66,7 +66,7 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
 
   const onSearchChange = async (value: string) => {
     setOptions([]);
-    const response = await fetch(Config.API.GraphqlAPI, {
+    const response = await fetch(Config.API.CcreAPI, {
       method: "POST",
       body: JSON.stringify({
         query: SNP_AUTOCOMPLETE_QUERY,

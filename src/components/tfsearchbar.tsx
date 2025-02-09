@@ -94,7 +94,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   // Handle changes in the search bar with debouncing
   const onSearchChange = async (value: string, tfAassignment: any) => {
     setOptions([]);
-    const response = await fetch(Config.API.GraphqlAPI, {
+    const response = await fetch(Config.API.CcreAPI, {
       method: "POST",
       body: JSON.stringify({
         query: `
