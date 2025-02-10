@@ -13,12 +13,10 @@ import { curveBasis } from "d3-shape";
 import { scaleLinear } from "@visx/scale";
 import { AxisLeft, AxisBottom } from "@visx/axis";
 import { Group } from "@visx/group";
-import { useTooltip, TooltipWithBounds as VisxTooltipWithBounds } from "@visx/tooltip";
+import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { RawLogo, DNAAlphabet } from "logojs-react";
 import { downloadSVG } from "@/utilities/svgdata";
-import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
-const TooltipWithBounds: React.FC<TooltipProps> = (props) => <TooltipWithBounds {...props} />
 
 interface ConservationPlotProps {
   name: string;

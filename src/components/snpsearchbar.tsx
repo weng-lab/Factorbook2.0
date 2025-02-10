@@ -13,10 +13,10 @@ import {
   useTheme,
   Autocomplete,
   FormControl,
+  Grid2
 } from "@mui/material";
 import styled from "@emotion/styled";
 import Stack from "@mui/material/Stack";
-import Grid2 from "@mui/material/Unstable_Grid2";
 import Config from "../../config.json";
 import ClearIcon from '@mui/icons-material/Clear';
 
@@ -66,7 +66,7 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
 
   const onSearchChange = async (value: string) => {
     setOptions([]);
-    const response = await fetch(Config.API.GraphqlAPI, {
+    const response = await fetch(Config.API.CcreAPI, {
       method: "POST",
       body: JSON.stringify({
         query: SNP_AUTOCOMPLETE_QUERY,

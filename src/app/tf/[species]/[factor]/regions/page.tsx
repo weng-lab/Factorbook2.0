@@ -12,6 +12,6 @@ export default function RegionsPage({
      * @todo probably transition this component to using props for species/factor 
      * instead of it using useParams
      */
-    <PeakSearch />
-  )
+    (<PeakSearch />)
+  );
 }
