@@ -3,7 +3,7 @@ import { LinePath } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Group } from "@visx/group";
-import { Tooltip as VisxTooltip, useTooltip, defaultStyles } from "@visx/tooltip";
+import { Tooltip, useTooltip, defaultStyles } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { curveMonotoneX } from "d3-shape";
 import { MARK_COLORS } from "./marks";
@@ -12,7 +12,7 @@ import { Line } from "@visx/shape";
 import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
 
 //Needed to fix type errors on vercel build
-const Tooltip: React.FC<TooltipProps> = VisxTooltip;
+// const Tooltip: React.FC<TooltipProps> = VisxTooltip;
 
 interface GraphProps {
   proximal_values: number[];

@@ -17,9 +17,6 @@ import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { RawLogo, DNAAlphabet } from "logojs-react";
 import { downloadSVG } from "@/utilities/svgdata";
-import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
-
-// const TooltipWithBounds: React.FC<TooltipProps> = (props) => <TooltipWithBounds {...props} />
 
 interface ConservationPlotProps {
   name: string;
