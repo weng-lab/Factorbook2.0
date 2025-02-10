@@ -18,6 +18,8 @@ const TranscriptionTabs: React.FC<{ species: string }> = ({ species }) => {
     <Box
       sx={{
         width: "100%",
+        height: "auto",
+        minHeight: "800px",
         maxWidth: "1440px",
         margin: "0 auto",
         padding: "0 24px",
@@ -38,7 +40,7 @@ const TranscriptionTabs: React.FC<{ species: string }> = ({ species }) => {
         />
         <Tab label="Browse all Cell Types" sx={{ textTransform: "none" }} />
       </Tabs>
-      <Box>
+      <Box mb={4}>
         {tabValue === 0 && (
           <TfDetails
             species={species}

@@ -22,6 +22,7 @@ import { getRCSBImageUrl } from "@/components/tf/functions";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
 import Link from "next/link";
+import LoadingTFPortal from "@/app/tf/[species]/loading";
 
 interface FactorRow {
   image?: string;
@@ -181,7 +182,12 @@ const TfDetails: React.FC<TfDetailsProps> = ({
     }
   }, [tfData, factorData, tfA]);
 
-  if (tfLoading || factorLoading) return <CircularProgress />;
+  if (tfLoading || factorLoading || rows.length === 0) return (
+    <>
+      {LoadingTFPortal()}
+    </>
+  )
+
   if (tfError || factorError)
     return <p>Error: {tfError?.message || factorError?.message}</p>;
 

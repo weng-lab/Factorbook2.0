@@ -10,6 +10,7 @@ import { SummaryProps } from "./types";
 import { useTFInfo } from "./hooks";
 import CtDetails from "./ctdetails";
 import Link from "next/link";
+import LoadingTFPortal from "@/app/tf/[species]/loading";
 
 interface LinkWrapperProps {
   url: string;
@@ -36,7 +37,12 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species }) => {
 
   const { data, loading, error } = useTFInfo(species);
 
-  if (loading) return <CircularProgress />;
+  if (loading) return (
+    <>
+      {LoadingTFPortal()}
+    </>
+  );
+  
   if (error || !data) return <div>Error: {error?.message}</div>;
 
   const columns: DataTableColumn<any>[] = [
@@ -77,16 +83,14 @@ const Summary: React.FC<SummaryProps> = ({ assembly, species }) => {
   ];
 
   return (
-    <Container>
-      <Box style={{ overflowX: "auto" }}>
-        <DataTable
-          columns={columns}
-          rows={data.peakDataset.partitionByBiosample}
-          itemsPerPage={5}
-          searchable={true}
-        />
-      </Box>
-    </Container>
+    <Box style={{ overflowX: "auto" }}>
+      <DataTable
+        columns={columns}
+        rows={data.peakDataset.partitionByBiosample}
+        itemsPerPage={5}
+        searchable={true}
+      />
+    </Box>
   );
 };
 
