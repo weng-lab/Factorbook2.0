@@ -20,12 +20,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { curveBasis } from "@visx/curve";
 import { Zoom as VisxZoom } from "@visx/zoom";
 import { createPortal } from "react-dom";
-import zIndex from "@mui/material/styles/zIndex";
 import { ZoomProps } from "@visx/zoom/lib/Zoom";
 import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
 
-// const Tooltip: React.FC<TooltipProps> = (props) => <Tooltip {...props} />
-// const Zoom: React.FC<ZoomProps<ElementType>> = (props) => <Zoom {...props} />
+//Needed to fix type errors on vercel build
 const Tooltip: React.FC<TooltipProps> = VisxTooltip;
 const Zoom: React.FC<ZoomProps<SVGElement>> = VisxZoom;
 

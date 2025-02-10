@@ -5,11 +5,15 @@ import { curveBasis } from "d3-shape";
 import { scaleLinear } from "@visx/scale";
 import { AxisLeft, AxisBottom } from "@visx/axis";
 import { Group } from "@visx/group";
-import { useTooltip, TooltipWithBounds as VisxTooltipWithBounds } from "@visx/tooltip";
+import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
+import { Tooltip as VisxTooltip } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { downloadSVG } from "@/utilities/svgdata";
+import { TooltipWithBoundsProps } from "@visx/tooltip/lib/tooltips/TooltipWithBounds";
 import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
-const TooltipWithBounds: React.FC<TooltipProps> = (props) => <TooltipWithBounds {...props} />
+
+// const TooltipWithBounds: React.FC<TooltipProps> = (props) => <TooltipWithBounds {...props} />
+
 interface CentralityPlotProps {
   peak_centrality: Record<number, number>;
   width?: number;
