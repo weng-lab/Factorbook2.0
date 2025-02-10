@@ -6,6 +6,7 @@ import {
   Box,
   Typography,
   Grid,
+  Grid2,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -20,7 +21,6 @@ import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import InfoIcon from "@mui/icons-material/Info";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import StyledButton from "../../components/styledbutton";
-import Grid2 from "@mui/material/Unstable_Grid2";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -67,7 +67,7 @@ const DownloadPage: React.FC = () => {
   };
 
   return (
-    <Container sx={{ mb: 4 }}>
+    (<Container sx={{ mb: 4 }}>
       <Box my={4}>
         <Typography variant="h4" component="h1" gutterBottom>
           Factorbook Downloads <SaveAltIcon fontSize="large" />
@@ -76,7 +76,6 @@ const DownloadPage: React.FC = () => {
           Select a Factorbook Data set to download:
         </Typography>
       </Box>
-
       {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs value={tabValue} onChange={handleTabChange} aria-label="download tabs" variant="fullWidth" >
@@ -85,7 +84,6 @@ const DownloadPage: React.FC = () => {
           <Tab label="Heritability Models" {...a11yProps(2)} sx={{ textTransform: "none" }} />
         </Tabs>
       </Box>
-
       {/* Tab Content */}
       <TabPanel value={tabValue} index={0}>
         <Box>
@@ -105,7 +103,7 @@ const DownloadPage: React.FC = () => {
         </Box>
         <Divider />
         <Grid2 container sx={{ mt: 5 }}>
-          <Grid2 xs={8}>
+          <Grid2 size={8}>
             <Stack spacing={2}>
               <Typography variant="h6">
                 MEME ChIP-seq Catalog
@@ -151,7 +149,7 @@ const DownloadPage: React.FC = () => {
               </Stack>
             </Stack>
           </Grid2>
-          <Grid2 xs={4}>
+          <Grid2 size={4}>
             <Stack spacing={2}>
               <Typography variant="h6">
                 HT-SELEX Catalog
@@ -187,7 +185,6 @@ const DownloadPage: React.FC = () => {
           </Grid2>
         </Grid2>
       </TabPanel>
-
       {/* Genomic Motif Sites Tab */}
       <TabPanel value={tabValue} index={1}>
         <Typography
@@ -248,7 +245,7 @@ const DownloadPage: React.FC = () => {
                 Download merged motif sites
               </Typography>
               <Grid2 container columnSpacing={2}>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.merged.bed.gz"
                     text={
@@ -260,7 +257,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-4</sup> (46 MB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.merged.bed.gz"
                     text={
@@ -272,7 +269,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup> (45 MB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.merged.bed.gz"
                     text={
@@ -292,7 +289,7 @@ const DownloadPage: React.FC = () => {
                 Download all motif sites
               </Typography>
               <Grid2 container columnSpacing={2}>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.bed.gz"
                     text={
@@ -304,7 +301,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-4</sup> (758 MB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.bed.gz"
                     text={
@@ -316,7 +313,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup> (684 MB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.bed.gz"
                     text={
@@ -360,7 +357,7 @@ const DownloadPage: React.FC = () => {
                 Download merged motif sites
               </Typography>
               <Grid2 container spacing={2}>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.merged.bed.gz"
                     text={
@@ -372,7 +369,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (47 MB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.merged.bed.gz"
                     text={
@@ -384,7 +381,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-7</sup> (19 MB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.merged.bed.gz"
                     text={
@@ -396,7 +393,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-8</sup> (11 MB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-5.merged.bed.gz"
                     text={
@@ -408,7 +405,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup> (57 MB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-6.merged.bed.gz"
                     text={
@@ -420,7 +417,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (12 MB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-7.merged.bed.gz"
                     text={
@@ -440,7 +437,7 @@ const DownloadPage: React.FC = () => {
                 Download all motif sites
               </Typography>
               <Grid2 container spacing={2}>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.bed.gz"
                     text={
@@ -452,7 +449,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (2.9 GB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.bed.gz"
                     text={
@@ -464,7 +461,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-7</sup> (1.5 GB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
                     text={
@@ -476,7 +473,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-8</sup> (885 MB)</p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
                     text={
@@ -488,7 +485,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup></p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
                     text={
@@ -500,7 +497,7 @@ const DownloadPage: React.FC = () => {
                     secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup></p>}
                   />
                 </Grid2>
-                <Grid2 xs={4}>
+                <Grid2 size={4}>
                   <StyledButton
                     href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
                     text={
@@ -518,7 +515,6 @@ const DownloadPage: React.FC = () => {
         </Accordion>     
         </div>
       </TabPanel>
-
       {/* Heritability Models Tab */}
       <TabPanel value={tabValue} index={2}>
         <Box>
@@ -686,7 +682,7 @@ const DownloadPage: React.FC = () => {
           </div>
         </Box>
       </TabPanel>
-    </Container>
+    </Container>)
   );
 };
 

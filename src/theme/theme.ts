@@ -32,7 +32,7 @@ const theme = createTheme({
       main: '#EDE7F6',  // Light gray used for backgrounds
     },
     link: {
-      main: 'purple',   // Link color
+      main: '#8169BF',   // Link color
     },
     black: {
       main: '#000000',  // Black used in text (like headers)

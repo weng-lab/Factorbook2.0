@@ -3,15 +3,13 @@ import { LinePath } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Group } from "@visx/group";
-import { Tooltip as VisxTooltip, useTooltip, defaultStyles } from "@visx/tooltip";
+import { Tooltip, useTooltip, defaultStyles } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
-import { bisector } from "d3-array";
 import { curveMonotoneX } from "d3-shape";
 import { MARK_COLORS } from "./marks";
 import { Box, Typography } from "@mui/material";
 import { Line } from "@visx/shape";
-import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
-const Tooltip: React.FC<TooltipProps> = (props) => <Tooltip {...props} />
+
 interface GraphProps {
   proximal_values: number[];
   distal_values: number[];

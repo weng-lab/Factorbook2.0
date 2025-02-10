@@ -122,13 +122,13 @@ const MotifRow: React.FC<MMotif> = (x) => {
 };
 
 // Define DataTable columns
-const COLUMNS = (title: string) => {
+const COLUMNS = (title: string): DataTableColumn<MMotif>[] => {
   return [
     {
       header: "Motif",
       value: (x: MMotif) =>
         isPWMObjectArray(x.pwm) ? x.pwm[0].A : x.pwm[0][0],
-      FunctionalRender: MotifRow,
+      render: MotifRow,
     },
     {
       header: "Assayed TF",

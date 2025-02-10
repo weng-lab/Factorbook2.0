@@ -6,9 +6,10 @@ import React from 'react';
 
 import { GenomicRange } from "./types";
 import { RESOLVE_QUERY } from "./queries";
+import config from '../../../../../../../config.json'
 
 export async function fetchGenomicObject(id: string, assembly: string): Promise<GenomicRange | null> {
-    return fetch('https://ga.staging.wenglab.org/graphql', {
+    return fetch(config.API.CcreAPI, {
         method: 'POST',
         body: JSON.stringify({
             query: RESOLVE_QUERY,

@@ -38,7 +38,7 @@ const apiContextValue: ApiContextType = {
   client,
   restEndpoints: {
     streamPeaks: Config.API.CcreAPI,
-    streamMemeService: Config.API.GraphqlAPI,
+    streamMemeService: Config.API.CcreAPI,
   },
 };
 
