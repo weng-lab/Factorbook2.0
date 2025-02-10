@@ -45,6 +45,8 @@
     "jubilant-carnival": "^0.6.0",
     "liftover": "^0.1.0",
     "logojs-react": "^2.1.1",
+    "logots-react": "^0.2.2",
+    "mui-markdown": "^1.2.5",
     "next": "^14",
     "pako": "^1.0.11",
     "queryz": "^0.0.3",

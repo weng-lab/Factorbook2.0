@@ -3,10 +3,9 @@ import { MessageBubble } from "./MessageBubble"
 import { FactorChatFigure, FactorChatMessage } from "./types"
 import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, Typography } from "@mui/material";
 import { ExpandMore, FileDownloadOutlined, InfoOutlined } from "@mui/icons-material";
-import { DNALogo } from "logots-react";
 import { getFileSize } from "./helpers";
 import { useState, useEffect, useMemo } from "react";
-import NextLink, { LinkProps as NextLinkProps } from "next/link";
+import NextLink from "next/link";
 import Link, { LinkProps } from "@mui/material/Link";
 import MotifFigure from "./MotifFigure";
 
