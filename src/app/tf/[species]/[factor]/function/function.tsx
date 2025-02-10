@@ -3,7 +3,6 @@ import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import {
   Box,
-  CircularProgress,
   Typography,
   Alert,
   Paper,
@@ -335,7 +334,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
               sortDescending
               headerColor={{
                 /**
-                 * @todo this is dumb. When datatable types are changed for this prop, change. https://github.com/weng-lab/psychscreen-ui-components/issues/51
+                 * @todo this is dumb typecasting. When datatable types are changed for this prop, change. https://github.com/weng-lab/psychscreen-ui-components/issues/51
                  */
                 backgroundColor: theme.palette.primary.main as "#",
                 textColor: "#FFF",
@@ -352,7 +351,10 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
               sortDescending
               itemsPerPage={5}
               headerColor={{
-                backgroundColor: "#7151A1",
+                /**
+                 * @todo this is dumb typecasting. When datatable types are changed for this prop, change. https://github.com/weng-lab/psychscreen-ui-components/issues/51
+                 */
+                backgroundColor: theme.palette.primary.main as "#",
                 textColor: "#FFF",
               }}
             />

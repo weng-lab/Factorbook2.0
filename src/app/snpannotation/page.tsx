@@ -12,7 +12,6 @@ import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
-import { useParams } from "react-router";
 import { POPULATIONS, SUBPOPULATIONS } from "./const";
 import styled from "@emotion/styled";
 import {
@@ -96,17 +95,14 @@ const AnnotationsVariants = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const { population, subPopulation, rSquared } = useParams();
-  const [value, setValue] = useState(0);
-  const params = useParams();
+  const [value, setValue] = useState(0)
+
   const [disequilibriumDetails, setDisequilibriumDetails] = useState<DisequilibriumDetails>({
     selected: false,
-    population: population || POPULATIONS[0].value,
-    subpopulation: subPopulation || "NONE",
-    rSquaredThreshold: +(rSquared || 0.7)
+    population: POPULATIONS[0].value,
+    subpopulation: "NONE",
+    rSquaredThreshold: 0.7
   });
-
-  const [id, setId] = useState<string | undefined>(params.i);
 
   //update specific variable in disequilbriumDetails
   const updateDetails = (key: keyof DisequilibriumDetails, value: unknown) => {
@@ -132,6 +128,10 @@ const AnnotationsVariants = () => {
   const handleSelectionChange = (prev: boolean) => {
     updateDetails("selected", !prev);
   };
+
+  const handleRSquaredChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
+    updateDetails("rSquaredThreshold", event.target.value)
+  }
 
   const handleSubmit = (snpValue: string) => {
     //create cutom redirect url based on if the user wants to change the linkage disequilibrium details
@@ -173,8 +173,7 @@ const AnnotationsVariants = () => {
         </Tabs>
       </Box>
 
-      {id === "" || id === undefined
-        ? value === 0 && (
+      {value === 0 && (
           <Box
             sx={{
               ml: "10vw",
@@ -211,7 +210,6 @@ const AnnotationsVariants = () => {
                       Select a Population:
                     </Typography>
                     <SmallSelect
-                      value={population}
                       onChange={handlePopulationChange}
                       defaultValue={POPULATIONS[0].value}
                     >
@@ -242,6 +240,7 @@ const AnnotationsVariants = () => {
                       variant="outlined"
                       placeholder="Type a value"
                       defaultValue="0.7"
+                      onChange={handleRSquaredChange}
                     />
                   </FlexBox>
                   <Typography
@@ -250,7 +249,7 @@ const AnnotationsVariants = () => {
                     style={{ marginBottom: "5px" }}
                   >
                     LD data is derived from the{" "}
-                    <Link href="#" style={{ color: "secondary" }}>
+                    <Link href="https://www.internationalgenome.org/" target="_blank" rel="noopener noreferrer" style={{ color: "secondary" }}>
                       1,000 Genomes Project
                     </Link>
                   </Typography>
@@ -258,8 +257,7 @@ const AnnotationsVariants = () => {
               )}
             </Box>
           </Box>
-        )
-        : null}
+        )}
 
       {value === 1 && (
         <Box

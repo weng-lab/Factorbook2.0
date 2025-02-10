@@ -52,8 +52,8 @@ const FactorTabs: React.FC<FactorTabsProps> = ({
   })
 
   const allExperiments = React.useMemo(() => {
-    return [...experimentsData?.peakDataset.partitionByBiosample || []]
-      .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name))
+    return [...(experimentsData?.peakDataset.partitionByBiosample || [])]
+      .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name));
   }, [experimentsData])
 
   const validHistoneExperiments = React.useMemo(() => {

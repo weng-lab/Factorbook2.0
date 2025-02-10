@@ -11,6 +11,6 @@ export default function FunctionPage({
     /**
      * @todo this species === "human" ? "GRCh38" : "mm10" is used many places, define utlity shared
      */
-    <FunctionTab factor={factor} assembly={species === "human" ? "GRCh38" : "mm10"} />
-  )
+    (<FunctionTab factor={factor} assembly={species === "human" ? "GRCh38" : "mm10"} />)
+  );
 }

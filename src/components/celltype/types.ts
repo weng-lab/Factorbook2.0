@@ -51,6 +51,7 @@ export type DatasetQueryResponse = {
       };
       counts: {
         targets: number;
+        total: number;
       };
     }[];
   };

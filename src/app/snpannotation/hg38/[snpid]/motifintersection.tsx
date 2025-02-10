@@ -298,12 +298,12 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
           ...COMPLETE_MOTIF_TABLE_COLUMNS,
           {
             header: "occurrence p-value",
-            value: (x: RdhsOccurrenceMatch) =>
+            value: (x) =>
               x.p_value !== undefined ? x.p_value : "N/A",
           },
           {
             header: "rdhs",
-            value: (x: RdhsOccurrenceMatch) =>
+            value: (x) =>
               x.rdhs !== undefined ? x.rdhs : "N/A",
           },
         ]
