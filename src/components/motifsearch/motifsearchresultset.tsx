@@ -9,6 +9,7 @@ import { MotifTableRow } from "./types";
 import MotifTable from "./motifsearchtable";
 import { usePathname } from "next/navigation";
 import { Motif } from "@/app/motif/human/meme-search/types";
+import LoadingMotifSearch from "@/app/motif/human/meme-search/[regex]/loading";
 
 const MOTIFS_PER_PAGE = 5;
 
@@ -179,13 +180,29 @@ export const MotifSearchResultSet: React.FC<{
   }, [motifResults, datasetMapState]);
 
   return (
-    <Box sx={{ padding: isMobile ? 2 : isTablet ? 3 : 4 }}>
-      {data &&
-        <MotifTable
-          motifRows={motifRows}
-          title={title}
-        />
-      }
-    </Box>
-  );
+    <>
+      {loading ? (
+        <Box
+          sx={{
+            width: search === "fileupload" ? "100%" : "100vw",
+            height: search === "fileupload" ? "100%" :"100vh",
+            display: "flex",
+            alignItems: "center",
+            ml: search === "fileupload" ? 4 : 0
+          }}
+        >
+          {LoadingMotifSearch()}
+        </Box>
+      ) : (
+        <Box sx={{ padding: isMobile ? 2 : isTablet ? 3 : 4 }}>
+          {data && (
+            <MotifTable
+              motifRows={motifRows}
+              title={title}
+            />
+          )}
+        </Box>
+      )}
+    </>
+  );  
 };

@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Box, Breadcrumbs, Button, Divider, Grid, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Breadcrumbs, Button, Divider, Grid, Link, Skeleton, Typography, useMediaQuery, useTheme } from "@mui/material";
 import RegexSearchResults from "@/components/motifsearch/regexsearchresults";
 import { Motif } from "../types";
 import MotifDrawer from "@/components/motifsearch/motiffileuploaddrawer";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import LoadingMotifSearch from "../[regex]/loading";
 
 const FileUploadMotifDetails = () => {
     const theme = useTheme();
@@ -127,7 +128,17 @@ const FileUploadMotifDetails = () => {
                     </div>
                 </div>
             ) : (
-                <Typography>No file data found.</Typography>
+                    <Box
+                        sx={{
+                            width: "100vw",
+                            height: "100vh",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}
+                    >
+                        {LoadingMotifSearch()}
+                    </Box>
             )}
         </Box>
     );
