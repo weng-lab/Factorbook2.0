@@ -20,7 +20,6 @@ const MotifDetails = () => {
                 container
                 alignItems="center"
                 justifyContent="space-between"
-                sx={{ mt: isMobile ? 2 : 4 }}
             >
                 <Grid item>
                     <Breadcrumbs

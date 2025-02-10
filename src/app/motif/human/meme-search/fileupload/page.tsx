@@ -60,7 +60,6 @@ const FileUploadMotifDetails = () => {
                 container
                 alignItems="center"
                 justifyContent="space-between"
-                sx={{ mt: isMobile ? 2 : 4 }}
             >
                 <Grid item>
                     <Breadcrumbs
@@ -115,7 +114,7 @@ const FileUploadMotifDetails = () => {
                     </Button>
                 </Grid>
             </Grid>
-            <Divider sx={{ my: isMobile ? 2 : 4 }}/>
+            <Divider sx={{ mt: isMobile ? 2 : 4 }}/>
             {uniqueMotifs.length > 0 ? (
                 <div style={{ display: "flex" }}>
                     <MotifDrawer
@@ -123,7 +122,7 @@ const FileUploadMotifDetails = () => {
                         selectedMotif={selectedMotif}
                         onMotifSelect={handleMotifSelect}
                     />
-                    <div style={{ flexGrow: 1, padding: "1rem" }}>
+                    <div style={{ flexGrow: 1}}>
                         {selectedMotif && <RegexSearchResults pwm={selectedMotif.pwm} />}
                     </div>
                 </div>
