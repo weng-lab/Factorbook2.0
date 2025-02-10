@@ -7,6 +7,8 @@ import { MotifInfo, MotifMatch, MotifResult } from "./results";
 import { logLikelihood } from "./motifutil";
 import { MotifTableRow } from "./types";
 import MotifTable from "./motifsearchtable";
+import { usePathname } from "next/navigation";
+import { Motif } from "@/app/motif/human/meme-search/types";
 
 const MOTIFS_PER_PAGE = 5;
 
@@ -77,6 +79,11 @@ export const MotifSearchResultSet: React.FC<{
   offset?: number;
   onResultsLoaded?: (n: number) => void;
 }> = ({ assembly, pwm, offset, onResultsLoaded }) => {
+  const search = usePathname().split('/')[4];
+  const title = search === "fileupload" 
+  ? JSON.parse(sessionStorage.getItem("motifSearch") || "{}")?.name || "" 
+  : search;
+
   const client = useContext(ApiContext)!!.client;
   const { data, loading } = useQuery<any>(MOTIF_SEARCH_QUERY, {
     client,
@@ -176,6 +183,7 @@ export const MotifSearchResultSet: React.FC<{
       {data &&
         <MotifTable
           motifRows={motifRows}
+          title={title}
         />
       }
     </Box>

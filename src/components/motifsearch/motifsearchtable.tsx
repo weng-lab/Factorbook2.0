@@ -5,6 +5,7 @@ import { InfoOutlined } from "@mui/icons-material";
 
 const MotifTable: React.FC<MotifTableProps> = ({
     motifRows,
+    title,
     // onPageChane,
 }) => {
 
@@ -31,6 +32,7 @@ const MotifTable: React.FC<MotifTableProps> = ({
             sortColumn={2}
             sortDescending
             hidePageMenu
+            tableTitle={`Motif Search Results for ${title}`}
         />
     );
 };

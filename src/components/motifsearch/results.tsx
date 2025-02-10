@@ -32,7 +32,7 @@ export const MotifResult: React.FC<MotifResultProps> = ({
       : Math.max(alignment.motif.pwm.length, query.length + offset);
 
   return (
-    <Box width={"100%"} height={"100%"}>
+    <Box width={"100%"} height={"100%"} minWidth={"400px"}>
       <svg
         style={{ width: isMobile ? "100%" : "75%" }}
         viewBox={`0 0 ${totalLength * 75 + 300} 580`}

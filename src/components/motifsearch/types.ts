@@ -37,6 +37,7 @@ export type MotifMatchProps = {
 
 export type MotifTableProps = {
     motifRows: MotifTableRow[];
+    title: string;
     // onPageChane: (event: React.ChangeEvent<unknown>, value: number) => void;
 };
 

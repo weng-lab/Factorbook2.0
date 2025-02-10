@@ -56,10 +56,6 @@ const FileUploadMotifDetails = () => {
 
     return (
         <Box sx={{ padding: isMobile ? 2 : 4 }}>
-            <Typography variant={isMobile ? "h5" : "h4"}>
-                Motif search results for {filename}
-            </Typography>
-
             <Grid
                 container
                 alignItems="center"
