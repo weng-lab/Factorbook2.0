@@ -9,10 +9,6 @@ import { curveMonotoneX } from "d3-shape";
 import { MARK_COLORS } from "./marks";
 import { Box, Typography } from "@mui/material";
 import { Line } from "@visx/shape";
-import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
-
-//Needed to fix type errors on vercel build
-// const Tooltip: React.FC<TooltipProps> = VisxTooltip;
 
 interface GraphProps {
   proximal_values: number[];

@@ -12,20 +12,14 @@ import { scaleLinear } from "@visx/scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Circle, LinePath } from "@visx/shape";
 import { localPoint } from "@visx/event";
-import { Tooltip as VisxTooltip } from "@visx/tooltip";
+import { Tooltip } from "@visx/tooltip";
 import { Text } from "@visx/text";
 import { useDrag } from "@visx/drag";
 import { HandlerArgs } from "@visx/drag/lib/useDrag";
 import CircularProgress from "@mui/material/CircularProgress";
 import { curveBasis } from "@visx/curve";
-import { Zoom as VisxZoom } from "@visx/zoom";
+import { Zoom } from "@visx/zoom";
 import { createPortal } from "react-dom";
-import { ZoomProps } from "@visx/zoom/lib/Zoom";
-import { TooltipProps } from "@visx/tooltip/lib/tooltips/Tooltip";
-
-//Needed to fix type errors on vercel build
-const Tooltip: React.FC<TooltipProps> = VisxTooltip;
-const Zoom: React.FC<ZoomProps<SVGElement>> = VisxZoom;
 
 /*
     All information given to a point on the plot, including its coordinates(x and y), its radius, color, and opacity, and its metadata information
