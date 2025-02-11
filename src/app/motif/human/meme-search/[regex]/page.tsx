@@ -16,15 +16,10 @@ const MotifDetails = () => {
 
     return (
         <Box sx={{ padding: isMobile ? 2 : 4 }}>
-            <Typography variant={isMobile ? "h5" : "h4"}>
-                Motif search results for {decodedRegex}
-            </Typography>
-
             <Grid
                 container
                 alignItems="center"
                 justifyContent="space-between"
-                sx={{ mt: isMobile ? 2 : 4 }}
             >
                 <Grid item>
                     <Breadcrumbs

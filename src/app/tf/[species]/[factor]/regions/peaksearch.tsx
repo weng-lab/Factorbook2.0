@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, SetStateAction, useMemo } from "react";
-import { Grid, Pagination, PaginationItem, Divider } from "@mui/material";
+import { Grid, Pagination, PaginationItem, Divider, Skeleton, CircularProgress } from "@mui/material";
 import {
   Box,
   Typography,
@@ -177,11 +177,7 @@ const MotifCell: React.FC<{
   return (
     <div>
       {loading && (
-        <img
-          style={{ width: "16px", height: "16px" }}
-          src={"/loader.svg"}
-          alt={"Loading"}
-        />
+        <CircularProgress size={10} />
       )}
       {error && <span>Error!</span>}
       {!loading &&
@@ -774,6 +770,11 @@ const PeakSearch: React.FC = () => {
               </Box>
             </>
           )}
+        </Box>
+      )}
+      {loading && (
+        <Box sx={{ mx: "auto", alignItems: "center", maxWidth: "1000px" }}>
+          <Skeleton variant="rounded" width={"100%"} height={"650px"} />
         </Box>
       )}
       {peaksData && peaksData.peaksrange.data && (

@@ -43,6 +43,7 @@ import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import Link from "next/link";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Chart, Point, MetaData } from "./scatterplot";
+import LoadingMemeUmap from "@/app/motif/human/meme-umap/loading";
 
 // Color definitions
 const colors = {
@@ -320,7 +321,7 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
   }, []);
 
   return umapLoading ? (
-    <CircularProgress />
+    LoadingMemeUmap()
   ) : (
     <Box sx={{ padding: isMobile ? 2 : isTablet ? 3 : 4 }}>
       <br />
