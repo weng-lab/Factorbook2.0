@@ -170,6 +170,7 @@ export default function MotifTile({ motif, species, selectedExperimentID, select
           variant="outlined"
           startIcon={<SwapHorizIcon />}
           onClick={() => handleReverseComplement()}
+          sx={{ width: '250px' }}
         >
           {reverseComplement ? "Show Original" : "Show Reverse Complement"}
         </Button>
