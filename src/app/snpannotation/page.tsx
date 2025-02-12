@@ -24,6 +24,7 @@ import {
 import ClearIcon from '@mui/icons-material/Clear';
 import SnpSearchBar from "@/components/snpsearchbar";
 import { DisequilibriumDetails } from "./types";
+import HeritabilityModels from "../downloads/heritabilityModels";
 
 type Snp = {
   id: string;
@@ -269,63 +270,7 @@ const AnnotationsVariants = () => {
             mb: 8, // Add margin at the bottom for extra space
           }}
         >
-          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-            Partitioned LD Score Regression
-          </Typography>
-          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            Quantify heritability enrichment in TF peaks and motif sites
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Quantifying heritability enrichment takes ~5 minutes on a
-            standard laptop. We recommend running this workflow using our
-            provided Docker image. Click for detailed instructions.
-          </Typography>
-          <ol>
-            <li>
-              1.{" "}
-              <Link
-                href="https://docs.docker.com/get-docker/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Install Docker
-              </Link>
-            </li>
-            <li>
-              2. Run the following command to partition heritability for motif
-              sites in ChIP-seq peaks from seven ENCODE cell lines:
-            </li>
-          </ol>
-          <CodeBox>
-            <pre>
-              docker run \<br />
-              &nbsp;&nbsp;--volume /path/to/inputs:/input \<br />
-              &nbsp;&nbsp;ghcr.io/weng-lab/ldr/ldr:latest \<br />
-              &nbsp;&nbsp;python3 -m ldr.h2 \<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;--ld-scores <br />
-              &nbsp;&nbsp;&nbsp;&nbsp;http://gcp.wenglab.org/ldr-models/seven-cell-type-motifs.tar.gz
-              \<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;--ld-prefix annotations \<br />
-              &nbsp;&nbsp;&nbsp;&nbsp;--summary-statistics <br />
-              &nbsp;&nbsp;&nbsp;&nbsp;/input/summary-stats.txt &gt;
-              partitioned-heritability.txt
-            </pre>
-          </CodeBox>
-          <Typography variant="body2" gutterBottom>
-            To quantify heritability for a different subset of peaks or
-            motif sites, simply sub a different URL for the ld-scores
-            parameter. You can find URLs for each model in the{" "}
-            <strong>View Models</strong> section below.
-          </Typography>
-          <Typography variant="body2">
-            Output will be located at{" "}
-          </Typography>
-          <Box component="pre" display="inline">
-            <Typography variant="body2">
-              <b>/path/to/outputs/partitioned-heritability.txt </b>when the command finishes.
-            </Typography>
-          </Box>
-          <Divider />
+          <HeritabilityModels />
         </Box>
       )}
     </>
