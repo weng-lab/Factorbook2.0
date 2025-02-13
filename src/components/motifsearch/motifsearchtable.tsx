@@ -16,13 +16,7 @@ const MotifTable: React.FC<MotifTableProps> = ({
             { header: "Motif", value: (row) => row.distance, render: (row) => row.motif },
             { header: "Info", value: (row) => row.distance, render: (row) => row.info },
             {
-                header: "Distance", value: (row) => row.distance.toFixed(2), HeaderRender: () =>
-                    <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                        <Tooltip title="Euclidean Distance" arrow placement="top">
-                            <InfoOutlined fontSize="small" sx={{ cursor: "pointer" }}/>
-                        </Tooltip>
-                        <Typography><b>Distance</b></Typography>
-                    </Stack>
+                header: "Distance", value: (row) => row.distance.toFixed(2), tooltip: "Euclidian Distance"
             },
             { header: "Best External Dataset Match", value: (row) => row.distance, render: (row) => row.match },
         ]
