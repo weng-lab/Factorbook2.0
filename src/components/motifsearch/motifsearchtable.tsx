@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { DataTable, DataTableColumn } from "@weng-lab/psychscreen-ui-components";
 import { MotifTableProps, MotifTableRow } from "./types";
 import { InfoOutlined } from "@mui/icons-material";
+import { Stack, Tooltip, Typography } from "@mui/material";
 
 const MotifTable: React.FC<MotifTableProps> = ({
     motifRows,
@@ -15,7 +16,7 @@ const MotifTable: React.FC<MotifTableProps> = ({
             { header: "Motif", value: (row) => row.distance, render: (row) => row.motif },
             { header: "Info", value: (row) => row.distance, render: (row) => row.info },
             {
-                header: "Distance", value: (row) => row.distance.toFixed(2)
+                header: "Distance", value: (row) => row.distance.toFixed(2), tooltip: "Euclidian Distance"
             },
             { header: "Best External Dataset Match", value: (row) => row.distance, render: (row) => row.match },
         ]
