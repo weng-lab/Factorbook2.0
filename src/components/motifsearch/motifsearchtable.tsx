@@ -21,7 +21,7 @@ const MotifTable: React.FC<MotifTableProps> = ({
                         <Tooltip title="Euclidean Distance" arrow placement="top">
                             <InfoOutlined fontSize="small" sx={{ cursor: "pointer" }}/>
                         </Tooltip>
-                        <Typography>Distance</Typography>
+                        <Typography><b>Distance</b></Typography>
                     </Stack>
             },
             { header: "Best External Dataset Match", value: (row) => row.distance, render: (row) => row.match },
