@@ -16,7 +16,7 @@ import {
   Divider,
   Alert,
   Tooltip,
-  Link,
+  Link as MuiLink,
   Button,
 } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
@@ -25,6 +25,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import HeritabilityModels from "./heritabilityModels";
 import StackedDownloadButton from "../../components/stackedDownloadButton";
 import TfMotifCatalogDownloads from "./tfMotifCatalogs";
+import Link from "next/link";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -140,7 +141,7 @@ const DownloadPage: React.FC = () => {
               <Alert severity="warning">
                 <b>This catalog contains sites of MEME motifs from ChIP-seq
                   datasets identified within ChIP-seq peaks using FIMO.</b>{" "}
-                <a href="#" style={{ textDecoration: "underline" }}>See here</a> for a list of cell types in which these
+                <MuiLink component={Link} href="/tf/human?tab=1" style={{ textDecoration: "underline" }}>See here</MuiLink> for a list of cell types in which these
                 ChIP-seq peaks were identified. <b>Regulatory motif sites in cell
                   types biologically distinct from well-profiled cell types might
                   not be contained in this catalog!</b>
@@ -224,7 +225,7 @@ const DownloadPage: React.FC = () => {
               <Alert severity="warning">
                 <b>This catalog contains sites of MEME motifs and HT-SELEX motifs
                 identified within rDHSs from the ENCODE Registry of cCREs using
-                FIMO.</b> <a href="#" style={{ textDecoration: "underline" }}>Click here</a> for more information on the
+                FIMO.</b> <MuiLink component={Link} href="https://screen.wenglab.org/about">Click here</MuiLink> for more information on the
                 Registry of cCREs.
               </Alert>
               <Typography
