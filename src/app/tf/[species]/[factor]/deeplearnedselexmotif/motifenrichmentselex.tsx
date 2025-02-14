@@ -122,7 +122,7 @@ const DeepLearnedSelexMotifs: React.FC<{ factor: string; species: string }> = ({
     setMotif(event.target.value);
   };
 
-  if (loading ||  !data)
+  if (loading || !data)
     return (
       <>
         {/* HEADER */}
@@ -304,14 +304,14 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
 
   return (
     <Box sx={{ justifyContent: "center", marginBottom: 2, marginTop: 1 }}>
-      <Box sx={{ justifyContent: "center"}}>
-      <Logo
-        ppm={motifppm}
-        alphabet={DNAAlphabet}
-        ref={svgRef as MutableRefObject<SVGSVGElement>}
-        width={300}
-        height={200}
-      />
+      <Box sx={{ justifyContent: "center" }}>
+        <Logo
+          ppm={motifppm}
+          alphabet={DNAAlphabet}
+          ref={svgRef as MutableRefObject<SVGSVGElement>}
+          width={300}
+          height={200}
+        />
       </Box>
       <Box sx={{ display: "flex", justifyContent: "flex-start", gap: 2 }}>
         <Button
@@ -325,8 +325,9 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
           variant="outlined"
           startIcon={<SwapHorizIcon />}
           onClick={() => setReverseComplement(!reverseComplement)}
+          sx={{ width: '250px' }}
         >
-          Reverse Complement
+          {reverseComplement ? "Show Original" : "Show Reverse Complement"}
         </Button>
       </Box>
       {/** @todo deduplicate with download dialog in motif/[accession]/page.tsx */}
@@ -426,8 +427,8 @@ const DeepLearnedSelexMotif: React.FC<{
       {/* CYCLES */}
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "flex-start" }}>
         {data.map((d, i) => (
-          <Box 
-            key={`logo${i}`} 
+          <Box
+            key={`logo${i}`}
             sx={{
               textAlign: "flex-start",
               backgroundColor: hoveredCycle === d.selex_round ? `${colors[d.selex_round]}40` : "transparent",
