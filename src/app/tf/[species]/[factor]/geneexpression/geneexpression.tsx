@@ -9,9 +9,9 @@ import {
   MenuItem,
   Grid,
   Stack,
+  Button,
 } from "@mui/material";
 import {
-  Download as DownloadIcon,
   SaveAlt as SaveAltIcon,
 } from "@mui/icons-material";
 import { formatFactorName } from "@/utilities/misc";
@@ -25,7 +25,6 @@ import {
   tissueColors,
 } from "@/components/tf/geneexpression/utils";
 import ViolinPlot from "./_violin/violin";
-import StyledButton from "@/components/styledbutton";
 import { groupBy } from "queryz";
 import LoadingExpression from "./loading";
 
@@ -302,30 +301,20 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
                     gap: 5
                   }}
                 >
-                  <StyledButton
+                  <Button
+                    variant="contained"
                     startIcon={<SaveAltIcon />}
-                    text={`Download all ${[...assayTermNames][value]
-                      } expression data for ${props.gene_name}`}
-                    href="#"
                     onClick={download}
-                    sx={{
-                      display: "flex",
-                      maxWidth: "100%",
-                    }}
-                  />
-                  <StyledButton
+                  >
+                    {`Download all ${[...assayTermNames][value]} expression data for ${props.gene_name}`}
+                  </Button>
+                  <Button
+                    variant="contained"
                     startIcon={<SaveAltIcon />}
-                    text="Export plot as SVG"
-                    href="#"
-                    onClick={() =>
-                      ref.current &&
-                      downloadSVG(ref, `${props.gene_name}-gene-expression.svg`)
-                    }
-                    sx={{
-                      display: "flex",
-                      maxWidth: "100%"
-                    }}
-                  />
+                    onClick={() => ref.current && downloadSVG(ref, `${props.gene_name}-gene-expression.svg`)}
+                  >
+                    Export plot as SVG
+                  </Button>
                 </Box>
                 <svg
                   viewBox={`0 0 ${width} ${(width / 3) + (height)}`}

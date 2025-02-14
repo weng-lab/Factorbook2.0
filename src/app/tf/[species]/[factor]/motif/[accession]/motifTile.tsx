@@ -4,7 +4,7 @@ import ConservationPlot from "@/components/motifmeme/conservationplot";
 import { TOMTOMMessage } from "@/components/motifmeme/tomtommessage";
 import { meme, MMotif, rc } from "@/components/motifsearch/motifutil";
 import { downloadData, downloadSVGElementAsSVG } from "@/utilities/svgdata";
-import { HelpRounded, Visibility, VisibilityOff } from "@mui/icons-material";
+import { HelpRounded, Language, Visibility, VisibilityOff } from "@mui/icons-material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -57,6 +57,7 @@ function toScientificNotationElement(
 
 export default function MotifTile({ motif, species, selectedExperimentID, selectedPeakID }: { motif: any, species: string, selectedExperimentID: string, selectedPeakID: string }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [sitesOpen, setSitesOpen] = useState(false); // for show genome sites button
   const [motifppm, setMotifppm] = useState(motif.pwm);
   const [showQCStates, setShowQCStates] = useState(false);
   const [reverseComplement, setReverseComplement] = useState(false);
@@ -173,12 +174,13 @@ export default function MotifTile({ motif, species, selectedExperimentID, select
         >
           {reverseComplement ? "Show Original" : "Show Reverse Complement"}
         </Button>
-        <FullScreenDialog
-          species={species}
-          consensusRegex={motif.consensus_regex}
-          experimentID={selectedExperimentID}
-          fileID={selectedPeakID}
-        />
+        <Button
+          variant="outlined"
+          startIcon={<Language />}
+          onClick={() => setSitesOpen(true)}
+        >
+          Show Genomic Sites
+        </Button>
         <Button
           variant="outlined"
           startIcon={showQCStates ? <VisibilityOff /> : <Visibility />}
@@ -189,6 +191,14 @@ export default function MotifTile({ motif, species, selectedExperimentID, select
       </Box>
       {showQCStates && selectedPeakID && QCState}
       {isDialogOpen && <DownloadDialog motif={motif} motifppm={motifppm} selectedPeakID={selectedPeakID} species={species} svgRef={svgRef} isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen} />}
+      <FullScreenDialog
+        open={sitesOpen}
+        onClose={() => setSitesOpen(false)}
+        species={species}
+        consensusRegex={motif.consensus_regex}
+        experimentID={selectedExperimentID}
+        fileID={selectedPeakID}
+      />
     </Box>
   );
 }

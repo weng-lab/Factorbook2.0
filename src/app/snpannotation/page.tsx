@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState } from "react";
 import TranscriptionFactors from "@/components/transcriptionfactors";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -10,40 +10,22 @@ import Checkbox from "@mui/material/Checkbox";
 import MenuItem from "@mui/material/MenuItem";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Divider from "@mui/material/Divider";
 import Link from "@mui/material/Link";
 import { POPULATIONS, SUBPOPULATIONS } from "./const";
 import styled from "@emotion/styled";
 import {
-  Autocomplete,
-  FormControl,
   Select,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import ClearIcon from '@mui/icons-material/Clear';
 import SnpSearchBar from "@/components/snpsearchbar";
 import { DisequilibriumDetails } from "./types";
 import HeritabilityModels from "../downloads/heritabilityModels";
-
-type Snp = {
-  id: string;
-  chrom: string;
-  start: number;
-  end: number;
-};
 
 const StyledBox = styled(Box)({
   "& .MuiOutlinedInput-root": {
     backgroundColor: "#EDE7F6",
   },
-});
-
-const CodeBox = styled(Box)({
-  backgroundColor: "#f5f5f5",
-  padding: "16px",
-  overflowX: "auto",
-  fontFamily: "monospace",
 });
 
 const FlexBox = styled(Box)({
@@ -77,18 +59,6 @@ const SmallTextField = styled(TextField)({
     "&.Mui-focused fieldset": {
       borderColor: "#673AB7",
     },
-  },
-});
-
-const PurpleAutocomplete = styled(Autocomplete)({
-  "& .MuiOutlinedInput-root": {
-    height: "40px",
-    borderRadius: "24px",
-    paddingLeft: "12px",
-  },
-  "& .MuiInputBase-input::placeholder": {
-    color: "gray", // Placeholder color
-    opacity: 1,
   },
 });
 

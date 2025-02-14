@@ -1,6 +1,5 @@
-import StyledButton from "@/components/styledbutton"
 import { ExpandMore } from "@mui/icons-material"
-import { Box, Typography, Divider, Accordion, AccordionSummary, AccordionDetails, Grid, Link } from "@mui/material"
+import { Box, Typography, Divider, Accordion, AccordionSummary, AccordionDetails, Grid2 as Grid, Link, Button, Stack, Paper } from "@mui/material"
 
 const HeritabilityModels = () => {
   return (
@@ -102,17 +101,16 @@ const HeritabilityModels = () => {
               </Typography>
               <Grid container spacing={4}>
                 {/* TF ChIP-seq Peaks Card */}
-                <Grid item xs={12} md={6}>
-                  <Box
+                <Grid size={{xs: 12, md: 6}}>
+                <Paper
+                    component={Stack}
+                    p={3}
+                    alignItems={"flex-start"}
                     sx={{
                       backgroundColor: "#333",
                       color: "#fff",
-                      padding: 3,
-                      borderRadius: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      height: "100%",
+                      height: '100%',
+                      justifyContent: "space-between"
                     }}
                   >
                     <Typography variant="h6" sx={{ mb: 4 }}>
@@ -123,42 +121,37 @@ const HeritabilityModels = () => {
                       identified from ChIP-seq experiments in one of five
                       well-profiled ENCODE cell lines.
                     </Typography>
-                    <StyledButton
-                      text="View Models (5)"
-                      href="https://factorbook.org/partitioned-ldr/hg38/peak-models"
-                      sx={{ width: "auto" }}
-                    />
-                  </Box>
+                    <Button variant="contained" href="https://factorbook.org/partitioned-ldr/hg38/peak-models">
+                      View Models (5)
+                    </Button>
+                  </Paper>
                 </Grid>
 
                 {/* Motif Sites in TF ChIP-seq Peaks Card */}
-                <Grid item xs={12} md={6}>
-                  <Box
+                <Grid size={{xs: 12, md: 6}}>
+                  <Paper
+                    component={Stack}
+                    p={3}
+                    alignItems={"flex-start"}
                     sx={{
                       backgroundColor: "#333",
                       color: "#fff",
-                      padding: 3,
-                      borderRadius: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      height: "100%",
+                      height: '100%',
+                      justifyContent: "space-between"
                     }}
                   >
-                    <Typography variant="h6" sx={{ mb: 4 }}>
+                    <Typography variant="h6">
                       Motif Sites in TF ChIP-seq Peaks
                     </Typography>
-                    <Typography variant="body2" sx={{ mb: 5 }}>
+                    <Typography variant="body2">
                       Quantify heritability enrichment within TF motif sites
                       identified in peaks from ChIP-seq experiments in one of
                       five well-profiled ENCODE cell lines.
                     </Typography>
-                    <StyledButton
-                      text="View Models (2)"
-                      href="https://factorbook.org/partitioned-ldr/hg38/peak-motif-models"
-                      sx={{ width: "auto" }}
-                    />
-                  </Box>
+                    <Button variant="contained" href="https://factorbook.org/partitioned-ldr/hg38/peak-motif-models">
+                      View Models (2)
+                    </Button>
+                  </Paper>
                 </Grid>
               </Grid>
             </Box>

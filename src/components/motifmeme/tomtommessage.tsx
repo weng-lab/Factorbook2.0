@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Link } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"; // For the tick mark
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline"; // For no match
 import { TOMTOMMessageProps } from "./types";
@@ -54,23 +54,23 @@ export const TOMTOMMessage: React.FC<TOMTOMMessageProps> = ({
         {hasValidMatch ? (
           <Typography variant="body2">
             {tomtomMatch?.jaspar_name ? (
-              <a
+              <Link
                 href={`http://jaspar2020.genereg.net/matrix/${tomtomMatch.target_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ color: "green" }} // Link color for match
               >
                 {tomtomMatch.target_id}/{tomtomMatch.jaspar_name} (JASPAR)
-              </a>
+              </Link>
             ) : (
-              <a
+              <Link
                 href={`https://hocomoco11.autosome.ru/motif/${tomtomMatch?.target_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ color: "green" }} // Link color for match
               >
                 {tomtomMatch?.target_id} (HOCOMOCO)
-              </a>
+              </Link>
             )}
           </Typography>
         ) : (
