@@ -201,24 +201,15 @@ function ModelTable({ onRowClick, config }: { onRowClick: (row: Row) => void, co
             </TableHead>
             <TableBody>
                 {config.rows.map((row) => (
-                    <TableRow key={row.title} onClick={() => onRowClick(row)} sx={{ cursor: 'pointer' }}>
+                    <TableRow key={row.title} sx={{ cursor: 'pointer' }}>
                         {config.getCells(row).map((cell, i) => (
-                            <TableCell key={i}>
+                            <TableCell key={i} onClick={() => onRowClick(row)}>
                                 {typeof cell === 'number' ? cell.toLocaleString() : cell}
                             </TableCell>
                         ))}
                         <TableCell>
-                            <Link
-                                href={row.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                underline="none"
-                            >
-                                <StyledButton
-                                    text="Download"
-                                    onClick={() => { }}
-                                    href={""}
-                                />
+                            <Link href={row.url} target="_blank" rel="noopener noreferrer">
+                                {row.url}
                             </Link>
                         </TableCell>
                     </TableRow>
