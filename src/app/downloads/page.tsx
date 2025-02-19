@@ -26,7 +26,6 @@ import HeritabilityModels from "./heritabilityModels";
 import StackedDownloadButton from "../../components/stackedDownloadButton";
 import TfMotifCatalogDownloads from "./tfMotifCatalogs";
 import Link from "next/link";
-import ModelsTab from "./modelsTab";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -333,7 +332,7 @@ const DownloadPage: React.FC = () => {
       </TabPanel>
       {/* Heritability Models Tab */}
       <TabPanel value={tabValue} index={2}>
-        <ModelsTab />
+        <HeritabilityModels />
       </TabPanel>
     </Container>)
   );
