@@ -16,11 +16,16 @@ import {
   Divider,
   Alert,
   Tooltip,
+  Link as MuiLink,
+  Button,
 } from "@mui/material";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import InfoIcon from "@mui/icons-material/Info";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import StyledButton from "../../components/styledbutton";
+import HeritabilityModels from "./heritabilityModels";
+import StackedDownloadButton from "../../components/stackedDownloadButton";
+import TfMotifCatalogDownloads from "./tfMotifCatalogs";
+import Link from "next/link";
 import ModelsTab from "./modelsTab";
 
 interface TabPanelProps {
@@ -68,7 +73,7 @@ const DownloadPage: React.FC = () => {
   };
 
   return (
-    (<Container sx={{ mb: 4 }}>
+    (<Container sx={{ mb: 4, minHeight: '70vh' }}>
       <Box my={4}>
         <Typography variant="h4" component="h1" gutterBottom>
           Factorbook Downloads <SaveAltIcon fontSize="large" />
@@ -87,104 +92,7 @@ const DownloadPage: React.FC = () => {
       </Box>
       {/* Tab Content */}
       <TabPanel value={tabValue} index={0}>
-        <Box>
-          <Typography
-            variant="h4"
-            component="h1"
-            fontWeight={"bold"}
-            marginBottom={5}
-          >
-            TF Motif Catalog
-          </Typography>
-          <Typography variant="body1">
-            Motifs discovered using MEME on ChIP-seq experiments and the ZMotif
-            neural network on HT-SELEX experiments. The catalog contains more
-            than 6,000 motifs for each (with some redundancy).
-          </Typography>
-        </Box>
-        <Divider />
-        <Grid2 container sx={{ mt: 5 }}>
-          <Grid2 size={8}>
-            <Stack spacing={2}>
-              <Typography variant="h6">
-                MEME ChIP-seq Catalog
-                <Tooltip
-                  title={`
-                    These motifs were identified by applying MEME to the top 500 IDR thresholded ChIP-seq peaks from more than 3,000 ENCODE
-                    ChIP-seq experiments. Five motifs were identified per experiment; these were subsequently filtered for quality using peak
-                    centrality and enrichment metrics
-                  `}
-                >
-                  <InfoIcon sx={{ ml: 1 }} />
-                </Tooltip>
-              </Typography>
-              <Stack direction={"row"} spacing={2}>
-                <Typography variant="body2">
-                  6,069 Motifs
-                </Typography>
-                <Typography variant="body2">
-                  733 Transcription Factors
-                </Typography>
-              </Stack>
-              <Stack direction={"row"} spacing={2}>
-                <StyledButton
-                  href="/motifscatlog/factorbook_chipseq_meme_motifs.tsv"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Download Motifs in MEME Format</strong>
-                    </>
-                  }
-                  secondaryText="1 MB"
-                />
-                <StyledButton
-                  href="/motifscatlog/complete-factorbook-catalog.meme.gz"
-                  text={
-                    <>
-                      <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                      <strong>Download Metadata in TSV Format</strong>
-                    </>
-                  }
-                  secondaryText="2.9 MB"
-                />
-              </Stack>
-            </Stack>
-          </Grid2>
-          <Grid2 size={4}>
-            <Stack spacing={2}>
-              <Typography variant="h6">
-                HT-SELEX Catalog
-                <Tooltip
-                  title={`
-                    These motifs were identified by applying the ZMotif neural network to reads from HT-SELEX experiments and negative reads generated
-                    by dinucleotide shuffling of true positive reads. The motif identified by the network as most predictive of positive reads for each
-                    experiment is contained in this set. HDF5 format motifs can be loaded into Python for application in new models.
-                  `}
-                >
-                  <InfoIcon sx={{ ml: 1 }} />
-                </Tooltip>
-              </Typography>
-              <Stack direction={"row"} spacing={2}>
-                <Typography variant="body2">
-                  6,700 Motifs
-                </Typography>
-                <Typography variant="body2">
-                  631 Transcription Factors
-                </Typography>
-              </Stack>
-              <StyledButton
-                href="/motifscatlog/all-selex-motifs.meme.gz"
-                text={
-                  <>
-                    <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                    <strong>Download Motifs in MEME Format</strong>
-                  </>
-                }
-                secondaryText="1 MB"
-              />
-            </Stack>
-          </Grid2>
-        </Grid2>
+        <TfMotifCatalogDownloads />
       </TabPanel>
       {/* Genomic Motif Sites Tab */}
       <TabPanel value={tabValue} index={1}>
@@ -234,7 +142,7 @@ const DownloadPage: React.FC = () => {
                 <Alert severity="warning">
                   <b>This catalog contains sites of MEME motifs from ChIP-seq
                     datasets identified within ChIP-seq peaks using FIMO.</b>{" "}
-                  <a href="#" style={{ textDecoration: "underline" }}>See here</a> for a list of cell types in which these
+                  <MuiLink component={Link} href="/tf/human?tab=1" style={{ textDecoration: "underline" }}>See here</MuiLink> for a list of cell types in which these
                   ChIP-seq peaks were identified. <b>Regulatory motif sites in cell
                     types biologically distinct from well-profiled cell types might
                     not be contained in this catalog!</b>
@@ -247,39 +155,24 @@ const DownloadPage: React.FC = () => {
                 </Typography>
                 <Grid2 container columnSpacing={2}>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="Lenient set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-4</sup> (46 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.merged.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>Lenient set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-4</sup> (46 MB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="Moderate set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-5</sup> (45 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.merged.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>Moderate set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup> (45 MB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="Stringent set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup> (44 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.merged.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>Stringent set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (44 MB)</p>}
                     />
                   </Grid2>
                 </Grid2>
@@ -291,39 +184,24 @@ const DownloadPage: React.FC = () => {
                 </Typography>
                 <Grid2 container columnSpacing={2}>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="Lenient set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-4</sup> (758 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>Lenient set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-4</sup> (758 MB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="Moderate set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-5</sup> (684 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>Moderate set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup> (684 MB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="Stringent set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup> (653 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>Stringent set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (653 MB)</p>}
                     />
                   </Grid2>
                 </Grid2>
@@ -348,7 +226,7 @@ const DownloadPage: React.FC = () => {
                 <Alert severity="warning">
                   <b>This catalog contains sites of MEME motifs and HT-SELEX motifs
                     identified within rDHSs from the ENCODE Registry of cCREs using
-                    FIMO.</b> <a href="#" style={{ textDecoration: "underline" }}>Click here</a> for more information on the
+                    FIMO.</b> <MuiLink component={Link} href="https://screen.wenglab.org/about">Click here</MuiLink> for more information on the
                   Registry of cCREs.
                 </Alert>
                 <Typography
@@ -359,75 +237,45 @@ const DownloadPage: React.FC = () => {
                 </Typography>
                 <Grid2 container spacing={2}>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="MEME: Lenient set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup> (47 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.merged.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>MEME: Lenient set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (47 MB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="MEME: Moderate set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-7</sup> (19 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.merged.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>MEME: Moderate set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-7</sup> (19 MB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="MEME: Stringent set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-8</sup> (11 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.merged.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>MEME: Stringent set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-8</sup> (11 MB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="HT-SELEX: Lenient set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-5</sup> (57 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-5.merged.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>HT-SELEX: Lenient set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup> (57 MB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="HT-SELEX: Moderate set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup> (12 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-6.merged.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>HT-SELEX: Moderate set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (12 MB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="HT-SELEX: Stringent set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-7</sup> (2 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-7.merged.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>HT-SELEX: Stringent set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-7</sup> (2 MB)</p>}
                     />
                   </Grid2>
                 </Grid2>
@@ -439,75 +287,42 @@ const DownloadPage: React.FC = () => {
                 </Typography>
                 <Grid2 container spacing={2}>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="MEME: Lenient set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup> (2.9 GB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>Lenient set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup> (2.9 GB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="MEME: Moderate set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-7</sup> (1.5 GB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>Moderate set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-7</sup> (1.5 GB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
+                    <StackedDownloadButton
+                      topText="MEME: Stringent set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-8</sup> (885 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>Stringent set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-8</sup> (885 MB)</p>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
-                      href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>HT-SELEX: Lenient set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-5</sup></p>}
+                    <StackedDownloadButton
+                      topText="HT-SELEX: Lenient set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup></Typography>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
-                      href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>HT-SELEX: Moderate set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-6</sup></p>}
+                    <StackedDownloadButton
+                      topText="HT-SELEX: Moderate set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-7</sup></Typography>}
                     />
                   </Grid2>
                   <Grid2 size={4}>
-                    <StyledButton
-                      href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
-                      text={
-                        <>
-                          <SaveAltIcon sx={{ verticalAlign: "middle", mr: 1 }} />
-                          <strong>HT-SELEX: Stringent set</strong>
-                        </>
-                      }
-                      secondaryText={<p>FIMO p-value {'<'} 10<sup>-7</sup></p>}
+                    <StackedDownloadButton
+                      topText="HT-SELEX: Stringent set"
+                      bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-8</sup></Typography>}
                     />
                   </Grid2>
                 </Grid2>

@@ -1,9 +1,8 @@
 "use client";
 
 import React, { isValidElement, cloneElement, ReactElement } from "react";
-import { Box, Stack, Typography, useMediaQuery, useTheme, Grid2 } from "@mui/material";
+import { Box, Stack, Typography, useMediaQuery, useTheme, Grid2, Button } from "@mui/material";
 import Image from "next/image";
-import StyledButton from "@/components/styledbutton";
 import { SelectComponentProps } from "@/components/select";
 
 interface PortalPanelProps {
@@ -108,15 +107,17 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
               {description}
             </Typography>
             {buttonText && (
-              <StyledButton
-                text={buttonText}
+              <Button
+                variant="contained"
                 href={buttonHref}
                 sx={{
-                  width:"auto",
+                  width: "auto",
                   display: isSmallScreen ? "block" : "inline-block",
                   ml: isSmallScreen ? 0 : 2,
                 }}
-              />
+              >
+                {buttonText}
+              </Button>
             )}
             {clonedSelectComponent}
           </Stack>

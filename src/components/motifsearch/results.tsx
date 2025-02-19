@@ -2,7 +2,7 @@ import React from "react";
 import { RawLogo, DNAAlphabet } from "logojs-react";
 import Link from "next/link";
 import { TOMTOMMessage } from "../motifmeme/tomtommessage";
-import { Box, useMediaQuery, useTheme } from "@mui/material";
+import { Box, useMediaQuery, useTheme, Link as MuiLink } from "@mui/material";
 import { MotifInfoProps, MotifMatchProps, MotifResultProps } from "./types";
 
 // Set custom DNA alphabet colors
@@ -89,34 +89,37 @@ export const MotifInfo: React.FC<MotifInfoProps> = ({
 }) => {
   return (
     <>
-      <Link
+      <MuiLink
+        component={Link}
         style={{ color: "#8169BF" }}
         rel="noopener noreferrer"
         target="_blank"
         href={`/tf/human/${target}/function`}
       >
         <strong>{target}</strong>
-      </Link>{" "}
+      </MuiLink>{" "}
       in{" "}
-      <Link
+      <MuiLink
+        component={Link}
         style={{ color: "#8169BF" }}
         rel="noopener noreferrer"
         target="_blank"
         href={`/ct/human/${biosample}`}
       >
         <strong>{biosample}</strong>
-      </Link>
+      </MuiLink>
       <br />
       {labName} lab
       <br />
-      <Link
+      <MuiLink
+        component={Link}
         style={{ color: "#8169BF" }}
         rel="noopener noreferrer"
         target="_blank"
         href={`/tf/human/${target}/motif/${accession}`}
       >
         {accession}
-      </Link>
+      </MuiLink>
     </>
   );
 };

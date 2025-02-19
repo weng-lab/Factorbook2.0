@@ -23,15 +23,12 @@ const AnnotationDetailPage = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
-  const [loadingChains, setLoadingChains] = useState(false);
   const [chainFile, setChainFile] = useState<ChainFile | undefined>(undefined);
 
   useEffect(() => {
-    setLoadingChains(true);
     chainFileFetch().then(
       (loadedChainFile: React.SetStateAction<ChainFile | undefined>) => {
         setChainFile(loadedChainFile);
-        setLoadingChains(false);
       }
     );
   }, []);

@@ -99,14 +99,15 @@ const Transition = React.forwardRef(function Transition(
 });
 
 interface FullScreenDialogProps {
+  open: boolean,
+  onClose: () => void,
   species: string,
   consensusRegex: string,
   experimentID: string | null,
   fileID: string | null
 }
 
-export default function FullScreenDialog({ species, consensusRegex, experimentID, fileID }: FullScreenDialogProps) {
-  const [sitesOpen, setSitesOpen] = useState(false); // for show genome sites button
+export default function FullScreenDialog({ species, consensusRegex, experimentID, fileID, open, onClose }: FullScreenDialogProps) {
   const [currentTab, setcurrentTab] = useState<number>(0); // for popup tabs
   const [regions, setRegions] = useState<GenomicRange[]>([]);
 
@@ -126,24 +127,10 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
   });
 
   return (
-    <>
-      <Button
-        variant="outlined"
-        startIcon={<LanguageIcon />}
-        sx={{
-          borderRadius: "20px",
-          borderColor: "#8169BF",
-          color: "#8169BF",
-          backgroundColor: "white",
-        }}
-        onClick={() => setSitesOpen(true)}
-      >
-        Show Genomic Sites
-      </Button>
       <Dialog
         fullScreen
-        open={sitesOpen}
-        onClose={() => setSitesOpen(false)}
+        open={open}
+        onClose={onClose}
         TransitionComponent={Transition}
       >
         <AppBar sx={{ position: 'relative' }}>
@@ -151,7 +138,7 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
             <IconButton
               edge="start"
               color="inherit"
-              onClick={() => setSitesOpen(false)}
+              onClick={onClose}
               aria-label="close"
             >
               <CloseIcon />
@@ -239,7 +226,6 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
           </TabPanel>
         </Box>
       </Dialog>
-    </>
   );
 }
 
