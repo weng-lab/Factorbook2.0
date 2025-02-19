@@ -4,13 +4,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import {
   Box,
-  Button,
   Typography,
-  Divider,
   Select,
   MenuItem,
-  Breadcrumbs,
-  Link,
   CircularProgress,
   Grid,
   useMediaQuery,
@@ -20,8 +16,6 @@ import PeakIntersectionView from "../../../peakintersection";
 import MotifIntersectionView from "../../../motifintersection";
 import { useSNPData } from "../../../../../hooks";
 import { ChainFile } from "liftover";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import { chainFileFetch } from "../../../chainfilefetch";
 
 const AnnotationDetailLD = () => {
@@ -29,15 +23,12 @@ const AnnotationDetailLD = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
-  const [loadingChains, setLoadingChains] = useState(false);
   const [chainFile, setChainFile] = useState<ChainFile | undefined>(undefined);
 
   useEffect(() => {
-    setLoadingChains(true);
     chainFileFetch().then(
       (loadedChainFile: React.SetStateAction<ChainFile | undefined>) => {
         setChainFile(loadedChainFile);
-        setLoadingChains(false);
       }
     );
   }, []);

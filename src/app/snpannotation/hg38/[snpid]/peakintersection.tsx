@@ -7,6 +7,7 @@ import {
   CircularProgress,
   useMediaQuery,
   useTheme,
+  Link as MuiLink
 } from "@mui/material";
 import { PEAK_QUERY } from "../../queries";
 import { useApolloClient } from "@apollo/client";
@@ -94,12 +95,12 @@ const COMPLETE_PEAK_TABLE_COLUMNS: DataTableColumn<PeakWithSNP>[] = [
     value: (x) => x.dataset?.target || "",
     render: (x) =>
       x.dataset?.target ? (
-        <Link
+        <MuiLink
+          component={Link}
           href={tfRoute("human", x.dataset.target)}
-          style={{ color: theme.palette.link.main }}
         >
           {x.dataset.target}
-        </Link>
+        </MuiLink>
       ) : (
         ""
       ),
@@ -109,12 +110,12 @@ const COMPLETE_PEAK_TABLE_COLUMNS: DataTableColumn<PeakWithSNP>[] = [
     value: (x) => x.experiment_accession || "",
     render: (x) =>
       x.experiment_accession ? (
-        <a
+        <MuiLink
+          component={Link}
           href={`https://www.encodeproject.org/experiments/${x.experiment_accession}`}
-          style={{ color: theme.palette.link.main  }}
         >
           {x.experiment_accession}
-        </a>
+        </MuiLink>
       ) : (
         ""
       ),

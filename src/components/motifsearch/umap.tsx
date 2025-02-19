@@ -8,7 +8,6 @@ import React, {
 import { ungzip } from "pako";
 import {
   Button,
-  CircularProgress,
   Typography,
   Box,
   Grid,
@@ -18,6 +17,7 @@ import {
   Stack,
   Tooltip,
   IconButton,
+  Link as MuiLink
 } from "@mui/material";
 import {
   Visibility,
@@ -26,9 +26,7 @@ import {
   PanTool,
   Edit,
   HighlightAlt,
-  Padding,
 } from "@mui/icons-material";
-import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import {
   DataTable,
   DataTableColumn,
@@ -134,7 +132,8 @@ const COLUMNS = (title: string): DataTableColumn<MMotif>[] => {
       header: "Assayed TF",
       value: (x: MMotif) => x.factor.split("phospho")[0],
       render: (x: MMotif) => (
-        <Link
+        <MuiLink
+          component={Link}
           style={{ color: "#8169BF" }}
           href={`/tf/human/${x.factor.split("phospho")[0]
             }/function`}
@@ -142,7 +141,7 @@ const COLUMNS = (title: string): DataTableColumn<MMotif>[] => {
           target="_blank"
         >
           {x.factor}
-        </Link>
+        </MuiLink>
       ),
     },
     {
@@ -151,14 +150,15 @@ const COLUMNS = (title: string): DataTableColumn<MMotif>[] => {
       render: (x: MMotif) => {
         if (title === "selex") return <>{x.accession}</>;
         return (
-          <Link
+          <MuiLink
+            component={Link}
             style={{ color: "#8169BF" }}
             href={`https://www.encodeproject.org/experiments/${x.accession}`}
             rel="noopener noreferrer"
             target="_blank"
           >
             {x.accession}
-          </Link>
+          </MuiLink>
         );
       },
     },
