@@ -12,7 +12,7 @@ const TranscriptionTabs = dynamic(
 
 type ContentType = "human" | "mouse";
 
-const TranscriptionFactorsPage: React.FC = () => {
+export default function TranscriptionFactorsPage({searchParams}: {searchParams: { [key: string]: string | string[] | undefined }}) {
   const pathname = usePathname();
   const type = pathname.split("/").pop() as ContentType;
 
@@ -79,9 +79,7 @@ const TranscriptionFactorsPage: React.FC = () => {
         image={image}
         assembly={assembly}
       />
-      <TranscriptionTabs species={type} />
+      <TranscriptionTabs species={type} initialTab={searchParams?.tab === "1" ? 1 : 0}  />
     </>
   );
 };
-
-export default TranscriptionFactorsPage;

@@ -31,7 +31,7 @@ export function useSNPData(id: string, assembly: string, population?: string, su
         variables: {
             snpids: id,
             assembly,
-            population,
+            population: population,
             subpopulation: subpopulation === 'NONE' ? undefined : subpopulation,
         },
         skip: !chainFile,
