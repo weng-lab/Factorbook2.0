@@ -8,10 +8,8 @@ import React, {
 import { ungzip } from "pako";
 import {
   Button,
-  CircularProgress,
   Typography,
   Box,
-  Grid,
   Alert,
   useMediaQuery,
   useTheme,
@@ -21,17 +19,12 @@ import {
 } from "@mui/material";
 import {
   Visibility,
-  ZoomIn,
-  ZoomOut,
-  PanTool,
-  Edit,
-  HighlightAlt,
-  Padding,
 } from "@mui/icons-material";
-import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import {
   DataTable,
   DataTableColumn,
+  ScatterPlot,
+  Point
 } from "@weng-lab/psychscreen-ui-components";
 import { DNALogo } from "logojs-react";
 import { downloadSVG } from "@/components/tf/geneexpression/utils";
@@ -42,8 +35,9 @@ import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import Link from "next/link";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Chart, Point, MetaData } from "./scatterplot";
+import { MetaData } from "./types";
 import LoadingMemeUmap from "@/app/motif/human/meme-umap/loading";
+import Grid from "@mui/material/Grid2"
 
 // Color definitions
 const colors = {
@@ -96,7 +90,7 @@ const MotifRow: React.FC<MMotif> = (x) => {
   return (
     <Grid container spacing={2} alignItems="center">
       {/* Left-side Buttons */}
-      <Grid item xs={2}>
+      <Grid size={2}>
         <Tooltip title="Reverse Complement">
           <IconButton onClick={handleReverseComplement}>
             <SwapHorizIcon />
@@ -114,7 +108,7 @@ const MotifRow: React.FC<MMotif> = (x) => {
       </Grid>
 
       {/* DNA Logo */}
-      <Grid item xs={10}>
+      <Grid size={10}>
         <DNALogo ppm={formattedPWM} height={100} ref={r} />
       </Grid>
     </Grid>
@@ -194,6 +188,7 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
       y: x.coordinates[1],
       r: 2,
       color: x.color,
+      shape: "circle",
       opacity:
         selection.length === 0
           ? 1
@@ -292,16 +287,15 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
   const graphRef = useRef<HTMLDivElement>(null);
   const graphContainerRef = useRef<HTMLDivElement>(null);
 
-  const map = useMemo(() => {
-    return {
-      show: showMiniMap,
-      position: {
-        right: 50,
-        bottom: 50,
-      },
-      ref: graphContainerRef,
-    };
-  }, [showMiniMap]);
+  const map = {
+    show: true,
+    defaultOpen: true,
+    position: {
+      right: 50,
+      bottom: 50,
+    },
+    ref: graphContainerRef
+  };
 
   useEffect(() => {
     const graphElement = graphRef.current;
@@ -360,213 +354,104 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
         </Typography>
       </Alert>
       <br />
-      <Grid container spacing={1} alignItems={"flex-start"}>
-        <Grid xs={4}>
-          <ParentSize>
-            {({ width, height }) => {
-              const squareSize = Math.min(width, height);
+      <Grid container spacing={5} alignItems={"flex-start"}>
+        <Grid size={isMobile || isTablet ? 12 : 6}>
+          <Stack overflow={"hidden"} padding={1} sx={{ border: '2px solid', borderColor: 'grey.400', borderRadius: '8px', height: '57vh', position: 'relative' }} ref={graphContainerRef}>
+            <Stack direction="row" justifyContent="space-between" mt={1} sx={{ backgroundColor: '#dbdefc', borderRadius: '8px', zIndex: 10 }}>
+              <Button endIcon={selection.length !== 0 && <Visibility />}>
+                {`${selection.length} Motifs Selected`}
+              </Button>
+              <Button onClick={() => setSelection([])}>Clear Selection</Button>
+            </Stack>
+            <ParentSize>
+              {({ width, height }) => {
+                const squareSize = Math.min(width, height);
 
-              return (
-                <Stack
-                  overflow={"hidden"}
-                  padding={1}
-                  sx={{
-                    border: "2px solid",
-                    borderColor: "grey.400",
-                    borderRadius: "8px",
-                    height: "57vh",
-                    width: "45vw", // Increased height for larger plot area
-                    position: "relative",
-                  }}
-                  ref={graphContainerRef}
-                >
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    mt={1}
-                    sx={{
-                      backgroundColor: "#dbdefc",
-                      borderRadius: "8px",
-                      zIndex: 10,
+                return (
+                  <ScatterPlot
+                    width={squareSize}
+                    height={squareSize}
+                    pointData={scatterData}
+                    loading={umapLoading}
+                    selectable={true}
+                    onSelectionChange={handleSelectionChange}
+                    miniMap={map}
+                    leftAxisLable="UMAP-2"
+                    bottomAxisLabel="UMAP-1"
+                    tooltipBody={(point) => {
+                      const formattedPWM = point.metaData?.pwm
+                        ? formatPWM(point.metaData.pwm)
+                        : null;
+                      return (
+                        <Box sx={{ textAlign: "center", p: 1 }}>
+                          {formattedPWM && (
+                            <DNALogo ppm={formattedPWM} height={100} />
+                          )}
+                          {point.metaData?.tooltipValues && (
+                            <>
+                              <Typography variant="body2">
+                                <strong>Accession:</strong>{" "}
+                                {point.metaData.tooltipValues.accession}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>DBD:</strong>{" "}
+                                {point.metaData.tooltipValues.dbd}
+                              </Typography>
+                              <Typography variant="body2">
+                                <strong>Factor:</strong>{" "}
+                                {point.metaData.tooltipValues.factor}
+                              </Typography>
+                            </>
+                          )}
+                        </Box>
+                      );
                     }}
-                  >
-                    <Button endIcon={selection.length !== 0 && <Visibility />}>
-                      {`${selection.length} Motifs Selected`}
-                    </Button>
-                    <Button onClick={() => setSelection([])}>Clear Selection</Button>
-                  </Stack>
-                  <Stack
-                    direction="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    sx={{ position: "relative", maxHeight: 800 }} // Increased max height
-                  >
-                    <Box sx={{ width: squareSize, height: squareSize }} ref={graphRef}>
-                      <Chart
-                        width={squareSize} // Increased width
-                        height={squareSize} // Increased height
-                        pointData={scatterData}
-                        loading={umapLoading}
-                        selectionType={selectMode}
-                        onSelectionChange={handleSelectionChange}
-                        zoomScale={zoom}
-                        miniMap={map}
-                        leftAxisLable="UMAP-2"
-                        bottomAxisLabel="UMAP-1"
-                        tooltipBody={(point) => {
-                          const formattedPWM = point.metaData?.pwm
-                            ? formatPWM(point.metaData.pwm)
-                            : null;
-                          return (
-                            <Box sx={{ textAlign: "center", p: 1 }}>
-                              {formattedPWM && (
-                                <DNALogo ppm={formattedPWM} height={100} />
-                              )}
-                              {point.metaData?.tooltipValues && (
-                                <>
-                                  <Typography variant="body2">
-                                    <strong>Accession:</strong>{" "}
-                                    {point.metaData.tooltipValues.accession}
-                                  </Typography>
-                                  <Typography variant="body2">
-                                    <strong>DBD:</strong>{" "}
-                                    {point.metaData.tooltipValues.dbd}
-                                  </Typography>
-                                  <Typography variant="body2">
-                                    <strong>Factor:</strong>{" "}
-                                    {point.metaData.tooltipValues.factor}
-                                  </Typography>
-                                </>
-                              )}
-                            </Box>
-                          );
-                        }}
-                      />
-                    </Box>
-                  </Stack>
-
-                  <Stack
-                    direction="column"
-                    justifyContent="flex-start"
-                    alignItems="center"
-                    spacing={5}
-                    sx={{
-                      position: "absolute",
-                      left: 3,
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                    }}
-                  >
-                    <Tooltip title="Drag to select">
-                      <IconButton
-                        aria-label="edit"
-                        onClick={() => setSelectMode("select")}
-                        sx={{
-                          color: selectMode === "select" ? "primary.main" : "default",
-                        }}
-                      >
-                        <Edit />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Drag to pan, or hold Shift and drag">
-                      <IconButton
-                        aria-label="pan"
-                        onClick={() => setSelectMode("pan")}
-                        sx={{
-                          color: selectMode === "pan" ? "primary.main" : "default",
-                        }}
-                      >
-                        <PanTool />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Zoom In">
-                      <IconButton aria-label="zoom-in" onClick={handleZoomIn}>
-                        <ZoomIn />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Zoom Out">
-                      <IconButton aria-label="zoom-out" onClick={handleZoomOut}>
-                        <ZoomOut />
-                      </IconButton>
-                    </Tooltip>
-                    <Button
-                      sx={{ height: "30px", textTransform: "none" }}
-                      size="small"
-                      variant="outlined"
-                      onClick={handleReset}
-                    >
-                      Reset
-                    </Button>
-                  </Stack>
-                  <Tooltip title="Toggle Minimap">
-                    <IconButton
-                      sx={{
-                        position: "absolute",
-                        right: 10,
-                        bottom: 10,
-                        zIndex: 10,
-                        width: "auto",
-                        height: "auto",
-                        color: showMiniMap ? "primary.main" : "default",
-                      }}
-                      size="small"
-                      onClick={toggleMiniMap}
-                    >
-                      <HighlightAlt />
-                    </IconButton>
-                  </Tooltip>
-                </Stack>
-              )
-            }}
-          </ParentSize>
-        </Grid>
-        <Grid
-          container
-          xs={12}
-          sm={5.5}
-          ml={isMobile ? "auto" : isTablet ? "auto" : "auto"} // Adjust spacing dynamically
-        >
-          <Grid item xs={12}>
-            <Box
-              sx={{
-                maxHeight: isMobile ? "auto" : "auto", // Adjust height for mobile and desktop
-                overflow: isMobile ? "auto" : "auto", // Enable scrolling for smaller screens
-                border: "1px solid",
-                borderRadius: "8px",
-                padding: isMobile ? 1 : 2,
-                backgroundColor: isMobile ? "#f9f9f9" : "inherit", // Optional: Set a background color for clarity
+                  />
+                )
               }}
-            >
-              <div style={{ fontSize: isMobile ? "10px" : "14px" }}>
-                <DataTable
-                  columns={COLUMNS(props.title)} // Use fewer columns if needed on mobile
-                  rows={selection}
-                  emptyText="Drag on the UMAP to make a selection"
-                  itemsPerPage={isMobile ? 3 : 5} // Adjust items per page for smaller screens
-                  sortColumn={1}
-                  tableTitle="Motifs"
-                />
-              </div>
+            </ParentSize>
+          </Stack>
+        </Grid>
+        <Grid size={isMobile || isTablet ? 12 : 6}>
+          <Box
+            sx={{
+              maxHeight: isMobile ? "auto" : "auto", // Adjust height for mobile and desktop
+              overflow: isMobile ? "auto" : "auto", // Enable scrolling for smaller screens
+              border: "1px solid",
+              borderRadius: "8px",
+              padding: isMobile ? 1 : 2,
+              backgroundColor: isMobile ? "#f9f9f9" : "inherit", // Optional: Set a background color for clarity
+            }}
+          >
+            <div style={{ fontSize: isMobile ? "10px" : "14px" }}>
+              <DataTable
+                columns={COLUMNS(props.title)} // Use fewer columns if needed on mobile
+                rows={selection}
+                emptyText="Drag on the UMAP to make a selection"
+                itemsPerPage={isMobile ? 3 : 5} // Adjust items per page for smaller screens
+                sortColumn={1}
+                tableTitle="Motifs"
+              />
+            </div>
 
-              {selection.length > 0 && (
-                <Button
-                  variant="contained"
-                  sx={{
-                    borderRadius: "20px",
-                    backgroundColor: "#8169BF",
-                    color: "white",
-                    marginTop: isMobile ? 2 : 4,
-                    width: isMobile ? "100%" : "auto", // Make the button full width on mobile
-                  }}
-                  onClick={() =>
-                    downloadData(meme(selection), "motif-collection.meme")
-                  }
-                >
-                  Download these motifs
-                </Button>
-              )}
-            </Box>
-          </Grid>
+            {selection.length > 0 && (
+              <Button
+                variant="contained"
+                sx={{
+                  borderRadius: "20px",
+                  backgroundColor: "#8169BF",
+                  color: "white",
+                  marginTop: isMobile ? 2 : 4,
+                  width: isMobile ? "100%" : "auto", // Make the button full width on mobile
+                }}
+                onClick={() =>
+                  downloadData(meme(selection), "motif-collection.meme")
+                }
+              >
+                Download these motifs
+              </Button>
+            )}
+          </Box>
         </Grid>
       </Grid>
     </Box>

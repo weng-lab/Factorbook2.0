@@ -47,3 +47,17 @@ export type MotifTableRow = {
     info: ReactElement;
     match: ReactElement;
 };
+
+// Define MetaData to include `tooltipValues` and `pwm` properties
+export interface MetaData {
+    tooltipValues?: {
+      accession: string;
+      dbd: string;
+      factor: string;
+    };
+    pwm: { A: number; C: number; G: number; T: number }[];
+    sites?: number;
+    e?: number;
+    coordinates?: [number, number];
+    color?: string;
+  }
