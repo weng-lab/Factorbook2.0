@@ -164,11 +164,9 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const [selectMode, setSelectMode] = useState<"select" | "pan">("select");
   const [data, setData] = useState<MMotif[]>([]);
   const [selection, setSelection] = useState<MMotif[]>([]);
-  const [zoom, setZoom] = useState({ scaleX: 1, scaleY: 1 });
-  const [showMiniMap, setShowMiniMap] = useState(false);
+  const graphContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch(props.url)
@@ -229,24 +227,6 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
     [data]
   );
 
-  const handleZoomIn = useCallback(() => {
-    setZoom((prevZoom) => ({
-      scaleX: prevZoom.scaleX * 1.2,
-      scaleY: prevZoom.scaleY * 1.2,
-    }));
-  }, []);
-
-  const handleZoomOut = useCallback(() => {
-    setZoom((prevZoom) => ({
-      scaleX: prevZoom.scaleX * 0.8,
-      scaleY: prevZoom.scaleY * 0.8,
-    }));
-  }, []);
-
-  const toggleMiniMap = useCallback(() => {
-    setShowMiniMap((prev) => !prev);
-  }, []);
-
   const handleSelectionChange = (selectedPoints: Point<MetaData>[]) => {
     const selectedData = selectedPoints
       .map((s) => s.metaData as MMotif)
@@ -255,40 +235,7 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
     setSelection(selectedData);
   };
 
-  const handleReset = useCallback(() => {
-    setZoom({
-      scaleX: 1,
-      scaleY: 1,
-    });
-  }, []);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Shift") {
-        setSelectMode("pan");
-      }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "Shift") {
-        setSelectMode("select");
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, []);
-
-  const graphRef = useRef<HTMLDivElement>(null);
-  const graphContainerRef = useRef<HTMLDivElement>(null);
-
   const map = {
-    show: true,
     defaultOpen: true,
     position: {
       right: 50,
@@ -298,7 +245,7 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
   };
 
   useEffect(() => {
-    const graphElement = graphRef.current;
+    const graphElement = graphContainerRef.current;
 
     const handleWheel = (event: WheelEvent) => {
       // Prevent default scroll behavior when using the wheel in the graph
@@ -373,7 +320,7 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
                     height={squareSize}
                     pointData={scatterData}
                     loading={umapLoading}
-                    selectable={true}
+                    selectable
                     onSelectionChange={handleSelectionChange}
                     miniMap={map}
                     leftAxisLable="UMAP-2"
