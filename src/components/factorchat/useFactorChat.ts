@@ -34,7 +34,7 @@ export function useFactorChat() {
       // const endpoint = 'https://factorchat.staging.wenglab.org/api/chat'
       const endpoint =
         apiVersion === 1 ? 'https://factorchat.staging.wenglab.org/api/chat_tools'
-          : 'https://factorchat.staging.wenglab.org/chat_interpreter'
+          : 'https://factorchat.staging.wenglab.org/api/chat_interpreter'
 
       const prompt = {role: "system", contents: systemPrompt }
 
