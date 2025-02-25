@@ -12,7 +12,6 @@ export const MessageBubble = ({ isUser, children }: MessageBubbleProps) => {
     <Paper
       sx={{
         p: 1,
-        margin: 0.5,
         borderRadius: isUser ? '8px 8px 0px 8px' : '8px 8px 8px 0px',
         maxWidth: '75%',
         alignSelf: isUser ? "flex-end" : "flex-start",

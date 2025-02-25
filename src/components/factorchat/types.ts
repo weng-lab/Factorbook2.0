@@ -1,22 +1,36 @@
-export type FactorChatResponse = {
+export type Role = "user" | "assistant" | "tool" | "tool_memory"
+
+export type UserMessage = string
+
+export type BackendMessage = {
   text: string
-  files: {description: string, url: string}[]
-  tool_generated: boolean,
-  thoughts: string,
+  files: { description: string, url: string }[]
   figures: FactorChatFigure[],
+  tool_used?: "RNA_EXPR" | "CHIP_INFO" | "MOTIF_INFO"
   error?: string
 }
 
-
-export type UserMessage = {
-  origin: "user"
-  contents: string
+export type ToolMemory = {
+  tool_calls: {
+    id: string,
+    type: string,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[]
 }
 
-export type BackendMessage = {
-  origin: "backend"
-  contents: FactorChatResponse
+export type Contents<T extends Role> = T extends "user" ? UserMessage : T extends "tool_memory" ? ToolMemory : BackendMessage
+
+export type Message<T extends Role> = {
+  role: T,
+  contents: Contents<T>
 }
+
+export type BackendResponse = Message<"assistant" | "tool" | "tool_memory">[]
+
+export type Conversation = Message<Role>[]
 
 export type MotifFigureData = {
   ppm: number[][];
@@ -38,5 +52,3 @@ export type MotifFigure = {
 }
 
 export type FactorChatFigure = (MotifFigure) //Add union type when more supported
-
-export type FactorChatMessage = UserMessage | BackendMessage

@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { FactorChatMessage, FactorChatResponse } from "./types";
+import { BackendMessage, BackendResponse, Conversation } from "./types";
+import { exampleResponse } from "./exampleResponse";
+import { defaultPrompt1 } from "./helpers";
 
 export function useFactorChat() {
-  const [messages, setMessages] = useState<FactorChatMessage[]>([])
-  /**
-   * I could prepend a message here explaining everything
-   */
+  const [messages, setMessages] = useState<Conversation>([])
   const [input, setInput] = useState<string>('')
   const [loading, setLoading] = useState(false)
+  const [apiVersion, setApiVersion] = useState<1 | 2>(1)
+  const [systemPrompt, setSystemPrompt] = useState<string>(defaultPrompt1)
 
   // handles text box state
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -19,7 +20,7 @@ export function useFactorChat() {
     event.preventDefault()
 
     // append user message to end of array
-    const newMessages: FactorChatMessage[] = [...messages, { origin: 'user', contents: input }]
+    const newMessages: Conversation = [...messages, { role: 'user', contents: input }]
     setMessages(newMessages)
 
     // clear text box
@@ -29,33 +30,41 @@ export function useFactorChat() {
     try {
       setLoading(true)
 
-      const res = await fetch('https://factorchat.staging.wenglab.org/api/chat', {
+      // const endpoint = 'http://127.0.0.1:8000/api/chat'
+      // const endpoint = 'https://factorchat.staging.wenglab.org/api/chat'
+      const endpoint =
+        apiVersion === 1 ? 'https://factorchat.staging.wenglab.org/api/chat_tools'
+          : 'https://factorchat.staging.wenglab.org/chat_interpreter'
+
+      const prompt = {role: "system", contents: systemPrompt }
+
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newMessages)
+        body: JSON.stringify([prompt, ...newMessages])
       })
 
       if (!res.ok) {
         throw new Error(`HTTP error status: ${res.status}`);
       }
 
-      const backendMessage: FactorChatResponse = await res.json()
+      const backendResponse: BackendResponse = await res.json()
 
-      setMessages([...newMessages, { origin: "backend", contents: backendMessage }])
+      setMessages([...newMessages, ...backendResponse])
+
+      // setMessages([...newMessages, ...exampleResponse])
 
     } catch (error) {
       console.error('Error:\n', error)
-      const errorMsg: FactorChatResponse = {
-        text: "Something went wrong", //probably should handle displaying actual error,
+      const errorMsg: BackendMessage = {
+        text: "Something went wrong",
         figures: [],
         files: [],
-        tool_generated: false,
-        thoughts: "",
         error: error instanceof Error ? error.message : 'Unexpected error',
       }
-      setMessages([...newMessages, { origin: "backend", contents: errorMsg }])
+      setMessages([...newMessages, { role: "assistant", contents: errorMsg }])
     }
     
     setLoading(false)
@@ -84,6 +93,10 @@ export function useFactorChat() {
     handleSubmit,
     messages,
     setMessages,
+    apiVersion,
+    setApiVersion,
+    systemPrompt,
+    setSystemPrompt,
     handleClearMessages,
     handleDownloadMessages,
     loading

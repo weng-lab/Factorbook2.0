@@ -1,20 +1,33 @@
 'use client'
-import { Button, Stack, TextField, Tooltip, Typography } from "@mui/material";
+import { Button, Stack, TextField, Tooltip } from "@mui/material";
 import { Refresh, Download, Send } from "@mui/icons-material";
-import { FactorChatMessage } from "./types";
-import { Message } from "./Message";
+import { MessageComponent } from "./MessageComponent";
 import { LoadingMessage } from "./LoadingMessage";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, SetStateAction } from "react";
 import { useFactorChat } from "./useFactorChat";
 import { MessageBubble } from "./MessageBubble";
-import MuiMarkdown from "mui-markdown";
+import { MuiMarkdown } from "mui-markdown";
+import ConfigureChat from "./ConfigureChat";
 
 type ChatDisplayProps = {
   mode: "window" | "page"
 }
 
 export default function ChatDisplay(props: ChatDisplayProps) {
-  const { input, handleInputChange, handleSubmit, messages, setMessages, loading, handleClearMessages, handleDownloadMessages } = useFactorChat();
+  const {
+    input,
+    handleInputChange,
+    handleSubmit,
+    messages,
+    setMessages,
+    apiVersion,
+    setApiVersion,
+    systemPrompt,
+    setSystemPrompt,
+    loading,
+    handleClearMessages,
+    handleDownloadMessages
+  } = useFactorChat();
 
   const messageRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -31,7 +44,7 @@ export default function ChatDisplay(props: ChatDisplayProps) {
     const container = messageRef.current;
     if (!container) return;
 
-    const shouldScroll = messages.at(-1)?.origin === "user";
+    const shouldScroll = messages.at(-1)?.role === "user";
     if (shouldScroll) container.scrollTop = container.scrollHeight;
   }, [messages]);
 
@@ -39,19 +52,27 @@ export default function ChatDisplay(props: ChatDisplayProps) {
     `######Hi there!\nI am FactorChat, a tool-augmented LLM that can help you answer questions about transcription factors and navigate FactorBook. It has access to tools to find motifs, binding sites, and RNA expression levels of transcription factors. For questions that I cannot answer using these tools, I will attempt to answer using my general knowledge. Responses are annotated depending on which tool I used to generate the response.`
 
   return (
-    <Stack height="100%">
-      <Stack ref={messageRef} gap={2} flexGrow={1} overflow={"auto"}>
+    <Stack gap={1} boxSizing={"border-box"} p={1}>
+      <ConfigureChat
+        apiVersion={apiVersion}
+        setApiVersion={setApiVersion}
+        systemPrompt={systemPrompt}
+        setSystemPrompt={setSystemPrompt}
+        handleClearMessages={handleClearMessages}
+      />
+      <Stack ref={messageRef} gap={2} flexGrow={1} minHeight={"300px"} maxHeight={'700px'} overflow={"auto"}>
         <MessageBubble isUser={false}>
           <MuiMarkdown>
             {initialMessage}
           </MuiMarkdown>
         </MessageBubble>
-        {messages.map((message: FactorChatMessage, i) => (
-          <Message {...message} key={"message-" + i} />
+        {messages.map((message, i) => (
+          message.role === "tool_memory" ? null :
+            <MessageComponent {...message} key={"message-" + i} />
         ))}
         {loading && <LoadingMessage />}
       </Stack>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flexGrow: 0 }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', flexGrow: 0, gap: '8px' }}>
         <TextField
           inputRef={inputRef}
           placeholder={"Ask a question to FactorChat"}
@@ -65,7 +86,7 @@ export default function ChatDisplay(props: ChatDisplayProps) {
             }
           }}
         />
-        <Stack direction={"row"} justifyContent={"space-between"} mt={1}>
+        <Stack direction={"row"} justifyContent={"space-between"}>
           <Button
             variant="contained"
             type="submit"
