@@ -60,7 +60,7 @@ export default function ChatDisplay(props: ChatDisplayProps) {
         setSystemPrompt={setSystemPrompt}
         handleClearMessages={handleClearMessages}
       />
-      <Stack ref={messageRef} gap={2} flexGrow={1} minHeight={"300px"} maxHeight={'700px'} overflow={"auto"}>
+      <Stack ref={messageRef} gap={2} flexGrow={1} minHeight={"300px"} maxHeight={'700px'} overflow={"auto"} pb={0.5}>
         <MessageBubble isUser={false}>
           <MuiMarkdown>
             {initialMessage}
