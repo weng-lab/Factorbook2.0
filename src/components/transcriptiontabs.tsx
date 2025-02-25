@@ -3,12 +3,21 @@
 import * as React from "react";
 import { Box, Tabs, Tab } from "@mui/material";
 import dynamic from "next/dynamic";
+import { usePathname, useRouter } from "next/navigation";
 
 const TfDetails = dynamic(() => import("@/components/tf/tfdetails"));
 const CtPage = dynamic(() => import("@/components/celltype/ctpage"));
 
-const TranscriptionTabs: React.FC<{ species: string }> = ({ species }) => {
-  const [tabValue, setTabValue] = React.useState<number>(0);
+const TranscriptionTabs: React.FC<{ species: string, initialTab: 0 | 1 }> = ({ species, initialTab }) => {
+  const [tabValue, setTabValue] = React.useState<number>(initialTab);
+
+  const router = useRouter()
+  const pathname = usePathname()
+
+  //clear search params from the url once the initial tab is set
+  React.useEffect(() => {
+    router.replace(pathname);
+  }, [])
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -18,6 +27,8 @@ const TranscriptionTabs: React.FC<{ species: string }> = ({ species }) => {
     <Box
       sx={{
         width: "100%",
+        height: "auto",
+        minHeight: "800px",
         maxWidth: "1440px",
         margin: "0 auto",
         padding: "0 24px",
@@ -38,7 +49,7 @@ const TranscriptionTabs: React.FC<{ species: string }> = ({ species }) => {
         />
         <Tab label="Browse all Cell Types" sx={{ textTransform: "none" }} />
       </Tabs>
-      <Box>
+      <Box mb={4}>
         {tabValue === 0 && (
           <TfDetails
             species={species}

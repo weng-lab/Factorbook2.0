@@ -25,14 +25,6 @@ export default function MotifEnrichmentPage({
 }: {
   params: { species: string; factor: string, accession: string };
 }) {
-  const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
-  const selectedPeakID = useMemo(() => selectedDataset && selectedDataset.replicated_peaks[0].accession, [selectedDataset]);
-  const selectedExperimentID = useMemo(() => selectedDataset && selectedDataset.accession, [selectedDataset]);
-  const selectedBiosample = useMemo(() => { return selectedDataset?.biosample }, [selectedDataset]);
-
-  const handleSetSelectedDataset = (newDataset: Dataset) => {
-    setSelectedDataset(newDataset)
-  }
 
   const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10"
 
@@ -50,23 +42,32 @@ export default function MotifEnrichmentPage({
       include_investigatedas: includeTargetTypes,
       exclude_investigatedas: excludeTargetTypes,
     },
-    onCompleted: (d: any) => {
-      //if there's a url experiment passed, initialize selectedDataset with that, else set to first
-      if (!selectedDataset) {
-        const urlExp = accession
-        const partitionedBiosamples = [...d.peakDataset.partitionByBiosample]
-        const foundDataset = urlExp && partitionedBiosamples.flatMap((b) => b.datasets).find((d) => d.accession === urlExp)
-        if (foundDataset) {
-          handleSetSelectedDataset(foundDataset as Dataset)
-        } else {
-          const firstExperiment = partitionedBiosamples
-            .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name)) //sort alphabetically
-          [0].datasets[0] //extract first experiment
-          handleSetSelectedDataset(firstExperiment as Dataset)
-        }
-      }
-    }
   });
+
+  const selectedDataset = useMemo(() => {
+    if (!data || !data.peakDataset) return null;
+
+    const partitionedBiosamples = [...data.peakDataset.partitionByBiosample];
+
+    const foundDataset =
+      accession &&
+      partitionedBiosamples
+        .flatMap((b) => b.datasets)
+        .find((d) => d.accession === accession);
+
+    if (foundDataset) {
+      return foundDataset as Dataset;
+    }
+
+    // Extract the first experiment if no matching dataset is found
+    return partitionedBiosamples
+      .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name))[0]
+      ?.datasets[0] || null; // Ensure we return null if no dataset is found
+  }, [data, accession]);
+
+  const selectedPeakID = useMemo(() => selectedDataset ? selectedDataset.replicated_peaks[0].accession : "", [selectedDataset]);
+  const selectedBiosample = useMemo(() => { return selectedDataset?.biosample }, [selectedDataset]);
+  
 
   const {
     data: motifData,
@@ -89,9 +90,8 @@ export default function MotifEnrichmentPage({
         : undefined,
   }));
 
-  if (loading || !selectedPeakID || motifLoading) return LoadingMotif();
+  if (motifLoading || loading || !motifData ) return LoadingMotif();
   if (error) return <p>Error: {error.message}</p>;
-  if (!motifData) return <Typography>Select a peak to view motif data</Typography>
 
   return (
     <Stack
@@ -104,8 +104,8 @@ export default function MotifEnrichmentPage({
       <Typography variant="h5" m={2}>
         <span style={{ fontWeight: "bold" }}>
           De novo motif discovery in{" "}
-          {selectedBiosample || "Unknown"}{" "}
-          ({selectedExperimentID || "Unknown"}) by MEME
+          {selectedBiosample}{" "}
+          ({accession}) by MEME
         </span>
       </Typography>
       {motifError && <p>Error: {motifError.message}</p>}
@@ -119,7 +119,7 @@ export default function MotifEnrichmentPage({
               key={motif.id}
               motif={motif}
               species={species}
-              selectedExperimentID={selectedExperimentID || "Unknown"}
+              selectedExperimentID={accession}
               selectedPeakID={selectedPeakID}
             />
           })}

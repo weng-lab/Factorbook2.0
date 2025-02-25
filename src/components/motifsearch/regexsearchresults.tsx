@@ -9,7 +9,7 @@ import {
   Box,
 } from "@mui/material";
 
-const MOTIFS_PER_PAGE = 3;
+const MOTIFS_PER_PAGE = 5;
 
 const RegexSearchResults: React.FC<{ regex?: string, pwm?: number[][] }> = ({ regex, pwm }) => {
   const [total, setTotal] = useState(0);
@@ -35,9 +35,8 @@ const RegexSearchResults: React.FC<{ regex?: string, pwm?: number[][] }> = ({ re
         <Box
           sx={{
             display: "flex",
-            justifyContent: isMobile ? "center" : "flex-start",
+            justifyContent: "center",
             marginTop: isMobile ? "16px" : "24px",
-            marginLeft: isMobile ? "0px" : "450px",
           }}
         >
           <Pagination

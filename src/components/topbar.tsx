@@ -135,6 +135,7 @@ const Topbar: React.FC = () => {
                                 component={Link}
                                 href={subItem.href}
                                 sx={{pl: 4}}
+                                onClick={handleDrawerToggle}
                               >
                                 <ListItemText primary={subItem.title} color="primary" />
                               </ListItemButton>
@@ -145,6 +146,7 @@ const Topbar: React.FC = () => {
                             key={dropdownLink.title}
                             component={Link}
                             href={dropdownLink.href}
+                            onClick={handleDrawerToggle}
                           >
                             <ListItemText primary={dropdownLink.title} />
                           </ListItemButton>
@@ -153,7 +155,7 @@ const Topbar: React.FC = () => {
                   </AccordionDetails>
                 </Accordion>
             ) : (
-              <ListItemButton component={Link} href={item.href}>
+              <ListItemButton component={Link} href={item.href} onClick={handleDrawerToggle}>
                 <ListItemText primary={item.title} />
                 {item.icon && (
                   <Box

@@ -11,4 +11,5 @@ export type Data = {
 export type PlotProps = {
     data: Data;
     downloadSVGElement: (ref: MutableRefObject<SVGSVGElement | null>, filename: string) => void;
+    onHover: (cycle: number | null) => void;
 }

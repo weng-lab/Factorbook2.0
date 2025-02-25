@@ -8,6 +8,11 @@ const nextConfig = {
         destination: '/tf/:species/:factor/function',
         permanent: true,
       },
+      {
+        source: '/experiment',
+        destination: '/',
+        permanent: true,
+      },
     ]
   }
 };

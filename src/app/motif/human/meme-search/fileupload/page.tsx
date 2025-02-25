@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Box, Breadcrumbs, Button, Divider, Grid, Link, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Box, Breadcrumbs, Button, Divider, Grid, Link, Skeleton, Typography, useMediaQuery, useTheme } from "@mui/material";
 import RegexSearchResults from "@/components/motifsearch/regexsearchresults";
 import { Motif } from "../types";
 import MotifDrawer from "@/components/motifsearch/motiffileuploaddrawer";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
+import LoadingMotifSearch from "../[regex]/loading";
 
 const FileUploadMotifDetails = () => {
     const theme = useTheme();
@@ -56,15 +57,10 @@ const FileUploadMotifDetails = () => {
 
     return (
         <Box sx={{ padding: isMobile ? 2 : 4 }}>
-            <Typography variant={isMobile ? "h5" : "h4"}>
-                Motif search results for {filename}
-            </Typography>
-
             <Grid
                 container
                 alignItems="center"
                 justifyContent="space-between"
-                sx={{ mt: isMobile ? 2 : 4 }}
             >
                 <Grid item>
                     <Breadcrumbs
@@ -119,7 +115,7 @@ const FileUploadMotifDetails = () => {
                     </Button>
                 </Grid>
             </Grid>
-            <Divider sx={{ my: isMobile ? 2 : 4 }}/>
+            <Divider sx={{ mt: isMobile ? 2 : 4 }}/>
             {uniqueMotifs.length > 0 ? (
                 <div style={{ display: "flex" }}>
                     <MotifDrawer
@@ -127,12 +123,22 @@ const FileUploadMotifDetails = () => {
                         selectedMotif={selectedMotif}
                         onMotifSelect={handleMotifSelect}
                     />
-                    <div style={{ flexGrow: 1, padding: "1rem" }}>
+                    <div style={{ flexGrow: 1}}>
                         {selectedMotif && <RegexSearchResults pwm={selectedMotif.pwm} />}
                     </div>
                 </div>
             ) : (
-                <Typography>No file data found.</Typography>
+                    <Box
+                        sx={{
+                            width: "100vw",
+                            height: "100vh",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}
+                    >
+                        {LoadingMotifSearch()}
+                    </Box>
             )}
         </Box>
     );
