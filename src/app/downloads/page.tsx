@@ -306,7 +306,7 @@ const DownloadPage: React.FC = () => {
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
                     />
                   </Grid2>
-                  <Grid2 size={4}>
+                  {/* <Grid2 size={4}>
                     <StackedDownloadButton
                       topText="HT-SELEX: Lenient set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup></Typography>}
@@ -323,7 +323,7 @@ const DownloadPage: React.FC = () => {
                       topText="HT-SELEX: Stringent set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-8</sup></Typography>}
                     />
-                  </Grid2>
+                  </Grid2> */}
                 </Grid2>
               </Stack>
             </AccordionDetails>
