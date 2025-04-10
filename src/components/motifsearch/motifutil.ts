@@ -43,12 +43,15 @@ const PCMAP: { [letter: string]: number[] } = {
 };
 
 export const regexToPWM = (regex: any) => {
+  //brackets being seen as 5%B and 5%D, have to decode first
+  const decodedpwm = decodeURIComponent(regex);
   const pwm = [];
-  const lregex = regex.toLowerCase();
+  const lregex = decodedpwm.toLowerCase();
   let inBracket = false,
     cbracket = [0.0, 0.0, 0.0, 0.0],
     ccount = 0.0;
   for (let i = 0; i < lregex.length; ++i) {
+    console.log(cbracket)
     if (inBracket) {
       if (lregex[i] === "]") {
         inBracket = false;
@@ -56,7 +59,7 @@ export const regexToPWM = (regex: any) => {
         pwm.push(cbracket);
         cbracket = [0.0, 0.0, 0.0, 0.0];
         ccount = 0.0;
-      } else if (ACMAP[lregex[i]] && cbracket[ACMAP[lregex[i]]] === 0.0) {
+      } else if ((ACMAP[lregex[i]] || lregex[i] === "a") && cbracket[ACMAP[lregex[i]]] === 0.0) {
         ccount += 1.0;
         cbracket[ACMAP[lregex[i]]] = 1.0;
       }

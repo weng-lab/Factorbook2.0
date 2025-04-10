@@ -154,7 +154,7 @@ export const MotifSearchResultSet: React.FC<{
           <MotifResult
             key={i}
             alignment={alignment}
-            query={rpwm}
+            query={pwm}
           />
         ),
         info: (
