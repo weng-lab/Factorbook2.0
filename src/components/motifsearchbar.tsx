@@ -28,7 +28,16 @@ const MotifSearchbar: React.FC<MotifSearchBarProps> = ({dark}) => {
     const regex = /^[acgtwsmkrybdhvn\[\]]*$/i; // Match allowed letters and brackets
     const bracketBalanced = (input.match(/\[/g)?.length || 0) === (input.match(/\]/g)?.length || 0);
 
-    if (regex.test(input) && bracketBalanced) {
+    // Find all content inside brackets
+    const bracketMatches = input.match(/\[([^\[\]]+)\]/g);
+
+    const onlyACGTInside = bracketMatches
+    ? bracketMatches.every(group =>
+        /^[acgt]+$/i.test(group.slice(1, -1))
+      )
+    : true;
+
+    if (regex.test(input) && bracketBalanced && onlyACGTInside) {
       setValidSearch(true);
     } else {
       setValidSearch(false);
