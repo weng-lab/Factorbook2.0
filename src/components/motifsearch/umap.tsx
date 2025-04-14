@@ -236,30 +236,11 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
   };
 
   const map = {
-    defaultOpen: true,
     position: {
       right: 50,
       bottom: 50,
-    },
-    ref: graphContainerRef
-  };
-
-  useEffect(() => {
-    const graphElement = graphContainerRef.current;
-
-    const handleWheel = (event: WheelEvent) => {
-      // Prevent default scroll behavior when using the wheel in the graph
-      event.preventDefault();
-    };
-    if (graphElement) {
-      graphElement.addEventListener('wheel', handleWheel, { passive: false });
     }
-    return () => {
-      if (graphElement) {
-        graphElement.removeEventListener('wheel', handleWheel);
-      }
-    };
-  }, []);
+  };
 
   return umapLoading ? (
     LoadingMemeUmap()
@@ -303,60 +284,50 @@ const MotifUMAP: React.FC<{ url: string; title: string }> = (props) => {
       <br />
       <Grid container spacing={5} alignItems={"flex-start"}>
         <Grid size={isMobile || isTablet ? 12 : 6}>
-          <Stack overflow={"hidden"} padding={1} sx={{ border: '2px solid', borderColor: 'grey.400', borderRadius: '8px', height: '57vh', position: 'relative' }} ref={graphContainerRef}>
+          <Stack overflow={"hidden"} padding={1} sx={{ border: '2px solid', borderColor: 'grey.400', borderRadius: '8px', height: '60vh', position: 'relative' }} ref={graphContainerRef}>
             <Stack direction="row" justifyContent="space-between" mt={1} sx={{ backgroundColor: '#dbdefc', borderRadius: '8px', zIndex: 10 }}>
               <Button endIcon={selection.length !== 0 && <Visibility />}>
                 {`${selection.length} Motifs Selected`}
               </Button>
               <Button onClick={() => setSelection([])}>Clear Selection</Button>
             </Stack>
-            <ParentSize>
-              {({ width, height }) => {
-                const squareSize = Math.min(width, height);
-
+            <ScatterPlot
+              pointData={scatterData}
+              loading={umapLoading}
+              selectable
+              onSelectionChange={handleSelectionChange}
+              miniMap={map}
+              leftAxisLabel="UMAP-2"
+              bottomAxisLabel="UMAP-1"
+              tooltipBody={(point) => {
+                const formattedPWM = point.metaData?.pwm
+                  ? formatPWM(point.metaData.pwm)
+                  : null;
                 return (
-                  <ScatterPlot
-                    width={squareSize}
-                    height={squareSize}
-                    pointData={scatterData}
-                    loading={umapLoading}
-                    selectable
-                    onSelectionChange={handleSelectionChange}
-                    miniMap={map}
-                    leftAxisLable="UMAP-2"
-                    bottomAxisLabel="UMAP-1"
-                    tooltipBody={(point) => {
-                      const formattedPWM = point.metaData?.pwm
-                        ? formatPWM(point.metaData.pwm)
-                        : null;
-                      return (
-                        <Box sx={{ textAlign: "center", p: 1 }}>
-                          {formattedPWM && (
-                            <DNALogo ppm={formattedPWM} height={100} />
-                          )}
-                          {point.metaData?.tooltipValues && (
-                            <>
-                              <Typography variant="body2">
-                                <strong>Accession:</strong>{" "}
-                                {point.metaData.tooltipValues.accession}
-                              </Typography>
-                              <Typography variant="body2">
-                                <strong>DBD:</strong>{" "}
-                                {point.metaData.tooltipValues.dbd}
-                              </Typography>
-                              <Typography variant="body2">
-                                <strong>Factor:</strong>{" "}
-                                {point.metaData.tooltipValues.factor}
-                              </Typography>
-                            </>
-                          )}
-                        </Box>
-                      );
-                    }}
-                  />
-                )
+                  <Box sx={{ textAlign: "center", p: 1 }}>
+                    {formattedPWM && (
+                      <DNALogo ppm={formattedPWM} height={100} />
+                    )}
+                    {point.metaData?.tooltipValues && (
+                      <>
+                        <Typography variant="body2">
+                          <strong>Accession:</strong>{" "}
+                          {point.metaData.tooltipValues.accession}
+                        </Typography>
+                        <Typography variant="body2">
+                          <strong>DBD:</strong>{" "}
+                          {point.metaData.tooltipValues.dbd}
+                        </Typography>
+                        <Typography variant="body2">
+                          <strong>Factor:</strong>{" "}
+                          {point.metaData.tooltipValues.factor}
+                        </Typography>
+                      </>
+                    )}
+                  </Box>
+                );
               }}
-            </ParentSize>
+            />
           </Stack>
         </Grid>
         <Grid size={isMobile || isTablet ? 12 : 6}>

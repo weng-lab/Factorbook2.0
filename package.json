@@ -37,7 +37,7 @@
     "@visx/tooltip": "^3",
     "@visx/zoom": "^3",
     "@weng-lab/genomebrowser": "^0.0.20",
-    "@weng-lab/psychscreen-ui-components": "^2.0.13",
+    "@weng-lab/psychscreen-ui-components": "^2.0.21",
     "copy-to-clipboard": "^3.3.3",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^5",
