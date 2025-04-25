@@ -20,6 +20,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Stack,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
@@ -30,6 +31,7 @@ import {
 import { useTheme } from "@mui/material/styles";
 import styles from "./topbar.module.css";
 import Link from "next/link";
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 let navItems = [
   { title: "Home", href: "/", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
@@ -62,7 +64,11 @@ let navItems = [
   { title: "Downloads", href: "/downloads" }
 ];
 
-const Topbar: React.FC = () => {
+interface TopbarProps {
+  maintenance: boolean;
+}
+
+const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [portalsAnchorEl, setPortalsAnchorEl] =
     React.useState<null | HTMLElement>(null);
@@ -114,41 +120,41 @@ const Topbar: React.FC = () => {
         {navItems.map((item, index) => (
           <React.Fragment key={item.title}>
             {item.dropdownLinks ? (
-                <Accordion elevation={0} sx={{color: theme => theme.palette.primary.main}}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon color="primary"/>} >
-                    {item.title}
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <List disablePadding>
-                      {item.dropdownLinks.map((dropdownLink, i) => (
-                        dropdownLink.subItems ?
-                          <div key={i}>
-                            <ListItemText sx={{ textAlign: 'left', py: 1, px: 2 }}>{dropdownLink.title}</ListItemText>
-                            {dropdownLink.subItems.map(subItem => (
-                              <ListItemButton
-                                key={subItem.title}
-                                component={Link}
-                                href={subItem.href}
-                                sx={{pl: 4}}
-                                onClick={handleDrawerToggle}
-                              >
-                                <ListItemText primary={subItem.title} color="primary" />
-                              </ListItemButton>
-                            ))}
-                          </div>
-                          :
-                          <ListItemButton
-                            key={dropdownLink.title}
-                            component={Link}
-                            href={dropdownLink.href}
-                            onClick={handleDrawerToggle}
-                          >
-                            <ListItemText primary={dropdownLink.title} />
-                          </ListItemButton>
-                      ))}
-                    </List>
-                  </AccordionDetails>
-                </Accordion>
+              <Accordion elevation={0} sx={{ color: theme => theme.palette.primary.main }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon color="primary" />} >
+                  {item.title}
+                </AccordionSummary>
+                <AccordionDetails>
+                  <List disablePadding>
+                    {item.dropdownLinks.map((dropdownLink, i) => (
+                      dropdownLink.subItems ?
+                        <div key={i}>
+                          <ListItemText sx={{ textAlign: 'left', py: 1, px: 2 }}>{dropdownLink.title}</ListItemText>
+                          {dropdownLink.subItems.map(subItem => (
+                            <ListItemButton
+                              key={subItem.title}
+                              component={Link}
+                              href={subItem.href}
+                              sx={{ pl: 4 }}
+                              onClick={handleDrawerToggle}
+                            >
+                              <ListItemText primary={subItem.title} color="primary" />
+                            </ListItemButton>
+                          ))}
+                        </div>
+                        :
+                        <ListItemButton
+                          key={dropdownLink.title}
+                          component={Link}
+                          href={dropdownLink.href}
+                          onClick={handleDrawerToggle}
+                        >
+                          <ListItemText primary={dropdownLink.title} />
+                        </ListItemButton>
+                    ))}
+                  </List>
+                </AccordionDetails>
+              </Accordion>
             ) : (
               <ListItemButton component={Link} href={item.href} onClick={handleDrawerToggle}>
                 <ListItemText primary={item.title} />
@@ -173,75 +179,147 @@ const Topbar: React.FC = () => {
   );
 
   return (
-    <AppBar
-      position="static"
-      className={styles.topbar}
-      sx={{
-        backgroundColor: "transparent",
-        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-        width: "100%",
-      }}
-    >
-      <Toolbar disableGutters className={styles.toolbar}>
-        <Grid container alignItems="center">
-          {isMobile ? (
-            <>
-              <Grid item xs={6}>
-                <IconButton
-                  edge="start"
-                  color="inherit"
-                  aria-label="menu"
-                  onClick={handleDrawerToggle}
+    <>
+      <Stack
+        direction={"row"}
+        style={{
+          position: 'fixed',
+          width: '100%',
+          height: "40px",
+          backgroundColor: '#ff9800',
+          zIndex: 1301,
+          color: '#fff',
+          textAlign: 'center',
+          display: maintenance ? "flex" : "none"
+        }}
+        justifyContent={"center"}
+        alignItems={"center"}
+        spacing={2}
+      >
+        <WarningAmberIcon />
+        <Typography sx={{ fontWeight: 'bold' }}>Scheduled maintenance is in progress... Some features may be unavailable</Typography>
+        <WarningAmberIcon />
+      </Stack>
+      <AppBar
+        position="fixed"
+        className={styles.topbar}
+        sx={{
+          backgroundColor: "white",
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          width: "100%",
+          top: maintenance ? '40px' : '0px'
+        }}
+      >
+        <Toolbar disableGutters className={styles.toolbar}>
+          <Grid container alignItems="center">
+            {isMobile ? (
+              <>
+                <Grid item xs={6}>
+                  <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    onClick={handleDrawerToggle}
+                  >
+                    <MenuIcon sx={{ color: "grey" }} />
+                  </IconButton>
+                </Grid>
+                <Grid
+                  item
+                  xs={6}
+                  sx={{ display: "flex", justifyContent: "flex-end" }}
                 >
-                  <MenuIcon sx={{ color: "grey" }} />
-                </IconButton>
-              </Grid>
-              <Grid
-                item
-                xs={6}
-                sx={{ display: "flex", justifyContent: "flex-end" }}
-              >
-                <Link href="/">
-                  <img
-                    src="/logo/on-white/Logo_01_on-white-bg.png"
-                    alt="Logo"
-                    width={180} // Increased width
-                    style={{ height: "auto", maxHeight: "100px" }} // Optional height
-                  />
-                </Link>
-              </Grid>
-            </>
-          ) : (
-            <>
-              <Grid item xs="auto">
-                <Link href="/">
-                  <img
-                    src="/logo/on-white/Logo_01_on-white-bg.png"
-                    alt="Logo"
-                    width={180} // Increased width
-                    style={{ height: "auto", maxHeight: "100px" }} // Optional height
-                  />
-                </Link>
-              </Grid>
-              <Grid item xs>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    width: "100%",
-                  }}
-                >
-                  {navItems.map((item) =>
-                    item.dropdownLinks ? (
-                      <React.Fragment key={item.title}>
+                  <Link href="/">
+                    <img
+                      src="/logo/on-white/Logo_01_on-white-bg.png"
+                      alt="Logo"
+                      width={180} // Increased width
+                      style={{ height: "auto", maxHeight: "100px" }} // Optional height
+                    />
+                  </Link>
+                </Grid>
+              </>
+            ) : (
+              <>
+                <Grid item xs="auto">
+                  <Link href="/">
+                    <img
+                      src="/logo/on-white/Logo_01_on-white-bg.png"
+                      alt="Logo"
+                      width={180} // Increased width
+                      style={{ height: "auto", maxHeight: "100px" }} // Optional height
+                    />
+                  </Link>
+                </Grid>
+                <Grid item xs>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      width: "100%",
+                    }}
+                  >
+                    {navItems.map((item) =>
+                      item.dropdownLinks ? (
+                        <React.Fragment key={item.title}>
+                          <Button
+                            aria-controls={
+                              portalsAnchorEl ? "portals-menu" : undefined
+                            }
+                            aria-haspopup="true"
+                            aria-expanded={portalsAnchorEl ? "true" : undefined}
+                            onClick={handlePortalsClick}
+                            endIcon={<ExpandMoreIcon />}
+                            sx={{
+                              fontSize: "15px",
+                              fontWeight: 700,
+                              lineHeight: "26px",
+                              color: "var(--primary-mainText, #6750A4)",
+                              marginLeft: "16px",
+                            }}
+                          >
+                            {item.title}
+                          </Button>
+                          <Menu
+                            id="portals-menu"
+                            anchorEl={portalsAnchorEl}
+                            open={Boolean(portalsAnchorEl)}
+                            onClose={handlePortalsClose}
+                            MenuListProps={{
+                              "aria-labelledby": "portals-button",
+                            }}
+                          >
+                            {item.dropdownLinks.map((dropdownLink, i) => (
+                              dropdownLink.subItems ?
+                                <div key={i}>
+                                  <Typography px={2} py={1}>{dropdownLink.title}</Typography>
+                                  {dropdownLink.subItems.map(subItem => (
+                                    <MenuItem
+                                      key={subItem.title}
+                                      component={Link}
+                                      href={subItem.href}
+                                      sx={{ pl: 4 }}
+                                    >
+                                      {subItem.title}
+                                    </MenuItem>
+                                  ))}
+                                </div>
+                                :
+                                <MenuItem
+                                  key={dropdownLink.title}
+                                  component={Link}
+                                  href={dropdownLink.href}
+                                >
+                                  {dropdownLink.title}
+                                </MenuItem>
+                            ))}
+                          </Menu>
+                        </React.Fragment>
+                      ) : (
                         <Button
-                          aria-controls={
-                            portalsAnchorEl ? "portals-menu" : undefined
-                          }
-                          aria-haspopup="true"
-                          aria-expanded={portalsAnchorEl ? "true" : undefined}
-                          onClick={handlePortalsClick}
-                          endIcon={<ExpandMoreIcon />}
+                          key={item.title}
+                          LinkComponent={Link}
+                          href={item.href}
                           sx={{
                             fontSize: "15px",
                             fontWeight: 700,
@@ -252,82 +330,37 @@ const Topbar: React.FC = () => {
                         >
                           {item.title}
                         </Button>
-                        <Menu
-                          id="portals-menu"
-                          anchorEl={portalsAnchorEl}
-                          open={Boolean(portalsAnchorEl)}
-                          onClose={handlePortalsClose}
-                          MenuListProps={{
-                            "aria-labelledby": "portals-button",
-                          }}
-                        >
-                          {item.dropdownLinks.map((dropdownLink, i) => (
-                            dropdownLink.subItems ?
-                              <div key={i}>
-                                <Typography px={2} py={1}>{dropdownLink.title}</Typography>
-                                {dropdownLink.subItems.map(subItem => (
-                                  <MenuItem
-                                    key={subItem.title}
-                                    component={Link}
-                                    href={subItem.href}
-                                    sx={{pl: 4}}
-                                  >
-                                    {subItem.title}
-                                  </MenuItem>
-                                ))}
-                              </div>
-                              :
-                              <MenuItem
-                                key={dropdownLink.title}
-                                component={Link}
-                                href={dropdownLink.href}
-                              >
-                                {dropdownLink.title}
-                              </MenuItem>
-                          ))}
-                        </Menu>
-                      </React.Fragment>
-                    ) : (
-                      <Button
-                        key={item.title}
-                        LinkComponent={Link}
-                        href={item.href}
-                        sx={{
-                          fontSize: "15px",
-                          fontWeight: 700,
-                          lineHeight: "26px",
-                          color: "var(--primary-mainText, #6750A4)",
-                          marginLeft: "16px",
-                        }}
-                      >
-                        {item.title}
-                      </Button>
-                    )
-                  )}
-                </Box>
-              </Grid>
-            </>
-          )}
-        </Grid>
-      </Toolbar>
-      <nav>
-        <Drawer
-          anchor="left"
-          open={mobileOpen}
-          onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            "& .MuiDrawer-paper": {
-              width: "100%",
-            },
-          }}
-        >
-          {drawer}
-        </Drawer>
-      </nav>
-    </AppBar>
+                      )
+                    )}
+                  </Box>
+                </Grid>
+              </>
+            )}
+          </Grid>
+        </Toolbar>
+        <nav>
+          <Drawer
+            anchor="left"
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            ModalProps={{
+              keepMounted: true,
+            }}
+            sx={{
+              "& .MuiDrawer-paper": {
+                width: "100%",
+              },
+            }}
+          >
+            {drawer}
+          </Drawer>
+        </nav>
+      </AppBar>
+      {/* Bumps content down since header is position="fixed" */}
+      {/* Bumps content down even more if banner is open */}
+      {maintenance && <Box sx={{ height: '40px' }} />}
+      <Box sx={{ height: '100px' }} />
+    </>
   );
 };
 
