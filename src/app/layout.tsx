@@ -45,7 +45,7 @@ export default function RootLayout({ children }: LayoutProps) {
       <body>
         <ApolloWrapper>
           <ClientThemeProvider>
-            <Topbar maintenance={true}/>
+            <Topbar maintenance={false}/>
             {children}
             <Footer />
           </ClientThemeProvider>
