@@ -50,7 +50,7 @@ interface LinkWrapperProps {
 
 const LinkWrapper: React.FC<LinkWrapperProps> = ({ url, children }) => (
   <Link
-    href={url.toLowerCase()}
+    href={url}
     target="_blank"
     rel="noopener noreferrer"
     style={{ textDecoration: "none", color: "inherit" }}
@@ -139,7 +139,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       assembly,
       name: tfData
         ? tfData.peakDataset.partitionByTarget.map(
-            (target) => target.target.name
+            (target) => target.target.name.split(/phospho/i)[0]
           )
         : [],
     },
@@ -151,12 +151,12 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       const factorDescriptions: FactorRow[] =
         tfData.peakDataset.partitionByTarget.map((target) => {
           const factor = factorData.factor.find(
-            (factor) => factor.name === target.target.name
+            (factor) => factor.name === target.target.name.split(/phospho/i)[0]
           );
 
           const image = getRCSBImageUrl(factor?.pdbids);
 
-          const tfAssignment = tfA.get(target.target.name.split("phospho")[0]);
+          const tfAssignment = tfA.get(target.target.name.split(/phospho/i)[0]);
 
           const description =
             factor?.factor_wiki?.split(".")[0] || "Description not available.";
@@ -197,9 +197,9 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       render: (row: FactorRow) => {
         const nameForUrl =
           species === "human"
-            ? row.name.toUpperCase()
+            ? row.name //.toUpperCase()
             : species === "mouse"
-            ? row.name.charAt(0).toUpperCase() + row.name.slice(1)
+            ? row.name.charAt(0).toUpperCase() + row.name.slice(1).toLowerCase()
             : row.name;
 
         return row.image ? (
@@ -228,12 +228,12 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       header: "Details",
       render: (row: FactorRow) => {
         const nameForUrl =
-          species === "human"
-            ? row.name.toUpperCase()
-            : species === "mouse"
-            ? row.name.charAt(0).toUpperCase() + row.name.slice(1)
-            : row.name;
-
+        species === "human"
+        ? row.name //.toUpperCase()
+        : species === "mouse"
+        ? row.name.charAt(0).toUpperCase() + row.name.slice(1).toLowerCase()
+        : row.name;
+        console.log("nameForUrl",species,nameForUrl)
         return (
           (<LinkWrapper
             url={`/tf/${species}/${nameForUrl}/function`}
@@ -274,9 +274,9 @@ const TfDetails: React.FC<TfDetailsProps> = ({
       render: (row: FactorRow) => {
         const nameForUrl =
           species === "human"
-            ? row.name.toUpperCase()
+            ? row.name //.toUpperCase()
             : species === "mouse"
-            ? row.name.charAt(0).toUpperCase() + row.name.slice(1)
+            ? row.name.charAt(0).toUpperCase() + row.name.slice(1).toLowerCase()
             : row.name;
 
         return (
@@ -308,9 +308,15 @@ const TfDetails: React.FC<TfDetailsProps> = ({
   ];
 
   const downloadData = (row: FactorRow) => {
+    const factorName =
+    species === "human"
+      ? row.name //.toUpperCase()
+      : species === "mouse"
+      ? row.name.charAt(0).toUpperCase() + row.name.slice(1).toLowerCase()
+      : row.name;
     const tsvData = [
       "image\tlabel\tname\texperiments\tcellTypes\tdescription",
-      `${row.image || ""}\t${row.label || ""}\t${row.name}\t${
+      `${row.image || ""}\t${row.label || ""}\t${factorName}\t${
         row.experiments
       }\t${row.cellTypes}\t${row.description}`,
     ].join("\n");
@@ -319,12 +325,13 @@ const TfDetails: React.FC<TfDetailsProps> = ({
     )}`;
     const downloadAnchorNode = document.createElement("a");
     downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", `${row.name}.tsv`);
+    downloadAnchorNode.setAttribute("download", `${factorName}.tsv`);
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
   };
 
+  
   return (
     <Container maxWidth={false} disableGutters>
       <Box style={{ overflowX: "auto", marginTop: "20px" }}>

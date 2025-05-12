@@ -35,6 +35,7 @@ import { BiosamplePartitionedDatasetCollection } from "@/components/types";
 import LoadingFunction from "./loading";
 import Link from "next/link";
 import { ExpandMore } from "@mui/icons-material";
+import { tfToAlphaFoldIds } from "./consts";
 
 /** Utility to check if a description has biological information */
 const looksBiological = (value: string): boolean => {
@@ -51,7 +52,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   // Define factorForUrl to be uppercase if species is human, or capitalize the first letter if species is mouse
   const factorForUrl =
     species.toLowerCase() === "human"
-      ? factor.toUpperCase()
+      ? factor//.toUpperCase()
       : species.toLowerCase() === "mouse"
       ? factor.charAt(0).toUpperCase() + factor.slice(1)
       : factor;
@@ -62,7 +63,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     loading: factorLoading,
     error: factorError,
   } = useQuery<FactorQueryResponse>(FACTOR_DESCRIPTION_QUERY, {
-    variables: { assembly: props.assembly, name: [props.factor] },
+    variables: { assembly: props.assembly, name: [props.factor.split(/phospho/i)[0]] },
   });
 
   /** Fetching dataset data */
@@ -89,9 +90,19 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     datasetData?.peakDataset.partitionByBiosample?.length || 0;
 
   const referenceLinks = useMemo(() => {
+    const afLink: Record<string, string> = {};
+
+    const alphaFoldId =
+    tfToAlphaFoldIds[species.toLowerCase()]?.[factorForUrl.toUpperCase()];
+
+    if (alphaFoldId) {
+      afLink.AlphaFold = "https://alphafold.ebi.ac.uk/entry/" + alphaFoldId;
+    }
+
     return (
       {
-        ENCODE: `https://www.encodeproject.org/search/?searchTerm=${factorForUrl}&type=Experiment&assembly=${props.assembly}&assay_title=TF+ChIP-seq&files.output_type=optimal+IDR+thresholded+peaks&files.output_type=pseudoreplicated+IDR+thresholded+peaks&status=released`,
+        ...afLink,
+        ENCODE: `https://www.encodeproject.org/search/?searchTerm=${factorForUrl}&type=Experiment&assembly=${props.assembly}&assay_title=TF+ChIP-seq&files.output_type=optimal+IDR+thresholded+peaks&files.output_type=pseudoreplicated+IDR+thresholded+peaks&status=released`,        
         Ensembl: `http://www.ensembl.org/Human/Search/Results?q=${factorForUrl}`,
         GO: `http://amigo.geneontology.org/amigo/search/bioentity?q=${factorForUrl}`,
         GeneCards: `http://www.genecards.org/cgi-bin/carddisp.pl?gene=${factorForUrl}`,
@@ -287,7 +298,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         p={3}
         sx={{
           background: "#494A50",
-          width: isMobile ? "auto" : "300px",
+          width: isMobile ? "auto" : "350px",
           position: isMobile ? "inherit" : "sticky",
           top: "10px",
           height: "fit-content",

@@ -126,11 +126,11 @@ const COLUMNS = (title: string): DataTableColumn<MMotif>[] => {
     },
     {
       header: "Assayed TF",
-      value: (x: MMotif) => x.factor.split("phospho")[0],
+      value: (x: MMotif) => x.factor.split(/phospho/i)[0],
       render: (x: MMotif) => (
         <Link
           style={{ color: "#8169BF" }}
-          href={`/tf/human/${x.factor.split("phospho")[0]
+          href={`/tf/human/${x.factor.split(/phospho/i)[0]
             }/function`}
           rel="noopener noreferrer"
           target="_blank"
