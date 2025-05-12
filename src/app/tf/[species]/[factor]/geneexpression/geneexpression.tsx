@@ -33,9 +33,9 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const { data, loading } = useGeneExpressionData(
     props.assembly,
     formatFactorName(
-      props.assembly === "Human"
-        ? props.gene_name.toUpperCase()
-        : props.gene_name,
+      props.assembly === "GRCh38"
+        ? props.gene_name.split(/phospho/i)[0].toUpperCase()
+        : props.gene_name.split(/phospho/i)[0],
       props.assembly
     )
   );
@@ -43,18 +43,37 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     inner: null,
     outer: null,
   });
-  const biosampleTypes = new Set(
-    data?.gene_dataset.map((x) => x.biosample_type) || []
+  
+  // Get sorted list of unique assay names
+  const assayTerm_Names = useMemo(
+    () =>
+      Array.from(
+        new Set(data?.gene_dataset.map((x) => x.assay_term_name) || [])
+      ),
+    [data]
   );
 
+  // Compute biosample types only for selected assay
+  const biosampleTypesForSelectedAssay = useMemo(() => {
+    const currentAssay = assayTerm_Names[value];
+    const biosamples = new Set(
+      data?.gene_dataset
+        .filter((x) => x.assay_term_name === currentAssay)
+        .map((x) => x.biosample_type) || []
+    );
+    return Array.from(biosamples).sort((a, b) => b.localeCompare(a));
+  }, [data, assayTerm_Names, value]);
+
+  
+  
   const assayTermNames = new Set(
     data?.gene_dataset.map((x) => x.assay_term_name) || []
   );
 
   const [biosampleType, setBiosampleType] = useState(0);
   const sortedBiosampleTypes = useMemo(
-    () => [...biosampleTypes].sort((a, b) => b.localeCompare(a)),
-    [biosampleTypes]
+    () => [...biosampleTypesForSelectedAssay].sort((a, b) => b.localeCompare(a)),
+    [biosampleTypesForSelectedAssay]
   );
   const ref = useRef<SVGSVGElement>(null);
 
@@ -124,7 +143,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
       ),
     [sortedKeys, subGrouped]
   );
-
+  
   const domain: [number, number] = useMemo(() => {
     const values = [...toPlot.values()].flatMap((x) => x.get("all")!);
     return [Math.log10(0.01), Math.max(...values, 4.5)];
@@ -193,9 +212,11 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   }, [props.gene_name, data]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setBiosampleType(0);
     setValue(newValue);
   };
 
+  
   return toPlot.size <= 0 ? (
     LoadingExpression()
   ) : (

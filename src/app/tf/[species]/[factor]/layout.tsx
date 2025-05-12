@@ -58,7 +58,7 @@ export default function FactorDetailsLayout({
    */
   const factorForUrl =
     species.toLowerCase() === "human"
-      ? factor.toUpperCase()
+      ? factor //.toUpperCase()
       : species.toLowerCase() === "mouse"
         ? factor.charAt(0).toUpperCase() + factor.slice(1).toLowerCase()
         : factor;
@@ -66,13 +66,14 @@ export default function FactorDetailsLayout({
   const [tfA, setTFA] = useState<Map<string, TFData> | null>(null);
   const [hasSelexData, setHasSelexData] = useState(false);
 
+  
   // Fetch factor description
   const { data, loading, error } = useQuery<FactorQueryResponse>(
     FACTOR_DESCRIPTION_QUERY,
     {
       variables: {
         assembly: species.toLowerCase() === "human" ? "GRCh38" : "mm10",
-        name: [factorForUrl],
+        name: [factorForUrl.split(/phospho/i)[0]],
       },
     }
   );
@@ -119,13 +120,13 @@ export default function FactorDetailsLayout({
       .catch((err) => console.error("Failed to load TF assignments:", err));
   }, []);
 
-  const TFregion = data?.factor[0].coordinates ? `${data.factor[0].coordinates.chromosome}:${data.factor[0].coordinates.start.toLocaleString()}-${data.factor[0].coordinates.end.toLocaleString()}` : ''
+  const TFregion = data?.factor[0].coordinates && data.factor[0].coordinates.chromosome ? `${data.factor[0].coordinates.chromosome}:${data.factor[0].coordinates.start?.toLocaleString()}-${data.factor[0].coordinates.end?.toLocaleString()}` : ''
 
   if (loading) return Loading();
   if (error) return <p>Error: {error.message}</p>;
 
   // Compute Label
-  const tfAssignment = tfA?.get(factorForUrl.toLowerCase()); // Use normalized key
+  const tfAssignment = tfA?.get(factorForUrl.split(/phospho/i)[0].toLowerCase()); // Use normalized key
   const label =
     tfAssignment === undefined
       ? ""

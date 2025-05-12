@@ -30,7 +30,7 @@ export function useGeneExpressionData(assembly: string, gene_name: string) {
         variables:  {
             gene_id: geneId,
             assembly,
-            accessions: assembly.toLowerCase() === "grch38" ?  [
+           /* accessions: assembly.toLowerCase() === "grch38" ?  [
                 "ENCSR828TEI",
                 "ENCSR919QJT",
                 "ENCSR314LXG",
@@ -416,7 +416,7 @@ export function useGeneExpressionData(assembly: string, gene_name: string) {
                 "ENCSR982MRY",
                 "ENCSR992WBR",
                 "ENCSR996TVY"
-              ]
+              ]*/
         },
         skip: loading || !data || !geneId,
     });
