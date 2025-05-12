@@ -21,6 +21,7 @@
     "@mui/material-nextjs": "^6",
     "@typescript-eslint/eslint-plugin": "^8",
     "@typescript-eslint/parser": "^8",
+    "@vercel/analytics": "^1.5.0",
     "@visx/axis": "^3",
     "@visx/drag": "^3",
     "@visx/event": "^3",

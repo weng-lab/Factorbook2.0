@@ -6,6 +6,7 @@ import { ApolloWrapper } from "../../lib/apollo-wrapper";
 import { Hind } from 'next/font/google'
 import ClientThemeProvider from "@/components/clientthemeprovider";
 import { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next"
 
 type LayoutProps = {
   children: ReactNode;
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: LayoutProps) {
             <Footer />
           </ClientThemeProvider>
         </ApolloWrapper>
+        <Analytics />
       </body>
     </html>
   );
