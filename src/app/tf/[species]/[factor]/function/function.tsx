@@ -52,7 +52,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   // Define factorForUrl to be uppercase if species is human, or capitalize the first letter if species is mouse
   const factorForUrl =
     species.toLowerCase() === "human"
-      ? factor.toUpperCase()
+      ? factor//.toUpperCase()
       : species.toLowerCase() === "mouse"
       ? factor.charAt(0).toUpperCase() + factor.slice(1)
       : factor;
