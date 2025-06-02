@@ -47,6 +47,7 @@ export const DATASETS_QUERY = gql`
                     friendly_name
                     name
                 }
+                source
                 biosample
                 released
                 accession

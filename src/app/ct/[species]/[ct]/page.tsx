@@ -19,6 +19,7 @@ const includeTargetTypes = [
   "DNA repair",
   "cohesin",
   "transcription factor",
+  "RNA binding protein"
 ];
 import { DataTable } from "@weng-lab/psychscreen-ui-components";
 const excludeTargetTypes = ["recombinant protein"];

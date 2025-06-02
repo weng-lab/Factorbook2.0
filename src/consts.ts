@@ -6,5 +6,6 @@ export const includeTargetTypes = [
     'DNA repair',
     'cohesin',
     'transcription factor',
+    'RNA binding protein'
 ];
 export const excludeTargetTypes = ['recombinant protein'];

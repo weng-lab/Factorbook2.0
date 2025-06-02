@@ -52,7 +52,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   // Define factorForUrl to be uppercase if species is human, or capitalize the first letter if species is mouse
   const factorForUrl =
     species.toLowerCase() === "human"
-      ? factor//.toUpperCase()
+      ? factor.toUpperCase()
       : species.toLowerCase() === "mouse"
       ? factor.charAt(0).toUpperCase() + factor.slice(1)
       : factor;
@@ -96,7 +96,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     tfToAlphaFoldIds[species.toLowerCase()]?.[factorForUrl.toUpperCase()];
 
     if (alphaFoldId) {
-      afLink.AlphaFold = "https://alphafold.ebi.ac.uk/entry/" + alphaFoldId;
+      afLink['AlphaFold DB'] = "https://alphafold.ebi.ac.uk/entry/" + alphaFoldId;
     }
 
     return (
@@ -266,18 +266,18 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
             description={factorDetails.factor_wiki}
           />
         )}
-      {factorDetails?.hgnc_data && (
+      {factorDetails?.hgnc_data && factorDetails.hgnc_data?.hgnc_id && (
         <ContentCard
           title="HGNC"
           titleLink={referenceLinks.HGNC}
-          description={`HGNC ID: ${factorDetails.hgnc_data.hgnc_id}\nLocus Type: ${factorDetails.hgnc_data.locus_type}\nChromosomal Location: ${factorDetails.hgnc_data.location}`}
+          description={`HGNC ID:  ${factorDetails.hgnc_data?.hgnc_id}\nLocus Type:  ${factorDetails.hgnc_data?.locus_type}\nChromosomal Location:  ${factorDetails.hgnc_data?.location}\n Gene groups: ${factorDetails.hgnc_data?.gene_group}\n Previous Names: This gene is a member of the ${species} CCDS set: ${factorDetails.hgnc_data?.prev_name}`}
         />
       )}
       {factorDetails?.ensemble_data && (
         <ContentCard
           title="Ensembl"
           titleLink={referenceLinks.Ensembl}
-          description={`Gene Type: ${factorDetails.ensemble_data.biotype}\nDescription: ${factorDetails.ensemble_data.description}`}
+          description={`Gene Type:  ${factorDetails.ensemble_data.biotype}\nDescription:  ${factorDetails.ensemble_data.description}`}
         />
       )}
     </>
