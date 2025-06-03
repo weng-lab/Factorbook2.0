@@ -111,7 +111,8 @@ const TfDetails: React.FC<TfDetailsProps> = ({
             "DNA repair",
             "cohesin",
             "transcription factor",
-            "RNA binding protein"
+            "RNA binding protein",
+            "other context"
           ],
           exclude_investigatedas: ["recombinant protein"],
         }
@@ -126,7 +127,8 @@ const TfDetails: React.FC<TfDetailsProps> = ({
             "DNA repair",
             "cohesin",
             "transcription factor",
-            "RNA binding protein"
+            "RNA binding protein",
+            "other context"
           ],
           exclude_investigatedas: ["recombinant protein"],
         },

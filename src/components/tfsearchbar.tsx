@@ -104,7 +104,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
               processed_assembly: $assembly,
               replicated_peaks: true,
               exclude_investigatedas: ["recombinant protein"],
-              include_investigatedas: ["cofactor", "chromatin remodeler", "RNA polymerase complex", "DNA replication", "DNA repair", "cohesin", "transcription factor","RNA binding protein"],
+              include_investigatedas: ["cofactor", "chromatin remodeler", "RNA polymerase complex", "DNA replication", "DNA repair", "cohesin", "transcription factor","RNA binding protein","other context"],
               limit: $limit
             ) {
               name
