@@ -71,7 +71,7 @@ function generateTracks(species: string, experimentID: string): TrackProps[] {
 
     if (loading) return []
     if (error) return []
-    console.log(data)
+    
     const file = data.peakDataset.datasets[0].files[0]
     if (!file) return []
     const url = `https://www.encodeproject.org/files/${file.accession}/@@download/${file.accession}.bigWig`

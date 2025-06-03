@@ -129,7 +129,7 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
     }
   }, [filteredBiosamples])
 
-  console.log("filteredBiosamples",filteredBiosamples)
+  
   return (
     <Box id="outer" overflow={"hidden"} display={"flex"} flexDirection={"column"} maxHeight={'100%'}>
       <Stack direction="row" p={1} gap={0.5}>

@@ -116,7 +116,7 @@ const SearchBox: React.FC<SearchBoxProps> = props => {
                     </li>
                 )}
                 onChange={(_event, value) => {
-                    console.log(value)
+                    
                     if (value) {
                         setIsResultSelected(true);
                         onSubmit(value);
