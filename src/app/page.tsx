@@ -202,6 +202,11 @@ const Homepage = () => {
               focusing on their binding specificities and regulatory roles in gene
               expression across cell types. Factorbook integrates public data,
               especially ENCODE data, to provide a wide-ranging motif catalog and transcription factor binding sites.
+              <br />
+              <br />
+              Human: 3318 experiments ‧ 1146 transcription factors ‧ 185 cell types
+              <br />
+              Mouse: 195 experiments ‧ 54 transcription factors ‧ 35 cell types
             </Typography>
             <Box
               sx={{
