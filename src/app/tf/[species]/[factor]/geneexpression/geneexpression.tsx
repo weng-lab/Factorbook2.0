@@ -1,8 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
-  AppBar,
-  Tabs,
-  Tab,
   Box,
   Typography,
   MenuItem,
@@ -26,6 +23,7 @@ import { GeneExpressionPageProps } from "@/components/tf/geneexpression/types";
 import {
   downloadTSV,
   tissueColors,
+  downloadSVG
 } from "@/components/tf/geneexpression/utils";
 import { groupBy } from "queryz";
 import LoadingExpression from "./loading";
@@ -40,7 +38,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const [biosample, setBiosample] = useState("tissue");
   const [scale, setScale] = useState<"log" | "linear">("log");
 
-  const ref = useRef<SVGSVGElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { data } = useGeneExpressionData(
@@ -76,6 +74,12 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
       `factorbook-${props.gene_name}-expression.tsv`
     );
   }, [props.gene_name, data]);
+
+  const handleDownloadSVG = () => {
+    if (!svgRef.current) return
+
+    downloadSVG(svgRef, `${props.gene_name}-violin-plot`)
+  };
 
   const handleRNATypeChange = (event: React.SyntheticEvent, newValue: number) => {
     setBiosample("tissue");
@@ -283,6 +287,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               <Button
                 variant="contained"
                 startIcon={<SaveAltIcon />}
+                onClick={handleDownloadSVG}
               >
                 Export Plot as SVG
               </Button>
@@ -304,6 +309,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
             }}
             labelOrientation="leftDiagonal"
             axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
+            svgRef={svgRef}
           />
         </Box>
       </Stack>
