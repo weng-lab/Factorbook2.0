@@ -13,9 +13,17 @@ import {
   FormLabel,
   ToggleButton,
   ToggleButtonGroup,
+  ButtonGroup,
+  ClickAwayListener,
+  Grow,
+  MenuList,
+  Paper,
+  Popper,
+  Divider,
 } from "@mui/material";
 import {
   SaveAlt as SaveAltIcon,
+  ArrowDropDown
 } from "@mui/icons-material";
 import { formatFactorName } from "@/utilities/misc";
 import { useGeneExpressionData } from "@/components/tf/geneexpression/hooks";
@@ -40,6 +48,11 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
 
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const [open, setOpen] = React.useState(false);
+  const anchorRef = React.useRef<HTMLDivElement>(null);
+
+  const downloadOptions = ['Download Data', 'Download Plot as SVG'];
 
   const { data } = useGeneExpressionData(
     props.assembly,
@@ -88,6 +101,39 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
 
   const handleScaleChange = (event: React.SyntheticEvent, scale: "log" | "linear") => {
     setScale(scale)
+  };
+
+  const handleMenuItemClick = (
+    event: React.MouseEvent<HTMLLIElement, MouseEvent>,
+    index: number,
+  ) => {
+    if (index === 0) {
+      download()
+    } else if (index === 1) {
+      handleDownloadSVG()
+    }
+    setOpen(false);
+  };
+
+  const downloadAll = () => {
+    download();
+    handleDownloadSVG();
+    setOpen(false)
+  }
+
+  const handleToggle = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleClose = (event: Event) => {
+    if (
+      anchorRef.current &&
+      anchorRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+
+    setOpen(false);
   };
 
   // Get sorted list of unique assay names
@@ -173,7 +219,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         ? tissueColors[tissue]
         : tissueColors.missing;
 
-        const label = key
+      const label = key
         .replace(/-positive/gi, "+")
         .replace(/alpha-beta/gi, "αβ")
         .replace(/\b\w/g, char => char.toUpperCase());
@@ -235,63 +281,105 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               </Select>
             </FormControl>
           </Grid2>
-            <Grid2 size={6}>
-              <Stack direction={"row"} justifyContent={"space-around"}>
-                {assayTermNames.size > 1 && (
-                  <FormControl>
-                    <FormLabel>RNA-seq Type</FormLabel>
-                    <ToggleButtonGroup
-                      color="primary"
-                      value={RNAtype}
-                      exclusive
-                      onChange={handleRNATypeChange}
-                      aria-label="RNA-seq Type"
-                      size="small"
-                    >
-                      {[...assayTermNames].map((name, index) => (
-                        <ToggleButton
-                          key={index}
-                          value={index}
-                        >
-                          {name}
-                        </ToggleButton>
-                      ))}
-                    </ToggleButtonGroup>
-                  </FormControl>
-                )}
+          <Grid2 size={8}>
+            <Stack direction={"row"} justifyContent={"space-around"}>
+              {assayTermNames.size > 1 && (
                 <FormControl>
-                  <FormLabel>Scale</FormLabel>
+                  <FormLabel>RNA-seq Type</FormLabel>
                   <ToggleButtonGroup
                     color="primary"
-                    value={scale}
+                    value={RNAtype}
                     exclusive
-                    onChange={handleScaleChange}
+                    onChange={handleRNATypeChange}
                     aria-label="RNA-seq Type"
                     size="small"
                   >
-                    <ToggleButton key={"log"} value={"log"}>Log</ToggleButton>
-                    <ToggleButton key={"linear"} value={"linear"}>Linear</ToggleButton>
+                    {[...assayTermNames].map((name, index) => (
+                      <ToggleButton
+                        key={index}
+                        value={index}
+                      >
+                        {name}
+                      </ToggleButton>
+                    ))}
                   </ToggleButtonGroup>
                 </FormControl>
-              </Stack>
-            </Grid2>
-          <Grid2 size={4}>
-            <Stack direction={"row"} spacing={2} justifyContent={"flex-end"} sx={{ height: "100%" }}>
-              <Button
-                variant="contained"
-                startIcon={<SaveAltIcon />}
-                onClick={download}
-              >
-                {`Download Data`}
-              </Button>
-              <Button
-                variant="contained"
-                startIcon={<SaveAltIcon />}
-                onClick={handleDownloadSVG}
-              >
-                Export Plot as SVG
-              </Button>
+              )}
+              <FormControl>
+                <FormLabel>Scale</FormLabel>
+                <ToggleButtonGroup
+                  color="primary"
+                  value={scale}
+                  exclusive
+                  onChange={handleScaleChange}
+                  aria-label="RNA-seq Type"
+                  size="small"
+                >
+                  <ToggleButton key={"log"} value={"log"}>Log</ToggleButton>
+                  <ToggleButton key={"linear"} value={"linear"}>Linear</ToggleButton>
+                </ToggleButtonGroup>
+              </FormControl>
             </Stack>
+          </Grid2>
+          <Grid2 size={2} display={"flex"} justifyContent={"flex-end"}>
+            <ButtonGroup
+              variant="contained"
+              ref={anchorRef}
+              sx={{
+                width: 'fit-content',
+                minWidth: 'fit-content',
+              }}
+            >
+              <Button onClick={downloadAll} startIcon={<SaveAltIcon />}>Download</Button>
+              <Button
+                size="small"
+                aria-controls={open ? 'split-button-menu' : undefined}
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleToggle}
+              >
+                <ArrowDropDown />
+              </Button>
+            </ButtonGroup>
+            <Popper
+              sx={{ zIndex: 1 }}
+              open={open}
+              anchorEl={anchorRef.current}
+              role={undefined}
+              transition
+              disablePortal
+            >
+              {({ TransitionProps, placement }) => (
+                <Grow
+                  {...TransitionProps}
+                  style={{
+                    transformOrigin:
+                      placement === 'bottom' ? 'right top' : 'right bottom',
+                  }}
+                >
+                  <Paper>
+                    <ClickAwayListener onClickAway={handleClose}>
+                      <MenuList id="split-button-menu" autoFocusItem>
+                        {downloadOptions.map((option, index) => (
+                          <MenuItem
+                            key={option}
+                            onClick={(event) => handleMenuItemClick(event, index)}
+                          >
+                            {option}
+                          </MenuItem>
+                        ))}
+                        <Divider />
+                        <MenuItem
+                          key={"all"}
+                          onClick={downloadAll}
+                        >
+                          Download All
+                        </MenuItem>
+                      </MenuList>
+                    </ClickAwayListener>
+                  </Paper>
+                </Grow>
+              )}
+            </Popper >
           </Grid2>
         </Grid2>
         <Box
