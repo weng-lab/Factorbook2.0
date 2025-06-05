@@ -12,7 +12,10 @@ import {
   InputLabel,
   Select,
   SelectChangeEvent,
-  Grid2
+  Grid2,
+  FormLabel,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
 import {
   SaveAlt as SaveAltIcon,
@@ -22,7 +25,6 @@ import { useGeneExpressionData } from "@/components/tf/geneexpression/hooks";
 import { GeneExpressionPageProps } from "@/components/tf/geneexpression/types";
 import {
   downloadTSV,
-  downloadSVG,
   tissueColors,
 } from "@/components/tf/geneexpression/utils";
 import { groupBy } from "queryz";
@@ -34,10 +36,12 @@ type DataPoint = {
 }
 
 const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
-  const [value, setValue] = useState(0);
+  const [RNAtype, setRNAtype] = useState(0);
   const [biosample, setBiosample] = useState("tissue");
+  const [scale, setScale] = useState<"log" | "linear">("log");
 
   const ref = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const { data } = useGeneExpressionData(
     props.assembly,
@@ -73,9 +77,13 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     );
   }, [props.gene_name, data]);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleRNATypeChange = (event: React.SyntheticEvent, newValue: number) => {
     setBiosample("tissue");
-    setValue(newValue);
+    setRNAtype(newValue);
+  };
+
+  const handleScaleChange = (event: React.SyntheticEvent, scale: "log" | "linear") => {
+    setScale(scale)
   };
 
   // Get sorted list of unique assay names
@@ -89,14 +97,14 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
 
   // Compute biosample types only for selected assay
   const biosampleTypesForSelectedAssay = useMemo(() => {
-    const currentAssay = assayTerm_Names[value];
+    const currentAssay = assayTerm_Names[RNAtype];
     const biosamples = new Set(
       data?.gene_dataset
         .filter((x) => x.assay_term_name === currentAssay)
         .map((x) => x.biosample_type) || []
     );
     return Array.from(biosamples).sort((a, b) => b.localeCompare(a));
-  }, [data, assayTerm_Names, value]);
+  }, [data, assayTerm_Names, RNAtype]);
 
   const assayTermNames = new Set(
     data?.gene_dataset.map((x) => x.assay_term_name) || []
@@ -111,12 +119,12 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     () =>
       groupBy(
         data?.gene_dataset
-          .filter((g) => g.assay_term_name === [...assayTermNames][value])
+          .filter((g) => g.assay_term_name === [...assayTermNames][RNAtype])
           .filter((x) => x.gene_quantification_files.length > 0) || [],
         (x) => x.biosample_type,
         (x) => x
       ),
-    [data, value]
+    [data, RNAtype]
   );
 
   const subGrouped = useMemo(
@@ -131,7 +139,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
       ),
     [grouped, biosample]
   );
-  
+
   const sortedKeys = useMemo(
     () =>
       [...subGrouped.keys()]
@@ -154,15 +162,17 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
           d.gene_quantification_files.map(f => f.quantifications[0]?.tpm)
         )
         .filter((x): x is number => x !== undefined)
-        .map(x => Math.log10(x + 0.01)) ?? [];
+        .map(x => scale === "log" ? Math.log10(x + 0.01) : x) ?? [];
 
       const tissue = subGrouped.get(key)?.[0]?.tissue;
       const violinColor = tissue && tissueColors[tissue]
         ? tissueColors[tissue]
         : tissueColors.missing;
 
-      // Capitalize each word in the key
-      const label = key.replace(/\b\w/g, char => char.toUpperCase());
+        const label = key
+        .replace(/-positive/gi, "+")
+        .replace(/alpha-beta/gi, "αβ")
+        .replace(/\b\w/g, char => char.toUpperCase());
 
       const data: ViolinPoint<DataPoint>[] = values.map(value => (
         values.length < 3
@@ -172,54 +182,13 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
 
       return [{ label, data, violinColor }];
     }),
-    [sortedKeys, subGrouped, tissueColors]
+    [sortedKeys, subGrouped, tissueColors, scale]
   );
 
   return violinData.length <= 0 ? (
     LoadingExpression()
   ) : (
     <Box sx={{ width: "100%", height: "100%" }}>
-      {assayTermNames.size > 1 && (
-        <AppBar position="static" color="default">
-          <Tabs
-            value={value}
-            onChange={handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            variant="scrollable" // Allows the tabs to scroll when necessary
-            scrollButtons="auto" // Displays navigation buttons for overflow
-            aria-label="Gene expression tabs"
-            sx={{
-              "& .MuiTabs-flexContainer": {
-                justifyContent:
-                  assayTermNames.size === 1 ? "center" : "flex-start", // Center if one tab
-              },
-              "& .MuiTab-root": {
-                textTransform: "none", // Keep the original case for the text
-                whiteSpace: "nowrap", // Prevent text wrapping
-                overflow: "hidden", // Handle overflow gracefully
-                textOverflow: "ellipsis", // Truncate long text
-                maxWidth: "200px", // Set a reasonable maximum width for tabs
-                fontSize: "0.9rem", // Adjust font size for better fit
-                padding: "6px 12px", // Adjust padding for better alignment
-              },
-            }}
-          >
-            {[...assayTermNames].map((a, index) => (
-              <Tab
-                key={index}
-                label={
-                  a === "in vitro differentiated cells"
-                    ? "In Vitro Cells" // Shortened version for better fit
-                    : a === "Total RNA-Seq"
-                      ? "Total RNA-Seq"
-                      : a
-                }
-              />
-            ))}
-          </Tabs>
-        </AppBar>
-      )}
       <Stack spacing={2}>
         <Typography
           variant="h5"
@@ -262,21 +231,60 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               </Select>
             </FormControl>
           </Grid2>
-          <Grid2 size={6}>
+            <Grid2 size={6}>
+              <Stack direction={"row"} justifyContent={"space-around"}>
+                {assayTermNames.size > 1 && (
+                  <FormControl>
+                    <FormLabel>RNA-seq Type</FormLabel>
+                    <ToggleButtonGroup
+                      color="primary"
+                      value={RNAtype}
+                      exclusive
+                      onChange={handleRNATypeChange}
+                      aria-label="RNA-seq Type"
+                      size="small"
+                    >
+                      {[...assayTermNames].map((name, index) => (
+                        <ToggleButton
+                          key={index}
+                          value={index}
+                        >
+                          {name}
+                        </ToggleButton>
+                      ))}
+                    </ToggleButtonGroup>
+                  </FormControl>
+                )}
+                <FormControl>
+                  <FormLabel>Scale</FormLabel>
+                  <ToggleButtonGroup
+                    color="primary"
+                    value={scale}
+                    exclusive
+                    onChange={handleScaleChange}
+                    aria-label="RNA-seq Type"
+                    size="small"
+                  >
+                    <ToggleButton key={"log"} value={"log"}>Log</ToggleButton>
+                    <ToggleButton key={"linear"} value={"linear"}>Linear</ToggleButton>
+                  </ToggleButtonGroup>
+                </FormControl>
+              </Stack>
+            </Grid2>
+          <Grid2 size={4}>
             <Stack direction={"row"} spacing={2} justifyContent={"flex-end"} sx={{ height: "100%" }}>
               <Button
                 variant="contained"
                 startIcon={<SaveAltIcon />}
                 onClick={download}
               >
-                {`Download all ${[...assayTermNames][value]} expression data for ${props.gene_name}`}
+                {`Download Data`}
               </Button>
               <Button
                 variant="contained"
                 startIcon={<SaveAltIcon />}
-                onClick={() => ref.current && downloadSVG(ref, `${props.gene_name}-gene-expression.svg`)}
               >
-                Export plot as SVG
+                Export Plot as SVG
               </Button>
             </Stack>
           </Grid2>
@@ -284,6 +292,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         <Box
           padding={1}
           sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, position: "relative", width: "100%", height: "600px" }}
+          ref={containerRef}
         >
           <ViolinPlot
             distributions={violinData}
@@ -294,7 +303,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               jitter: 10,
             }}
             labelOrientation="leftDiagonal"
-            axisLabel="log₁₀ TPM"
+            axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
           />
         </Box>
       </Stack>
