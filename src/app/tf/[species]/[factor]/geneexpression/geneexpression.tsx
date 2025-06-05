@@ -20,6 +20,8 @@ import {
   Paper,
   Popper,
   Divider,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import {
   SaveAlt as SaveAltIcon,
@@ -53,6 +55,9 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const anchorRef = React.useRef<HTMLDivElement>(null);
 
   const downloadOptions = ['Download Data', 'Download Plot as SVG'];
+
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('md'));
 
   const { data } = useGeneExpressionData(
     props.assembly,
@@ -239,7 +244,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     LoadingExpression()
   ) : (
     <Box sx={{ width: "100%", height: "100%" }}>
-      <Stack spacing={2}>
+      <Stack spacing={2} sx={{ width: "100%", height: "100%" }}>
         <Typography
           variant="h5"
           sx={{ marginTop: "1em" }}
@@ -251,7 +256,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
           : RNA-seq
         </Typography>
         <Grid2 container display={"flex"} justifyContent={"space-between"}>
-          <Grid2 size={2}>
+          <Grid2 size={{xs: 6, md: 2}}>
             <FormControl fullWidth sx={{ height: "100%" }}>
               <InputLabel id="demo-simple-select-label">Biosample Type</InputLabel>
               <Select
@@ -281,8 +286,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               </Select>
             </FormControl>
           </Grid2>
-          <Grid2 size={8}>
-            <Stack direction={"row"} justifyContent={"space-around"}>
+          <Grid2 size={{xs: 12, md: 8}} order={{xs: 3, md: 2}} mt={{xs: 2, md: 0}}>
+            <Stack direction={"row"} justifyContent={{xs: "space-between", md: "space-around"}}>
               {assayTermNames.size > 1 && (
                 <FormControl>
                   <FormLabel>RNA-seq Type</FormLabel>
@@ -321,7 +326,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               </FormControl>
             </Stack>
           </Grid2>
-          <Grid2 size={2} display={"flex"} justifyContent={"flex-end"}>
+          <Grid2 size={{xs: 6, md: 2}} display={"flex"} justifyContent={"flex-end"} order={{xs: 2, md: 3}}>
             <ButtonGroup
               variant="contained"
               ref={anchorRef}
@@ -384,7 +389,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         </Grid2>
         <Box
           padding={1}
-          sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, position: "relative", width: "100%", height: "600px" }}
+          sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, position: "relative", width: "100%", height: {xs: "800px", md: "600px"} }}
           ref={containerRef}
         >
           <ViolinPlot
@@ -398,6 +403,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
             labelOrientation="leftDiagonal"
             axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
             svgRef={svgRef}
+            horizontal={isXs}
           />
         </Box>
       </Stack>
