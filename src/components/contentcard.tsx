@@ -35,7 +35,7 @@ const ContentCard: React.FC<ContentCardProps> = ({
             <b>{title}</b>
           </Typography>
         }
-        <Typography>
+        <Typography style={{ whiteSpace: 'pre-line' }}>
           {description}
         </Typography>
       </CardContent>

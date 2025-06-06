@@ -129,6 +129,7 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
     }
   }, [filteredBiosamples])
 
+  
   return (
     <Box id="outer" overflow={"hidden"} display={"flex"} flexDirection={"column"} maxHeight={'100%'}>
       <Stack direction="row" p={1} gap={0.5}>
@@ -170,7 +171,7 @@ const ExperimentSelectionPanel = <Mode extends "MotifEnrichment" | "EpigeneticPr
               id={`panel${index}-header`}
             >
               <Typography style={{ fontWeight: "bold" }}>
-                {biosample.biosample.name}
+                {biosample.biosample.name}{" ("}{biosample.datasets[0].source}{")"}
               </Typography>
               <Chip
                 label={`${biosample.datasets.length} exp`}

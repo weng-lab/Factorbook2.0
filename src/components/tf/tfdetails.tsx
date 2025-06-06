@@ -111,6 +111,8 @@ const TfDetails: React.FC<TfDetailsProps> = ({
             "DNA repair",
             "cohesin",
             "transcription factor",
+            "RNA binding protein",
+            "other context"
           ],
           exclude_investigatedas: ["recombinant protein"],
         }
@@ -125,6 +127,8 @@ const TfDetails: React.FC<TfDetailsProps> = ({
             "DNA repair",
             "cohesin",
             "transcription factor",
+            "RNA binding protein",
+            "other context"
           ],
           exclude_investigatedas: ["recombinant protein"],
         },
@@ -233,7 +237,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
         : species === "mouse"
         ? row.name.charAt(0).toUpperCase() + row.name.slice(1).toLowerCase()
         : row.name;
-        console.log("nameForUrl",species,nameForUrl)
+        
         return (
           (<LinkWrapper
             url={`/tf/${species}/${nameForUrl}/function`}

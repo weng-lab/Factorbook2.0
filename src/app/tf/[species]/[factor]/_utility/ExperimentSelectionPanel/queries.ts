@@ -27,6 +27,7 @@ export const DATASETS_QUERY = gql(`
                     lab {
                         friendly_name
                     }
+                    source
                     biosample
                     accession
                     replicated_peaks: files(types: "replicated_peaks", assembly: $processed_assembly) {
