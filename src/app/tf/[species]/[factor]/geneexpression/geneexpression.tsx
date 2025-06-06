@@ -22,6 +22,7 @@ import {
   Divider,
   useTheme,
   useMediaQuery,
+  Skeleton,
 } from "@mui/material";
 import {
   SaveAlt as SaveAltIcon,
@@ -36,7 +37,6 @@ import {
   downloadSVG
 } from "@/components/tf/geneexpression/utils";
 import { groupBy } from "queryz";
-import LoadingExpression from "./loading";
 import { Distribution, ViolinPlot, ViolinPoint } from "@weng-lab/psychscreen-ui-components";
 
 type DataPoint = {
@@ -240,9 +240,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
     [sortedKeys, subGrouped, tissueColors, scale]
   );
 
-  return violinData.length <= 0 ? (
-    LoadingExpression()
-  ) : (
+  return (
     <Box sx={{ width: "100%", height: "100%" }}>
       <Stack spacing={2} sx={{ width: "100%", height: "100%" }}>
         <Typography
@@ -387,25 +385,30 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
             </Popper >
           </Grid2>
         </Grid2>
-        <Box
-          padding={1}
-          sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, position: "relative", width: "100%", height: {xs: "800px", md: "600px"} }}
-          ref={containerRef}
-        >
-          <ViolinPlot
-            distributions={violinData}
-            loading={violinData.length <= 0}
-            violinProps={{
-              bandwidth: "scott",
-              showAllPoints: true,
-              jitter: 10,
-            }}
-            labelOrientation="leftDiagonal"
-            axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
-            svgRef={svgRef}
-            horizontal={isXs}
-          />
-        </Box>
+          {violinData.length <= 0 ? (
+            <Skeleton variant="rounded" width={"100%"} height={600}/>
+          ) : (
+            <Box
+              padding={1}
+              sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, position: "relative", width: "100%", height: { xs: "800px", md: "600px" } }}
+              ref={containerRef}
+            >
+              <ViolinPlot
+                distributions={violinData}
+                loading={violinData.length <= 0}
+                violinProps={{
+                  bandwidth: "scott",
+                  showAllPoints: true,
+                  jitter: 10,
+                }}
+                labelOrientation={isXs ? "horizontal" : "leftDiagonal"}
+                axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
+                svgRef={svgRef}
+                horizontal={isXs}
+
+              />
+            </Box>
+          )}
       </Stack>
     </Box>
   );
