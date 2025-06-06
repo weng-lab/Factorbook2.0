@@ -41,6 +41,23 @@ import { Distribution, ViolinPlot, ViolinPoint } from "@weng-lab/psychscreen-ui-
 
 type DataPoint = {
   tissue?: string
+  expId?: string
+  fileId?: string
+  label?: string;
+  outlier?: boolean;
+}
+
+function getOutlierFlags(values: number[]): boolean[] {
+  if (values.length === 0) return [];
+
+  const sorted = [...values].sort((a, b) => a - b);
+  const q1 = sorted[Math.floor(sorted.length * 0.25)];
+  const q3 = sorted[Math.floor(sorted.length * 0.75)];
+  const iqr = q3 - q1;
+  const lowerFence = q1 - 1.5 * iqr;
+  const upperFence = q3 + 1.5 * iqr;
+
+  return values.map(v => v < lowerFence || v > upperFence);
 }
 
 const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
@@ -212,14 +229,18 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
 
   const violinData: Distribution<DataPoint>[] = useMemo(() =>
     sortedKeys.flatMap((key) => {
-      const values = subGrouped.get(key)
+      const rawValues = subGrouped.get(key)
         ?.flatMap((d) =>
           d.gene_quantification_files.map(f => f.quantifications[0]?.tpm)
         )
-        .filter((x): x is number => x !== undefined)
-        .map(x => scale === "log" ? Math.log10(x + 0.01) : x) ?? [];
+        .filter((x): x is number => x !== undefined) ?? [];
+
+      const values = rawValues.map(x => scale === "log" ? Math.log10(x + 0.01) : x);
+      const outlierFlags = getOutlierFlags(values);
 
       const tissue = subGrouped.get(key)?.[0]?.tissue;
+      const expId = subGrouped.get(key)?.[0]?.accession;
+      const fileId = subGrouped.get(key)?.[0]?.gene_quantification_files[0].accession;
       const violinColor = tissue && tissueColors[tissue]
         ? tissueColors[tissue]
         : tissueColors.missing;
@@ -229,11 +250,13 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         .replace(/alpha-beta/gi, "αβ")
         .replace(/\b\w/g, char => char.toUpperCase());
 
-      const data: ViolinPoint<DataPoint>[] = values.map(value => (
-        values.length < 3
-          ? { value, radius: 4, tissue }
-          : { value, tissue }
-      ));
+      const data: ViolinPoint<DataPoint & { outlier: boolean }>[] = values.map((value, i) => {
+        const metaData = { tissue, fileId, expId, label, outlier: outlierFlags[i] };
+
+        return values.length < 3
+          ? { value, radius: 4, metaData }
+          : { value, metaData };
+      });
 
       return [{ label, data, violinColor }];
     }),
@@ -254,7 +277,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
           : RNA-seq
         </Typography>
         <Grid2 container display={"flex"} justifyContent={"space-between"}>
-          <Grid2 size={{xs: 6, md: 2}}>
+          <Grid2 size={{ xs: 6, md: 2 }}>
             <FormControl fullWidth sx={{ height: "100%" }}>
               <InputLabel id="demo-simple-select-label">Biosample Type</InputLabel>
               <Select
@@ -284,8 +307,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               </Select>
             </FormControl>
           </Grid2>
-          <Grid2 size={{xs: 12, md: 8}} order={{xs: 3, md: 2}} mt={{xs: 2, md: 0}}>
-            <Stack direction={"row"} justifyContent={{xs: "space-between", md: "space-around"}}>
+          <Grid2 size={{ xs: 12, md: 8 }} order={{ xs: 3, md: 2 }} mt={{ xs: 2, md: 0 }}>
+            <Stack direction={"row"} justifyContent={{ xs: "space-between", md: "space-around" }}>
               {assayTermNames.size > 1 && (
                 <FormControl>
                   <FormLabel>RNA-seq Type</FormLabel>
@@ -324,7 +347,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               </FormControl>
             </Stack>
           </Grid2>
-          <Grid2 size={{xs: 6, md: 2}} display={"flex"} justifyContent={"flex-end"} order={{xs: 2, md: 3}}>
+          <Grid2 size={{ xs: 6, md: 2 }} display={"flex"} justifyContent={"flex-end"} order={{ xs: 2, md: 3 }}>
             <ButtonGroup
               variant="contained"
               ref={anchorRef}
@@ -385,30 +408,65 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
             </Popper >
           </Grid2>
         </Grid2>
-          {violinData.length <= 0 ? (
-            <Skeleton variant="rounded" width={"100%"} height={600}/>
-          ) : (
-            <Box
-              padding={1}
-              sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, position: "relative", width: "100%", height: { xs: "800px", md: "600px" } }}
-              ref={containerRef}
-            >
-              <ViolinPlot
-                distributions={violinData}
-                loading={violinData.length <= 0}
-                violinProps={{
-                  bandwidth: "scott",
-                  showAllPoints: true,
-                  jitter: 10,
-                }}
-                labelOrientation={isXs ? "horizontal" : "leftDiagonal"}
-                axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
-                svgRef={svgRef}
-                horizontal={isXs}
+        {violinData.length <= 0 ? (
+          <Skeleton variant="rounded" width={"100%"} height={600} />
+        ) : (
+          <Box
+            padding={1}
+            sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, position: "relative", width: "100%", height: { xs: "800px", md: "600px" } }}
+            ref={containerRef}
+          >
+            <ViolinPlot
+              distributions={violinData}
+              loading={violinData.length <= 0}
+              violinProps={{
+                bandwidth: "scott",
+                showAllPoints: true,
+                jitter: 10,
+              }}
+              labelOrientation={isXs ? "horizontal" : "leftDiagonal"}
+              axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
+              svgRef={svgRef}
+              horizontal={isXs}
+              pointTooltipBody={(point) => {
+                const formatKey = (key: string) =>
+                  key.replace(/^./, (str) => str.toUpperCase());
 
-              />
-            </Box>
-          )}
+                return (
+                  <Box>
+                    {point.metaData?.outlier && (
+                      <div>
+                        <strong>Outlier</strong>
+                      </div>
+                    )}
+                    <div>
+                      <strong>Label:</strong> {point.metaData?.label}
+                    </div>
+                    <div>
+                      <strong>Value:</strong> {point.value.toFixed(2)}
+                    </div>
+                    {point.metaData?.tissue && (
+                      <div>
+                        <strong>Tissue:</strong> {formatKey(point.metaData.tissue)}
+                      </div>
+                    )}
+                    {point.metaData?.expId && (
+                      <div>
+                        <strong>Experiment ID:</strong> {point.metaData.expId}
+                      </div>
+                    )}
+                    {point.metaData?.fileId && (
+                      <div>
+                        <strong>File ID:</strong> {point.metaData.fileId}
+                      </div>
+                    )}
+                  </Box>
+                );
+              }}
+
+            />
+          </Box>
+        )}
       </Stack>
     </Box>
   );
