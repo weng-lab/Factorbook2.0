@@ -281,96 +281,95 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         : RNA-seq
       </Typography>
       <Grid2 container display={"flex"} justifyContent={"space-between"} alignItems={"flex-end"}>
-        <Grid2 size={{ xs: 4, md: 2 }}>
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Biosample Type</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={biosample}
-              label="BiosampleType"
-              onChange={handleChange}
-              size="small"
-            >
-              {sortedBiosampleTypes.map((t, i) => {
-                const capitalizeWords = (str: string) =>
-                  str.replace(/\b\w/g, (char) => char.toUpperCase());
-
-                return (
-                  <MenuItem key={i} value={t}>
-                    {t === "in vitro differentiated cells" ? (
-                      <>
-                        <i>In Vitro</i>&nbsp;Differentiated Cells
-                      </>
-                    ) : (
-                      capitalizeWords(`${t}${t !== "in vitro differentiated cells" ? "s" : ""}`)
-                    )}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          </FormControl>
-        </Grid2>
-        <Grid2 size={{ xs: 12, md: 8 }} order={{ xs: 3, md: 2 }} mt={{ xs: 2, md: 0 }}>
-          <Stack direction={"row"} justifyContent={{ xs: "space-between", md: "space-around" }}>
-            {assayTermNames.size > 1 && (
-              <FormControl>
-                <FormLabel>RNA-seq Type</FormLabel>
-                <ToggleButtonGroup
-                  color="primary"
-                  value={RNAtype}
-                  exclusive
-                  onChange={handleRNATypeChange}
-                  aria-label="RNA-seq Type"
-                  size="small"
+        <Grid2 size={{ xs: 12, sm: "grow" }}>
+          <Stack direction={"row"} display={"flex"} justifyContent={"flex-start"} spacing={2} useFlexGap sx={{ flexWrap: 'wrap' }}>
+            <Stack>
+              <Typography sx={{ color: "rgba(0, 0, 0, 0.6)", height: "23px" }}>{isXs ? "Biosample" : "Biosample Type"}</Typography>
+              <FormControl sx={{ minWidth: { xs: "none", md: 240 } }}>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={biosample}
+                  onChange={handleChange}
+                  sx={{ height: "38.75px" }}
                 >
-                  {[...assayTermNames].map((name, index) => {
-                    let displayName = name.charAt(0).toUpperCase() + name.slice(1);
+                  {sortedBiosampleTypes.map((t, i) => {
+                    const capitalizeWords = (str: string) =>
+                      str.replace(/\b\w/g, (char) => char.toUpperCase());
 
-                    if (isXs) {
+                    return (
+                      <MenuItem key={i} value={t}>
+                        {t === "in vitro differentiated cells" ? (
+                          <>
+                            <i>In Vitro</i>&nbsp;Differentiated Cells
+                          </>
+                        ) : (
+                          capitalizeWords(`${t}${t !== "in vitro differentiated cells" ? "s" : ""}`)
+                        )}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+            </Stack>
+            <Stack direction={"row"} display={"flex"} justifyContent={"flex-start"} spacing={2} useFlexGap sx={{ flexWrap: 'wrap' }}>
+              {assayTermNames.size > 1 && (
+                <FormControl>
+                  <FormLabel>{isXs ? "RNA-seq" : "RNA-seq Type"}</FormLabel>
+                  <ToggleButtonGroup
+                    color="primary"
+                    value={RNAtype}
+                    exclusive
+                    onChange={handleRNATypeChange}
+                    aria-label="RNA-seq Type"
+                    size="small"
+                  >
+                    {[...assayTermNames].map((name, index) => {
+                      let displayName = name.charAt(0).toUpperCase() + name.slice(1);
                       if (name.toLowerCase() === "polya plus rna-seq") {
                         displayName = "PolyA+";
                       } else if (name.toLowerCase() === "total rna-seq") {
                         displayName = "Total";
                       }
-                    }
 
-                    return (
-                      <ToggleButton
-                        key={index}
-                        value={index}
-                        sx={{ textTransform: "none" }}
-                      >
-                        {displayName}
-                      </ToggleButton>
-                    );
-                  })}
+                      return (
+                        <ToggleButton
+                          key={index}
+                          value={index}
+                          sx={{ textTransform: "none" }}
+                        >
+                          {displayName}
+                        </ToggleButton>
+                      );
+                    })}
+                  </ToggleButtonGroup>
+                </FormControl>
+              )}
+              <FormControl>
+                <FormLabel>Scale</FormLabel>
+                <ToggleButtonGroup
+                  color="primary"
+                  value={scale}
+                  exclusive
+                  onChange={handleScaleChange}
+                  aria-label="RNA-seq Type"
+                  size="small"
+                >
+                  <ToggleButton key={"log"} value={"log"} sx={{ textTransform: "none" }}>Log</ToggleButton>
+                  <ToggleButton key={"linear"} value={"linear"} sx={{ textTransform: "none" }}>Linear</ToggleButton>
                 </ToggleButtonGroup>
               </FormControl>
-            )}
-            <FormControl>
-              <FormLabel>Scale</FormLabel>
-              <ToggleButtonGroup
-                color="primary"
-                value={scale}
-                exclusive
-                onChange={handleScaleChange}
-                aria-label="RNA-seq Type"
-                size="small"
-              >
-                <ToggleButton key={"log"} value={"log"} sx={{ textTransform: "none" }}>Log</ToggleButton>
-                <ToggleButton key={"linear"} value={"linear"} sx={{ textTransform: "none" }}>Linear</ToggleButton>
-              </ToggleButtonGroup>
-            </FormControl>
+            </Stack>
           </Stack>
         </Grid2>
-        <Grid2 size={{ xs: 8, md: 2 }} display={"flex"} justifyContent={"flex-end"} order={{ xs: 2, md: 3 }}>
+        <Grid2 size={{ xs: 12, sm: 4 }} mt={{ xs: 2, md: 0 }} display={"flex"} justifyContent={{ xs: "flex-start", sm: "flex-end" }}>
           <ButtonGroup
             variant="contained"
             ref={anchorRef}
             sx={{
               width: 'fit-content',
               minWidth: 'fit-content',
+              height: '38.75px'
             }}
           >
             <Button onClick={downloadAll} startIcon={<SaveAltIcon />}>Download</Button>
@@ -441,7 +440,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               showAllPoints: true,
               jitter: 10,
             }}
-            labelOrientation={isXs ? "horizontal" : "leftDiagonal"}
+            labelOrientation={"leftDiagonal"}
             axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
             svgRef={svgRef}
             horizontal={isXs}
