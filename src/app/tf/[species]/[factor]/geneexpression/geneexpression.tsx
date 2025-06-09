@@ -251,7 +251,13 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         .replace(/\b\w/g, char => char.toUpperCase());
 
       const data: ViolinPoint<DataPoint & { outlier: boolean }>[] = values.map((value, i) => {
-        const metaData = { tissue, fileId, expId, label, outlier: outlierFlags[i] };
+        const metaData: DataPoint & { outlier: boolean } = {
+          label,
+          fileId,
+          expId,
+          outlier: outlierFlags[i],
+          ...(biosample !== "tissue" && tissue ? { tissue } : {})
+        };
 
         return values.length < 3
           ? { value, radius: 4, metaData }
