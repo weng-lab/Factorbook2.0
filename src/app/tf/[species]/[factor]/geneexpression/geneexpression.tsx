@@ -264,211 +264,221 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   );
 
   return (
-    <Box sx={{ width: "100%", height: "100%" }}>
-      <Stack spacing={2} sx={{ width: "100%", height: "100%" }}>
-        <Typography
-          variant="h5"
-          sx={{ marginTop: "1em" }}
-        >
-          {props.gene_name} expression in{" "}
-          {biosample}
-          {biosample !==
-            "in vitro differentiated cells" && "s"}
-          : RNA-seq
-        </Typography>
-        <Grid2 container display={"flex"} justifyContent={"space-between"}>
-          <Grid2 size={{ xs: 6, md: 2 }}>
-            <FormControl fullWidth sx={{ height: "100%" }}>
-              <InputLabel id="demo-simple-select-label">Biosample Type</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={biosample}
-                label="BiosampleType"
-                onChange={handleChange}
-                sx={{ height: "100%" }}
-              >
-                {sortedBiosampleTypes.map((t, i) => {
-                  const capitalizeWords = (str: string) =>
-                    str.replace(/\b\w/g, (char) => char.toUpperCase());
+    <Stack spacing={2} sx={{ width: "100%", height: "100%" }}>
+      <Typography
+        variant="h5"
+      >
+        {props.gene_name} expression in{" "}
+        {biosample}
+        {biosample !==
+          "in vitro differentiated cells" && "s"}
+        : RNA-seq
+      </Typography>
+      <Grid2 container display={"flex"} justifyContent={"space-between"} alignItems={"flex-end"}>
+        <Grid2 size={{ xs: 4, md: 2 }}>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Biosample Type</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={biosample}
+              label="BiosampleType"
+              onChange={handleChange}
+              size="small"
+            >
+              {sortedBiosampleTypes.map((t, i) => {
+                const capitalizeWords = (str: string) =>
+                  str.replace(/\b\w/g, (char) => char.toUpperCase());
 
-                  return (
-                    <MenuItem key={i} value={t}>
-                      {t === "in vitro differentiated cells" ? (
-                        <>
-                          <i>In Vitro</i>&nbsp;Differentiated Cells
-                        </>
-                      ) : (
-                        capitalizeWords(`${t}${t !== "in vitro differentiated cells" ? "s" : ""}`)
-                      )}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 8 }} order={{ xs: 3, md: 2 }} mt={{ xs: 2, md: 0 }}>
-            <Stack direction={"row"} justifyContent={{ xs: "space-between", md: "space-around" }}>
-              {assayTermNames.size > 1 && (
-                <FormControl>
-                  <FormLabel>RNA-seq Type</FormLabel>
-                  <ToggleButtonGroup
-                    color="primary"
-                    value={RNAtype}
-                    exclusive
-                    onChange={handleRNATypeChange}
-                    aria-label="RNA-seq Type"
-                    size="small"
-                  >
-                    {[...assayTermNames].map((name, index) => (
-                      <ToggleButton
-                        key={index}
-                        value={index}
-                      >
-                        {name}
-                      </ToggleButton>
-                    ))}
-                  </ToggleButtonGroup>
-                </FormControl>
-              )}
+                return (
+                  <MenuItem key={i} value={t}>
+                    {t === "in vitro differentiated cells" ? (
+                      <>
+                        <i>In Vitro</i>&nbsp;Differentiated Cells
+                      </>
+                    ) : (
+                      capitalizeWords(`${t}${t !== "in vitro differentiated cells" ? "s" : ""}`)
+                    )}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          </FormControl>
+        </Grid2>
+        <Grid2 size={{ xs: 12, md: 8 }} order={{ xs: 3, md: 2 }} mt={{ xs: 2, md: 0 }}>
+          <Stack direction={"row"} justifyContent={{ xs: "space-between", md: "space-around" }}>
+            {assayTermNames.size > 1 && (
               <FormControl>
-                <FormLabel>Scale</FormLabel>
+                <FormLabel>RNA-seq Type</FormLabel>
                 <ToggleButtonGroup
                   color="primary"
-                  value={scale}
+                  value={RNAtype}
                   exclusive
-                  onChange={handleScaleChange}
+                  onChange={handleRNATypeChange}
                   aria-label="RNA-seq Type"
                   size="small"
                 >
-                  <ToggleButton key={"log"} value={"log"}>Log</ToggleButton>
-                  <ToggleButton key={"linear"} value={"linear"}>Linear</ToggleButton>
+                  {[...assayTermNames].map((name, index) => {
+                    let displayName = name.charAt(0).toUpperCase() + name.slice(1);
+
+                    if (isXs) {
+                      if (name.toLowerCase() === "polya plus rna-seq") {
+                        displayName = "PolyA+";
+                      } else if (name.toLowerCase() === "total rna-seq") {
+                        displayName = "Total";
+                      }
+                    }
+
+                    return (
+                      <ToggleButton
+                        key={index}
+                        value={index}
+                        sx={{ textTransform: "none" }}
+                      >
+                        {displayName}
+                      </ToggleButton>
+                    );
+                  })}
                 </ToggleButtonGroup>
               </FormControl>
-            </Stack>
-          </Grid2>
-          <Grid2 size={{ xs: 6, md: 2 }} display={"flex"} justifyContent={"flex-end"} order={{ xs: 2, md: 3 }}>
-            <ButtonGroup
-              variant="contained"
-              ref={anchorRef}
-              sx={{
-                width: 'fit-content',
-                minWidth: 'fit-content',
-              }}
-            >
-              <Button onClick={downloadAll} startIcon={<SaveAltIcon />}>Download</Button>
-              <Button
+            )}
+            <FormControl>
+              <FormLabel>Scale</FormLabel>
+              <ToggleButtonGroup
+                color="primary"
+                value={scale}
+                exclusive
+                onChange={handleScaleChange}
+                aria-label="RNA-seq Type"
                 size="small"
-                aria-controls={open ? 'split-button-menu' : undefined}
-                aria-expanded={open ? 'true' : undefined}
-                onClick={handleToggle}
               >
-                <ArrowDropDown />
-              </Button>
-            </ButtonGroup>
-            <Popper
-              sx={{ zIndex: 1 }}
-              open={open}
-              anchorEl={anchorRef.current}
-              role={undefined}
-              transition
-              disablePortal
-            >
-              {({ TransitionProps, placement }) => (
-                <Grow
-                  {...TransitionProps}
-                  style={{
-                    transformOrigin:
-                      placement === 'bottom' ? 'right top' : 'right bottom',
-                  }}
-                >
-                  <Paper>
-                    <ClickAwayListener onClickAway={handleClose}>
-                      <MenuList id="split-button-menu" autoFocusItem>
-                        {downloadOptions.map((option, index) => (
-                          <MenuItem
-                            key={option}
-                            onClick={(event) => handleMenuItemClick(event, index)}
-                          >
-                            {option}
-                          </MenuItem>
-                        ))}
-                        <Divider />
-                        <MenuItem
-                          key={"all"}
-                          onClick={downloadAll}
-                        >
-                          Download All
-                        </MenuItem>
-                      </MenuList>
-                    </ClickAwayListener>
-                  </Paper>
-                </Grow>
-              )}
-            </Popper >
-          </Grid2>
+                <ToggleButton key={"log"} value={"log"} sx={{ textTransform: "none" }}>Log</ToggleButton>
+                <ToggleButton key={"linear"} value={"linear"} sx={{ textTransform: "none" }}>Linear</ToggleButton>
+              </ToggleButtonGroup>
+            </FormControl>
+          </Stack>
         </Grid2>
-        {violinData.length <= 0 ? (
-          <Skeleton variant="rounded" width={"100%"} height={600} />
-        ) : (
-          <Box
-            padding={1}
-            sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, position: "relative", width: "100%", height: { xs: "800px", md: "600px" } }}
-            ref={containerRef}
+        <Grid2 size={{ xs: 8, md: 2 }} display={"flex"} justifyContent={"flex-end"} order={{ xs: 2, md: 3 }}>
+          <ButtonGroup
+            variant="contained"
+            ref={anchorRef}
+            sx={{
+              width: 'fit-content',
+              minWidth: 'fit-content',
+            }}
           >
-            <ViolinPlot
-              distributions={violinData}
-              loading={violinData.length <= 0}
-              violinProps={{
-                bandwidth: "scott",
-                showAllPoints: true,
-                jitter: 10,
-              }}
-              labelOrientation={isXs ? "horizontal" : "leftDiagonal"}
-              axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
-              svgRef={svgRef}
-              horizontal={isXs}
-              pointTooltipBody={(point) => {
-                const formatKey = (key: string) =>
-                  key.replace(/^./, (str) => str.toUpperCase());
+            <Button onClick={downloadAll} startIcon={<SaveAltIcon />}>Download</Button>
+            <Button
+              size="small"
+              aria-controls={open ? 'split-button-menu' : undefined}
+              aria-expanded={open ? 'true' : undefined}
+              onClick={handleToggle}
+            >
+              <ArrowDropDown />
+            </Button>
+          </ButtonGroup>
+          <Popper
+            sx={{ zIndex: 1 }}
+            open={open}
+            anchorEl={anchorRef.current}
+            role={undefined}
+            transition
+            disablePortal
+          >
+            {({ TransitionProps, placement }) => (
+              <Grow
+                {...TransitionProps}
+                style={{
+                  transformOrigin:
+                    placement === 'bottom' ? 'right top' : 'right bottom',
+                }}
+              >
+                <Paper>
+                  <ClickAwayListener onClickAway={handleClose}>
+                    <MenuList id="split-button-menu" autoFocusItem>
+                      {downloadOptions.map((option, index) => (
+                        <MenuItem
+                          key={option}
+                          onClick={(event) => handleMenuItemClick(event, index)}
+                        >
+                          {option}
+                        </MenuItem>
+                      ))}
+                      <Divider />
+                      <MenuItem
+                        key={"all"}
+                        onClick={downloadAll}
+                      >
+                        Download All
+                      </MenuItem>
+                    </MenuList>
+                  </ClickAwayListener>
+                </Paper>
+              </Grow>
+            )}
+          </Popper >
+        </Grid2>
+      </Grid2>
+      {violinData.length <= 0 ? (
+        <Skeleton variant="rounded" width={"100%"} height={600} />
+      ) : (
+        <Box
+          padding={1}
+          sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 1, position: "relative", width: "100%", height: { xs: "800px", md: "600px" } }}
+          ref={containerRef}
+        >
+          <ViolinPlot
+            distributions={violinData}
+            loading={violinData.length <= 0}
+            violinProps={{
+              bandwidth: "scott",
+              showAllPoints: true,
+              jitter: 10,
+            }}
+            labelOrientation={isXs ? "horizontal" : "leftDiagonal"}
+            axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
+            svgRef={svgRef}
+            horizontal={isXs}
+            pointTooltipBody={(point) => {
+              const formatKey = (key: string) =>
+                key.replace(/^./, (str) => str.toUpperCase());
 
-                return (
-                  <Box>
-                    {point.metaData?.outlier && (
-                      <div>
-                        <strong>Outlier</strong>
-                      </div>
-                    )}
+              return (
+                <Box>
+                  {point.metaData?.outlier && (
                     <div>
-                      <strong>Label:</strong> {point.metaData?.label}
+                      <strong>Outlier</strong>
                     </div>
+                  )}
+                  <div>
+                    <strong>Label:</strong> {point.metaData?.label}
+                  </div>
+                  <div>
+                    <strong>Value:</strong> {point.value.toFixed(2)}
+                  </div>
+                  {point.metaData?.tissue && (
                     <div>
-                      <strong>Value:</strong> {point.value.toFixed(2)}
+                      <strong>Tissue:</strong> {formatKey(point.metaData.tissue)}
                     </div>
-                    {point.metaData?.tissue && (
-                      <div>
-                        <strong>Tissue:</strong> {formatKey(point.metaData.tissue)}
-                      </div>
-                    )}
-                    {point.metaData?.expId && (
-                      <div>
-                        <strong>Experiment ID:</strong> {point.metaData.expId}
-                      </div>
-                    )}
-                    {point.metaData?.fileId && (
-                      <div>
-                        <strong>File ID:</strong> {point.metaData.fileId}
-                      </div>
-                    )}
-                  </Box>
-                );
-              }}
+                  )}
+                  {point.metaData?.expId && (
+                    <div>
+                      <strong>Experiment ID:</strong> {point.metaData.expId}
+                    </div>
+                  )}
+                  {point.metaData?.fileId && (
+                    <div>
+                      <strong>File ID:</strong> {point.metaData.fileId}
+                    </div>
+                  )}
+                </Box>
+              );
+            }}
 
-            />
-          </Box>
-        )}
-      </Stack>
-    </Box>
+          />
+        </Box>
+      )}
+    </Stack>
   );
 };
 
