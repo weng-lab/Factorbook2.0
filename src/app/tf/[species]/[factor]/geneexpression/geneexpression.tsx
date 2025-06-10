@@ -47,19 +47,6 @@ type DataPoint = {
   outlier?: boolean;
 }
 
-function getOutlierFlags(values: number[]): boolean[] {
-  if (values.length === 0) return [];
-
-  const sorted = [...values].sort((a, b) => a - b);
-  const q1 = sorted[Math.floor(sorted.length * 0.25)];
-  const q3 = sorted[Math.floor(sorted.length * 0.75)];
-  const iqr = q3 - q1;
-  const lowerFence = q1 - 1.5 * iqr;
-  const upperFence = q3 + 1.5 * iqr;
-
-  return values.map(v => v < lowerFence || v > upperFence);
-}
-
 const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const [RNAtype, setRNAtype] = useState(0);
   const [biosample, setBiosample] = useState("tissue");
@@ -236,7 +223,6 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         .filter((x): x is number => x !== undefined) ?? [];
 
       const values = rawValues.map(x => scale === "log" ? Math.log10(x + 0.01) : x);
-      const outlierFlags = getOutlierFlags(values);
 
       const tissue = subGrouped.get(key)?.[0]?.tissue;
       const expId = subGrouped.get(key)?.[0]?.accession;
@@ -250,12 +236,11 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         .replace(/alpha-beta/gi, "αβ")
         .replace(/,/gi, "");
 
-      const data: ViolinPoint<DataPoint & { outlier: boolean }>[] = values.map((value, i) => {
-        const metadata: DataPoint & { outlier: boolean } = {
+      const data: ViolinPoint<DataPoint>[] = values.map((value, i) => {
+        const metadata: DataPoint = {
           label,
           fileId,
           expId,
-          outlier: outlierFlags[i],
           ...(biosample !== "tissue" && tissue ? { tissue } : {})
         };
 
@@ -450,7 +435,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
 
               return (
                 <Box>
-                  {point.metadata?.outlier && (
+                  {point.outlier && (
                     <div>
                       <strong>Outlier</strong>
                     </div>
