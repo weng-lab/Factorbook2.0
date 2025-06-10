@@ -248,10 +248,10 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
       const label = key
         .replace(/-positive/gi, "+")
         .replace(/alpha-beta/gi, "αβ")
-        .replace(/\b\w/g, char => char.toUpperCase());
+        .replace(/,/gi, "");
 
       const data: ViolinPoint<DataPoint & { outlier: boolean }>[] = values.map((value, i) => {
-        const metaData: DataPoint & { outlier: boolean } = {
+        const metadata: DataPoint & { outlier: boolean } = {
           label,
           fileId,
           expId,
@@ -260,8 +260,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         };
 
         return values.length < 3
-          ? { value, radius: 4, metaData }
-          : { value, metaData };
+          ? { value, radius: 4, metadata }
+          : { value, metadata };
       });
 
       return [{ label, data, violinColor }];
@@ -450,30 +450,30 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
 
               return (
                 <Box>
-                  {point.metaData?.outlier && (
+                  {point.metadata?.outlier && (
                     <div>
                       <strong>Outlier</strong>
                     </div>
                   )}
                   <div>
-                    <strong>Label:</strong> {point.metaData?.label}
+                    <strong>Label:</strong> {point.metadata?.label}
                   </div>
                   <div>
                     <strong>Value:</strong> {point.value.toFixed(2)}
                   </div>
-                  {point.metaData?.tissue && (
+                  {point.metadata?.tissue && (
                     <div>
-                      <strong>Tissue:</strong> {formatKey(point.metaData.tissue)}
+                      <strong>Tissue:</strong> {point.metadata.tissue}
                     </div>
                   )}
-                  {point.metaData?.expId && (
+                  {point.metadata?.expId && (
                     <div>
-                      <strong>Experiment ID:</strong> {point.metaData.expId}
+                      <strong>Experiment ID:</strong> {point.metadata.expId}
                     </div>
                   )}
-                  {point.metaData?.fileId && (
+                  {point.metadata?.fileId && (
                     <div>
-                      <strong>File ID:</strong> {point.metaData.fileId}
+                      <strong>File ID:</strong> {point.metadata.fileId}
                     </div>
                   )}
                 </Box>
