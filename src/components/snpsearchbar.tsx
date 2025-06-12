@@ -13,7 +13,8 @@ import {
   useTheme,
   Autocomplete,
   FormControl,
-  Grid2
+  Grid2,
+  CircularProgress
 } from "@mui/material";
 import styled from "@emotion/styled";
 import Stack from "@mui/material/Stack";
@@ -63,44 +64,54 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
   const [options, setOptions] = useState<string[]>([]);
   const [snpids, setSnpIds] = useState<Snp[]>([]);
   const [validSearch, setValidSearch] = useState<boolean>(false)
+  const [optionsLoading, setOptionsLoading] = useState(true);
 
   const onSearchChange = async (value: string) => {
     setOptions([]);
-    const response = await fetch(Config.API.CcreAPI, {
-      method: "POST",
-      body: JSON.stringify({
-        query: SNP_AUTOCOMPLETE_QUERY,
-        variables: {
-          assembly: "GRCh38",
-          snpid: value,
-        },
-      }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const snpSuggestion = (await response.json()).data?.snpAutocompleteQuery;
-    if (snpSuggestion && snpSuggestion.length > 0) {
-      const r: string[] = snpSuggestion.map((g: { id: number }) => g.id);
-      const snp = snpSuggestion.map(
-        (g: {
-          coordinates: { chromosome: string; start: number; end: number };
-          id: number;
-        }) => ({
-          chrom: g.coordinates.chromosome,
-          start: g.coordinates.start,
-          end: g.coordinates.end,
-          id: g.id,
-        })
-      );
-      setOptions(r);
-      setSnpIds(snp);
-      const exists = r.some(str => str.toLowerCase() === value.toLowerCase());
-      setValidSearch(exists)
-      if (exists) {
-        setSnpValue(value as any)
+    setOptionsLoading(true);
+
+    try {
+      const response = await fetch(Config.API.CcreAPI, {
+        method: "POST",
+        body: JSON.stringify({
+          query: SNP_AUTOCOMPLETE_QUERY,
+          variables: {
+            assembly: "GRCh38",
+            snpid: value,
+          },
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
+      const snpSuggestion = (await response.json()).data?.snpAutocompleteQuery;
+      if (snpSuggestion && snpSuggestion.length > 0) {
+        const r: string[] = snpSuggestion.map((g: { id: number }) => g.id);
+        const snp = snpSuggestion.map(
+          (g: {
+            coordinates: { chromosome: string; start: number; end: number };
+            id: number;
+          }) => ({
+            chrom: g.coordinates.chromosome,
+            start: g.coordinates.start,
+            end: g.coordinates.end,
+            id: g.id,
+          })
+        );
+        setOptions(r);
+        setSnpIds(snp);
+        const exists = r.some(str => str.toLowerCase() === value.toLowerCase());
+        console.log(r)
+        setValidSearch(exists)
+        if (exists) {
+          setSnpValue(value as any)
+        }
+      } else {
+        setOptions([]);
+        setSnpIds([]);
       }
-    } else {
-      setOptions([]);
-      setSnpIds([]);
+    } catch (error) {
+      window.alert("Error Fetching Variants")
+    } finally {
+      setOptionsLoading(false);
     }
   };
 
@@ -134,9 +145,7 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
             }}
             popupIcon={<ArrowDropDown sx={{ color: "gray" }} />}
 
-            clearIcon={<ClearIcon sx={{ color: "white" }}
-              onClick={() => { handleReset() }}
-            />}
+            clearIcon={optionsLoading && !validSearch ? <CircularProgress size={20} sx={{ color: "white" }} /> : <ClearIcon sx={{ color: "white" }} onClick={() => { handleReset() }}/>}
             value={snpValue}
             onChange={(_, newValue: any) => setSnpValue(newValue)}
             inputValue={inputValue}
@@ -151,7 +160,7 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
               <TextField
                 color="primary"
                 error={!validSearch && inputValue !== ""}
-                label={validSearch || inputValue === "" ? "" : "Invalid ID"}
+                label={validSearch || inputValue === "" ? "" : "Select rsID"}
                 {...params}
                 placeholder="Enter rsID"
                 fullWidth

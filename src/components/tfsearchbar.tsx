@@ -16,7 +16,8 @@ import {
   FormControl,
   styled,
   Stack,
-  Grid2
+  Grid2,
+  CircularProgress
 } from "@mui/material";
 import Config from "../../config.json";
 import { inflate } from "pako";
@@ -54,7 +55,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   const [snpids, setSnpIds] = useState<any[]>([]);
   const [tfA, setTFA] = useState<Map<string, any> | null>(null);
   const [loading, setLoading] = useState(false);
-  const [validSearch, setValidSearch] = useState<boolean>(false)
+  const [optionsLoading, setOptionsLoading] = useState(true);
+  const [validSearch, setValidSearch] = useState<string | undefined>(undefined)
 
   // Fetch and inflate the data from the gzipped JSON file
   useEffect(() => {
@@ -88,84 +90,91 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
     setSnpValue(null); // Clear the selected value
     setInputValue(""); // Clear the input text
     setOptions([]); //clear the options
-    setValidSearch(false); // disable search
+    setValidSearch(undefined); // disable search
+    setOptionsLoading(true);
   }
 
   // Handle changes in the search bar with debouncing
   const onSearchChange = async (value: string, tfAassignment: any) => {
     setOptions([]);
-    const response = await fetch(Config.API.CcreAPI, {
-      method: "POST",
-      body: JSON.stringify({
-        query: `
-          query Datasets($q: String, $assembly: String, $limit: Int) {
-            counts: targets(
-              target_prefix: $q,
-              processed_assembly: $assembly,
-              replicated_peaks: true,
-              exclude_investigatedas: ["recombinant protein"],
-              include_investigatedas: ["cofactor", "chromatin remodeler", "RNA polymerase complex", "DNA replication", "DNA repair", "cohesin", "transcription factor","RNA binding protein","other context"],
-              limit: $limit
-            ) {
-              name
-              datasets {
-                counts {
-                  total
-                  biosamples
-                  __typename
+    setOptionsLoading(true);
+    try {
+      const response = await fetch(Config.API.CcreAPI, {
+        method: "POST",
+        body: JSON.stringify({
+          query: `
+            query Datasets($q: String, $assembly: String, $limit: Int) {
+              counts: targets(
+                target_prefix: $q,
+                processed_assembly: $assembly,
+                replicated_peaks: true,
+                exclude_investigatedas: ["recombinant protein"],
+                include_investigatedas: ["cofactor", "chromatin remodeler", "RNA polymerase complex", "DNA replication", "DNA repair", "cohesin", "transcription factor","RNA binding protein","other context"],
+                limit: $limit
+              ) {
+                name
+                datasets {
+                  counts {
+                    total
+                    biosamples
+                  }
                 }
-                __typename
               }
-              __typename
             }
-          }
-        `,
-        variables: {
-          assembly: assembly,
-          q: value,
-          limit: 3,
-        },
-      }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const tfSuggestion = (await response.json()).data?.counts;
-    if (tfSuggestion && tfSuggestion.length > 0) {
-      const r: string[] = tfSuggestion.map((g: { name: string }) => g.name);
+          `,
+          variables: {
+            assembly: assembly,
+            q: value,
+            limit: 3,
+          },
+        }),
+        headers: { "Content-Type": "application/json" },
+      });
 
-      const snp = tfSuggestion.map(
-        (g: {
-          datasets: { counts: { total: number; biosamples: number } };
-          name: string;
-        }) => {
-          return {
-            total: g.datasets.counts.total,
-            biosamples: g.datasets.counts.biosamples,
-            label:
-              !tfAassignment || !tfAassignment.get(g.name!)
-                ? ""
-                : (
-                  tfAassignment.get(g.name!)["TF assessment"] as string
-                ).includes("Likely")
-                  ? "Likely sequence-specific TF - "
-                  : SEQUENCE_SPECIFIC.has(
-                    tfAassignment.get(g.name!)["TF assessment"]
-                  )
-                    ? "Sequence-specific TF - "
-                    : "Non-sequence-specific factor - ",
-            name: g.name,
-          };
+      const tfSuggestion = (await response.json()).data?.counts;
+
+      if (tfSuggestion && tfSuggestion.length > 0) {
+        const r: string[] = tfSuggestion.map((g: { name: string }) => g.name);
+        const snp = tfSuggestion.map((g: any) => ({
+          total: g.datasets.counts.total,
+          biosamples: g.datasets.counts.biosamples,
+          label:
+            !tfAassignment || !tfAassignment.get(g.name!)
+              ? ""
+              : (
+                tfAassignment.get(g.name!)["TF assessment"] as string
+              ).includes("Likely")
+                ? "Likely sequence-specific TF - "
+                : SEQUENCE_SPECIFIC.has(
+                  tfAassignment.get(g.name!)["TF assessment"]
+                )
+                  ? "Sequence-specific TF - "
+                  : "Non-sequence-specific factor - ",
+          name: g.name,
+        }));
+
+        setOptions(r);
+        setSnpIds(snp);
+
+        let exists = r.find(str => str.toLowerCase() === value.toLowerCase());
+        if (exists) {
+          if (assembly === "GRCh38") {
+            exists = exists.toUpperCase();
+          } else if (assembly === "mm10") {
+            exists = exists.charAt(0).toUpperCase() + exists.slice(1).toLowerCase();
+          }
         }
-      );
-      setOptions(r);
-      setSnpIds(snp);
-      const exists = r.some(str => str.toLowerCase() === value.toLowerCase());
-      setValidSearch(exists)
-      if (exists) {
-        setSnpValue(value as any)
+
+        setValidSearch(exists);
+        if (exists) setSnpValue(value as any);
+      } else {
+        setOptions([]);
+        setSnpIds([]);
       }
-    } else {
-      setOptions([]);
-      setSnpIds([]);
+    } catch (error) {
+      window.alert("Error Fetching Transcription Factors")
+    } finally {
+      setOptionsLoading(false);
     }
   };
 
@@ -183,18 +192,16 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
               if (event.key === "Enter" && snpValue && validSearch) {
                 event.preventDefault();
                 window.open(
-                  snpValue
+                  validSearch
                     ? `/tf/${assembly === "GRCh38" ? "human" : "mouse"
-                    }/${snpValue}/function`
+                    }/${validSearch}/function`
                     : "",
                   "_self"
                 );
               }
             }}
             popupIcon={<ArrowDropDown sx={{ color: "white" }} />}
-            clearIcon={<ClearIcon sx={{ color: "white" }}
-              onClick={() => { handleReset() }}
-            />}
+            clearIcon={optionsLoading && !validSearch ? <CircularProgress size={20} sx={{ color: "white" }} /> : <ClearIcon sx={{ color: "white" }} onClick={() => { handleReset() }} />}
             value={snpValue && formatFactorName(snpValue, assembly)}
             onChange={(_, newValue: any) => setSnpValue(newValue)}
             inputValue={inputValue}
@@ -209,7 +216,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
               <TextField
                 color="primary"
                 error={!validSearch && inputValue !== ""}
-                label={validSearch || inputValue === "" ? "" : "Invalid TF"}
+                label={validSearch || inputValue === "" ? "" : "Select TF"}
                 {...params}
                 placeholder="Enter TF Name"
                 fullWidth
@@ -273,7 +280,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
           href={
             snpValue && validSearch
               ? `/tf/${assembly === "GRCh38" ? "human" : "mouse"
-              }/${snpValue}/function`
+              }/${validSearch}/function`
               : ""
           }
         >
