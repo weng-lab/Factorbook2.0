@@ -1,7 +1,7 @@
 "use client";
 
 import { debounce } from "lodash";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { formatFactorName } from "@/utilities/misc";
 import SearchIcon from "@mui/icons-material/Search";
 import {
@@ -19,12 +19,13 @@ import {
   Grid2,
   CircularProgress
 } from "@mui/material";
-import Config from "../../config.json";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
 import ClearIcon from "@mui/icons-material/Clear";
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import Link from "next/link";
+import { useLazyQuery } from "@apollo/client";
+import { gql } from "@/types";
 
 interface TFSearchBarProps {
   assembly: string;
@@ -43,6 +44,27 @@ const StyledAutocomplete = styled(Autocomplete)(() => ({
   },
 }));
 
+const SEARCH_OPTIONS_QUERY = gql(`
+  query Datasets($q: String, $assembly: String, $limit: Int) {
+    counts: targets(
+      target_prefix: $q,
+      processed_assembly: $assembly,
+      replicated_peaks: true,
+      exclude_investigatedas: ["recombinant protein"],
+      include_investigatedas: ["cofactor", "chromatin remodeler", "RNA polymerase complex", "DNA replication", "DNA repair", "cohesin", "transcription factor","RNA binding protein","other context"],
+      limit: $limit
+    ) {
+      name
+      datasets {
+        counts {
+          total
+          biosamples
+        }
+      }
+    }
+  }
+`)
+
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
 const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
@@ -51,12 +73,48 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
 
   const [snpValue, setSnpValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
-  const [options, setOptions] = useState<string[]>([]);
-  const [snpids, setSnpIds] = useState<any[]>([]);
   const [tfA, setTFA] = useState<Map<string, any> | null>(null);
   const [loading, setLoading] = useState(false);
-  const [optionsLoading, setOptionsLoading] = useState(true);
   const [validSearch, setValidSearch] = useState<string | undefined>(undefined)
+  const [searchCaption, setSearchCaption] = useState<string>("")
+
+  const [fetchOptions, { loading: loading_options, data: optionsData, error: error_options }] =
+    useLazyQuery(SEARCH_OPTIONS_QUERY, {
+      fetchPolicy: 'cache-first',
+      onCompleted(d) {
+        const tfSuggestion = d.counts;
+        if (tfSuggestion && tfSuggestion.length > 0) {
+          setSearchCaption("Select TF")
+          const r = tfSuggestion
+            .map(g => g.name)
+            .filter((name): name is string => typeof name === "string");
+
+          if (r?.length > 0) {
+
+            let exists = r.find(str => str.toLowerCase() === inputValue.toLowerCase());
+            if (exists) {
+              if (assembly === "GRCh38") {
+                exists = exists.toUpperCase();
+              } else if (assembly === "mm10") {
+                exists = exists.charAt(0).toUpperCase() + exists.slice(1).toLowerCase();
+              }
+
+              setValidSearch(exists);
+              setSnpValue(inputValue as any);
+              setSearchCaption("")
+            } else {
+              setValidSearch(undefined);
+            }
+          } else {
+            setValidSearch(undefined)
+            setSearchCaption("No Matching TFs")
+          }
+        } else {
+          setValidSearch(undefined)
+          setSearchCaption("No Matching TFs")
+        }
+      }
+    });
 
   // Fetch and inflate the data from the gzipped JSON file
   useEffect(() => {
@@ -89,104 +147,33 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   const handleReset = () => {
     setSnpValue(null); // Clear the selected value
     setInputValue(""); // Clear the input text
-    setOptions([]); //clear the options
     setValidSearch(undefined); // disable search
-    setOptionsLoading(true);
+    setSearchCaption("")
   }
 
-  // Handle changes in the search bar with debouncing
-  const onSearchChange = async (value: string, tfAassignment: any) => {
-    setOptions([]);
-    setOptionsLoading(true);
-    try {
-      const response = await fetch(Config.API.CcreAPI, {
-        method: "POST",
-        body: JSON.stringify({
-          query: `
-            query Datasets($q: String, $assembly: String, $limit: Int) {
-              counts: targets(
-                target_prefix: $q,
-                processed_assembly: $assembly,
-                replicated_peaks: true,
-                exclude_investigatedas: ["recombinant protein"],
-                include_investigatedas: ["cofactor", "chromatin remodeler", "RNA polymerase complex", "DNA replication", "DNA repair", "cohesin", "transcription factor","RNA binding protein","other context"],
-                limit: $limit
-              ) {
-                name
-                datasets {
-                  counts {
-                    total
-                    biosamples
-                  }
-                }
-              }
-            }
-          `,
-          variables: {
-            assembly: assembly,
-            q: value,
-            limit: 3,
-          },
-        }),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const tfSuggestion = (await response.json()).data?.counts;
-
-      if (tfSuggestion && tfSuggestion.length > 0) {
-        const r: string[] = tfSuggestion.map((g: { name: string }) => g.name);
-        const snp = tfSuggestion.map((g: any) => ({
-          total: g.datasets.counts.total,
-          biosamples: g.datasets.counts.biosamples,
-          label:
-            !tfAassignment || !tfAassignment.get(g.name!)
-              ? ""
-              : (
-                tfAassignment.get(g.name!)["TF assessment"] as string
-              ).includes("Likely")
-                ? "Likely sequence-specific TF - "
-                : SEQUENCE_SPECIFIC.has(
-                  tfAassignment.get(g.name!)["TF assessment"]
-                )
-                  ? "Sequence-specific TF - "
-                  : "Non-sequence-specific factor - ",
-          name: g.name,
-        }));
-
-        setOptions(r);
-        setSnpIds(snp);
-
-        let exists = r.find(str => str.toLowerCase() === value.toLowerCase());
-        if (exists) {
-          if (assembly === "GRCh38") {
-            exists = exists.toUpperCase();
-          } else if (assembly === "mm10") {
-            exists = exists.charAt(0).toUpperCase() + exists.slice(1).toLowerCase();
-          }
-        }
-
-        setValidSearch(exists);
-        if (exists) setSnpValue(value as any);
-      } else {
-        setOptions([]);
-        setSnpIds([]);
-      }
-    } catch (error) {
-      window.alert("Error Fetching Transcription Factors")
-    } finally {
-      setOptionsLoading(false);
-    }
-  };
-
   // Debouncing the search input change
-  const debounceFn = useCallback(debounce(onSearchChange, 300), [assembly]);
+  const debounceFn = useMemo(() => {
+    return debounce((q: string) => {
+      fetchOptions({
+        variables: {
+          assembly,
+          q,
+          limit: 3,
+        },
+      });
+    }, 300);
+  }, [assembly, fetchOptions]);
+
+  useEffect(() => {
+    return () => debounceFn.cancel();
+  }, [debounceFn]);
 
   return (
     <Box>
       <Stack direction={isMobile ? "column" : "row"} spacing={2}>
         <FormControl fullWidth variant="outlined">
           <StyledAutocomplete
-            options={options}
+            options={inputValue === "" ? [] : optionsData?.counts.map(c => c.name) ?? []}
             freeSolo
             onKeyDown={(event: any) => {
               if (event.key === "Enter" && snpValue && validSearch) {
@@ -201,22 +188,22 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
               }
             }}
             popupIcon={<ArrowDropDown sx={{ color: "white" }} />}
-            clearIcon={optionsLoading && !validSearch ? <CircularProgress size={20} sx={{ color: "white" }} /> : <ClearIcon sx={{ color: "white" }} onClick={() => { handleReset() }} />}
+            clearIcon={loading_options && !validSearch ? <CircularProgress size={20} sx={{ color: "white" }} /> : <ClearIcon sx={{ color: "white" }} onClick={() => { handleReset() }} />}
             value={snpValue && formatFactorName(snpValue, assembly)}
             onChange={(_, newValue: any) => setSnpValue(newValue)}
             inputValue={inputValue}
             onInputChange={(_, newInputValue) => {
-              if (newInputValue) {
-                debounceFn(newInputValue, tfA);
-              }
               setInputValue(newInputValue);
+              if (newInputValue) {
+                debounceFn(newInputValue);
+              }
             }}
             noOptionsText="Example: CTCF"
             renderInput={(params) => (
               <TextField
                 color="primary"
-                error={!validSearch && inputValue !== ""}
-                label={validSearch || inputValue === "" ? "" : "Select TF"}
+                error={(optionsData?.counts.length === 0 && inputValue !== "") || Boolean(error_options)}
+                label={error_options ? "Error Fetching TFs" : searchCaption}
                 {...params}
                 placeholder="Enter TF Name"
                 fullWidth
@@ -230,7 +217,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                   style: { textAlign: "center", color: "white" },
                 }}
                 InputLabelProps={{
-                  style: { width: "100%", color: "#ee725f" },
+                  style: { width: "100%", color: optionsData?.counts.length === 0 || error_options ? theme.palette.error.main : "white" },
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -238,14 +225,33 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                       borderColor: "white", // Default border color
                     },
                     "&:hover fieldset": {
-                      borderColor: validSearch || inputValue === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
+                      borderColor: searchCaption === "Select TF" || searchCaption === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
                     },
                   }
                 }}
               />
             )}
             renderOption={(props, option: any) => {
-              const selectedSnp = snpids.find((g) => g.name === option);
+              const tfSuggestion = optionsData?.counts;
+              let subtitle;
+              if (tfSuggestion && tfSuggestion.length > 0) {
+                subtitle = tfSuggestion.map((g: any) => ({
+                  total: g.datasets.counts.total,
+                  biosamples: g.datasets.counts.biosamples,
+                  label:
+                    !tfA || !tfA.get(g.name!)
+                      ? ""
+                      : (
+                        tfA.get(g.name!)["TF assessment"] as string
+                      ).includes("Likely")
+                        ? "Likely sequence-specific TF - "
+                        : SEQUENCE_SPECIFIC.has(tfA.get(g.name!)["TF assessment"])
+                          ? "Sequence-specific TF - "
+                          : "Non-sequence-specific factor - ",
+                  name: g.name,
+                }));
+              }
+              const selected = subtitle?.find((g) => g.name === option);
               return (
                 <li {...props} key={option}>
                   <Grid2 container alignItems="center">
@@ -253,9 +259,9 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                       <Box component="span">
                         {formatFactorName(option, assembly)}
                       </Box>
-                      {selectedSnp && (
+                      {selected && (
                         <Typography variant="body2" color="text.secondary">
-                          {`${selectedSnp.label} ${selectedSnp.total} experiments, ${selectedSnp.biosamples} cell types`}
+                          {`${selected.label} ${selected.total} experiments, ${selected.biosamples} cell types`}
                         </Typography>
                       )}
                     </Grid2>
@@ -268,7 +274,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
         <Button
           LinkComponent={Link}
           variant="contained"
-          disabled={!validSearch}
+          disabled={validSearch === undefined}
           sx={{
             padding: "8px 24px",
             "&:disabled": {

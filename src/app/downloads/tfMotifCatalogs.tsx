@@ -83,7 +83,7 @@ const TfMotifCatalogDownloads = () => {
             </Stack>
             <StackedDownloadButton
               topText="Download Motifs in MEME Format"
-              bottomText="1 MB"
+              bottomText="(1 MB)"
               href="/motifscatlog/all-selex-motifs.meme.gz"
             />
           </Stack>
