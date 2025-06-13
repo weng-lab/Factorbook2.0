@@ -79,7 +79,7 @@ const Footer: React.FC = () => (
         <LinkSection
           title="About Us"
           links={[
-            { text: "Factorbook Overview", href: "#" },
+            { text: "Factorbook Overview", href: "/about" },
             { text: "Weng Lab", href: "https://www.umassmed.edu/wenglab/" },
             { text: "ENCODE Consortium", href: "#" },
             {

@@ -13,6 +13,7 @@
   "dependencies": {
     "@apollo/client": "^3",
     "@apollo/experimental-nextjs-app-support": "^0.11.8",
+    "@emailjs/browser": "^4.4.1",
     "@emotion/cache": "^11",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
@@ -38,7 +39,7 @@
     "@visx/tooltip": "^3",
     "@visx/zoom": "^3",
     "@weng-lab/genomebrowser": "^0.0.20",
-    "@weng-lab/psychscreen-ui-components": "^2.0.21",
+    "@weng-lab/psychscreen-ui-components": "^2.1.5",
     "copy-to-clipboard": "^3.3.3",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^5",
@@ -65,5 +66,6 @@
     "eslint-config-next": "^14",
     "graphql": "^16",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "yarn@4.6.0+sha512.5383cc12567a95f1d668fbe762dfe0075c595b4bfff433be478dbbe24e05251a8e8c3eb992a986667c1d53b6c3a9c85b8398c35a960587fbd9fa3a0915406728"
 }

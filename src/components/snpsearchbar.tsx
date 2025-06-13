@@ -1,7 +1,7 @@
 "use client";
 
 import { debounce } from "lodash";
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useMemo } from "react";
 
 import SearchIcon from "@mui/icons-material/Search";
 import {
@@ -13,16 +13,18 @@ import {
   useTheme,
   Autocomplete,
   FormControl,
-  Grid2
+  Grid2,
+  CircularProgress
 } from "@mui/material";
 import styled from "@emotion/styled";
 import Stack from "@mui/material/Stack";
-import Config from "../../config.json";
 import ClearIcon from '@mui/icons-material/Clear';
 
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
+import { useLazyQuery } from "@apollo/client";
+import { gql } from "@/types";
 
-const SNP_AUTOCOMPLETE_QUERY = `
+const SNP_AUTOCOMPLETE_QUERY = gql(`
     query suggestions($assembly: String!, $snpid: String!) {
         snpAutocompleteQuery(assembly: $assembly, snpid: $snpid) {
             id
@@ -33,7 +35,7 @@ const SNP_AUTOCOMPLETE_QUERY = `
             }
         }
     }
-`;
+`);
 type Snp = {
   id: string;
   chrom: string;
@@ -60,49 +62,38 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
 
   const [snpValue, setSnpValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
-  const [options, setOptions] = useState<string[]>([]);
   const [snpids, setSnpIds] = useState<Snp[]>([]);
   const [validSearch, setValidSearch] = useState<boolean>(false)
+  const [searchCaption, setSearchCaption] = useState<string>("")
 
-  const onSearchChange = async (value: string) => {
-    setOptions([]);
-    const response = await fetch(Config.API.CcreAPI, {
-      method: "POST",
-      body: JSON.stringify({
-        query: SNP_AUTOCOMPLETE_QUERY,
-        variables: {
-          assembly: "GRCh38",
-          snpid: value,
-        },
-      }),
-      headers: { "Content-Type": "application/json" },
-    });
-    const snpSuggestion = (await response.json()).data?.snpAutocompleteQuery;
-    if (snpSuggestion && snpSuggestion.length > 0) {
-      const r: string[] = snpSuggestion.map((g: { id: number }) => g.id);
-      const snp = snpSuggestion.map(
-        (g: {
-          coordinates: { chromosome: string; start: number; end: number };
-          id: number;
-        }) => ({
-          chrom: g.coordinates.chromosome,
-          start: g.coordinates.start,
-          end: g.coordinates.end,
-          id: g.id,
-        })
-      );
-      setOptions(r);
-      setSnpIds(snp);
-      const exists = r.some(str => str.toLowerCase() === value.toLowerCase());
-      setValidSearch(exists)
-      if (exists) {
-        setSnpValue(value as any)
+  const [fetchOptions, { loading: loading_options, data: optionsData, error: error_options }] =
+    useLazyQuery(SNP_AUTOCOMPLETE_QUERY, {
+      fetchPolicy: 'cache-first',
+      onCompleted(d) {
+        setSearchCaption("Select ID")
+        const snpSuggestion = d.snpAutocompleteQuery;
+        if (snpSuggestion && snpSuggestion.length > 0) {
+          const r = snpSuggestion.map(g => g.id);
+          const snp = snpSuggestion.map(g => ({
+            chrom: g.coordinates.chromosome,
+            start: g.coordinates.start,
+            end: g.coordinates.end,
+            id: g.id,
+          })
+          );
+          setSnpIds(snp);
+          const exists = r.some(str => str.toLowerCase() === inputValue.toLowerCase());
+          setValidSearch(exists)
+          if (exists) {
+            setSnpValue(inputValue as any)
+            setSearchCaption("")
+          }
+        } else {
+          setSnpIds([]);
+          setSearchCaption("No Matching IDs")
+        }
       }
-    } else {
-      setOptions([]);
-      setSnpIds([]);
-    }
-  };
+    });
 
   //handle the case where all characters are deleted
   useEffect(() => {
@@ -114,17 +105,32 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
   const handleReset = () => {
     setSnpValue(null); // Clear the selected value
     setInputValue(""); // Clear the input text
-    setOptions([]); //clear the options
     setValidSearch(false); // disable search
+    setSearchCaption("")
   }
 
-  const debounceFn = useCallback(debounce(onSearchChange, 500), []);
+  // Debouncing the search input change
+  const debounceFn = useMemo(() => {
+    return debounce((q: string) => {
+      fetchOptions({
+        variables: {
+          assembly: "GRCh38",
+          snpid: q,
+        },
+      });
+    }, 300);
+  }, [fetchOptions]);
+
+  useEffect(() => {
+    return () => debounceFn.cancel();
+  }, [debounceFn]);
+  
   return (
     <Box>
       <Stack direction="row" spacing={2}>
         <FormControl fullWidth variant="outlined">
           <StyledAutocomplete
-            options={options}
+            options={inputValue === "" ? [] : optionsData?.snpAutocompleteQuery.map(s => s.id) ?? []}
             freeSolo
             onKeyDown={(event: any) => {
               if (event.key === "Enter" && snpValue && validSearch) {
@@ -134,24 +140,22 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
             }}
             popupIcon={<ArrowDropDown sx={{ color: "gray" }} />}
 
-            clearIcon={<ClearIcon sx={{ color: "white" }}
-              onClick={() => { handleReset() }}
-            />}
+            clearIcon={loading_options && !validSearch ? <CircularProgress size={20} sx={{ color: "white" }} /> : <ClearIcon sx={{ color: "white" }} onClick={() => { handleReset() }}/>}
             value={snpValue}
             onChange={(_, newValue: any) => setSnpValue(newValue)}
             inputValue={inputValue}
             onInputChange={(_, newInputValue) => {
+              setInputValue(newInputValue);
               if (newInputValue) {
                 debounceFn(newInputValue);
               }
-              setInputValue(newInputValue);
             }}
             noOptionsText="Example: rs3794102"
             renderInput={(params) => (
               <TextField
                 color="primary"
-                error={!validSearch && inputValue !== ""}
-                label={validSearch || inputValue === "" ? "" : "Invalid ID"}
+                error={(optionsData?.snpAutocompleteQuery.length === 0 && inputValue !== "") || Boolean(error_options)}
+                label={error_options ? "Error Fetching IDs" : searchCaption}
                 {...params}
                 placeholder="Enter rsID"
                 fullWidth
@@ -165,7 +169,7 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
                   style: { textAlign: "center", color: textColor ? textColor : "white" },
                 }}
                 InputLabelProps={{
-                  style: { width: "100%" },
+                  style: { width: "100%", color: optionsData?.snpAutocompleteQuery.length === 0 || error_options ? theme.palette.error.main : "white" },
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -173,7 +177,7 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
                       borderColor: "white", // Default border color
                     },
                     "&:hover fieldset": {
-                      borderColor: validSearch || inputValue === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
+                      borderColor: searchCaption === "Select ID" || searchCaption === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
                     },
                     "& .MuiInputBase-input::placeholder": {
                       color: textColor ? textColor : "white", // Placeholder color
