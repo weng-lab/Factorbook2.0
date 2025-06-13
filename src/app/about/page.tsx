@@ -50,7 +50,7 @@ export default function About() {
   const sendEmail = () => {
     return new Promise((resolve, reject) => {
       //These IDs come from the emailjs website (using screenumass gmail account)
-      emailjs.sendForm('service_k7xidgk', 'igSCREEN', form.current ?? "", 'VU9U1vX9cAro8XtUK')
+      emailjs.sendForm('service_k7xidgk', 'contactUs', form.current ?? "", 'VU9U1vX9cAro8XtUK')
         .then((result) => {
           resolve(result);
         })
@@ -60,15 +60,21 @@ export default function About() {
     });
   };
 
-  return (
-      <Grid2 container spacing={4} sx={{ maxWidth: "70%", mr: "auto", ml: "auto", mt: '3rem', mb: '3rem' }}>
-        <Grid2 size={12}>
-          <Typography paragraph variant="h3">About Factorbook</Typography>
-          <Typography paragraph variant="h5">Search <i>immune</i> Candidate cis-Regulatory Elements</Typography>
-          <Typography paragraph>igSCREEN is a comprehensive catalog of multi-omic knowledge about human immune cells. It was designed and built by Dr. Zhiping Weng’s and Dr. Jill Moore’s labs at UMass Chan Medical School.</Typography>
-          <Typography paragraph>For questions or comments please contact us at Zhiping.Weng@umassmed.edu and Jill.Moore@umassmed.edu</Typography>
-          <Typography paragraph>This work is supported by U01AI173584.</Typography>
-        </Grid2>
+    return (
+        <Grid2 container spacing={4} sx={{ maxWidth: "70%", mr: "auto", ml: "auto", mt: '3rem', mb: '3rem' }}>
+            <Grid2 size={12}>
+                <Typography paragraph variant="h3">About Factorbook</Typography>
+                <Typography paragraph>Factorbook is a resource for human and mouse transcription factors,
+                    focusing on their binding specificities and regulatory roles in gene
+                    expression across cell types. Factorbook integrates public data,
+                    especially ENCODE data, to provide a wide-ranging motif catalog and transcription factor binding sites.
+                    <br />
+                    <br />
+                    Human: 3318 experiments ‧ 1146 transcription factors ‧ 185 cell types
+                    <br />
+                    Mouse: 195 experiments ‧ 54 transcription factors ‧ 35 cell types
+                </Typography>
+            </Grid2>
         {/* Contact Us */}
         <Grid2 id="contact-us" size={12}>
           <Typography mb={1} variant="h2">Contact Us</Typography>
@@ -92,6 +98,7 @@ export default function About() {
             noValidate
             autoComplete="off"
           >
+            <input style={{display: "none"}} name="site" value={"Factorbook"} readOnly></input>
             <TextField
               required
               value={contactName}
