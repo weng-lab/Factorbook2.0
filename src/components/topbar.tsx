@@ -215,20 +215,10 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
           <Grid container alignItems="center">
             {isMobile ? (
               <>
-                <Grid item xs={6}>
-                  <IconButton
-                    edge="start"
-                    color="inherit"
-                    aria-label="menu"
-                    onClick={handleDrawerToggle}
-                  >
-                    <MenuIcon sx={{ color: "grey" }} />
-                  </IconButton>
-                </Grid>
                 <Grid
                   item
                   xs={6}
-                  sx={{ display: "flex", justifyContent: "flex-end" }}
+                  sx={{ display: "flex", justifyContent: "flex-start" }}
                 >
                   <Link href="/">
                     <img
@@ -238,6 +228,16 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
                       style={{ height: "auto", maxHeight: "100px" }} // Optional height
                     />
                   </Link>
+                </Grid>
+                <Grid item xs={6} sx={{ display: "flex", justifyContent: "flex-end" }}>
+                  <IconButton
+                    edge="start"
+                    color="inherit"
+                    aria-label="menu"
+                    onClick={handleDrawerToggle}
+                  >
+                    <MenuIcon sx={{ color: "grey" }} />
+                  </IconButton>
                 </Grid>
               </>
             ) : (
