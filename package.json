@@ -13,6 +13,7 @@
   "dependencies": {
     "@apollo/client": "^3",
     "@apollo/experimental-nextjs-app-support": "^0.11.8",
+    "@emailjs/browser": "^4.4.1",
     "@emotion/cache": "^11",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",

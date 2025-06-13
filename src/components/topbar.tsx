@@ -61,6 +61,7 @@ let navItems = [
       },
     ]
   },
+  { title: "About", href: "/about" },
   { title: "Downloads", href: "/downloads" }
 ];
 
