@@ -62,7 +62,7 @@ export default function About() {
 
     return (
       <Stack
-        spacing={2}
+        spacing={3}
         sx={{ maxWidth: "70%", mr: "auto", ml: "auto", mt: "3rem", mb: "3rem" }}
       >
         <Box>
