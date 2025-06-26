@@ -81,6 +81,7 @@ const Footer: React.FC = () => (
           links={[
             { text: "Factorbook Overview", href: "/about" },
             { text: "Weng Lab", href: "https://www.umassmed.edu/wenglab/" },
+            { text: "Moore Lab", href: "https://sites.google.com/view/moore-lab/" },
             { text: "ENCODE Consortium", href: "#" },
             {
               text: "UMass Chan Medical School",
@@ -101,24 +102,6 @@ const Footer: React.FC = () => (
           title="Resources"
           links={[{ text: "Downloads", href: "/downloads" }]}
         />
-      </Box>
-    </Box>
-    <Divider sx={{ bgcolor: "white", my: 4, mx: 3 }} />
-    <Box
-      display="flex"
-      justifyContent="space-between"
-      alignItems="center"
-      flexWrap="wrap"
-      sx={{ color: "white", fontSize: 12, px: 3 }}
-    >
-      <Typography sx={{ pointerEvents: "none" }}></Typography>
-      <Box component="nav" display="flex" gap={2}>
-        <MuiLink href="#" color="white" underline="none">
-          Privacy & Policy
-        </MuiLink>
-        <MuiLink href="#" color="white" underline="none">
-          Terms & Conditions
-        </MuiLink>
       </Box>
     </Box>
   </Box>
