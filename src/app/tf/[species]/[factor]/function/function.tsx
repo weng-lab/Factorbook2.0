@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { DNAAlphabet, DNALogo } from "logojs-react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import {
@@ -12,7 +13,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
-  useMediaQuery
+  useMediaQuery,
 } from "@mui/material";
 import {
   FACTOR_DESCRIPTION_QUERY,
@@ -36,6 +37,11 @@ import LoadingFunction from "./loading";
 import Link from "next/link";
 import { ExpandMore } from "@mui/icons-material";
 import { tfToAlphaFoldIds } from "./consts";
+import { IconButton } from "@mui/material";
+import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+
+DNAAlphabet[0].color = "#228b22";
+DNAAlphabet[3].color = "red";
 
 /** Utility to check if a description has biological information */
 const looksBiological = (value: string): boolean => {
@@ -44,15 +50,25 @@ const looksBiological = (value: string): boolean => {
 };
 
 const FunctionTab: React.FC<FunctionPageProps> = (props) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? imageUrls.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev === imageUrls.length - 1 ? 0 : prev + 1));
+  };
+
   const { species, factor } = useParams<{ species: string; factor: string }>();
 
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   // Define factorForUrl to be uppercase if species is human, or capitalize the first letter if species is mouse
   const factorForUrl =
     species.toLowerCase() === "human"
-      ? factor//.toUpperCase()
+      ? factor //.toUpperCase()
       : species.toLowerCase() === "mouse"
       ? factor.charAt(0).toUpperCase() + factor.slice(1)
       : factor;
@@ -63,7 +79,10 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     loading: factorLoading,
     error: factorError,
   } = useQuery<FactorQueryResponse>(FACTOR_DESCRIPTION_QUERY, {
-    variables: { assembly: props.assembly, name: [props.factor.split(/phospho/i)[0]] },
+    variables: {
+      assembly: props.assembly,
+      name: [props.factor.split(/phospho/i)[0]],
+    },
   });
 
   /** Fetching dataset data */
@@ -85,6 +104,26 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     () => getRCSBImageUrl(factorDetails?.pdbids),
     [factorDetails]
   );
+
+  
+  // Build image URLs array based on conditions
+  const imageUrls = useMemo(() => {
+    const urls: string[] = [];
+    if (props.factorlogo) urls.push("motif");
+    if (imageUrl) urls.push(imageUrl);
+    
+    return urls;
+  }, [imageUrl, props.factorlogo]);
+
+  const hasMultipleImages = imageUrls.length > 1;
+  const currentImage = imageUrls[currentIndex];
+
+  
+  const pdbId = factorDetails?.pdbids
+    ? factorDetails?.pdbids.split(",")[0].split(":")[0].toLowerCase()
+    : undefined;
+
+  
   const experimentCount = datasetData?.peakDataset.datasets.length || 0;
   const biosampleCount =
     datasetData?.peakDataset.partitionByBiosample?.length || 0;
@@ -93,27 +132,30 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     const afLink: Record<string, string> = {};
 
     const alphaFoldId =
-    tfToAlphaFoldIds[species.toLowerCase()]?.[factorForUrl.toUpperCase()];
+      tfToAlphaFoldIds[species.toLowerCase()]?.[factorForUrl.toUpperCase()];
 
     if (alphaFoldId) {
-      afLink['AlphaFold DB'] = "https://alphafold.ebi.ac.uk/entry/" + alphaFoldId;
+      afLink["AlphaFold DB"] =
+        "https://alphafold.ebi.ac.uk/entry/" + alphaFoldId;
     }
 
-    return (
-      {
-        ...afLink,
-        ENCODE: `https://www.encodeproject.org/search/?searchTerm=${factorForUrl}&type=Experiment&assembly=${props.assembly}&assay_title=TF+ChIP-seq&files.output_type=optimal+IDR+thresholded+peaks&files.output_type=pseudoreplicated+IDR+thresholded+peaks&status=released`,        
-        Ensembl: `http://www.ensembl.org/Human/Search/Results?q=${factorForUrl}`,
-        GO: `http://amigo.geneontology.org/amigo/search/bioentity?q=${factorForUrl}`,
-        GeneCards: `http://www.genecards.org/cgi-bin/carddisp.pl?gene=${factorForUrl}`,
-        HGNC: `https://genenames.org/tools/search/#!/?query=${factorForUrl}`,
-        RefSeq: `http://www.ncbi.nlm.nih.gov/nuccore/?term=${factorForUrl}+AND+${props.assembly.toLowerCase() !== "mm10" ? '"Homo sapiens"[porgn:__txid9606]' : '"Mus musculus"[porgn]'}`,
-        UniProt: `http://www.uniprot.org/uniprot/?query=${factorForUrl}`,
-        Wikipedia: `https://en.wikipedia.org/wiki/${factorForUrl}`,
-        NCBI: `https://www.ncbi.nlm.nih.gov/search/all/?term=${factorForUrl}`
-      }
-    )
-  }, [factorForUrl]) 
+    return {
+      ...afLink,
+      ENCODE: `https://www.encodeproject.org/search/?searchTerm=${factorForUrl}&type=Experiment&assembly=${props.assembly}&assay_title=TF+ChIP-seq&files.output_type=optimal+IDR+thresholded+peaks&files.output_type=pseudoreplicated+IDR+thresholded+peaks&status=released`,
+      Ensembl: `http://www.ensembl.org/Human/Search/Results?q=${factorForUrl}`,
+      GO: `http://amigo.geneontology.org/amigo/search/bioentity?q=${factorForUrl}`,
+      GeneCards: `http://www.genecards.org/cgi-bin/carddisp.pl?gene=${factorForUrl}`,
+      HGNC: `https://genenames.org/tools/search/#!/?query=${factorForUrl}`,
+      RefSeq: `http://www.ncbi.nlm.nih.gov/nuccore/?term=${factorForUrl}+AND+${
+        props.assembly.toLowerCase() !== "mm10"
+          ? '"Homo sapiens"[porgn:__txid9606]'
+          : '"Mus musculus"[porgn]'
+      }`,
+      UniProt: `http://www.uniprot.org/uniprot/?query=${factorForUrl}`,
+      Wikipedia: `https://en.wikipedia.org/wiki/${factorForUrl}`,
+      NCBI: `https://www.ncbi.nlm.nih.gov/search/all/?term=${factorForUrl}`,
+    };
+  }, [factorForUrl]);
 
   /** Columns for the experiment DataTable */
   const datasetColumns = (species: string): DataTableColumn<any>[] => [
@@ -228,7 +270,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   ];
 
   /** Error or Loading State Handling */
-  if (factorLoading || datasetLoading ) return LoadingFunction();
+  if (factorLoading || datasetLoading) return LoadingFunction();
   if (factorError)
     return (
       <Alert severity="error">
@@ -283,14 +325,8 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     </>
   );
 
-
-
   return (
-    <Stack
-      gap={3}
-      direction={isMobile ? "column" : "row"}
-      color="white"
-    >
+    <Stack gap={3} direction={isMobile ? "column" : "row"} color="white">
       <Stack
         component={Paper}
         elevation={0}
@@ -302,74 +338,146 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
           position: isMobile ? "inherit" : "sticky",
           top: "10px",
           height: "fit-content",
-          color: "inherit"
+          color: "inherit",
         }}
       >
-        <Typography variant="h4">
-          {factorForUrl}
-        </Typography>
-        {imageUrl && (isMobile ?
-          <div>
-            <Accordion sx={{ background: "#6B6C74", color: "inherit" }}>
-              <AccordionSummary expandIcon={<ExpandMore htmlColor="white" />}>
-                Show Structure
-              </AccordionSummary>
-              <AccordionDetails>
-                <img
-                  src={imageUrl}
-                  alt={factorDetails?.name}
-                  style={{ borderRadius: theme.shape.borderRadius }}
+        <Typography variant="h4">{factorForUrl}</Typography>
+        {/* Image carousel section */}
+        {imageUrls.length > 0 && (
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="center"
+            spacing={1}
+          >
+            {currentIndex === 1 && hasMultipleImages && (
+              <IconButton
+                onClick={handlePrev}
+                sx={{
+                  position: "absolute",
+                  left: 0,
+                  transform: "translateY(-0%)",
+                  color: "white",
+                }}
+              >
+                <ArrowBackIos />
+              </IconButton>
+            )}
+            <Box
+              sx={{
+                backgroundColor: "white",
+                borderRadius: 2, // theme.spacing(2) => 16px
+                padding: 1,
+                display: "inline-block",
+                boxShadow: 1, // optional: subtle shadow
+
+                // height: "300px"
+              }}
+            >
+              {currentImage === "motif" && props.factorlogo ? (
+                <DNALogo
+                  ppm={props.factorlogo}
+                  alphabet={DNAAlphabet}
+                  width={290}
+                  height={160}
                 />
-              </AccordionDetails>
-            </Accordion>
-          </div>
-          :
-          <img
-            src={imageUrl}
-            alt={factorDetails?.name}
-            style={{ borderRadius: theme.shape.borderRadius }}
-          />
+              ) : pdbId ? (
+                <a
+                  href={`https://www.rcsb.org/structure/${pdbId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src={imageUrls[currentIndex]}
+                    alt={factorDetails?.name}
+                    style={{
+                      borderRadius: theme.shape.borderRadius, // rounds the image inside
+                      maxWidth: "100%",
+                      height: "auto",
+                      //display: "block",
+                      objectFit: "contain",
+                      maxHeight: "300px",
+                    }}
+                  />
+                </a>
+              ) : (
+                <img
+                  src={imageUrls[currentIndex]}
+                  alt={factorDetails?.name}
+                  style={{
+                    borderRadius: theme.shape.borderRadius, // rounds the image inside
+                    maxWidth: "100%",
+                    height: "auto",
+                    //display: "block",
+                    objectFit: "contain",
+                    maxHeight: "300px",
+                  }}
+                />
+              )}
+            </Box>
+
+            {currentIndex === 0 && hasMultipleImages && (
+              <IconButton
+                onClick={handleNext}
+                sx={{
+                  position: "absolute",
+                  right: -12,
+                  transform: "translateY(-20%)",
+                  color: "white",
+                }}
+              >
+                <ArrowForwardIos />
+              </IconButton>
+            )}
+          </Stack>
         )}
-        <ReferenceSection title="References" sources={Object.entries(referenceLinks).map(([name, url]) => ({ name, url }))} />
+
+        <ReferenceSection
+          title="References"
+          sources={Object.entries(referenceLinks).map(([name, url]) => ({
+            name,
+            url,
+          }))}
+        />
       </Stack>
       <Stack flex={1} gap={3}>
-          <InfoCards />
-          {datasetData && (
-            <DataTable
-              tableTitle={`${experimentCount} Experiments`}
-              columns={datasetColumns(species)}
-              rows={datasetData.peakDataset.datasets}
-              searchable
-              itemsPerPage={5}
-              sortColumn={2}
-              sortDescending
-              headerColor={{
-                /**
-                 * @todo this is dumb typecasting. When datatable types are changed for this prop, change. https://github.com/weng-lab/psychscreen-ui-components/issues/51
-                 */
-                backgroundColor: theme.palette.primary.main as "#",
-                textColor: "#FFF",
-              }}
-            />
-          )}
-          {datasetData?.peakDataset.partitionByBiosample && (
-            <DataTable
-              tableTitle={`${biosampleCount} Biosamples`}
-              downloadFileName={`${factor}_profiled_biosamples.tsv`}
-              columns={biosampleColumns(species)}
-              rows={datasetData.peakDataset.partitionByBiosample}
-              searchable
-              sortDescending
-              itemsPerPage={5}
-              headerColor={{
-                /**
-                 * @todo this is dumb typecasting. When datatable types are changed for this prop, change. https://github.com/weng-lab/psychscreen-ui-components/issues/51
-                 */
-                backgroundColor: theme.palette.primary.main as "#",
-                textColor: "#FFF",
-              }}
-            />
-          )}
+        <InfoCards />
+        {datasetData && (
+          <DataTable
+            tableTitle={`${experimentCount} Experiments`}
+            columns={datasetColumns(species)}
+            rows={datasetData.peakDataset.datasets}
+            searchable
+            itemsPerPage={5}
+            sortColumn={2}
+            sortDescending
+            headerColor={{
+              /**
+               * @todo this is dumb typecasting. When datatable types are changed for this prop, change. https://github.com/weng-lab/psychscreen-ui-components/issues/51
+               */
+              backgroundColor: theme.palette.primary.main as "#",
+              textColor: "#FFF",
+            }}
+          />
+        )}
+        {datasetData?.peakDataset.partitionByBiosample && (
+          <DataTable
+            tableTitle={`${biosampleCount} Biosamples`}
+            downloadFileName={`${factor}_profiled_biosamples.tsv`}
+            columns={biosampleColumns(species)}
+            rows={datasetData.peakDataset.partitionByBiosample}
+            searchable
+            sortDescending
+            itemsPerPage={5}
+            headerColor={{
+              /**
+               * @todo this is dumb typecasting. When datatable types are changed for this prop, change. https://github.com/weng-lab/psychscreen-ui-components/issues/51
+               */
+              backgroundColor: theme.palette.primary.main as "#",
+              textColor: "#FFF",
+            }}
+          />
+        )}
       </Stack>
     </Stack>
   );
