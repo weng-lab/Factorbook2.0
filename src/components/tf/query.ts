@@ -79,6 +79,41 @@ export const DATASETS_QUERY = gql`
     }
 `;
 
+export const FETCH_PDBID_DETAILS_QUERY = gql `query fetchpdbiddetails($pdbids: [String!]!){
+  entries(entry_ids: $pdbids) {
+    rcsb_id
+    rcsb_accession_info {
+      deposit_date
+      
+    }
+    struct {
+      title
+      pdbx_model_details
+      pdbx_model_type_details
+      pdbx_descriptor
+    }
+    exptl {
+      method
+    }
+    rcsb_entry_info {
+      resolution_combined
+      molecular_weight
+    }
+    polymer_entities {
+      rcsb_polymer_entity_container_identifiers {
+        entity_id
+        reference_sequence_identifiers {
+          database_name
+          database_accession
+        }
+      }
+      rcsb_polymer_entity {
+        pdbx_description
+      }
+    }
+  }
+}
+`
 export const FACTOR_DESCRIPTION_QUERY = gql`
     query Factor($id: [String], $name: [String], $assembly: String!) {
         factor(id: $id, name: $name, assembly: $assembly) {

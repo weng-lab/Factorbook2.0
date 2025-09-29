@@ -15,7 +15,7 @@ export default function FunctionPage({
   const [dataMap, setDataMap] = useState<Map<string, number[][]>>(new Map());
   
   useEffect(() => {
-    fetch("/Trimmed_ppm_TF-ChIP-Canonical-Motifs-w-Trimmed.json") // Replace with actual filename in public folder
+    fetch("/TF-ChIP-Canonical-Motifs-w-Trimmed.json") // Replace with actual filename in public folder
       .then((res) => res.json())
       .then((json) => {
         const tfMap = new Map<string, number[][]>();

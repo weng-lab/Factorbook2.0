@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { DNAAlphabet, DNALogo } from "logojs-react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
@@ -18,6 +19,7 @@ import {
 import {
   FACTOR_DESCRIPTION_QUERY,
   DATASETS_QUERY,
+  FETCH_PDBID_DETAILS_QUERY
 } from "@/components/tf/query";
 import {
   FactorQueryResponse,
@@ -39,6 +41,7 @@ import { ExpandMore } from "@mui/icons-material";
 import { tfToAlphaFoldIds } from "./consts";
 import { IconButton } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
+import { useGetPdbId } from "./useGetPdbId";
 
 DNAAlphabet[0].color = "#228b22";
 DNAAlphabet[3].color = "red";
@@ -49,16 +52,21 @@ const looksBiological = (value: string): boolean => {
   return v.includes("gene") || v.includes("protein");
 };
 
+const customClient = new ApolloClient({
+  uri: "https://data.rcsb.org/graphql", // <-- replace with your GraphQL endpoint
+  cache: new InMemoryCache(),
+});
+
 const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const handlePrev = () => {
+  /*const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? imageUrls.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
     setCurrentIndex((prev) => (prev === imageUrls.length - 1 ? 0 : prev + 1));
-  };
+  };*/
 
   const { species, factor } = useParams<{ species: string; factor: string }>();
 
@@ -100,24 +108,76 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
 
   /** Memoized derived data */
   const factorDetails = useMemo(() => factorData?.factor[0], [factorData]);
-  const imageUrl = useMemo(
-    () => getRCSBImageUrl(factorDetails?.pdbids),
-    [factorDetails]
-  );
 
+//  console.log("factorDetails",factorDetails)
+  //ensemble_data.uniprot_primary_id
+  const { tfName, uniprotId, pdbIds, loading, error } = useGetPdbId(props.factor, props.assembly ,factorDetails?.ensemble_data?.uniprot_primary_id);
+
+  if (loading || error) {
+    if (error) console.log("Error: ",error)
+    //console.log("Loading...");
+  } else {
+    //console.log(tfName, uniprotId, pdbIds)
+  }
+  
+  const {
+    data: pdbidData,
+    loading: pdbidLoading,
+    error: dpdbidError,
+  } = useQuery(FETCH_PDBID_DETAILS_QUERY, {
+    variables: {
+      "pdbids": pdbIds
+    },
+    skip: !pdbIds || (pdbIds && pdbIds.length == 0),
+    client: customClient,
+  });
+  //console.log("pdbidData",pdbidData?.entries[0])
+  //FETCH_PDBID_DETAILS
+  const pdbMap = useMemo(() => {
+    if (!pdbidData?.entries) return {};
+  
+    return pdbidData.entries.reduce(
+      (acc: Record<string, string>, entry: any) => {
+        if (entry?.rcsb_id && entry?.struct?.title) {
+          acc[entry.rcsb_id] = entry.struct.title;
+        }
+        return acc;
+      },
+      {}
+    );
+  }, [pdbidData?.entries]);
+  const rcsb_imageUrls = useMemo(() => {
+    if (!pdbIds || pdbIds.length === 0) return [];
+    return pdbIds.map((pdbId) => getRCSBImageUrl(pdbId));
+    }, [pdbIds]);
   
   // Build image URLs array based on conditions
   const imageUrls = useMemo(() => {
     const urls: string[] = [];
     if (props.factorlogo) urls.push("motif");
-    if (imageUrl) urls.push(imageUrl);
+    for(const ri in rcsb_imageUrls)
+    {
+       urls.push(rcsb_imageUrls[ri] as string);
+    }    
     
     return urls;
-  }, [imageUrl, props.factorlogo]);
+  }, [rcsb_imageUrls, props.factorlogo]);
 
-  const hasMultipleImages = imageUrls.length > 1;
+  //console.log("imageUrls",imageUrls)
+
+  //const hasMultipleImages = imageUrls.length > 1;
   const currentImage = imageUrls[currentIndex];
 
+  const totalSlides = (props.factorlogo ? 1 : 0) + pdbIds.length;
+  const hasMultipleImages = totalSlides > 1;
+
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  const handleNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % totalSlides);
+  };
   
   const pdbId = factorDetails?.pdbids
     ? factorDetails?.pdbids.split(",")[0].split(":")[0].toLowerCase()
@@ -343,26 +403,15 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       >
         <Typography variant="h4">{factorForUrl}</Typography>
         {/* Image carousel section */}
-        {imageUrls.length > 0 && (
+        {(props.factorlogo || (pdbIds && pdbIds.length > 0)) && (
           <Stack
             direction="row"
             alignItems="center"
             justifyContent="center"
             spacing={1}
+            position="relative"
           >
-            {currentIndex === 1 && hasMultipleImages && (
-              <IconButton
-                onClick={handlePrev}
-                sx={{
-                  position: "absolute",
-                  left: 0,
-                  transform: "translateY(-0%)",
-                  color: "white",
-                }}
-              >
-                <ArrowBackIos />
-              </IconButton>
-            )}
+            {hasMultipleImages && ( <IconButton onClick={handlePrev} sx={{ position: "absolute", left: -23, transform: "translateY(-0%)", color: "white", }} > <ArrowBackIos /> </IconButton> )}
             <Box
               sx={{
                 backgroundColor: "white",
@@ -374,61 +423,26 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
                 // height: "300px"
               }}
             >
-              {currentImage === "motif" && props.factorlogo ? (
-                <DNALogo
-                  ppm={props.factorlogo}
-                  alphabet={DNAAlphabet}
-                  width={290}
-                  height={160}
-                />
-              ) : pdbId ? (
-                <a
-                  href={`https://www.rcsb.org/structure/${pdbId}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <img
-                    src={imageUrls[currentIndex]}
-                    alt={factorDetails?.name}
-                    style={{
-                      borderRadius: theme.shape.borderRadius, // rounds the image inside
-                      maxWidth: "100%",
-                      height: "auto",
-                      //display: "block",
-                      objectFit: "contain",
-                      maxHeight: "300px",
-                    }}
-                  />
-                </a>
-              ) : (
-                <img
-                  src={imageUrls[currentIndex]}
-                  alt={factorDetails?.name}
-                  style={{
-                    borderRadius: theme.shape.borderRadius, // rounds the image inside
-                    maxWidth: "100%",
-                    height: "auto",
-                    //display: "block",
-                    objectFit: "contain",
-                    maxHeight: "300px",
-                  }}
-                />
-              )}
+             {currentIndex === 0 && props.factorlogo ? ( 
+              
+              <DNALogo ppm={props.factorlogo} alphabet={DNAAlphabet} width={290} height={160} /> ) : 
+              ( /* PDB slides (shifted by -1 because motif is index 0) */ pdbIds[currentIndex - 1] && 
+              
+              ( <a href={`https://www.rcsb.org/structure/${pdbIds[currentIndex - 1]}`} target="_blank" rel="noopener noreferrer" > 
+              <Box sx={{ textAlign: "center" }}>
+              <img src={`https://cdn.rcsb.org/images/structures/${pdbIds[currentIndex - 1].toLowerCase()}_assembly-1.jpeg`} alt={`${factorDetails?.name || tfName} - ${ pdbIds[currentIndex - 1] }`} style={{ borderRadius: theme.shape.borderRadius, maxWidth: "100%", height: "auto", objectFit: "contain", maxHeight: "300px", }} /> 
+              <Typography
+            variant="caption"
+            sx={{ display: "block", mt: 1, color: "text.secondary" }}
+          >
+            {pdbIds[currentIndex - 1]} - {pdbMap[pdbIds[currentIndex - 1]]}
+          </Typography>
+              </Box>
+              </a> ) )}
             </Box>
 
-            {currentIndex === 0 && hasMultipleImages && (
-              <IconButton
-                onClick={handleNext}
-                sx={{
-                  position: "absolute",
-                  right: -12,
-                  transform: "translateY(-20%)",
-                  color: "white",
-                }}
-              >
-                <ArrowForwardIos />
-              </IconButton>
-            )}
+            {hasMultipleImages && ( <IconButton onClick={handleNext} sx={{ position: "absolute", right: -35, transform: "translateY(-20%)", color: "white", }} > <ArrowForwardIos /> </IconButton> )}
+
           </Stack>
         )}
 
