@@ -1,8 +1,12 @@
 import React, { useMemo, useState } from "react";
+import MobileStepper from '@mui/material/MobileStepper';
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { DNAAlphabet, DNALogo } from "logojs-react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
+import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+
 import {
   Box,
   Typography,
@@ -15,11 +19,12 @@ import {
   AccordionSummary,
   AccordionDetails,
   useMediaQuery,
+  Button,
 } from "@mui/material";
 import {
   FACTOR_DESCRIPTION_QUERY,
   DATASETS_QUERY,
-  FETCH_PDBID_DETAILS_QUERY
+  FETCH_PDBID_DETAILS_QUERY,
 } from "@/components/tf/query";
 import {
   FactorQueryResponse,
@@ -37,7 +42,7 @@ import CtDetails from "@/components/celltype/ctdetails";
 import { BiosamplePartitionedDatasetCollection } from "@/components/types";
 import LoadingFunction from "./loading";
 import Link from "next/link";
-import { ExpandMore } from "@mui/icons-material";
+import { ExpandMore, KeyboardDoubleArrowLeft, KeyboardDoubleArrowRight } from "@mui/icons-material";
 import { tfToAlphaFoldIds } from "./consts";
 import { IconButton } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
@@ -109,24 +114,28 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   /** Memoized derived data */
   const factorDetails = useMemo(() => factorData?.factor[0], [factorData]);
 
-//  console.log("factorDetails",factorDetails)
+  //  console.log("factorDetails",factorDetails)
   //ensemble_data.uniprot_primary_id
-  const { tfName, uniprotId, pdbIds, loading, error } = useGetPdbId(props.factor, props.assembly ,factorDetails?.ensemble_data?.uniprot_primary_id);
+  const { tfName, uniprotId, pdbIds, loading, error } = useGetPdbId(
+    props.factor,
+    props.assembly,
+    undefined //factorDetails?.ensemble_data?.uniprot_primary_id
+  );
 
   if (loading || error) {
-    if (error) console.log("Error: ",error)
+    if (error) console.log("Error: ", error);
     //console.log("Loading...");
   } else {
     //console.log(tfName, uniprotId, pdbIds)
   }
-  
+
   const {
     data: pdbidData,
     loading: pdbidLoading,
     error: dpdbidError,
   } = useQuery(FETCH_PDBID_DETAILS_QUERY, {
     variables: {
-      "pdbids": pdbIds
+      pdbids: pdbIds,
     },
     skip: !pdbIds || (pdbIds && pdbIds.length == 0),
     client: customClient,
@@ -135,7 +144,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   //FETCH_PDBID_DETAILS
   const pdbMap = useMemo(() => {
     if (!pdbidData?.entries) return {};
-  
+
     return pdbidData.entries.reduce(
       (acc: Record<string, string>, entry: any) => {
         if (entry?.rcsb_id && entry?.struct?.title) {
@@ -149,17 +158,16 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   const rcsb_imageUrls = useMemo(() => {
     if (!pdbIds || pdbIds.length === 0) return [];
     return pdbIds.map((pdbId) => getRCSBImageUrl(pdbId));
-    }, [pdbIds]);
-  
+  }, [pdbIds]);
+
   // Build image URLs array based on conditions
   const imageUrls = useMemo(() => {
     const urls: string[] = [];
     if (props.factorlogo) urls.push("motif");
-    for(const ri in rcsb_imageUrls)
-    {
-       urls.push(rcsb_imageUrls[ri] as string);
-    }    
-    
+    for (const ri in rcsb_imageUrls) {
+      urls.push(rcsb_imageUrls[ri] as string);
+    }
+
     return urls;
   }, [rcsb_imageUrls, props.factorlogo]);
 
@@ -172,18 +180,26 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   const hasMultipleImages = totalSlides > 1;
 
   const handlePrev = () => {
-    setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
+    //setCurrentIndex((prev) => (prev - 1 + totalSlides) % totalSlides);
+    if (currentIndex > 0) {
+      setCurrentIndex((prev) => prev - 1);
+    }
   };
 
   const handleNext = () => {
-    setCurrentIndex((prev) => (prev + 1) % totalSlides);
+    //setCurrentIndex((prev) => (prev + 1) % totalSlides);
+    if (currentIndex < totalSlides - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    }
   };
-  
+
+  const jumpTo = (index: number) => {
+    setCurrentIndex(index);
+  };
   const pdbId = factorDetails?.pdbids
     ? factorDetails?.pdbids.split(",")[0].split(":")[0].toLowerCase()
     : undefined;
 
-  
   const experimentCount = datasetData?.peakDataset.datasets.length || 0;
   const biosampleCount =
     datasetData?.peakDataset.partitionByBiosample?.length || 0;
@@ -404,14 +420,10 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         <Typography variant="h4">{factorForUrl}</Typography>
         {/* Image carousel section */}
         {(props.factorlogo || (pdbIds && pdbIds.length > 0)) && (
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="center"
-            spacing={1}
-            position="relative"
-          >
-            {hasMultipleImages && ( <IconButton onClick={handlePrev} sx={{ position: "absolute", left: -23, transform: "translateY(-0%)", color: "white", }} > <ArrowBackIos /> </IconButton> )}
+         <Stack direction="column" alignItems="center" spacing={2}>
+
+              <Box position="relative" display="inline-flex" alignItems="center">
+  
             <Box
               sx={{
                 backgroundColor: "white",
@@ -423,26 +435,137 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
                 // height: "300px"
               }}
             >
-             {currentIndex === 0 && props.factorlogo ? ( 
-              
-              <DNALogo ppm={props.factorlogo} alphabet={DNAAlphabet} width={290} height={160} /> ) : 
-              ( /* PDB slides (shifted by -1 because motif is index 0) */ pdbIds[currentIndex - 1] && 
-              
-              ( <a href={`https://www.rcsb.org/structure/${pdbIds[currentIndex - 1]}`} target="_blank" rel="noopener noreferrer" > 
-              <Box sx={{ textAlign: "center" }}>
-              <img src={`https://cdn.rcsb.org/images/structures/${pdbIds[currentIndex - 1].toLowerCase()}_assembly-1.jpeg`} alt={`${factorDetails?.name || tfName} - ${ pdbIds[currentIndex - 1] }`} style={{ borderRadius: theme.shape.borderRadius, maxWidth: "100%", height: "auto", objectFit: "contain", maxHeight: "300px", }} /> 
-              <Typography
-            variant="caption"
-            sx={{ display: "block", mt: 1, color: "text.secondary" }}
-          >
-            {pdbIds[currentIndex - 1]} - {pdbMap[pdbIds[currentIndex - 1]]}
-          </Typography>
-              </Box>
-              </a> ) )}
+              {currentIndex === 0 && props.factorlogo ? (
+                <DNALogo
+                  ppm={props.factorlogo}
+                  alphabet={DNAAlphabet}
+                  width={290}
+                  height={160}
+                />
+              ) : (
+                /* PDB slides (shifted by -1 because motif is index 0) */ pdbIds[
+                  currentIndex - 1
+                ] && (
+                  <a
+                    href={`https://www.rcsb.org/structure/${
+                      pdbIds[currentIndex - 1]
+                    }`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Box sx={{ textAlign: "center" }}>
+                      <img
+                        src={`https://cdn.rcsb.org/images/structures/${pdbIds[
+                          currentIndex - 1
+                        ].toLowerCase()}_assembly-1.jpeg`}
+                        alt={`${factorDetails?.name || tfName} - ${
+                          pdbIds[currentIndex - 1]
+                        }`}
+                        style={{
+                          borderRadius: theme.shape.borderRadius,
+                          maxWidth: "100%",
+                          height: "auto",
+                          objectFit: "contain",
+                          maxHeight: "300px",
+                        }}
+                      />
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          display: "block",
+                          mt: 1,
+                          color: "text.secondary",
+                        }}
+                      >
+                        {pdbIds[currentIndex - 1]} -{" "}
+                        {pdbMap[pdbIds[currentIndex - 1]]}
+                      </Typography>
+                    </Box>
+                  </a>
+                )
+              )}
             </Box>
 
-            {hasMultipleImages && ( <IconButton onClick={handleNext} sx={{ position: "absolute", right: -35, transform: "translateY(-20%)", color: "white", }} > <ArrowForwardIos /> </IconButton> )}
+            
+            </Box>
 
+             {/* Dot Indicators */}
+        {/* Stepper navigation */}
+        {hasMultipleImages && (
+            <Stack direction="row" alignItems="center"  spacing={0.5}  justifyContent="center">
+ <IconButton
+    onClick={() => setCurrentIndex(0)}
+    disabled={currentIndex === 0}
+    sx={{
+      color: "white",
+      padding: "6px",       // match MobileStepper IconButton padding
+      width: 40,
+      height: 40,
+      
+    }}
+  >
+   <KeyboardDoubleArrowLeft sx={{ ml: "100px"}}/>
+  </IconButton>
+            <MobileStepper
+              variant="text" // we don't want dots/progress bar
+              steps={totalSlides}
+              position="static"
+              activeStep={currentIndex}
+              
+              backButton={
+                <Button
+                  size="small"
+                  onClick={handlePrev}
+                  disabled={currentIndex === 0}
+                  sx={{ color: "white",mx: 2 }}
+                >
+                  <KeyboardArrowLeft />
+                  
+                </Button>
+              }
+              nextButton={
+                <Button
+                  size="small"
+                  onClick={handleNext}
+                  disabled={currentIndex === totalSlides - 1}
+                  sx={{ color: "white",mx: 2 }}
+                >
+                  
+                  <KeyboardArrowRight />
+                </Button>
+              }
+              sx={{
+                
+      color: "white",
+      
+      
+      
+      
+      background: "transparent",
+      width: "auto",        // don't expand full width
+      flex: "none",         // prevent flex-grow
+      display: "inline-flex",
+      justifyContent: "center",
+      
+              }}
+            />
+              <IconButton
+    onClick={() => setCurrentIndex(totalSlides-1)}
+    disabled={currentIndex === totalSlides - 1}
+    sx={{
+      color: "white",
+      padding: "6px",       // match MobileStepper IconButton padding
+      width: 40,
+      height: 40,
+    }}
+  >
+   <KeyboardDoubleArrowRight sx={{ mr: "100px"}}/>
+  </IconButton>
+            </Stack>
+          )}
+
+          {/* Count 1 / N */}
+         
           </Stack>
         )}
 
