@@ -231,10 +231,18 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
         ? tissueColors[tissue]
         : tissueColors.missing;
 
-      const label = key
-        .replace(/-positive/gi, "+")
-        .replace(/alpha-beta/gi, "αβ")
-        .replace(/,/gi, "");
+      let label;
+      if (key.includes(",")) {
+        const [first, rest] = key.split(",", 2);
+        label = rest.includes("alpha-beta")
+          ? `${first},${rest.replace(/alpha-beta/gi, "αβ")}`
+          : first;
+      } else {
+        label = key
+          .replace(/-positive/gi, "+")
+          .replace(/alpha-beta/gi, "αβ")
+          .replace(/ \(in vitro differentiated cells\)/gi, "")
+      }
 
       const data: ViolinPoint<DataPoint>[] = values.map((value, i) => {
         const metadata: DataPoint = {
