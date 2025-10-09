@@ -495,17 +495,13 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
               <Stack
                 direction="row"
                 alignItems="center"
-                spacing={0.5}
-                justifyContent="center"
+                spacing={-2}
               >
                 <IconButton
                   onClick={() => setCurrentIndex(0)}
                   disabled={currentIndex === 0}
                   sx={{
                     color: "white",
-                    padding: "6px", // match MobileStepper IconButton padding
-                    width: 40,
-                    height: 40                   
                   }}
                 >
                   <KeyboardDoubleArrowLeft />
@@ -516,29 +512,28 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
                   position="static"
                   activeStep={currentIndex}
                   backButton={
-                    <Button
+                    <IconButton
                       size="small"
                       onClick={handlePrev}
                       disabled={currentIndex === 0}
-                      sx={{ color: "white", mx: 2 }}
+                      sx={{ color: "white", mr: 2 }}
                     >
                       <KeyboardArrowLeft />
-                    </Button>
+                    </IconButton>
                   }
                   nextButton={
-                    <Button
+                    <IconButton
                       size="small"
                       onClick={handleNext}
                       disabled={currentIndex === totalSlides - 1}
-                      sx={{ color: "white", mx: 2 }}
+                      sx={{ color: "white", ml: 2 }}
                     >
                       <KeyboardArrowRight />
-                    </Button>
+                    </IconButton>
                   }
                   sx={{
                     color: "white",
                     background: "transparent",
-                    width: "auto", // don't expand full width
                     flex: "none", // prevent flex-grow
                     display: "inline-flex",
                     justifyContent: "center",
@@ -549,9 +544,6 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
                   disabled={currentIndex === totalSlides - 1}
                   sx={{
                     color: "white",
-                    padding: "6px", // match MobileStepper IconButton padding
-                    width: 40,
-                    height: 40                     
                   }}
                 >
                   <KeyboardDoubleArrowRight />
