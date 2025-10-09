@@ -31,7 +31,7 @@ export default function FunctionPage({
       });
   }, []);
 
-  console.log("dataMap",dataMap)
+  
   return (
     /**
      * @todo this species === "human" ? "GRCh38" : "mm10" is used many places, define utlity shared
