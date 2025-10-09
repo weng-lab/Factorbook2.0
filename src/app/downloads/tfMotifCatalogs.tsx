@@ -18,7 +18,7 @@ const TfMotifCatalogDownloads = () => {
         <Typography variant="body1">
           Motifs discovered using MEME on ChIP-seq experiments and the ZMotif
           neural network on HT-SELEX experiments. The catalog contains more
-          than 6,000 motifs for each (with some redundancy).
+          than 10,000 motifs for each (with some redundancy).
         </Typography>
       </Box>
       <Divider />
@@ -39,22 +39,22 @@ const TfMotifCatalogDownloads = () => {
             </Typography>
             <Stack direction={"row"} spacing={2}>
               <Typography variant="body2">
-                6,069 Motifs
+              10,477 Motifs
               </Typography>
               <Typography variant="body2">
-                733 Transcription Factors
+                1077 Transcription Factors
               </Typography>
             </Stack>
             <Stack direction={"row"} spacing={2}>
               <StackedDownloadButton
                 topText="Download Motifs in MEME Format"
-                bottomText="(1 MB)"
-                href="/motifscatlog/factorbook_chipseq_meme_motifs.tsv"
+                bottomText="(1.4 MB)"
+                href="https://downloads.wenglab.org/factorbook_chip_seq_meme_motif_catalog.meme.gz"
               />
               <StackedDownloadButton
                 topText="Download Metadata in TSV Format"
-                bottomText="(2.9 MB)"
-                href="/motifscatlog/complete-factorbook-catalog.meme.gz"
+                bottomText="(2.1 MB)"
+                href="https://downloads.wenglab.org/factorbook_chip_seq_meme_motifs.tsv"
               />
             </Stack>
           </Stack>
