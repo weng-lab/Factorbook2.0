@@ -1,11 +1,11 @@
 import React, { useMemo, useState } from "react";
-import MobileStepper from '@mui/material/MobileStepper';
+import MobileStepper from "@mui/material/MobileStepper";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { DNAAlphabet, DNALogo } from "logojs-react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
 import {
   Box,
@@ -42,7 +42,11 @@ import CtDetails from "@/components/celltype/ctdetails";
 import { BiosamplePartitionedDatasetCollection } from "@/components/types";
 import LoadingFunction from "./loading";
 import Link from "next/link";
-import { ExpandMore, KeyboardDoubleArrowLeft, KeyboardDoubleArrowRight } from "@mui/icons-material";
+import {
+  ExpandMore,
+  KeyboardDoubleArrowLeft,
+  KeyboardDoubleArrowRight,
+} from "@mui/icons-material";
 import { tfToAlphaFoldIds } from "./consts";
 import { IconButton } from "@mui/material";
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
@@ -420,152 +424,142 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
         <Typography variant="h4">{factorForUrl}</Typography>
         {/* Image carousel section */}
         {(props.factorlogo || (pdbIds && pdbIds.length > 0)) && (
-         <Stack direction="column" alignItems="center" spacing={2}>
+          <Stack direction="column" alignItems="center" spacing={2}>
+            <Box position="relative" display="inline-flex" alignItems="center">
+              <Box
+                sx={{
+                  backgroundColor: "white",
+                  borderRadius: 2, // theme.spacing(2) => 16px
+                  padding: 1,
+                  display: "inline-block",
+                  boxShadow: 1, // optional: subtle shadow
 
-              <Box position="relative" display="inline-flex" alignItems="center">
-  
-            <Box
-              sx={{
-                backgroundColor: "white",
-                borderRadius: 2, // theme.spacing(2) => 16px
-                padding: 1,
-                display: "inline-block",
-                boxShadow: 1, // optional: subtle shadow
-
-                // height: "300px"
-              }}
-            >
-              {currentIndex === 0 && props.factorlogo ? (
-                <DNALogo
-                  ppm={props.factorlogo}
-                  alphabet={DNAAlphabet}
-                  width={290}
-                  height={160}
-                />
-              ) : (
-                /* PDB slides (shifted by -1 because motif is index 0) */ pdbIds[
-                  currentIndex - 1
-                ] && (
-                  <a
-                    href={`https://www.rcsb.org/structure/${
-                      pdbIds[currentIndex - 1]
-                    }`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Box sx={{ textAlign: "center" }}>
-                      <img
-                        src={`https://cdn.rcsb.org/images/structures/${pdbIds[
-                          currentIndex - 1
-                        ].toLowerCase()}_assembly-1.jpeg`}
-                        alt={`${factorDetails?.name || tfName} - ${
-                          pdbIds[currentIndex - 1]
-                        }`}
-                        style={{
-                          borderRadius: theme.shape.borderRadius,
-                          maxWidth: "100%",
-                          height: "auto",
-                          objectFit: "contain",
-                          maxHeight: "300px",
-                        }}
-                      />
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          display: "block",
-                          mt: 1,
-                          color: "text.secondary",
-                        }}
-                      >
-                        {pdbIds[currentIndex - 1]} -{" "}
-                        {pdbMap[pdbIds[currentIndex - 1]]}
-                      </Typography>
-                    </Box>
-                  </a>
-                )
-              )}
+                  // height: "300px"
+                }}
+              >
+                {currentIndex === 0 && props.factorlogo ? (
+                  <DNALogo
+                    ppm={props.factorlogo}
+                    alphabet={DNAAlphabet}
+                    width={290}
+                    height={160}
+                  />
+                ) : (
+                  /* PDB slides (shifted by -1 because motif is index 0) */ pdbIds[
+                    currentIndex - 1
+                  ] && (
+                    <a
+                      href={`https://www.rcsb.org/structure/${
+                        pdbIds[currentIndex - 1]
+                      }`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Box sx={{ textAlign: "center" }}>
+                        <img
+                          src={`https://cdn.rcsb.org/images/structures/${pdbIds[
+                            currentIndex - 1
+                          ].toLowerCase()}_assembly-1.jpeg`}
+                          alt={`${factorDetails?.name || tfName} - ${
+                            pdbIds[currentIndex - 1]
+                          }`}
+                          style={{
+                            borderRadius: theme.shape.borderRadius,
+                            maxWidth: "100%",
+                            height: "auto",
+                            objectFit: "contain",
+                            maxHeight: "300px",
+                          }}
+                        />
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            display: "block",
+                            mt: 1,
+                            color: "text.secondary",
+                          }}
+                        >
+                          {pdbIds[currentIndex - 1]} -{" "}
+                          {pdbMap[pdbIds[currentIndex - 1]]}
+                        </Typography>
+                      </Box>
+                    </a>
+                  )
+                )}
+              </Box>
             </Box>
 
-            
-            </Box>
-
-             {/* Dot Indicators */}
-        {/* Stepper navigation */}
-        {hasMultipleImages && (
-            <Stack direction="row" alignItems="center"  spacing={0.5}  justifyContent="center">
- <IconButton
-    onClick={() => setCurrentIndex(0)}
-    disabled={currentIndex === 0}
-    sx={{
-      color: "white",
-      padding: "6px",       // match MobileStepper IconButton padding
-      width: 40,
-      height: 40,
-      
-    }}
-  >
-   <KeyboardDoubleArrowLeft sx={{ ml: "100px"}}/>
-  </IconButton>
-            <MobileStepper
-              variant="text" // we don't want dots/progress bar
-              steps={totalSlides}
-              position="static"
-              activeStep={currentIndex}
-              
-              backButton={
-                <Button
-                  size="small"
-                  onClick={handlePrev}
+            {/* Dot Indicators */}
+            {/* Stepper navigation */}
+            {hasMultipleImages && (
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={0.5}
+                justifyContent="center"
+              >
+                <IconButton
+                  onClick={() => setCurrentIndex(0)}
                   disabled={currentIndex === 0}
-                  sx={{ color: "white",mx: 2 }}
+                  sx={{
+                    color: "white",
+                    padding: "6px", // match MobileStepper IconButton padding
+                    width: 40,
+                    height: 40                   
+                  }}
                 >
-                  <KeyboardArrowLeft />
-                  
-                </Button>
-              }
-              nextButton={
-                <Button
-                  size="small"
-                  onClick={handleNext}
+                  <KeyboardDoubleArrowLeft />
+                </IconButton>
+                <MobileStepper
+                  variant="text" // we don't want dots/progress bar
+                  steps={totalSlides}
+                  position="static"
+                  activeStep={currentIndex}
+                  backButton={
+                    <Button
+                      size="small"
+                      onClick={handlePrev}
+                      disabled={currentIndex === 0}
+                      sx={{ color: "white", mx: 2 }}
+                    >
+                      <KeyboardArrowLeft />
+                    </Button>
+                  }
+                  nextButton={
+                    <Button
+                      size="small"
+                      onClick={handleNext}
+                      disabled={currentIndex === totalSlides - 1}
+                      sx={{ color: "white", mx: 2 }}
+                    >
+                      <KeyboardArrowRight />
+                    </Button>
+                  }
+                  sx={{
+                    color: "white",
+                    background: "transparent",
+                    width: "auto", // don't expand full width
+                    flex: "none", // prevent flex-grow
+                    display: "inline-flex",
+                    justifyContent: "center",
+                  }}
+                />
+                <IconButton
+                  onClick={() => setCurrentIndex(totalSlides - 1)}
                   disabled={currentIndex === totalSlides - 1}
-                  sx={{ color: "white",mx: 2 }}
+                  sx={{
+                    color: "white",
+                    padding: "6px", // match MobileStepper IconButton padding
+                    width: 40,
+                    height: 40                     
+                  }}
                 >
-                  
-                  <KeyboardArrowRight />
-                </Button>
-              }
-              sx={{
-                
-      color: "white",
-      
-      
-      
-      
-      background: "transparent",
-      width: "auto",        // don't expand full width
-      flex: "none",         // prevent flex-grow
-      display: "inline-flex",
-      justifyContent: "center",
-      
-              }}
-            />
-              <IconButton
-    onClick={() => setCurrentIndex(totalSlides-1)}
-    disabled={currentIndex === totalSlides - 1}
-    sx={{
-      color: "white",
-      padding: "6px",       // match MobileStepper IconButton padding
-      width: 40,
-      height: 40,
-    }}
-  >
-   <KeyboardDoubleArrowRight sx={{ mr: "100px"}}/>
-  </IconButton>
-            </Stack>
-          )}
+                  <KeyboardDoubleArrowRight />
+                </IconButton>
+              </Stack>
+            )}
 
-          {/* Count 1 / N */}
-         
+            {/* Count 1 / N */}
           </Stack>
         )}
 
