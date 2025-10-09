@@ -60,6 +60,7 @@ export type DatasetQueryResponse = {
 export type FunctionPageProps = {
   factor: string;
   assembly: "GRCh38" | "mm10";
+  factorlogo?: number[][];
 };
 
 export type TFInfoQueryResponse = {
