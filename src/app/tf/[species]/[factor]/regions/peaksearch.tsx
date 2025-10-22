@@ -148,7 +148,7 @@ const PEAKS_COLUMNS = (): DataTableColumn<PeakResult>[] => {
     },
   ];
   //if (includeFactor) cols.splice(4, 0, { header: 'Factor', value: row => row.target });
-  cols.push({
+  /*cols.push({
     header: "Motifs found",
     value: () => "",
     render: (row: PeakResult) => (
@@ -158,7 +158,7 @@ const PEAKS_COLUMNS = (): DataTableColumn<PeakResult>[] => {
         end={row.chrom_end}
       />
     ),
-  } as any);
+  } as any);*/
   return cols;
 };
 
