@@ -198,7 +198,7 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
         spacing={2}
       >
         <WarningAmberIcon />
-        <Typography sx={{ fontWeight: 'bold' }}>Scheduled maintenance is in progress... Some features may be unavailable</Typography>
+        <Typography sx={{ fontWeight: 'bold' }}>Factorbook API is temporarily unavailable. We are working to resolve the issue and will be back shortly.</Typography>
         <WarningAmberIcon />
       </Stack>
       <AppBar

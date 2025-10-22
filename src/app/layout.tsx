@@ -7,6 +7,7 @@ import { Hind } from 'next/font/google'
 import ClientThemeProvider from "@/components/clientthemeprovider";
 import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next"
+import ClientAppWrapper from "./ClientAppWrapper";
 
 type LayoutProps = {
   children: ReactNode;
@@ -41,14 +42,13 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: LayoutProps) {
+  
   return (
     <html lang="en" className={hind.className}>
       <body>
         <ApolloWrapper>
           <ClientThemeProvider>
-            <Topbar maintenance={false}/>
-            {children}
-            <Footer />
+          <ClientAppWrapper>{children}</ClientAppWrapper>
           </ClientThemeProvider>
         </ApolloWrapper>
         <Analytics />
