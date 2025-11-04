@@ -17,7 +17,6 @@ export function useGetPdbId(tfName: string, assembly: string, uniprotOverride?: 
 
     async function fetchUniProtId(tf: string): Promise<string | null> {
         const organism_id = assembly==="GRCh38" ? 9606 : 10090
-        console.log("called", tf)
         const url = `https://rest.uniprot.org/uniprotkb/search?query=gene:${tf}+AND+organism_id:${organism_id}&fields=accession&format=json`;
         const response = await fetch(url);
 
@@ -74,7 +73,6 @@ export function useGetPdbId(tfName: string, assembly: string, uniprotOverride?: 
                     let id = uniprotOverride || null;
                     
                     if (!id) {
-                        console.log("called fetchuniprot id")
                         id = await fetchUniProtId(tfName);
                         if (!id) {
                             throw new Error(`UniProt ID not found for ${tfName}`);
@@ -84,7 +82,6 @@ export function useGetPdbId(tfName: string, assembly: string, uniprotOverride?: 
                 if (cancelled) return;
                 setUniprotId(id);
 
-                console.log("uniprot id", id)
                 if (id) {
                     const pdbs = await fetchPdbIds(id);
                     if (cancelled) return;

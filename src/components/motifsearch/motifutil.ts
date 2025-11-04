@@ -51,7 +51,6 @@ export const regexToPWM = (regex: any) => {
     cbracket = [0.0, 0.0, 0.0, 0.0],
     ccount = 0.0;
   for (let i = 0; i < lregex.length; ++i) {
-    console.log(cbracket)
     if (inBracket) {
       if (lregex[i] === "]") {
         inBracket = false;
