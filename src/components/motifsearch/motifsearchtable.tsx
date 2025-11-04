@@ -1,13 +1,10 @@
 import React, { useMemo } from "react";
 import { DataTable, DataTableColumn } from "@weng-lab/psychscreen-ui-components";
 import { MotifTableProps, MotifTableRow } from "./types";
-import { InfoOutlined } from "@mui/icons-material";
-import { Stack, Tooltip, Typography } from "@mui/material";
 
 const MotifTable: React.FC<MotifTableProps> = ({
     motifRows,
     title,
-    // onPageChane,
 }) => {
 
     const motifColumns: DataTableColumn<MotifTableRow>[] = useMemo(() => {

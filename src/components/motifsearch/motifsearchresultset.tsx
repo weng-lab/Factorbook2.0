@@ -1,14 +1,13 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { ApiContext } from "@/apicontext";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { gql } from "@apollo/client";
-import { Divider, Box, useMediaQuery, useTheme } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { MotifInfo, MotifMatch, MotifResult } from "./results";
 import { logLikelihood } from "./motifutil";
 import { MotifTableRow } from "./types";
 import MotifTable from "./motifsearchtable";
 import { usePathname } from "next/navigation";
-import { Motif } from "@/app/motif/human/meme-search/types";
 import LoadingMotifSearch from "@/app/motif/human/meme-search/[regex]/loading";
 
 const MOTIFS_PER_PAGE = 5;
@@ -108,7 +107,7 @@ export const MotifSearchResultSet: React.FC<{
     if (data && onResultsLoaded) {
       onResultsLoaded(data.meme_motif_search[0].total);
     }
-  }, [data, onResultsLoaded]);
+  }, [data, onResultsLoaded]); 
 
   useEffect(() => {
     motifResults.forEach((m: any) => {
@@ -122,7 +121,7 @@ export const MotifSearchResultSet: React.FC<{
               ...prevMap,
               [m.motif.peaks_accession]: {
                 lab: dataset.lab,
-                target: dataset.target,
+                target: dataset.target, 
                 biosample: dataset.biosample,
                 accession: dataset.accession
               },

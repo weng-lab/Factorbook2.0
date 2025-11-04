@@ -4,6 +4,7 @@ import Link from "next/link";
 import { TOMTOMMessage } from "../motifmeme/tomtommessage";
 import { Box, useMediaQuery, useTheme, Link as MuiLink } from "@mui/material";
 import { MotifInfoProps, MotifMatchProps, MotifResultProps } from "./types";
+import { MemeMotif } from "@/types/graphql";
 
 // Set custom DNA alphabet colors
 DNAAlphabet[0].color = "#228b22";
@@ -16,10 +17,9 @@ export const MotifResult: React.FC<MotifResultProps> = ({
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
   // Calculate overlap and offsets
-  const offset = alignment.offset;
+  const offset = distance(query, alignment.motif!.pwm).offset;
   const overlapStart = Math.min(
     offset < 0 ? query.length : query.length + offset,
     offset < 0
@@ -133,3 +133,104 @@ export const MotifMatch: React.FC<MotifMatchProps> = ({
     </Box>
   );
 };
+
+interface MemeMotifAlignment {
+  motif?: MemeMotif;
+  offset: number;
+  distance: number;
+  reverseComplement: boolean;
+}
+
+function _distance(a: number[][], b: number[][], offset: number, cmin: number): number {
+  let sum: number = 0.0;
+  if (offset < 0) {
+    for (let i: number = offset; i < 0; ++i) {
+      for (let j: number = 0; j < 4; ++j) sum += a[i - offset][j] * a[i - offset][j];
+      if (sum > cmin) return sum;
+    }
+    for (let i: number = 0; i < a.length + offset; ++i) {
+      for (let j: number = 0; j < 4; ++j) sum += (a[i - offset][j] - b[i][j]) * (a[i - offset][j] - b[i][j]);
+      if (sum > cmin) return sum;
+    }
+    for (let i: number = a.length + offset; i < b.length; ++i) {
+      for (let j: number = 0; j < 4; ++j) sum += b[i][j] * b[i][j];
+      if (sum > cmin) return sum;
+    }
+  } else if (a.length + offset <= b.length) {
+    for (let i: number = 0; i < offset; ++i) {
+      for (let j: number = 0; j < 4; ++j) sum += b[i][j] * b[i][j];
+      if (sum > cmin) return sum;
+    }
+    for (let i: number = 0; i < a.length; ++i) {
+      for (let j: number = 0; j < 4; ++j) sum += (a[i][j] - b[i + offset][j]) * (a[i][j] - b[i + offset][j]);
+      if (sum > cmin) return sum;
+    }
+    for (let i: number = a.length + offset; i < b.length; ++i) {
+      for (let j: number = 0; j < 4; ++j) sum += b[i][j] * b[i][j];
+      if (sum > cmin) return sum;
+    }
+  } else {
+    for (let i: number = 0; i < offset; ++i) {
+      for (let j: number = 0; j < 4; ++j) sum += b[i][j] * b[i][j];
+      if (sum > cmin) return sum;
+    }
+    for (let i: number = offset; i < b.length; ++i) {
+      for (let j: number = 0; j < 4; ++j) sum += (a[i - offset][j] - b[i][j]) * (a[i - offset][j] - b[i][j]);
+      if (sum > cmin) return sum;
+    }
+    for (let i: number = b.length; i < offset + a.length; ++i) {
+      for (let j: number = 0; j < 4; ++j) sum += a[i - offset][j] * a[i - offset][j];
+      if (sum > cmin) return sum;
+    }
+  }
+  return sum;
+}
+
+function distance(a: number[][], b: number[][]): MemeMotifAlignment {
+  const aShorter: boolean = a.length < b.length;
+  const shorter: number[][] = aShorter ? a : b;
+  const longer: number[][] = aShorter ? b : a;
+  // reverse complement shorter
+  const shorterRC = shorter.map((_, i: number): number[] => {
+    const idx = shorter.length - i - 1;
+    return [shorter[idx][3], shorter[idx][2], shorter[idx][1], shorter[idx][0]];
+  });
+  // start where shorter completely overlaps, which is more likely to be optimal
+  let min: number = _distance(shorter, longer, -shorter.length + 1, Infinity);
+  let offset: number = -shorter.length + 1;
+  let reverseComplement: boolean = false;
+  for (let i = 0; i < longer.length; ++i) {
+    let d: number = _distance(shorter, longer, i, min);
+    if (d < min) {
+      min = d;
+      offset = i;
+      reverseComplement = false;
+    }
+    d = _distance(shorterRC, longer, i, min);
+    if (d < min) {
+      min = d;
+      offset = i;
+      reverseComplement = true;
+    }
+  }
+  // try offsets less than 0
+  for (let i = -shorter.length + 1; i < 0; ++i) {
+    let d: number = _distance(shorter, longer, i, min);
+    if (d < min) {
+      min = d;
+      offset = i;
+      reverseComplement = false;
+    }
+    d = _distance(shorterRC, longer, i, min);
+    if (d < min) {
+      min = d;
+      offset = i;
+      reverseComplement = true;
+    }
+  }
+  return {
+    distance: Math.sqrt(min),
+    offset: aShorter ? offset : -offset,
+    reverseComplement,
+  };
+}
