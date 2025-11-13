@@ -64,6 +64,20 @@ export function useGetPdbId(tfName: string, assembly: string, uniprotOverride?: 
         return (data.result_set || []).map((r: { identifier: string }) => r.identifier);        
     }
 
+    async function filterExistingPdbImages(pdbIds: string[]): Promise<string[]> {
+        const checks = pdbIds.map(async (id) => {
+            const url = `https://cdn.rcsb.org/images/structures/${id.toLowerCase()}_assembly-1.jpeg`;
+            try {
+                const res = await fetch(url, { method: "HEAD" }); // HEAD request for efficiency
+                return res.ok ? id : null;
+            } catch {
+                return null;
+            }
+        });
+
+        const results = await Promise.all(checks);
+        return results.filter((id): id is string => id !== null);
+    }
     useEffect(() => {
         let cancelled = false;
         async function load() {
@@ -85,7 +99,9 @@ export function useGetPdbId(tfName: string, assembly: string, uniprotOverride?: 
                 if (id) {
                     const pdbs = await fetchPdbIds(id);
                     if (cancelled) return;
-                    setPdbIds(pdbs);
+                     // ✅ only include PDBs with an existing image
+                    const filtered = await filterExistingPdbImages(pdbs);
+                    if (!cancelled) setPdbIds(filtered);
                 }
                 
             } catch (err: any) {
