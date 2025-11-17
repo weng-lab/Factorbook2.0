@@ -118,7 +118,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   /** Memoized derived data */
   const factorDetails = useMemo(() => factorData?.factor[0], [factorData]);
 
-  //  console.log("factorDetails",factorDetails)
+  
   //ensemble_data.uniprot_primary_id
   const { tfName, uniprotId, pdbIds, loading, error } = useGetPdbId(
     props.factor,
@@ -127,11 +127,8 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   );
 
   if (loading || error) {
-    if (error) console.log("Error: ", error);
-    //console.log("Loading...");
-  } else {
-    //console.log(tfName, uniprotId, pdbIds)
-  }
+    if (error) console.log("Error: ", error);    
+  } 
 
   const {
     data: pdbidData,
@@ -144,7 +141,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     skip: !pdbIds || (pdbIds && pdbIds.length == 0),
     client: customClient,
   });
-  //console.log("pdbidData",pdbidData?.entries[0])
+  
   //FETCH_PDBID_DETAILS
   const pdbMap = useMemo(() => {
     if (!pdbidData?.entries) return {};
@@ -175,7 +172,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
     return urls;
   }, [rcsb_imageUrls, props.factorlogo]);
 
-  //console.log("imageUrls",imageUrls)
+  
 
   //const hasMultipleImages = imageUrls.length > 1;
   const currentImage = imageUrls[currentIndex];
@@ -404,7 +401,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       )}
     </>
   );
-
+  const cInd = currentIndex===0 ? 0 : currentIndex - 1
   return (
     <Stack gap={3} direction={isMobile ? "column" : "row"} color="white">
       <Stack
@@ -445,12 +442,10 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
                     height={160}
                   />
                 ) : (
-                  /* PDB slides (shifted by -1 because motif is index 0) */ pdbIds[
-                    currentIndex - 1
-                  ] && (
+                  /* PDB slides (shifted by -1 because motif is index 0) */ pdbIds[cInd] && (
                     <a
                       href={`https://www.rcsb.org/structure/${
-                        pdbIds[currentIndex - 1]
+                        pdbIds[cInd]
                       }`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -458,10 +453,10 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
                       <Box sx={{ textAlign: "center" }}>
                         <img
                           src={`https://cdn.rcsb.org/images/structures/${pdbIds[
-                            currentIndex - 1
+                            cInd
                           ].toLowerCase()}_assembly-1.jpeg`}
                           alt={`${factorDetails?.name || tfName} - ${
-                            pdbIds[currentIndex - 1]
+                            pdbIds[cInd]
                           }`}
                           style={{
                             borderRadius: theme.shape.borderRadius,
@@ -479,8 +474,8 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
                             color: "text.secondary",
                           }}
                         >
-                          {pdbIds[currentIndex - 1]} -{" "}
-                          {pdbMap[pdbIds[currentIndex - 1]]}
+                          {pdbIds[cInd]} -{" "}
+                          {pdbMap[pdbIds[cInd]]}
                         </Typography>
                       </Box>
                     </a>
