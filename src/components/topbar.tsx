@@ -359,8 +359,8 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
       </AppBar>
       {/* Bumps content down since header is position="fixed" */}
       {/* Bumps content down even more if banner is open */}
-      {maintenance && <Box sx={{ height: '40px' }} />}
-      <Box sx={{ height: '100px' }} />
+      {maintenance && <Box sx={{ height: '40px', flexShrink: 0 }} />}
+      <Box sx={{ height: '100px', flexShrink: 0 }} />
     </>
   );
 };
