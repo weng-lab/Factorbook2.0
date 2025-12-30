@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import BoyIcon from '@mui/icons-material/Boy';
+import ManIcon from '@mui/icons-material/Man';
 import PestControlRodentIcon from '@mui/icons-material/PestControlRodent';
 import { Stack } from "@mui/material";
 
@@ -27,7 +27,7 @@ export default function AssemblySwitch({ assembly, onChange, iconColor = "black"
     handleClose();
   };
 
-  const Icon = assembly === "GRCh38" ? BoyIcon : PestControlRodentIcon;
+  const Icon = assembly === "GRCh38" ? ManIcon : PestControlRodentIcon;
 
   return (
     <Stack direction="row" alignItems="center" spacing={-2}>

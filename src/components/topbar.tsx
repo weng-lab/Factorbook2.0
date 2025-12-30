@@ -113,12 +113,12 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
     const observer = new IntersectionObserver(
       ([entry], obs) => {
         if (entry.isIntersecting) {
-          searchEl.focus();
+          (searchEl.querySelector('input') as HTMLInputElement)?.focus();
           obs.disconnect();
         }
       },
       {
-        threshold: 1.0,
+        threshold: 0.99,
       }
     );
 
@@ -407,7 +407,7 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
                     }}
                     >
                       {isHomePage ? (
-                        <IconButton sx={{ color: "var(--primary-mainText, #6750A4)", display: { xs: "none", md: "flex" } }} onClick={handleFocusSearch}>
+                        <IconButton sx={{ color: "var(--primary-mainText, #6750A4)", display: { xs: "none", md: "flex" }, justifySelf: "flex-end" }} onClick={handleFocusSearch}>
                           <Search />
                         </IconButton>
                       ) : (

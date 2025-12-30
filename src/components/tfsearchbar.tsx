@@ -17,7 +17,8 @@ import {
   styled,
   Stack,
   Grid2,
-  CircularProgress
+  CircularProgress,
+  ListSubheader
 } from "@mui/material";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
@@ -34,16 +35,16 @@ interface TFSearchBarProps {
 }
 
 // Custom styled Autocomplete textField
-  const StyledAutocomplete = styled(Autocomplete)(() => ({
-    "& .MuiOutlinedInput-root": {
-      height: "40px",
-      borderRadius: "24px",
-      paddingLeft: "12px",
-    },
-    "& .MuiInputBase-input::placeholder": {
-      opacity: 1,
-    },
-  }));
+const StyledAutocomplete = styled(Autocomplete)(() => ({
+  "& .MuiOutlinedInput-root": {
+    height: "40px",
+    borderRadius: "24px",
+    paddingLeft: "12px",
+  },
+  "& .MuiInputBase-input::placeholder": {
+    opacity: 1,
+  },
+}));
 
 const SEARCH_OPTIONS_QUERY = gql(`
   query Datasets($q: String, $assembly: String, $limit: Int) {
@@ -66,6 +67,28 @@ const SEARCH_OPTIONS_QUERY = gql(`
   }
 `)
 
+export const defaultHumanResults = [
+  {
+    name: "CTCF",
+    description: "Sequence-specific TF - 442 Experiments, 167 Cell Types",
+  },
+  {
+    name: "ATF3",
+    description: "Sequence-specific TF - 14 Experiments, 8 Cell Types",
+  },
+];
+
+export const defaultMouseResults = [
+  {
+    name: "Ctcf",
+    description: "Sequence-specific TF - 41 Experiments, 30 Cell Types",
+  },
+  {
+    name: "Chd2",
+    description: "Non-sequence-specific factor - 3 Experiments, 3 Cell Types",
+  },
+];
+
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
 const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = true }) => {
@@ -78,6 +101,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
   const [loading, setLoading] = useState(false);
   const [validSearch, setValidSearch] = useState<string | undefined>(undefined)
   const [searchCaption, setSearchCaption] = useState<string>("")
+
+  const defaultResults = assembly === "GRCh38" ? defaultHumanResults : defaultMouseResults;
 
   const [fetchOptions, { loading: loading_options, data: optionsData, error: error_options }] =
     useLazyQuery(SEARCH_OPTIONS_QUERY, {
@@ -172,10 +197,9 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
   return (
     <Box>
       <Stack direction={isMobile ? "column" : "row"} spacing={2}>
-        <FormControl fullWidth variant="outlined">
+        <FormControl fullWidth variant="outlined" id="tf-search">
           <StyledAutocomplete
-            id="tf-search"
-            options={inputValue === "" ? [] : optionsData?.counts.map(c => c.name) ?? []}
+            options={inputValue === "" ? defaultResults.map(r => r.name) : optionsData?.counts.map(c => c.name) ?? []}
             freeSolo
             onKeyDown={(event: any) => {
               if (event.key === "Enter" && snpValue && validSearch) {
@@ -196,9 +220,10 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
             inputValue={inputValue}
             onInputChange={(_, newInputValue) => {
               setInputValue(newInputValue);
-              if (newInputValue) {
-                debounceFn(newInputValue);
-              }
+
+              if (!newInputValue) return;   // <-- show defaults again
+
+              debounceFn(newInputValue);
             }}
             noOptionsText="Example: CTCF"
             renderInput={(params) => (
@@ -219,7 +244,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
                   style: { textAlign: "center", color: color ?? "white" },
                 }}
                 InputLabelProps={{
-                  style: { width: "100%", color: optionsData?.counts.length === 0 || error_options ? theme.palette.error.main :  color ?? "white" },
+                  style: { width: "100%", color: optionsData?.counts.length === 0 || error_options ? theme.palette.error.main : color ?? "white" },
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
@@ -236,44 +261,59 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
                 }}
               />
             )}
-            renderOption={(props, option: any) => {
-              const tfSuggestion = optionsData?.counts;
-              let subtitle;
-              if (tfSuggestion && tfSuggestion.length > 0) {
-                subtitle = tfSuggestion.map((g: any) => ({
-                  total: g.datasets.counts.total,
-                  biosamples: g.datasets.counts.biosamples,
-                  label:
-                    !tfA || !tfA.get(g.name!)
-                      ? ""
-                      : (
-                        tfA.get(g.name!)["TF assessment"] as string
-                      ).includes("Likely")
-                        ? "Likely sequence-specific TF - "
-                        : SEQUENCE_SPECIFIC.has(tfA.get(g.name!)["TF assessment"])
-                          ? "Sequence-specific TF - "
-                          : "Non-sequence-specific factor - ",
-                  name: g.name,
-                }));
+            renderOption={(props, option: any, state) => {
+              const isFirstDefault =
+                inputValue === "" && state.index === 0;
+
+              const api = optionsData?.counts?.find(g => g.name === option);
+
+              let description: string | undefined;
+
+              if (api) {
+                const label =
+                  !tfA || !tfA.get(api.name!)
+                    ? ""
+                    : (tfA.get(api.name!)["TF assessment"] as string).includes("Likely")
+                      ? "Likely sequence-specific TF - "
+                      : SEQUENCE_SPECIFIC.has(tfA.get(api.name!)["TF assessment"])
+                        ? "Sequence-specific TF - "
+                        : "Non-sequence-specific factor - ";
+
+                description = `${label}${api.datasets.counts.total} experiments, ${api.datasets.counts.biosamples} cell types`;
               }
-              const selected = subtitle?.find((g) => g.name === option);
+
+              if (!description) {
+                const def = defaultResults.find(r => r.name === option);
+                description = def?.description;
+              }
+
               return (
-                <li {...props} key={option}>
-                  <Grid2 container alignItems="center">
-                    <Grid2 sx={{ width: "100%", wordWrap: "break-word" }}>
-                      <Box component="span">
-                        {formatFactorName(option, assembly)}
-                      </Box>
-                      {selected && (
-                        <Typography variant="body2" color="text.secondary">
-                          {`${selected.label} ${selected.total} experiments, ${selected.biosamples} cell types`}
-                        </Typography>
-                      )}
+                <>
+                  {isFirstDefault && (
+                    <ListSubheader disableSticky>
+                      Examples
+                    </ListSubheader>
+                  )}
+
+                  <li {...props} key={option}>
+                    <Grid2 container alignItems="center">
+                      <Grid2 sx={{ width: "100%", wordWrap: "break-word" }}>
+                        <Box component="span">
+                          {formatFactorName(option, assembly)}
+                        </Box>
+
+                        {description && (
+                          <Typography variant="body2" color="text.secondary">
+                            {description}
+                          </Typography>
+                        )}
+                      </Grid2>
                     </Grid2>
-                  </Grid2>
-                </li>
+                  </li>
+                </>
               );
             }}
+
           />
         </FormControl>
         <Button
