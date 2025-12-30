@@ -232,7 +232,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
                 error={(optionsData?.counts.length === 0 && inputValue !== "") || Boolean(error_options)}
                 label={error_options ? "Error Fetching TFs" : searchCaption}
                 {...params}
-                placeholder="Enter TF Name"
+                placeholder="Search TF"
                 fullWidth
                 InputProps={{
                   ...params.InputProps,
