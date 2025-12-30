@@ -62,6 +62,7 @@ const Homepage = () => {
   return (
     <>
       <Box
+        id="header-book"
         sx={{
           display: "flex",
           justifyContent: "center", // Center the inner box

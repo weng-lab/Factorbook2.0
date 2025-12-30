@@ -29,20 +29,21 @@ import { gql } from "@/types";
 
 interface TFSearchBarProps {
   assembly: string;
+  color?: string;
+  example?: boolean;
 }
 
 // Custom styled Autocomplete textField
-const StyledAutocomplete = styled(Autocomplete)(() => ({
-  "& .MuiOutlinedInput-root": {
-    height: "40px",
-    borderRadius: "24px",
-    paddingLeft: "12px",
-  },
-  "& .MuiInputBase-input::placeholder": {
-    color: "white", // Placeholder color
-    opacity: 1,
-  },
-}));
+  const StyledAutocomplete = styled(Autocomplete)(() => ({
+    "& .MuiOutlinedInput-root": {
+      height: "40px",
+      borderRadius: "24px",
+      paddingLeft: "12px",
+    },
+    "& .MuiInputBase-input::placeholder": {
+      opacity: 1,
+    },
+  }));
 
 const SEARCH_OPTIONS_QUERY = gql(`
   query Datasets($q: String, $assembly: String, $limit: Int) {
@@ -67,7 +68,7 @@ const SEARCH_OPTIONS_QUERY = gql(`
 
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
-const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
+const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = true }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -173,6 +174,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
       <Stack direction={isMobile ? "column" : "row"} spacing={2}>
         <FormControl fullWidth variant="outlined">
           <StyledAutocomplete
+            id="tf-search"
             options={inputValue === "" ? [] : optionsData?.counts.map(c => c.name) ?? []}
             freeSolo
             onKeyDown={(event: any) => {
@@ -187,8 +189,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 );
               }
             }}
-            popupIcon={<ArrowDropDown sx={{ color: "white" }} />}
-            clearIcon={loading_options && !validSearch ? <CircularProgress size={20} sx={{ color: "white" }} /> : <ClearIcon sx={{ color: "white" }} onClick={() => { handleReset() }} />}
+            popupIcon={<ArrowDropDown sx={{ color: color ?? "white" }} />}
+            clearIcon={loading_options && !validSearch ? <CircularProgress size={20} sx={{ color: color ?? "white" }} /> : <ClearIcon sx={{ color: color ?? "white" }} onClick={() => { handleReset() }} />}
             value={snpValue && formatFactorName(snpValue, assembly)}
             onChange={(_, newValue: any) => setSnpValue(newValue)}
             inputValue={inputValue}
@@ -211,21 +213,24 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                   ...params.InputProps,
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "white" }} />{" "}
+                      <SearchIcon sx={{ color: color ?? "white" }} />{" "}
                     </InputAdornment>
                   ),
-                  style: { textAlign: "center", color: "white" },
+                  style: { textAlign: "center", color: color ?? "white" },
                 }}
                 InputLabelProps={{
-                  style: { width: "100%", color: optionsData?.counts.length === 0 || error_options ? theme.palette.error.main : "white" },
+                  style: { width: "100%", color: optionsData?.counts.length === 0 || error_options ? theme.palette.error.main :  color ?? "white" },
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     "& fieldset": {
-                      borderColor: "white", // Default border color
+                      borderColor: color ?? "white", // Default border color
                     },
                     "&:hover fieldset": {
                       borderColor: searchCaption === "Select TF" || searchCaption === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
+                    },
+                    "& .MuiInputBase-input::placeholder": {
+                      color: color ?? "white", // Placeholder color
                     },
                   }
                 }}
@@ -292,18 +297,18 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
         >
           Go
         </Button>
-
       </Stack>
-
-      <Box sx={{ marginLeft: "10px" }}>
-        <Typography variant="caption" sx={{ color: "white" }}>
-          {assembly === "GRCh38" ?
-            "Example: CTCF, ATF3"
-            :
-            "Example: Ctcf, Chd2"
-          }
-        </Typography>
-      </Box>
+      {example && (
+        <Box sx={{ marginLeft: "10px" }}>
+          <Typography variant="caption" sx={{ color: "white" }}>
+            {assembly === "GRCh38" ?
+              "Example: CTCF, ATF3"
+              :
+              "Example: Ctcf, Chd2"
+            }
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 };
