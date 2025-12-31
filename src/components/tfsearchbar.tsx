@@ -17,7 +17,8 @@ import {
   styled,
   Stack,
   Grid2,
-  CircularProgress
+  CircularProgress,
+  ListSubheader
 } from "@mui/material";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
@@ -29,6 +30,8 @@ import { gql } from "@/types";
 
 interface TFSearchBarProps {
   assembly: string;
+  color?: string;
+  example?: boolean;
 }
 
 // Custom styled Autocomplete textField
@@ -39,7 +42,6 @@ const StyledAutocomplete = styled(Autocomplete)(() => ({
     paddingLeft: "12px",
   },
   "& .MuiInputBase-input::placeholder": {
-    color: "white", // Placeholder color
     opacity: 1,
   },
 }));
@@ -65,9 +67,31 @@ const SEARCH_OPTIONS_QUERY = gql(`
   }
 `)
 
+export const defaultHumanResults = [
+  {
+    name: "CTCF",
+    description: "Sequence-specific TF - 442 Experiments, 167 Cell Types",
+  },
+  {
+    name: "ATF3",
+    description: "Sequence-specific TF - 14 Experiments, 8 Cell Types",
+  },
+];
+
+export const defaultMouseResults = [
+  {
+    name: "Ctcf",
+    description: "Sequence-specific TF - 41 Experiments, 30 Cell Types",
+  },
+  {
+    name: "Chd2",
+    description: "Non-sequence-specific factor - 3 Experiments, 3 Cell Types",
+  },
+];
+
 const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
-const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
+const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = true }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -77,6 +101,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   const [loading, setLoading] = useState(false);
   const [validSearch, setValidSearch] = useState<string | undefined>(undefined)
   const [searchCaption, setSearchCaption] = useState<string>("")
+
+  const defaultResults = assembly === "GRCh38" ? defaultHumanResults : defaultMouseResults;
 
   const [fetchOptions, { loading: loading_options, data: optionsData, error: error_options }] =
     useLazyQuery(SEARCH_OPTIONS_QUERY, {
@@ -171,9 +197,9 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
   return (
     <Box>
       <Stack direction={isMobile ? "column" : "row"} spacing={2}>
-        <FormControl fullWidth variant="outlined">
+        <FormControl fullWidth variant="outlined" id="tf-search">
           <StyledAutocomplete
-            options={inputValue === "" ? [] : optionsData?.counts.map(c => c.name) ?? []}
+            options={inputValue === "" ? defaultResults.map(r => r.name) : optionsData?.counts.map(c => c.name) ?? []}
             freeSolo
             onKeyDown={(event: any) => {
               if (event.key === "Enter" && snpValue && validSearch) {
@@ -187,16 +213,17 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 );
               }
             }}
-            popupIcon={<ArrowDropDown sx={{ color: "white" }} />}
-            clearIcon={loading_options && !validSearch ? <CircularProgress size={20} sx={{ color: "white" }} /> : <ClearIcon sx={{ color: "white" }} onClick={() => { handleReset() }} />}
+            popupIcon={<ArrowDropDown sx={{ color: color ?? "white" }} />}
+            clearIcon={loading_options && !validSearch ? <CircularProgress size={20} sx={{ color: color ?? "white" }} /> : <ClearIcon sx={{ color: color ?? "white" }} onClick={() => { handleReset() }} />}
             value={snpValue && formatFactorName(snpValue, assembly)}
             onChange={(_, newValue: any) => setSnpValue(newValue)}
             inputValue={inputValue}
             onInputChange={(_, newInputValue) => {
               setInputValue(newInputValue);
-              if (newInputValue) {
-                debounceFn(newInputValue);
-              }
+
+              if (!newInputValue) return;   // <-- show defaults again
+
+              debounceFn(newInputValue);
             }}
             noOptionsText="Example: CTCF"
             renderInput={(params) => (
@@ -205,70 +232,88 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
                 error={(optionsData?.counts.length === 0 && inputValue !== "") || Boolean(error_options)}
                 label={error_options ? "Error Fetching TFs" : searchCaption}
                 {...params}
-                placeholder="Enter TF Name"
+                placeholder="Search TF"
                 fullWidth
                 InputProps={{
                   ...params.InputProps,
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SearchIcon sx={{ color: "white" }} />{" "}
+                      <SearchIcon sx={{ color: color ?? "white" }} />{" "}
                     </InputAdornment>
                   ),
-                  style: { textAlign: "center", color: "white" },
+                  style: { textAlign: "center", color: color ?? "white" },
                 }}
                 InputLabelProps={{
-                  style: { width: "100%", color: optionsData?.counts.length === 0 || error_options ? theme.palette.error.main : "white" },
+                  style: { width: "100%", color: optionsData?.counts.length === 0 || error_options ? theme.palette.error.main : color ?? "white" },
                 }}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     "& fieldset": {
-                      borderColor: "white", // Default border color
+                      borderColor: color ?? "white", // Default border color
                     },
                     "&:hover fieldset": {
                       borderColor: searchCaption === "Select TF" || searchCaption === "" ? theme.palette.primary.main : theme.palette.error.main, // Hover border color
+                    },
+                    "& .MuiInputBase-input::placeholder": {
+                      color: color ?? "white", // Placeholder color
                     },
                   }
                 }}
               />
             )}
-            renderOption={(props, option: any) => {
-              const tfSuggestion = optionsData?.counts;
-              let subtitle;
-              if (tfSuggestion && tfSuggestion.length > 0) {
-                subtitle = tfSuggestion.map((g: any) => ({
-                  total: g.datasets.counts.total,
-                  biosamples: g.datasets.counts.biosamples,
-                  label:
-                    !tfA || !tfA.get(g.name!)
-                      ? ""
-                      : (
-                        tfA.get(g.name!)["TF assessment"] as string
-                      ).includes("Likely")
-                        ? "Likely sequence-specific TF - "
-                        : SEQUENCE_SPECIFIC.has(tfA.get(g.name!)["TF assessment"])
-                          ? "Sequence-specific TF - "
-                          : "Non-sequence-specific factor - ",
-                  name: g.name,
-                }));
+            renderOption={(props, option: any, state) => {
+              const isFirstDefault =
+                inputValue === "" && state.index === 0;
+
+              const api = optionsData?.counts?.find(g => g.name === option);
+
+              let description: string | undefined;
+
+              if (api) {
+                const label =
+                  !tfA || !tfA.get(api.name!)
+                    ? ""
+                    : (tfA.get(api.name!)["TF assessment"] as string).includes("Likely")
+                      ? "Likely sequence-specific TF - "
+                      : SEQUENCE_SPECIFIC.has(tfA.get(api.name!)["TF assessment"])
+                        ? "Sequence-specific TF - "
+                        : "Non-sequence-specific factor - ";
+
+                description = `${label}${api.datasets.counts.total} experiments, ${api.datasets.counts.biosamples} cell types`;
               }
-              const selected = subtitle?.find((g) => g.name === option);
+
+              if (!description) {
+                const def = defaultResults.find(r => r.name === option);
+                description = def?.description;
+              }
+
               return (
-                <li {...props} key={option}>
-                  <Grid2 container alignItems="center">
-                    <Grid2 sx={{ width: "100%", wordWrap: "break-word" }}>
-                      <Box component="span">
-                        {formatFactorName(option, assembly)}
-                      </Box>
-                      {selected && (
-                        <Typography variant="body2" color="text.secondary">
-                          {`${selected.label} ${selected.total} experiments, ${selected.biosamples} cell types`}
-                        </Typography>
-                      )}
+                <>
+                  {isFirstDefault && (
+                    <ListSubheader disableSticky>
+                      Examples
+                    </ListSubheader>
+                  )}
+
+                  <li {...props} key={option}>
+                    <Grid2 container alignItems="center">
+                      <Grid2 sx={{ width: "100%", wordWrap: "break-word" }}>
+                        <Box component="span">
+                          {formatFactorName(option, assembly)}
+                        </Box>
+
+                        {description && (
+                          <Typography variant="body2" color="text.secondary">
+                            {description}
+                          </Typography>
+                        )}
+                      </Grid2>
                     </Grid2>
-                  </Grid2>
-                </li>
+                  </li>
+                </>
               );
             }}
+
           />
         </FormControl>
         <Button
@@ -292,18 +337,18 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly }) => {
         >
           Go
         </Button>
-
       </Stack>
-
-      <Box sx={{ marginLeft: "10px" }}>
-        <Typography variant="caption" sx={{ color: "white" }}>
-          {assembly === "GRCh38" ?
-            "Example: CTCF, ATF3"
-            :
-            "Example: Ctcf, Chd2"
-          }
-        </Typography>
-      </Box>
+      {example && (
+        <Box sx={{ marginLeft: "10px" }}>
+          <Typography variant="caption" sx={{ color: "white" }}>
+            {assembly === "GRCh38" ?
+              "Example: CTCF, ATF3"
+              :
+              "Example: Ctcf, Chd2"
+            }
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 };

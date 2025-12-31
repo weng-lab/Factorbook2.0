@@ -21,20 +21,29 @@ import {
   AccordionSummary,
   AccordionDetails,
   Stack,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import {
   Menu as MenuIcon,
   Close as CloseIcon,
   Home as HomeIcon,
   ExpandMore as ExpandMoreIcon,
+  Search,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import styles from "./topbar.module.css";
 import Link from "next/link";
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { usePathname } from "next/navigation";
+import TFSearchbar from "./tfsearchbar";
+import AssemblySwitch from "./AssemblySwitch";
 
 let navItems = [
   { title: "Home", href: "/", icon: <HomeIcon sx={{ color: "#8169BF" }} /> },
+  { title: "Downloads", href: "/downloads" },
+  { title: "About", href: "/about" },
   {
     title: "Portals",
     dropdownLinks: [
@@ -61,8 +70,6 @@ let navItems = [
       },
     ]
   },
-  { title: "About", href: "/about" },
-  { title: "Downloads", href: "/downloads" }
 ];
 
 interface TopbarProps {
@@ -71,11 +78,14 @@ interface TopbarProps {
 
 const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [assembly, setAssembly] = React.useState<"GRCh38" | "mm10">("GRCh38");
   const [portalsAnchorEl, setPortalsAnchorEl] =
-    React.useState<null | HTMLElement>(null);
-
+  React.useState<null | HTMLElement>(null);
+  
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
 
   const handleDrawerToggle = () => {
     setMobileOpen((prevState) => !prevState);
@@ -87,6 +97,37 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
 
   const handlePortalsClose = () => {
     setPortalsAnchorEl(null);
+  };
+
+  React.useEffect(() => {
+    // Close drawer on route change
+    setMobileOpen(false);
+  }, [pathname]);
+
+  //Auto scroll and focus the main search bar
+  const handleFocusSearch = () => {
+    const searchEl = document.getElementById("tf-search");
+    const headerEl = document.getElementById("header-book");
+    if (!searchEl) return;
+
+    const observer = new IntersectionObserver(
+      ([entry], obs) => {
+        if (entry.isIntersecting) {
+          (searchEl.querySelector('input') as HTMLInputElement)?.focus();
+          obs.disconnect();
+        }
+      },
+      {
+        threshold: 0.99,
+      }
+    );
+
+    if (headerEl) {
+      observer.observe(headerEl);
+    }
+
+    // Scroll smoothly to the search bar
+    searchEl.scrollIntoView({ behavior: "smooth", block: "end" });
   };
 
   const drawer = (
@@ -117,6 +158,31 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
         </IconButton>
       </Box>
       <Divider />
+      <Box sx={{ flex: 1, paddingX: 2, mt: 2 }}>
+        <TFSearchbar assembly={assembly} color="black" example={false} />
+      </Box>
+      <RadioGroup
+        value={assembly}
+        onChange={(e) => setAssembly(e.target.value as "GRCh38" | "mm10")}
+        row
+        sx={{
+          justifyContent: "center",
+          alignItems: "center",
+          gap: { xs: 2, sm: 4, md: 6 },
+          flexWrap: "wrap",
+          my: 1,
+        }}
+      >
+        {["GRCh38", "mm10"].map((value) => (
+          <FormControlLabel
+            key={value}
+            value={value}
+            control={<Radio />}
+            label={<Typography>{value === "GRCh38" ? "Human" : "Mouse"}</Typography>}
+            sx={{ marginRight: 0 }}
+          />
+        ))}
+      </RadioGroup>
       <List>
         {navItems.map((item, index) => (
           <React.Fragment key={item.title}>
@@ -256,11 +322,11 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
                   <Box
                     sx={{
                       display: "flex",
-                      justifyContent: "flex-end",
+                      justifyContent: "flex-start",
                       width: "100%",
                     }}
                   >
-                    {navItems.map((item) =>
+                    {navItems.slice(1).map((item) =>
                       item.dropdownLinks ? (
                         <React.Fragment key={item.title}>
                           <Button
@@ -335,6 +401,33 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
                     )}
                   </Box>
                 </Grid>
+                  <Box
+                    sx={{
+                      width: "375px",
+                      display: "flex",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    {isHomePage ? (
+                      <IconButton
+                        sx={{
+                          color: "var(--primary-mainText, #6750A4)",
+                          display: { xs: "none", md: "flex" },
+                          ml: "auto",
+                        }}
+                        onClick={handleFocusSearch}
+                      >
+                        <Search />
+                      </IconButton>
+                    ) : (
+                      <Stack display={"flex"} direction={"row"} width={"100%"} justifyContent={"flex-end"} alignItems={"center"} spacing={1}>
+                        <AssemblySwitch assembly={assembly} onChange={setAssembly} iconColor="black" />
+                        <Box sx={{ flex: 1 }}>
+                          <TFSearchbar assembly={assembly} color="black" example={false} />
+                        </Box>
+                      </Stack>
+                    )}
+                  </Box>
               </>
             )}
           </Grid>
