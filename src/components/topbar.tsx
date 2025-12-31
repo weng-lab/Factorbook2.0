@@ -404,13 +404,22 @@ const Topbar: React.FC<TopbarProps> = ({ maintenance }) => {
                   <Box
                     sx={{
                       width: "375px",
+                      display: "flex",
+                      justifyContent: "flex-end",
                     }}
-                    >
-                      {isHomePage ? (
-                        <IconButton sx={{ color: "var(--primary-mainText, #6750A4)", display: { xs: "none", md: "flex" }, justifySelf: "flex-end" }} onClick={handleFocusSearch}>
-                          <Search />
-                        </IconButton>
-                      ) : (
+                  >
+                    {isHomePage ? (
+                      <IconButton
+                        sx={{
+                          color: "var(--primary-mainText, #6750A4)",
+                          display: { xs: "none", md: "flex" },
+                          ml: "auto",
+                        }}
+                        onClick={handleFocusSearch}
+                      >
+                        <Search />
+                      </IconButton>
+                    ) : (
                       <Stack display={"flex"} direction={"row"} width={"100%"} justifyContent={"flex-end"} alignItems={"center"} spacing={1}>
                         <AssemblySwitch assembly={assembly} onChange={setAssembly} iconColor="black" />
                         <Box sx={{ flex: 1 }}>
