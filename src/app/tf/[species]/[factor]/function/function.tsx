@@ -98,7 +98,8 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   } = useQuery<FactorQueryResponse>(FACTOR_DESCRIPTION_QUERY, {
     variables: {
       assembly: props.assembly,
-      name: [props.factor.split(/phospho/i)[0]],
+      //name: [props.factor.split(/phospho/i)[0]],
+      name_prefix: props.factor.split(/phospho/i)[0]
     },
   });
 

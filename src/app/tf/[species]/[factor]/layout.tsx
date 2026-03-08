@@ -73,7 +73,8 @@ export default function FactorDetailsLayout({
     {
       variables: {
         assembly: species.toLowerCase() === "human" ? "GRCh38" : "mm10",
-        name: [factorForUrl.split(/phospho/i)[0]],
+       // name: [factorForUrl.split(/phospho/i)[0]],
+       name_prefix: factorForUrl.split(/phospho/i)[0]
       },
     }
   );

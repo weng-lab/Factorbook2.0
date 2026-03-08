@@ -4525,6 +4525,7 @@ export type FactorQueryVariables = Exact<{
   id?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
   name?: InputMaybe<Array<InputMaybe<Scalars['String']['input']>> | InputMaybe<Scalars['String']['input']>>;
   assembly: Scalars['String']['input'];
+  name_prefix?: InputMaybe< Scalars['String']['input']> ;
 }>;
 
 

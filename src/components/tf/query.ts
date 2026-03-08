@@ -115,8 +115,8 @@ export const FETCH_PDBID_DETAILS_QUERY = gql `query fetchpdbiddetails($pdbids: [
 }
 `
 export const FACTOR_DESCRIPTION_QUERY = gql`
-    query Factor($id: [String], $name: [String], $assembly: String!) {
-        factor(id: $id, name: $name, assembly: $assembly) {
+    query Factor($id: [String], $name: [String], $assembly: String!, $name_prefix: String) {
+        factor(id: $id, name: $name, assembly: $assembly, name_prefix: $name_prefix) {
             name
             gene_id
             coordinates {
