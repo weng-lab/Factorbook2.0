@@ -4,7 +4,15 @@ import projectConfig from './config.json'
 //Taken from https://www.apollographql.com/docs/react/development-testing/static-typing#setting-up-your-project
 
 const config: CodegenConfig = {
-  schema: projectConfig.API.CcreAPI,
+  schema: [
+    {
+      [projectConfig.API.CcreAPI]: {
+        headers: {
+          "api-key": process.env.FACTORBOOK_API_KEY!,
+        },
+      },
+    },
+  ],
   documents: ['src/**/*.{ts,tsx}'],
   generates: {
     './src/types/': {

@@ -4,8 +4,6 @@ import { ChainFile, Region } from 'liftover';
 import { useMemo } from 'react';
 import { MINOR_ALLELE_FREQUENCY, SNP_QUERY } from './queries';
 import { MinorAlleleFrequencyResponse, SNPQueryResponse } from './types';
-import config from '../../../config.json'
-
 type GenomicRange = {
     chromosome?: string;
     start?: number;
@@ -13,7 +11,7 @@ type GenomicRange = {
 };
 
 const client = new ApolloClient<any>({
-    uri: config.API.CcreAPI,
+    uri: "/api/graphql",
     cache: new InMemoryCache(),
 });
 function liftOver(region: GenomicRange, chainFile: ChainFile): GenomicRange[] {

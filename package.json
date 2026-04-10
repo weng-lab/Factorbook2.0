@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "compile": "graphql-codegen",
-    "watch": "graphql-codegen -w"
+    "compile": "dotenv -e .env.local -- graphql-codegen",
+    "watch": "dotenv -e .env.local -- graphql-codegen -w"
   },
   "dependencies": {
     "@apollo/client": "^3",
@@ -41,6 +41,7 @@
     "@weng-lab/genomebrowser": "^0.0.20",
     "@weng-lab/psychscreen-ui-components": "^2.1.5",
     "copy-to-clipboard": "^3.3.3",
+    "dotenv-cli": "^11.0.0",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^5",
     "jszip": "^3.10.1",

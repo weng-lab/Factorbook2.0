@@ -9,11 +9,10 @@ import {
 } from "@apollo/experimental-nextjs-app-support";
 import { ReactNode } from "react";
 import { ApiContext, ApiContextType } from "@/apicontext";
-import Config from "../config.json";
 
 function makeClient(): ApolloClientNext<NormalizedCacheObject> {
   const httpLink = new HttpLink({
-    uri: Config.API.CcreAPI,
+    uri: "/api/graphql",
   });
 
   const link =
@@ -37,8 +36,8 @@ const client = makeClient();
 const apiContextValue: ApiContextType = {
   client,
   restEndpoints: {
-    streamPeaks: Config.API.CcreAPI,
-    streamMemeService: Config.API.CcreAPI,
+    streamPeaks: "/api/graphql",
+    streamMemeService: "/api/graphql",
   },
 };
 

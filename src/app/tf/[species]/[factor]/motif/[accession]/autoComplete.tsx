@@ -3,7 +3,6 @@ import { GENE_AUTOCOMPLETE_QUERY, SNP_AUTOCOMPLETE_QUERY } from './queries';
 import { uniq } from './utils';
 import { SearchBoxProps, Result } from './types';
 import { Autocomplete, TextField } from '@mui/material';
-import config from '../../../../../../../config.json'
 
 const SearchBox: React.FC<SearchBoxProps> = props => {
     const [results, setResults] = useState<Result[]>();
@@ -40,7 +39,7 @@ const SearchBox: React.FC<SearchBoxProps> = props => {
             const val: string = value.toLowerCase();
             let rs: Result[] = [];
             if (val.startsWith('rs') && props.assembly === 'GRCh38') {
-                const response = await fetch(config.API.CcreAPI, {
+                const response = await fetch("/api/graphql", {
                     method: 'POST',
 
                     body: JSON.stringify({
@@ -70,7 +69,7 @@ const SearchBox: React.FC<SearchBoxProps> = props => {
                         description: `\n${value}:1-10000000`,
                     },
                 ];
-            const response = await fetch(config.API.CcreAPI, {
+            const response = await fetch("/api/graphql", {
                 method: 'POST',
                 body: JSON.stringify({
                     query: GENE_AUTOCOMPLETE_QUERY,

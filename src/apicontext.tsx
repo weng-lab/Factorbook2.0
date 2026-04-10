@@ -1,6 +1,5 @@
 import { createContext } from "react";
 import { ApolloClient, InMemoryCache } from "@apollo/client";
-import Config from "../config.json";
 
 export type ApiContextType = {
   client: ApolloClient<any>;
@@ -14,7 +13,7 @@ export type ApiContextType = {
 export const ApiContext = createContext<ApiContextType | undefined>(undefined);
 
 const client = new ApolloClient({
-  uri: Config.API.CcreAPI,
+  uri: "/api/graphql",
   cache: new InMemoryCache(),
 });
 
