@@ -82,6 +82,7 @@ const Footer: React.FC = () => (
             { text: "Factorbook Overview", href: "/about" },
             { text: "Weng Lab", href: "https://www.umassmed.edu/wenglab/" },
             { text: "Moore Lab", href: "https://sites.google.com/view/moore-lab/" },
+            { text: "Colubri Lab", href: "http://co-labo.org/" },
             { text: "ENCODE Consortium", href: "#" },
             {
               text: "UMass Chan Medical School",
