@@ -16,7 +16,7 @@ import {
   FormControl,
   styled,
   Stack,
-  Grid2,
+  Grid,
   CircularProgress,
   ListSubheader
 } from "@mui/material";
@@ -294,8 +294,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
                   )}
 
                   <li {...props} key={option}>
-                    <Grid2 container alignItems="center">
-                      <Grid2 sx={{ width: "100%", wordWrap: "break-word" }}>
+                    <Grid container alignItems="center">
+                      <Grid sx={{ width: "100%", wordWrap: "break-word" }}>
                         <Box component="span">
                           {formatFactorName(option, assembly)}
                         </Box>
@@ -305,8 +305,8 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
                             {description}
                           </Typography>
                         )}
-                      </Grid2>
-                    </Grid2>
+                      </Grid>
+                    </Grid>
                   </li>
                 </>
               );

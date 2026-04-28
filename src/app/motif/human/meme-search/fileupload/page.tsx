@@ -63,7 +63,7 @@ const FileUploadMotifDetails = () => {
                 alignItems="center"
                 justifyContent="space-between"
             >
-                <Grid item>
+                <Grid>
                     <Breadcrumbs
                         aria-label="breadcrumb"
                         separator={<NavigateNextIcon fontSize="small" />}
@@ -89,7 +89,7 @@ const FileUploadMotifDetails = () => {
                         <Typography color="textPrimary">{filename}</Typography>
                     </Breadcrumbs>
                 </Grid>
-                <Grid item>
+                <Grid>
                     <Button
                         onClick={() => {
                             window.open("/motif/human/meme-search", "_self");

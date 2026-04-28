@@ -9,7 +9,7 @@ import {
   InputLabel,
   Select,
   SelectChangeEvent,
-  Grid2,
+  Grid,
   FormLabel,
   ToggleButton,
   ToggleButtonGroup,
@@ -273,8 +273,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
           "in vitro differentiated cells" && "s"}
         : RNA-seq
       </Typography>
-      <Grid2 container display={"flex"} justifyContent={"space-between"} alignItems={"flex-end"}>
-        <Grid2 size={{ xs: 12, sm: "grow" }}>
+      <Grid container display={"flex"} justifyContent={"space-between"} alignItems={"flex-end"}>
+        <Grid size={{ xs: 12, sm: "grow" }}>
           <Stack direction={"row"} display={"flex"} justifyContent={"flex-start"} spacing={2} useFlexGap sx={{ flexWrap: 'wrap' }}>
             <Stack>
               <Typography sx={{ color: "rgba(0, 0, 0, 0.6)", height: "23px" }}>{isXs ? "Biosample" : "Biosample Type"}</Typography>
@@ -354,8 +354,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               </FormControl>
             </Stack>
           </Stack>
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 4 }} mt={{ xs: 2, md: 0 }} display={"flex"} justifyContent={{ xs: "flex-start", sm: "flex-end" }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }} mt={{ xs: 2, md: 0 }} display={"flex"} justifyContent={{ xs: "flex-start", sm: "flex-end" }}>
           <ButtonGroup
             variant="contained"
             ref={anchorRef}
@@ -415,8 +415,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               </Grow>
             )}
           </Popper >
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
       {violinData.length <= 0 ? (
         <Skeleton variant="rounded" width={"100%"} height={600} />
       ) : (

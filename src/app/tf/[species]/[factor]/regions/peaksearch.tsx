@@ -593,7 +593,7 @@ const PeakSearch: React.FC = () => {
       {
         <>
           <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item>
+            <Grid>
               {isFileUpload ?
                 <Typography variant="h4">
                   {peaksData && peaksData.peaksrange.data
@@ -607,7 +607,7 @@ const PeakSearch: React.FC = () => {
                 </Typography>
               }
             </Grid>
-            <Grid item>
+            <Grid>
               <Button
                 onClick={() => {
                   setRegions([]);

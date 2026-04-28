@@ -239,9 +239,9 @@ const TfDetails: React.FC<TfDetailsProps> = ({
         : row.name;
         
         return (
-          (<LinkWrapper
-            url={`/tf/${species}/${nameForUrl}/function`}
-          >
+          <LinkWrapper
+              url={`/tf/${species}/${nameForUrl}/function`}
+            >
             <Box style={{ minWidth: "150px" }}>
               <Typography variant="h6" style={{ fontWeight: "bold" }}>
                 {species === "mouse"
@@ -264,7 +264,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
                 <Typography>{row.cellTypes} Cell Types</Typography>
               )}
             </Box>
-          </LinkWrapper>)
+          </LinkWrapper>
         );
       },
       value: (row: FactorRow) =>

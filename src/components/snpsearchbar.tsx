@@ -13,7 +13,7 @@ import {
   useTheme,
   Autocomplete,
   FormControl,
-  Grid2,
+  Grid,
   CircularProgress
 } from "@mui/material";
 import styled from "@emotion/styled";
@@ -190,8 +190,8 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
               const selectedSnp = snpids.find((g) => g.id === option);
               return (
                 <li {...props} key={option}>
-                  <Grid2 container alignItems="center">
-                    <Grid2
+                  <Grid container alignItems="center">
+                    <Grid
                       sx={{ width: "100%", wordWrap: "break-word" }}
                     >
                       <Box component="span">{option}</Box>
@@ -203,8 +203,8 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
                           {`${selectedSnp.chrom}:${selectedSnp.end}`}
                         </Typography>
                       )}
-                    </Grid2>
-                  </Grid2>
+                    </Grid>
+                  </Grid>
                 </li>
               );
             }} theme={theme} />

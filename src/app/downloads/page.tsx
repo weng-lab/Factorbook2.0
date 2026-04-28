@@ -6,7 +6,6 @@ import {
   Box,
   Typography,
   Grid,
-  Grid2,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -152,58 +151,58 @@ const DownloadPage: React.FC = () => {
                 >
                   Download merged motif sites
                 </Typography>
-                <Grid2 container columnSpacing={2}>
-                  <Grid2 size={4}>
+                <Grid container columnSpacing={2}>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="Lenient set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-4</sup> (46 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.merged.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="Moderate set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-5</sup> (45 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.merged.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="Stringent set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup> (44 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.merged.bed.gz"
                     />
-                  </Grid2>
-                </Grid2>
+                  </Grid>
+                </Grid>
                 <Typography
                   variant="subtitle2"
                   sx={{ textTransform: "uppercase" }}
                 >
                   Download all motif sites
                 </Typography>
-                <Grid2 container columnSpacing={2}>
-                  <Grid2 size={4}>
+                <Grid container columnSpacing={2}>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="Lenient set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-4</sup> (758 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.4.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="Moderate set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-5</sup> (684 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.5.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="Stringent set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup> (653 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-peak-occurrences.6.bed.gz"
                     />
-                  </Grid2>
-                </Grid2>
+                  </Grid>
+                </Grid>
               </Stack>
             </AccordionDetails>
           </Accordion>
@@ -234,97 +233,97 @@ const DownloadPage: React.FC = () => {
                 >
                   Download merged motif sites
                 </Typography>
-                <Grid2 container spacing={2}>
-                  <Grid2 size={4}>
+                <Grid container spacing={2}>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="MEME: Lenient set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup> (47 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.merged.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="MEME: Moderate set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-7</sup> (19 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.merged.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="MEME: Stringent set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-8</sup> (11 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.merged.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="HT-SELEX: Lenient set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-5</sup> (57 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-5.merged.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="HT-SELEX: Moderate set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup> (12 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-6.merged.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="HT-SELEX: Stringent set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-7</sup> (2 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/HT-SELEX-rDHS.1e-7.merged.bed.gz"
                     />
-                  </Grid2>
-                </Grid2>
+                  </Grid>
+                </Grid>
                 <Typography
                   variant="subtitle2"
                   sx={{ textTransform: "uppercase" }}
                 >
                   Download all motif sites
                 </Typography>
-                <Grid2 container spacing={2}>
-                  <Grid2 size={4}>
+                <Grid container spacing={2}>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="MEME: Lenient set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup> (2.9 GB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.6.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="MEME: Moderate set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-7</sup> (1.5 GB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.7.bed.gz"
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="MEME: Stringent set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-8</sup> (885 MB)</Typography>}
                       href="https://downloads.wenglab.org/factorbook-download/all-rDHS-instances.8.bed.gz"
                     />
-                  </Grid2>
-                  {/* <Grid2 size={4}>
+                  </Grid>
+                  {/* <Grid size={4}>
                     <StackedDownloadButton
                       topText="HT-SELEX: Lenient set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-6</sup></Typography>}
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="HT-SELEX: Moderate set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-7</sup></Typography>}
                     />
-                  </Grid2>
-                  <Grid2 size={4}>
+                  </Grid>
+                  <Grid size={4}>
                     <StackedDownloadButton
                       topText="HT-SELEX: Stringent set"
                       bottomText={<Typography variant="caption">FIMO p-value {'<'} 10<sup>-8</sup></Typography>}
                     />
-                  </Grid2> */}
-                </Grid2>
+                  </Grid> */}
+                </Grid>
               </Stack>
             </AccordionDetails>
           </Accordion>

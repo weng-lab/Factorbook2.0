@@ -10,7 +10,7 @@ import {
   Typography,
   Button,
   Link,
-  Grid,
+  GridLegacy as Grid,
 } from '@mui/material/';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';

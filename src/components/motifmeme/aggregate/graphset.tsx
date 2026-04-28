@@ -97,7 +97,13 @@ const GraphSet: React.FC<GraphSetProps> = ({ histoneData, metadata }) => {
           <AccordionDetails>
             <Grid container spacing={4}>
               {groupedData[markType].map((graph, idx) => (
-                <Grid item xs={12} sm={6} md={4} key={idx}>
+                <Grid
+                  key={idx}
+                  size={{
+                    xs: 12,
+                    sm: 6,
+                    md: 4
+                  }}>
                   <Box
                     padding="10px"
                     display="flex"

@@ -70,12 +70,12 @@ const AnnotationDetailPage = () => {
     <>
       <Box sx={{ paddingX: isMobile ? 2 : isTablet ? 3 : 4 }}>
         <Grid container spacing={isMobile ? 1 : 2} alignItems="center">
-          <Grid item>
+          <Grid>
             <Typography variant={isMobile ? "body1" : "h6"}>
               Select an annotation:
             </Typography>
           </Grid>
-          <Grid item>
+          <Grid>
             <Select
               value={annotationType}
               onChange={(e) => setAnnotationType(e.target.value)}

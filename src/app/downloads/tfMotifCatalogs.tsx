@@ -1,7 +1,7 @@
 'use client'
 import StackedDownloadButton from "@/components/stackedDownloadButton"
 import { Info } from "@mui/icons-material"
-import { Stack, Typography, Tooltip, Grid2, Divider, Box } from "@mui/material"
+import { Stack, Typography, Tooltip, Grid, Divider, Box } from "@mui/material"
 
 const TfMotifCatalogDownloads = () => {
   return (
@@ -22,8 +22,8 @@ const TfMotifCatalogDownloads = () => {
         </Typography>
       </Box>
       <Divider />
-      <Grid2 container sx={{ mt: 5 }} spacing={2}>
-        <Grid2 size={8}>
+      <Grid container sx={{ mt: 5 }} spacing={2}>
+        <Grid size={8}>
           <Stack spacing={2}>
             <Typography variant="h6">
               MEME ChIP-seq Catalog
@@ -58,8 +58,8 @@ const TfMotifCatalogDownloads = () => {
               />
             </Stack>
           </Stack>
-        </Grid2>
-        <Grid2 size={4}>
+        </Grid>
+        <Grid size={4}>
           <Stack spacing={2}>
             <Typography variant="h6">
               HT-SELEX Catalog
@@ -87,8 +87,8 @@ const TfMotifCatalogDownloads = () => {
               href="/motifscatlog/all-selex-motifs.meme.gz"
             />
           </Stack>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
     </div>
   )
 }

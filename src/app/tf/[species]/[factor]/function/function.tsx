@@ -443,44 +443,42 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
                     height={160}
                   />
                 ) : (
-                  /* PDB slides (shifted by -1 because motif is index 0) */ pdbIds[cInd] && (
-                    <a
-                      href={`https://www.rcsb.org/structure/${
+                  /* PDB slides (shifted by -1 because motif is index 0) */ (pdbIds[cInd] && (<a
+                  href={`https://www.rcsb.org/structure/${
+                    pdbIds[cInd]
+                  }`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Box sx={{ textAlign: "center" }}>
+                    <img
+                      src={`https://cdn.rcsb.org/images/structures/${pdbIds[
+                        cInd
+                      ].toLowerCase()}_assembly-1.jpeg`}
+                      alt={`${factorDetails?.name || tfName} - ${
                         pdbIds[cInd]
                       }`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      style={{
+                        borderRadius: theme.shape.borderRadius,
+                        maxWidth: "100%",
+                        height: "auto",
+                        objectFit: "contain",
+                        maxHeight: "300px",
+                      }}
+                    />
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        display: "block",
+                        mt: 1,
+                        color: "text.secondary",
+                      }}
                     >
-                      <Box sx={{ textAlign: "center" }}>
-                        <img
-                          src={`https://cdn.rcsb.org/images/structures/${pdbIds[
-                            cInd
-                          ].toLowerCase()}_assembly-1.jpeg`}
-                          alt={`${factorDetails?.name || tfName} - ${
-                            pdbIds[cInd]
-                          }`}
-                          style={{
-                            borderRadius: theme.shape.borderRadius,
-                            maxWidth: "100%",
-                            height: "auto",
-                            objectFit: "contain",
-                            maxHeight: "300px",
-                          }}
-                        />
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            display: "block",
-                            mt: 1,
-                            color: "text.secondary",
-                          }}
-                        >
-                          {pdbIds[cInd]} -{" "}
-                          {pdbMap[pdbIds[cInd]]}
-                        </Typography>
-                      </Box>
-                    </a>
-                  )
+                      {pdbIds[cInd]} -{" "}
+                      {pdbMap[pdbIds[cInd]]}
+                    </Typography>
+                  </Box>
+                </a>))
                 )}
               </Box>
             </Box>

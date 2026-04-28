@@ -1,5 +1,5 @@
 import { ExpandMore } from "@mui/icons-material"
-import { Box, Typography, Divider, Accordion, AccordionSummary, AccordionDetails, Grid2 as Grid, Link, Button, Stack, Paper } from "@mui/material"
+import { Box, Typography, Divider, Accordion, AccordionSummary, AccordionDetails, Grid, Link, Button, Stack, Paper } from "@mui/material"
 import Popup from "./popup"
 
 import { useState } from "react";

@@ -37,7 +37,7 @@ import Link from "next/link";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { MetaData } from "./types";
 import LoadingMemeUmap from "@/app/motif/human/meme-umap/loading";
-import Grid from "@mui/material/Grid2"
+import { Grid } from "@mui/material"
 
 // Color definitions
 const colors = {

@@ -21,7 +21,7 @@ const MotifDetails = () => {
                 alignItems="center"
                 justifyContent="space-between"
             >
-                <Grid item>
+                <Grid>
                     <Breadcrumbs
                         aria-label="breadcrumb"
                         separator={<NavigateNextIcon fontSize="small" />}
@@ -47,7 +47,7 @@ const MotifDetails = () => {
                         <Typography color="textPrimary">{decodedRegex}</Typography>
                     </Breadcrumbs>
                 </Grid>
-                <Grid item>
+                <Grid>
                     <Button
                         onClick={() => {
                             window.open("/motif/human/meme-search", "_self");
@@ -74,9 +74,7 @@ const MotifDetails = () => {
                     </Button>
                 </Grid>
             </Grid>
-
             <Divider sx={{ mt: isMobile ? 2 : 4 }} />
-
             <Box sx={{ padding: isMobile ? 2 : 4 }}>
                 <RegexSearchResults regex={regex} />
             </Box>

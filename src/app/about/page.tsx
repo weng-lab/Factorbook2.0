@@ -1,7 +1,7 @@
 "use client"
 import React, { useRef, useState } from "react"
 import { Box, Button, Link, Stack, TextField, Typography } from "@mui/material"
-import Grid2 from "@mui/material/Grid2"
+import { Grid } from "@mui/material"
 import emailjs from '@emailjs/browser';
 
 export default function About() {
