@@ -8,7 +8,7 @@ import React, {
   useContext,
   MutableRefObject,
 } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import {
   Box,
   Typography,

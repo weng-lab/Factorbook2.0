@@ -1,16 +1,16 @@
 "use client";
 
-import { ApolloLink, HttpLink, NormalizedCacheObject } from "@apollo/client";
+import { ApolloLink, HttpLink } from "@apollo/client";
 import {
   ApolloNextAppProvider,
-  SSRMultipartLink,
+  ApolloClient,
   InMemoryCache,
-  ApolloClient as ApolloClientNext,
-} from "@apollo/experimental-nextjs-app-support";
+  SSRMultipartLink,
+} from "@apollo/client-integration-nextjs";
 import { ReactNode } from "react";
 import { ApiContext, ApiContextType } from "@/apicontext";
 
-function makeClient(): ApolloClientNext<NormalizedCacheObject> {
+function makeClient() {
   const httpLink = new HttpLink({
     uri: "/api/graphql",
   });
@@ -25,7 +25,7 @@ function makeClient(): ApolloClientNext<NormalizedCacheObject> {
         ])
       : httpLink;
 
-  return new ApolloClientNext<NormalizedCacheObject>({
+  return new ApolloClient({
     cache: new InMemoryCache(),
     link,
   });

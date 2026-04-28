@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ReactNode, MouseEvent } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import {
   Box,
   CircularProgress,

@@ -3,7 +3,7 @@
 import ReferenceSection from "@/components/container";
 import React from "react";
 import { useParams } from "next/navigation";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { CellTypeDescription, DatasetQueryResponse } from "./types";
 import { CELLTYPE_DESCRIPTION_QUERY, DATASET_QUERY } from "./queries";
 import dynamic from "next/dynamic";

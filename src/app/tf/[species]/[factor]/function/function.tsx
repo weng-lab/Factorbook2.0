@@ -3,7 +3,7 @@ import MobileStepper from "@mui/material/MobileStepper";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 import { DNAAlphabet, DNALogo } from "logojs-react";
 import { useParams } from "next/navigation";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
@@ -62,7 +62,7 @@ const looksBiological = (value: string): boolean => {
 };
 
 const customClient = new ApolloClient({
-  uri: "https://data.rcsb.org/graphql", // <-- replace with your GraphQL endpoint
+  link: new HttpLink({ uri: "https://data.rcsb.org/graphql" }),
   cache: new InMemoryCache(),
 });
 

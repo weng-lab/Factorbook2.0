@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { ApiContext } from "@/apicontext";
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client/react";
 import { gql } from "@apollo/client";
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import { MotifInfo, MotifMatch, MotifResult } from "./results";

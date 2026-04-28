@@ -1,6 +1,7 @@
 'use client'
 
-import { gql, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import {
     GenomeBrowser, useBrowserState, InitialState,
     DefaultBigWig, BigWigTrackProps, ImportanceTrackProps,

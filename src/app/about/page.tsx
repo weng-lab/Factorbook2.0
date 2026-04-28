@@ -12,7 +12,7 @@ export default function About() {
   const [error, setError] = useState({ name: false, email: false, message: false })
   const [success, setSuccess] = useState(false)
 
-  const form = useRef();
+  const form = useRef<HTMLFormElement>(null);
 
   function isValidEmail(email: string) {
     //hopefully this is right, got it from ChatGPT

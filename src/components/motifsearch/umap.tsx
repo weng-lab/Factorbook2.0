@@ -73,8 +73,8 @@ function formatPWM(
 }
 
 // MotifRow component
-const MotifRow: React.FC<MMotif> = (x) => {
-  const r = useRef<SVGSVGElement>(null); // Reference for the DNA logo
+const MotifRow = (x: MMotif): React.ReactElement => {
+  const r = useRef<SVGSVGElement | null>(null); // Reference for the DNA logo
   const [rrc, setRC] = useState(false); // State for Reverse Complement
 
   // Format PWM dynamically based on reverse complement state
@@ -99,7 +99,7 @@ const MotifRow: React.FC<MMotif> = (x) => {
         <Tooltip title="Download Logo">
           <IconButton
             onClick={() =>
-              downloadSVG(r, `${x.accession}_${rrc ? "rc" : ""}_logo.svg`)
+              downloadSVG(r as React.RefObject<SVGSVGElement>, `${x.accession}_${rrc ? "rc" : ""}_logo.svg`)
             }
           >
             <FileDownloadOutlinedIcon />

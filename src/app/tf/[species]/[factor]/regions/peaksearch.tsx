@@ -13,7 +13,7 @@ import {
   Modal,
 } from "@mui/material";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { useParams } from "next/navigation";
 import { DNALogo } from "logojs-react";
 import {
@@ -441,7 +441,7 @@ const MotifsModal: React.FC<MotifsModalProps> = ({
       </g>
       <text
         textAnchor={"start"}
-        dominantBaseline="baseline"
+        dominantBaseline="alphabetic"
         x={0}
         y={secondY + height * 1.8}
       >
@@ -449,7 +449,7 @@ const MotifsModal: React.FC<MotifsModalProps> = ({
       </text>
       <text
         textAnchor={"end"}
-        dominantBaseline="baseline"
+        dominantBaseline="alphabetic"
         x={width}
         y={secondY + height * 1.8}
       >

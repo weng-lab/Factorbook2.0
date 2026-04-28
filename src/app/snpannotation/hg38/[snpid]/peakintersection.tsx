@@ -10,7 +10,7 @@ import {
   Link as MuiLink
 } from "@mui/material";
 import { PEAK_QUERY } from "../../queries";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { groupBy } from "lodash";
 import {
   PeakIntersectionMergerProps,

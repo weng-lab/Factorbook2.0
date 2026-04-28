@@ -25,7 +25,7 @@ import { associateBy } from "queryz";
 import ClearIcon from "@mui/icons-material/Clear";
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import Link from "next/link";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client/react";
 import { gql } from "@/types";
 
 interface TFSearchBarProps {
@@ -105,42 +105,40 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
   const defaultResults = assembly === "GRCh38" ? defaultHumanResults : defaultMouseResults;
 
   const [fetchOptions, { loading: loading_options, data: optionsData, error: error_options }] =
-    useLazyQuery(SEARCH_OPTIONS_QUERY, {
-      fetchPolicy: 'cache-first',
-      onCompleted(d) {
-        const tfSuggestion = d.counts;
-        if (tfSuggestion && tfSuggestion.length > 0) {
-          setSearchCaption("Select TF")
-          const r = tfSuggestion
-            .map(g => g.name)
-            .filter((name): name is string => typeof name === "string");
+    useLazyQuery(SEARCH_OPTIONS_QUERY, { fetchPolicy: 'cache-first' });
 
-          if (r?.length > 0) {
+  useEffect(() => {
+    if (!optionsData) return;
+    const tfSuggestion = optionsData.counts;
+    if (tfSuggestion && tfSuggestion.length > 0) {
+      setSearchCaption("Select TF");
+      const r = tfSuggestion
+        .map(g => g.name)
+        .filter((name): name is string => typeof name === "string");
 
-            let exists = r.find(str => str.toLowerCase() === inputValue.toLowerCase());
-            if (exists) {
-              if (assembly === "GRCh38") {
-                exists = exists.toUpperCase();
-              } else if (assembly === "mm10") {
-                exists = exists.charAt(0).toUpperCase() + exists.slice(1).toLowerCase();
-              }
-
-              setValidSearch(exists);
-              setSnpValue(inputValue as any);
-              setSearchCaption("")
-            } else {
-              setValidSearch(undefined);
-            }
-          } else {
-            setValidSearch(undefined)
-            setSearchCaption("No Matching TFs")
+      if (r?.length > 0) {
+        let exists = r.find(str => str.toLowerCase() === inputValue.toLowerCase());
+        if (exists) {
+          if (assembly === "GRCh38") {
+            exists = exists.toUpperCase();
+          } else if (assembly === "mm10") {
+            exists = exists.charAt(0).toUpperCase() + exists.slice(1).toLowerCase();
           }
+          setValidSearch(exists);
+          setSnpValue(inputValue as any);
+          setSearchCaption("");
         } else {
-          setValidSearch(undefined)
-          setSearchCaption("No Matching TFs")
+          setValidSearch(undefined);
         }
+      } else {
+        setValidSearch(undefined);
+        setSearchCaption("No Matching TFs");
       }
-    });
+    } else {
+      setValidSearch(undefined);
+      setSearchCaption("No Matching TFs");
+    }
+  }, [optionsData, inputValue, assembly]);
 
   // Fetch and inflate the data from the gzipped JSON file
   useEffect(() => {

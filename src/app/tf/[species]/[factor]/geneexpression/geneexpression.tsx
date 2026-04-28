@@ -52,7 +52,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const [biosample, setBiosample] = useState("tissue");
   const [scale, setScale] = useState<"log" | "linear">("log");
 
-  const svgRef = useRef<SVGSVGElement>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = React.useState(false);
@@ -100,7 +100,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const handleDownloadSVG = () => {
     if (!svgRef.current) return
 
-    downloadSVG(svgRef, `${props.gene_name}-violin-plot`)
+    downloadSVG(svgRef as React.RefObject<SVGSVGElement>, `${props.gene_name}-violin-plot`)
   };
 
   const handleRNATypeChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -435,7 +435,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
             }}
             labelOrientation={"leftDiagonal"}
             axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
-            svgRef={svgRef}
+            svgRef={svgRef as React.RefObject<SVGSVGElement>}
             horizontal={isXs}
             pointTooltipBody={(point) => {
               const formatKey = (key: string) =>

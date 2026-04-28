@@ -24,7 +24,7 @@ import {
   DataTable,
   DataTableColumn,
 } from "@weng-lab/psychscreen-ui-components";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { MEMEOCCU_QUERY } from "../../queries";
 import SearchBox from "./searchBox";
 
