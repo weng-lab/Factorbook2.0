@@ -1,6 +1,8 @@
 "use client";
 
-import MotifUMAP from "@/components/motifsearch/umap";
+import dynamic from "next/dynamic";
+
+const MotifUMAP = dynamic(() => import("@/components/motifsearch/umap"), { ssr: false });
 
 const SelexUmapPage = () => {
     return (

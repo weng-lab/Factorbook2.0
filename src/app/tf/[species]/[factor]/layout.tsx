@@ -18,7 +18,7 @@ import Link from "next/link";
 import { ApiContext } from "@/apicontext";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import FactorTabs from "./factortabs";
 import { DeepLearnedSELEXMotifsMetadataQueryResponse } from "./types";
 import { DEEP_LEARNED_MOTIFS_SELEX_METADATA_QUERY } from "./queries";
@@ -35,17 +35,10 @@ interface TFData {
 
 export default function FactorDetailsLayout({
   children,
-  params: {
-    species,
-    factor,
-  }
 }: {
   children: React.ReactNode,
-  params: {
-    species: string,
-    factor: string,
-  }
 }) {
+  const { species, factor } = useParams<{ species: string; factor: string }>();
   const apiContext = useContext(ApiContext);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));

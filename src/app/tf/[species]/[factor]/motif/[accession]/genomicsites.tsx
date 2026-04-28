@@ -209,16 +209,16 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
               </>
               <br />
               {regions.length === 0 && <SearchBox species={species} setRegions={setRegions} />}
-              {memeOccuData && memeOccuData.meme_occurrences && (
+              {memeOccuData && (memeOccuData as any).meme_occurrences && (
                 <Box sx={{ mx: "auto", alignItems: "center" }}>
                   <DataTable
                     key="meme_occu"
                     columns={MEME_OCCU_COLUMNS()}
-                    rows={memeOccuData.meme_occurrences}
+                    rows={(memeOccuData as any).meme_occurrences}
                     itemsPerPage={10}
                     sortColumn={1}
                     searchable
-                    tableTitle={`${memeOccuData.meme_occurrences.length} ${fileID} ChIP-seq peak motif sites matched your input:`}
+                    tableTitle={`${(memeOccuData as any).meme_occurrences.length} ${fileID} ChIP-seq peak motif sites matched your input:`}
                   />
                 </Box>
               )}

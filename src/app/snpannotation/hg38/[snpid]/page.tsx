@@ -34,10 +34,10 @@ const AnnotationDetailPage = () => {
   }, []);
 
   const [annotationType, setAnnotationType] = useState("Peak Intersection");
-  const { snpid } = useParams();
+  const { snpid } = useParams<{ snpid: string }>();
 
   const { data, loading, mafResults } = useSNPData(
-    snpid.toString(),
+    snpid?.toString() ?? "",
     "hg38",
     "AFRICAN",
     "NONE",

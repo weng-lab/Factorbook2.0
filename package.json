@@ -47,11 +47,11 @@
     "jubilant-carnival": "^0.6.0",
     "liftover": "^0.1.0",
     "logojs-react": "^2.1.1",
-    "next": "^14",
+    "next": "16.2.4",
     "pako": "^1.0.11",
     "queryz": "^0.0.3",
-    "react": "^19",
-    "react-dom": "^19",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
     "rxjs": "^7"
   },
   "devDependencies": {
@@ -61,13 +61,17 @@
     "@graphql-typed-document-node/core": "^3",
     "@types/node": "^22",
     "@types/pako": "^2.0.3",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
     "dotenv-cli": "^11.0.0",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^14",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
     "graphql": "^16",
     "typescript": "^5"
   },
-  "packageManager": "yarn@4.6.0+sha512.5383cc12567a95f1d668fbe762dfe0075c595b4bfff433be478dbbe24e05251a8e8c3eb992a986667c1d53b6c3a9c85b8398c35a960587fbd9fa3a0915406728"
+  "packageManager": "yarn@4.6.0+sha512.5383cc12567a95f1d668fbe762dfe0075c595b4bfff433be478dbbe24e05251a8e8c3eb992a986667c1d53b6c3a9c85b8398c35a960587fbd9fa3a0915406728",
+  "overrides": {
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3"
+  }
 }

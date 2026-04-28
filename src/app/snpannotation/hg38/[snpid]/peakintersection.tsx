@@ -153,7 +153,7 @@ const PeakIntersectionMerger: React.FC<PeakIntersectionMergerProps> = (
           .then((response) => {
             const newResults = [
               ...results,
-              ...response.data.peaks.peaks.map((peak: any) => ({
+              ...(response.data as any).peaks.peaks.map((peak: any) => ({
                 ...peak,
                 snp: props.snps[i],
               })),

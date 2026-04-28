@@ -145,9 +145,9 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   
   //FETCH_PDBID_DETAILS
   const pdbMap = useMemo(() => {
-    if (!pdbidData?.entries) return {};
+    if (!(pdbidData as any)?.entries) return {};
 
-    return pdbidData.entries.reduce(
+    return (pdbidData as any).entries.reduce(
       (acc: Record<string, string>, entry: any) => {
         if (entry?.rcsb_id && entry?.struct?.title) {
           acc[entry.rcsb_id] = entry.struct.title;
@@ -156,7 +156,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       },
       {}
     );
-  }, [pdbidData?.entries]);
+  }, [(pdbidData as any)?.entries]);
   const rcsb_imageUrls = useMemo(() => {
     if (!pdbIds || pdbIds.length === 0) return [];
     return pdbIds.map((pdbId) => getRCSBImageUrl(pdbId));

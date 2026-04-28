@@ -34,13 +34,18 @@ const AnnotationDetailLD = () => {
   }, []);
 
   const [annotationType, setAnnotationType] = useState("Peak Intersection");
-  const { snpid, population, subpopulation, rSquared } = useParams();
+  const { snpid, population, subpopulation, rSquared } = useParams<{
+    snpid: string;
+    population: string;
+    subpopulation: string;
+    rSquared: string;
+  }>();
 
   const { data, loading, mafResults } = useSNPData(
-    snpid.toString(),
+    snpid?.toString() ?? "",
     "hg38",
-    population.toString(),
-    subpopulation.toString(),
+    population?.toString() ?? "",
+    subpopulation?.toString() ?? "",
     chainFile
   );
 
@@ -51,7 +56,7 @@ const AnnotationDetailLD = () => {
 
     const leadSnp = data.snpQuery[0];
     const ldSnps = leadSnp.linkageDisequilibrium
-      .filter((x) => x.rSquared > parseFloat(rSquared.toString()))
+      .filter((x) => x.rSquared > parseFloat(rSquared?.toString() ?? "0"))
       .map((x) => ({
         ...x.snp,
         rSquared: x.rSquared,

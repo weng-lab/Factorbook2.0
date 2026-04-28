@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from "react";
+import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client/react";
 import {
   Typography,
@@ -20,11 +21,8 @@ import MotifTile from "./motifTile";
 DNAAlphabet[0].color = "#228b22";
 DNAAlphabet[3].color = "red";
 
-export default function MotifEnrichmentPage({
-  params: { species, factor, accession },
-}: {
-  params: { species: string; factor: string, accession: string };
-}) {
+export default function MotifEnrichmentPage() {
+  const { species, factor, accession } = useParams<{ species: string; factor: string; accession: string }>();
 
   const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10"
 

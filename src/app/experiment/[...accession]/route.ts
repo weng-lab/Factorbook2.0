@@ -24,7 +24,8 @@ async function getTarget(accession: string) {
   })
 }
 
-export async function GET(request: Request, { params: { accession } }: { params: { accession: string[] } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ accession: string[] }> }) {
+  const { accession } = await params;
   /**
    * params will be array of strings, since [...accession] is a catch-all segment, which catches:
    * 
@@ -44,12 +45,12 @@ export async function GET(request: Request, { params: { accession } }: { params:
     if (res.error) {
       throw new Error(JSON.stringify(res.error))
     }
-    if (res.data.peakDataset.datasets.length === 0) {
+    if (!res.data || res.data.peakDataset.datasets.length === 0) {
       throw new Error("No matching target found for experiment")
     }
 
-    species = res.data.peakDataset.datasets[0].species === "Homo sapiens" ? "human" : "mouse"
-    target = res.data.peakDataset.datasets[0].target ?? ""
+    species = res.data!.peakDataset.datasets[0].species === "Homo sapiens" ? "human" : "mouse"
+    target = res.data!.peakDataset.datasets[0].target ?? ""
 
     if (!species || !target){
       throw new Error("Species or target not found")

@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { Box, Breadcrumbs, Button, Divider, Grid, Link, Skeleton, Typography, useMediaQuery, useTheme } from "@mui/material";
-import RegexSearchResults from "@/components/motifsearch/regexsearchresults";
+const RegexSearchResults = dynamic(() => import("@/components/motifsearch/regexsearchresults"), { ssr: false });
 import { Motif } from "../types";
 import MotifDrawer from "@/components/motifsearch/motiffileuploaddrawer";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";

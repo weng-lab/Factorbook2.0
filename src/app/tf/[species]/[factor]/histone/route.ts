@@ -36,10 +36,9 @@ type Params = {
   factor: string;
 }
 
-export async function GET(request: Request, context: { params: Params }) {
-  const assembly = context.params.species.toLowerCase() === "human" ? "GRCh38" : "mm10";
-  const species = context.params.species;
-  const factor = context.params.factor;
+export async function GET(request: Request, context: { params: Promise<Params> }) {
+  const { species, factor } = await context.params;
+  const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";
 
   let firstExperiment: string | null = null;
 
@@ -49,14 +48,15 @@ export async function GET(request: Request, context: { params: Params }) {
 
     const [allExperiments, histoneAccessions] = await Promise.all([allExperimentsData, validExperimentsData]);
 
-    firstExperiment = [... allExperiments.data.peakDataset.partitionByBiosample]
+    if (!allExperiments.data || !histoneAccessions.data) throw new Error("Missing data");
+    firstExperiment = [...(allExperiments.data as any).peakDataset.partitionByBiosample]
       .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name)) //sort alphabetically
       .map(biosample => {
         return ({
           ...biosample,
           //filter out experiments which are not valid
-          datasets: biosample.datasets.filter(dataset =>
-            histoneAccessions.data.histone_aggregate_values?.some(x =>
+          datasets: biosample.datasets.filter((dataset: any) =>
+            (histoneAccessions.data as any).histone_aggregate_values?.some((x: any) =>
               x.peaks_dataset_accession === dataset.accession)
           )
         })
