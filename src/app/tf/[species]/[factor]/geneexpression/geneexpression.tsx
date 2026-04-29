@@ -34,10 +34,10 @@ import { GeneExpressionPageProps } from "@/components/tf/geneexpression/types";
 import {
   downloadTSV,
   tissueColors,
-  downloadSVG
 } from "@/components/tf/geneexpression/utils";
 import { groupBy } from "queryz";
-import { Distribution, ViolinPlot, ViolinPoint } from "@weng-lab/psychscreen-ui-components";
+import { ViolinPlot } from "@weng-lab/visualization";
+import type { Distribution, ViolinPoint, DownloadPlotHandle } from "@weng-lab/visualization";
 
 type DataPoint = {
   tissue?: string
@@ -52,7 +52,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const [biosample, setBiosample] = useState("tissue");
   const [scale, setScale] = useState<"log" | "linear">("log");
 
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  const violinRef = useRef<DownloadPlotHandle>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = React.useState(false);
@@ -98,9 +98,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   }, [props.gene_name, data]);
 
   const handleDownloadSVG = () => {
-    if (!svgRef.current) return
-
-    downloadSVG(svgRef as React.RefObject<SVGSVGElement>, `${props.gene_name}-violin-plot`)
+    violinRef.current?.downloadSVG();
   };
 
   const handleRNATypeChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -435,7 +433,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
             }}
             labelOrientation={"leftDiagonal"}
             axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
-            svgRef={svgRef as React.RefObject<SVGSVGElement>}
+            ref={violinRef}
             horizontal={isXs}
             pointTooltipBody={(point) => {
               const formatKey = (key: string) =>

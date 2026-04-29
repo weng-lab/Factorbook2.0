@@ -16,8 +16,8 @@ import {
 } from "@/components/celltype/types";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import { getRCSBImageUrl } from "@/components/tf/functions";
 import { inflate } from "pako";
 import { associateBy } from "queryz";

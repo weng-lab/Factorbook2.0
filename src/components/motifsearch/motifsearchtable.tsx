@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
-import { DataTable, DataTableColumn } from "@weng-lab/psychscreen-ui-components";
+import { DataTable } from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import { MotifTableProps, MotifTableRow } from "./types";
 
 const MotifTable: React.FC<MotifTableProps> = ({

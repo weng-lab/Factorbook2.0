@@ -3,8 +3,8 @@ import { ApiContext } from "@/apicontext";
 import { Container, Box, CircularProgress, Typography } from "@mui/material";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import { SummaryProps } from "./types";
 
 import { useTFInfo } from "./hooks";

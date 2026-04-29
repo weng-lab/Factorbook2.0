@@ -31,8 +31,8 @@ import {
 import { groupBy } from "lodash";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import { MOTIF_QUERY, RDHS_OCCU_QUERY } from "../../queries";
 import { ApiContext } from "@/apicontext";
 import AnnotatedLogo from "./annotatedlogo";

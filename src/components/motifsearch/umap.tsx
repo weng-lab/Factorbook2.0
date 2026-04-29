@@ -20,15 +20,12 @@ import {
 import {
   Visibility,
 } from "@mui/icons-material";
-import {
-  DataTable,
-  DataTableColumn,
-  ScatterPlot,
-  Point
-} from "@weng-lab/psychscreen-ui-components";
-import { DNALogo } from "logojs-react";
+import { DataTable } from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
+import { ScatterPlot } from "@weng-lab/visualization";
+import type { Point } from "@weng-lab/visualization";
+import { DNALogo } from "@weng-lab/logo";
 import { downloadSVG } from "@/components/tf/geneexpression/utils";
-import { ParentSize } from "@visx/responsive";
 import { downloadData } from "@/utilities/svgdata";
 import { MMotif, pwmArray, meme, rc } from "./motifutil";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -38,17 +35,6 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { MetaData } from "./types";
 import LoadingMemeUmap from "@/app/motif/human/meme-umap/loading";
 import { Grid } from "@mui/material"
-
-// Color definitions
-const colors = {
-  1: "#FFA500",
-  2: "#FF0000",
-  3: "#008000",
-  4: "#0000FF",
-  5: "#A52A2A",
-  6: "#FFD700",
-  7: "#90EE90",
-};
 
 // Type guard to check if PWM is in expected object array format
 function isPWMObjectArray(
@@ -74,7 +60,7 @@ function formatPWM(
 
 // MotifRow component
 const MotifRow = (x: MMotif): React.ReactElement => {
-  const r = useRef<SVGSVGElement | null>(null); // Reference for the DNA logo
+  const r = useRef<SVGSVGElement>(null); // Reference for the DNA logo
   const [rrc, setRC] = useState(false); // State for Reverse Complement
 
   // Format PWM dynamically based on reverse complement state
@@ -99,7 +85,7 @@ const MotifRow = (x: MMotif): React.ReactElement => {
         <Tooltip title="Download Logo">
           <IconButton
             onClick={() =>
-              downloadSVG(r as React.RefObject<SVGSVGElement>, `${x.accession}_${rrc ? "rc" : ""}_logo.svg`)
+              downloadSVG(r, `${x.accession}_${rrc ? "rc" : ""}_logo.svg`)
             }
           >
             <FileDownloadOutlinedIcon />
@@ -109,7 +95,7 @@ const MotifRow = (x: MMotif): React.ReactElement => {
 
       {/* DNA Logo */}
       <Grid size={10}>
-        <DNALogo ppm={formattedPWM} height={100} ref={r} />
+        <DNALogo ppm={formattedPWM} height={100} svgRef={r} />
       </Grid>
     </Grid>
   );

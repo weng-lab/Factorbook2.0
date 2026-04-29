@@ -15,11 +15,11 @@ import {
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import { useQuery } from "@apollo/client/react";
 import { useParams } from "next/navigation";
-import { DNALogo } from "logojs-react";
+import { DNALogo } from "@weng-lab/logo";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import { useMotifsInPeak } from "./hooks";
 import {
   MotifQueryDataOccurrence,
@@ -245,7 +245,7 @@ const PWMCell: React.FC<{
   }
   return (
     <>
-      <DNALogo ppm={pwm} height={"50px"} />
+      <DNALogo ppm={pwm} height={50} />
       <br />
       {matchLine}
     </>

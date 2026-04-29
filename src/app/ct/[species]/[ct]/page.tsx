@@ -22,7 +22,7 @@ const includeTargetTypes = [
   "RNA binding protein",
   "other context"
 ];
-import { DataTable } from "@weng-lab/psychscreen-ui-components";
+import { DataTable } from "@weng-lab/ui-components";
 const excludeTargetTypes = ["recombinant protein"];
 
 const months = [

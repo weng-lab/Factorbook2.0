@@ -9,7 +9,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, Paper, Stack, Table, TableBody, TableCell, TableRow, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { DNAAlphabet, DNALogo } from "logojs-react";
+import { DNAAlphabet, DNALogo } from "@weng-lab/logo";
 import { useMemo, useRef, useState } from "react";
 import FullScreenDialog from "./genomicsites";
 
@@ -73,7 +73,7 @@ export default function MotifTile({ motif, species, selectedExperimentID, select
   const isXS = useMediaQuery(theme.breakpoints.only("xs"))
   const isSM = useMediaQuery(theme.breakpoints.only("sm"))
 
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   const handleReverseComplement = () => {
     setReverseComplement(prev => !prev);
@@ -132,10 +132,7 @@ export default function MotifTile({ motif, species, selectedExperimentID, select
           >
             <DNALogo
               ppm={motifppm}
-              alphabet={DNAAlphabet}
-              ref={(el: SVGSVGElement | null) =>
-                (svgRef.current = el)
-              }
+              svgRef={svgRef}
               width={
                 (isXS || isSM) ? 232
                   : 325

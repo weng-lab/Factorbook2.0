@@ -21,8 +21,8 @@ import {
 } from "../../types";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import Link from "next/link";
 import theme from "@/theme/theme";
 

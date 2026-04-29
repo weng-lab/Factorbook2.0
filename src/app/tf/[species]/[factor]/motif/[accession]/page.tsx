@@ -11,15 +11,10 @@ import {
 import { MOTIF_QUERY } from "../../queries";
 import { MotifResponse } from "@/components/motifmeme/types";
 import { excludeTargetTypes, includeTargetTypes } from "@/consts";
-import { DNAAlphabet } from "logojs-react";
 import { Dataset } from "../../_utility/ExperimentSelectionPanel/ExperimentSelectionPanel";
 import { DATASETS_QUERY } from "../../_utility/ExperimentSelectionPanel/queries";
 import LoadingMotif from "../loading";
 import MotifTile from "./motifTile";
-
-// Add custom colors to Alphabet A and T
-DNAAlphabet[0].color = "#228b22";
-DNAAlphabet[3].color = "red";
 
 export default function MotifEnrichmentPage() {
   const { species, factor, accession } = useParams<{ species: string; factor: string; accession: string }>();

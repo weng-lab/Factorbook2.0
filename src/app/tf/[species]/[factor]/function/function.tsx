@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import MobileStepper from "@mui/material/MobileStepper";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
-import { DNAAlphabet, DNALogo } from "logojs-react";
+import { DNALogo } from "@weng-lab/logo";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client/react";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -15,11 +15,7 @@ import {
   Stack,
   useTheme,
   Link as MuiLink,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   useMediaQuery,
-  Button,
 } from "@mui/material";
 import {
   FACTOR_DESCRIPTION_QUERY,
@@ -36,24 +32,19 @@ import ReferenceSection from "@/components/container";
 import ContentCard from "@/components/contentcard";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import CtDetails from "@/components/celltype/ctdetails";
 import { BiosamplePartitionedDatasetCollection } from "@/components/types";
 import LoadingFunction from "./loading";
 import Link from "next/link";
 import {
-  ExpandMore,
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
 } from "@mui/icons-material";
 import { tfToAlphaFoldIds } from "./consts";
 import { IconButton } from "@mui/material";
-import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import { useGetPdbId } from "./useGetPdbId";
-
-DNAAlphabet[0].color = "#228b22";
-DNAAlphabet[3].color = "red";
 
 /** Utility to check if a description has biological information */
 const looksBiological = (value: string): boolean => {
@@ -438,7 +429,6 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
                 {currentIndex === 0 && props.factorlogo ? (
                   <DNALogo
                     ppm={props.factorlogo}
-                    alphabet={DNAAlphabet}
                     width={290}
                     height={160}
                   />

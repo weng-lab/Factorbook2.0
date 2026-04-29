@@ -22,8 +22,8 @@ import Tab from '@mui/material/Tab';
 import { GQLWrapper } from "@weng-lab/genomebrowser";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import { useQuery } from "@apollo/client/react";
 import { MEMEOCCU_QUERY } from "../../queries";
 import SearchBox from "./searchBox";
