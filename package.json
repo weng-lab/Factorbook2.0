@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "compile": "dotenv -e .env.local -- graphql-codegen",
+    "typecheck": "tsgo --noEmit",
     "watch": "dotenv -e .env.local -- graphql-codegen -w"
   },
   "dependencies": {
@@ -20,8 +21,8 @@
     "@mui/icons-material": "^7",
     "@mui/material": "^7",
     "@mui/material-nextjs": "^7",
-    "@typescript-eslint/eslint-plugin": "^8",
-    "@typescript-eslint/parser": "^8",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
     "@vercel/analytics": "^1.5.0",
     "@visx/axis": "^3",
     "@visx/drag": "^3",
@@ -68,7 +69,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "graphql": "^16",
-    "typescript": "^5"
+    "@typescript/native-preview": "beta",
+    "typescript": "^6"
   },
   "overrides": {
     "@types/react": "19.2.14",
