@@ -4,7 +4,7 @@ import Config from "../../../../config.json";
 export async function POST(request: NextRequest) {
   const body = await request.text();
 
-  const response = await fetch(Config.API.CcreAPI, {
+  const response = await fetch(Config.API.FactorbookAPI, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

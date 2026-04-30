@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import MobileStepper from "@mui/material/MobileStepper";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
-import { DNALogo } from "@weng-lab/logo";
+import { DNALogo } from "@weng-lab/seq-logo";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client/react";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";

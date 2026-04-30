@@ -10,7 +10,7 @@ export const { getClient, query } = registerApolloClient(() => {
   return new ApolloClient({
     cache: new InMemoryCache(),
     link: new HttpLink({
-      uri: Config.API.CcreAPI,
+      uri: Config.API.FactorbookAPI,
       headers: {
         "api-key": process.env.FACTORBOOK_API_KEY!,
       },

@@ -24,7 +24,7 @@ import { DataTable } from "@weng-lab/ui-components";
 import type { DataTableColumn } from "@weng-lab/ui-components";
 import { ScatterPlot } from "@weng-lab/visualization";
 import type { Point } from "@weng-lab/visualization";
-import { DNALogo } from "@weng-lab/logo";
+import { DNALogo } from "@weng-lab/seq-logo";
 import { downloadSVG } from "@/components/tf/geneexpression/utils";
 import { downloadData } from "@/utilities/svgdata";
 import { MMotif, pwmArray, meme, rc } from "./motifutil";

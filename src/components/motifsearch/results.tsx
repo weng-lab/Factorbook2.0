@@ -1,5 +1,5 @@
 import React from "react";
-import { RawLogo, DNAAlphabet } from "@weng-lab/logo";
+import { RawLogo, DNAAlphabet } from "@weng-lab/seq-logo";
 import Link from "next/link";
 import { TOMTOMMessage } from "../motifmeme/tomtommessage";
 import { Box, useMediaQuery, useTheme, Link as MuiLink } from "@mui/material";

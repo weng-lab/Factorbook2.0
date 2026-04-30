@@ -6,7 +6,7 @@ import projectConfig from './config.json'
 const config: CodegenConfig = {
   schema: [
     {
-      [projectConfig.API.CcreAPI]: {
+      [projectConfig.API.FactorbookAPI]: {
         headers: {
           "api-key": process.env.FACTORBOOK_API_KEY!,
         },

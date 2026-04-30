@@ -29,7 +29,7 @@ import {
   Skeleton,
 } from "@mui/material";
 import { ApiContext } from "@/apicontext";
-import { DNALogo } from "@weng-lab/logo";
+import { DNALogo } from "@weng-lab/seq-logo";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import {

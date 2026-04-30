@@ -11,7 +11,6 @@ import {
   Button,
   InputAdornment,
   useTheme,
-  useMediaQuery,
   Autocomplete,
   FormControl,
   styled,
@@ -93,7 +92,6 @@ const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
 const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = true }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [snpValue, setSnpValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -194,7 +192,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
 
   return (
     <Box>
-      <Stack direction={isMobile ? "column" : "row"} spacing={2}>
+      <Stack direction="row" spacing={1}>
         <FormControl fullWidth variant="outlined" id="tf-search">
           <StyledAutocomplete
             options={inputValue === "" ? defaultResults.map(r => r.name) : optionsData?.counts.map(c => c.name) ?? []}
@@ -260,6 +258,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
               />
             )}
             renderOption={(props, option: any, state) => {
+              const { key, ...optionProps } = props as any;
               const isFirstDefault =
                 inputValue === "" && state.index === 0;
 
@@ -286,14 +285,14 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
               }
 
               return (
-                <>
+                <React.Fragment key={key}>
                   {isFirstDefault && (
-                    <ListSubheader disableSticky>
+                    <ListSubheader key="examples-header" disableSticky>
                       Examples
                     </ListSubheader>
                   )}
 
-                  <li {...props} key={option}>
+                  <li {...optionProps}>
                     <Grid container alignItems="center">
                       <Grid sx={{ width: "100%", wordWrap: "break-word" }}>
                         <Box component="span">
@@ -308,7 +307,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
                       </Grid>
                     </Grid>
                   </li>
-                </>
+                </React.Fragment>
               );
             }}
 
@@ -330,7 +329,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
             snpValue && validSearch
               ? `/tf/${assembly === "GRCh38" ? "human" : "mouse"
               }/${validSearch}/function`
-              : ""
+              : undefined
           }
         >
           Go

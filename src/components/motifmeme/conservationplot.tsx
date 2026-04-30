@@ -15,7 +15,7 @@ import { AxisLeft, AxisBottom } from "@visx/axis";
 import { Group } from "@visx/group";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
-import { RawLogo, DNAAlphabet } from "@weng-lab/logo";
+import { RawLogo, DNAAlphabet } from "@weng-lab/seq-logo";
 import { downloadSVG } from "@/utilities/svgdata";
 
 interface ConservationPlotProps {

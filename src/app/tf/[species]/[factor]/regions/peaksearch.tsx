@@ -15,7 +15,7 @@ import {
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import { useQuery } from "@apollo/client/react";
 import { useParams } from "next/navigation";
-import { DNALogo } from "@weng-lab/logo";
+import { DNALogo } from "@weng-lab/seq-logo";
 import {
   DataTable,
 } from "@weng-lab/ui-components";

@@ -9,7 +9,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, Paper, Stack, Table, TableBody, TableCell, TableRow, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { DNAAlphabet, DNALogo } from "@weng-lab/logo";
+import { DNALogo } from "@weng-lab/seq-logo";
 import { useMemo, useRef, useState } from "react";
 import FullScreenDialog from "./genomicsites";
 

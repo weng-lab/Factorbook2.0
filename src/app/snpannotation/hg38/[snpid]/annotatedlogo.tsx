@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { RawLogo, DNAAlphabet } from "@weng-lab/logo";
+import { RawLogo, DNAAlphabet } from "@weng-lab/seq-logo";
 import { AnnotatedLogoProps } from "../../types";
 import { reverseComplement } from "@/components/tf/geneexpression/utils";
 
