@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ApiContext } from "@/apicontext";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { CellTypeDescription, TFInfoQueryResponse } from "./types";
 import { CELLTYPE_DESCRIPTION_QUERY, TF_INFO_QUERY } from "./queries";
 import { includeTargetTypes, excludeTargetTypes } from "@/consts";

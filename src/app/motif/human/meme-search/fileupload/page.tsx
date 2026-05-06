@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { Box, Breadcrumbs, Button, Divider, Grid, Link, Skeleton, Typography, useMediaQuery, useTheme } from "@mui/material";
-import RegexSearchResults from "@/components/motifsearch/regexsearchresults";
+const RegexSearchResults = dynamic(() => import("@/components/motifsearch/regexsearchresults"), { ssr: false });
 import { Motif } from "../types";
 import MotifDrawer from "@/components/motifsearch/motiffileuploaddrawer";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
@@ -62,7 +63,7 @@ const FileUploadMotifDetails = () => {
                 alignItems="center"
                 justifyContent="space-between"
             >
-                <Grid item>
+                <Grid>
                     <Breadcrumbs
                         aria-label="breadcrumb"
                         separator={<NavigateNextIcon fontSize="small" />}
@@ -88,7 +89,7 @@ const FileUploadMotifDetails = () => {
                         <Typography color="textPrimary">{filename}</Typography>
                     </Breadcrumbs>
                 </Grid>
-                <Grid item>
+                <Grid>
                     <Button
                         onClick={() => {
                             window.open("/motif/human/meme-search", "_self");

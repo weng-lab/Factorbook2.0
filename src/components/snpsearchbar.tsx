@@ -13,7 +13,7 @@ import {
   useTheme,
   Autocomplete,
   FormControl,
-  Grid2,
+  Grid,
   CircularProgress
 } from "@mui/material";
 import styled from "@emotion/styled";
@@ -21,7 +21,7 @@ import Stack from "@mui/material/Stack";
 import ClearIcon from '@mui/icons-material/Clear';
 
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client/react";
 import { gql } from "@/types";
 
 const SNP_AUTOCOMPLETE_QUERY = gql(`
@@ -67,33 +67,32 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
   const [searchCaption, setSearchCaption] = useState<string>("")
 
   const [fetchOptions, { loading: loading_options, data: optionsData, error: error_options }] =
-    useLazyQuery(SNP_AUTOCOMPLETE_QUERY, {
-      fetchPolicy: 'cache-first',
-      onCompleted(d) {
-        setSearchCaption("Select ID")
-        const snpSuggestion = d.snpAutocompleteQuery;
-        if (snpSuggestion && snpSuggestion.length > 0) {
-          const r = snpSuggestion.map(g => g.id);
-          const snp = snpSuggestion.map(g => ({
-            chrom: g.coordinates.chromosome,
-            start: g.coordinates.start,
-            end: g.coordinates.end,
-            id: g.id,
-          })
-          );
-          setSnpIds(snp);
-          const exists = r.some(str => str.toLowerCase() === inputValue.toLowerCase());
-          setValidSearch(exists)
-          if (exists) {
-            setSnpValue(inputValue as any)
-            setSearchCaption("")
-          }
-        } else {
-          setSnpIds([]);
-          setSearchCaption("No Matching IDs")
-        }
+    useLazyQuery(SNP_AUTOCOMPLETE_QUERY, { fetchPolicy: 'cache-first' });
+
+  useEffect(() => {
+    if (!optionsData) return;
+    const snpSuggestion = optionsData.snpAutocompleteQuery;
+    setSearchCaption("Select ID");
+    if (snpSuggestion && snpSuggestion.length > 0) {
+      const r = snpSuggestion.map(g => g.id);
+      const snp = snpSuggestion.map(g => ({
+        chrom: g.coordinates.chromosome,
+        start: g.coordinates.start,
+        end: g.coordinates.end,
+        id: g.id,
+      }));
+      setSnpIds(snp);
+      const exists = r.some(str => str.toLowerCase() === inputValue.toLowerCase());
+      setValidSearch(exists);
+      if (exists) {
+        setSnpValue(inputValue as any);
+        setSearchCaption("");
       }
-    });
+    } else {
+      setSnpIds([]);
+      setSearchCaption("No Matching IDs");
+    }
+  }, [optionsData, inputValue]);
 
   //handle the case where all characters are deleted
   useEffect(() => {
@@ -191,8 +190,8 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
               const selectedSnp = snpids.find((g) => g.id === option);
               return (
                 <li {...props} key={option}>
-                  <Grid2 container alignItems="center">
-                    <Grid2
+                  <Grid container alignItems="center">
+                    <Grid
                       sx={{ width: "100%", wordWrap: "break-word" }}
                     >
                       <Box component="span">{option}</Box>
@@ -204,8 +203,8 @@ const SnpSearchbar: React.FC<SnpSearchbarProps> = ({textColor, handleSubmit}) =>
                           {`${selectedSnp.chrom}:${selectedSnp.end}`}
                         </Typography>
                       )}
-                    </Grid2>
-                  </Grid2>
+                    </Grid>
+                  </Grid>
                 </li>
               );
             }} theme={theme} />

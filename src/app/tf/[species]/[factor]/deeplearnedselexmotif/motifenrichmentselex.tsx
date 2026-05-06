@@ -8,7 +8,7 @@ import React, {
   useContext,
   MutableRefObject,
 } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import {
   Box,
   Typography,
@@ -29,7 +29,7 @@ import {
   Skeleton,
 } from "@mui/material";
 import { ApiContext } from "@/apicontext";
-import { Logo, DNAAlphabet } from "logojs-react";
+import { DNALogo } from "@weng-lab/seq-logo";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import {
@@ -45,10 +45,6 @@ import { meme, MMotif } from "@/components/motifsearch/motifutil";
 import { reverseComplement as rc } from "@/components/tf/geneexpression/utils";
 import SelexLinePlot from "./lineplot";
 import SelexBarPlot from "./barplot";
-
-// Add custom colors to Alphabet A and T
-DNAAlphabet[0].color = "#228b22";
-DNAAlphabet[3].color = "red";
 
 export const colors: { [key: number]: string } = {
   1: "#e6725f",
@@ -269,7 +265,7 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
   ppm,
   name,
 }) => {
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
   const [reverseComplement, setReverseComplement] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [exportMotif, setExportMotif] = useState(true);
@@ -305,10 +301,9 @@ const DownloadableMotif: React.FC<{ ppm: number[][]; name: string }> = ({
   return (
     <Box sx={{ justifyContent: "center", marginBottom: 2, marginTop: 1 }}>
       <Box sx={{ justifyContent: "center" }}>
-        <Logo
+        <DNALogo
           ppm={motifppm}
-          alphabet={DNAAlphabet}
-          ref={svgRef as MutableRefObject<SVGSVGElement>}
+          svgRef={svgRef}
           width={300}
           height={200}
         />

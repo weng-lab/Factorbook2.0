@@ -3,7 +3,7 @@
 import ReferenceSection from "@/components/container";
 import React from "react";
 import { useParams } from "next/navigation";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { CellTypeDescription, DatasetQueryResponse } from "./types";
 import { CELLTYPE_DESCRIPTION_QUERY, DATASET_QUERY } from "./queries";
 import dynamic from "next/dynamic";
@@ -22,7 +22,7 @@ const includeTargetTypes = [
   "RNA binding protein",
   "other context"
 ];
-import { DataTable } from "@weng-lab/psychscreen-ui-components";
+import { DataTable } from "@weng-lab/ui-components";
 const excludeTargetTypes = ["recombinant protein"];
 
 const months = [

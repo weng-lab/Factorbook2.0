@@ -1,7 +1,7 @@
 "use client";
 
 import React, { isValidElement, cloneElement, ReactElement } from "react";
-import { Box, Stack, Typography, useMediaQuery, useTheme, Grid2, Button } from "@mui/material";
+import { Box, Stack, Typography, useMediaQuery, useTheme, Grid, Button } from "@mui/material";
 import Image from "next/image";
 import { SelectComponentProps } from "@/components/select";
 
@@ -47,8 +47,8 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
         maxWidth: "1300px"
       }}
     >
-      <Grid2 container spacing={2} alignItems="center">
-        <Grid2
+      <Grid container spacing={2} alignItems="center">
+        <Grid
           sx={{
             display: "flex",
             order: isSmallScreen ? 0 : reverse ? 1 : 0,
@@ -65,8 +65,8 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
             height={396}
             style={{ maxWidth: "100%", height: "auto" }}
           />
-        </Grid2>
-        <Grid2
+        </Grid>
+        <Grid
           sx={{
             textAlign: isSmallScreen ? "center" : "left",
             display: "flex",
@@ -121,8 +121,8 @@ const PortalPanel: React.FC<PortalPanelProps> = ({
             )}
             {clonedSelectComponent}
           </Stack>
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
     </Box>)
   );
 };

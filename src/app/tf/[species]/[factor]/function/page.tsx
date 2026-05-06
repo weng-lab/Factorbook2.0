@@ -2,16 +2,14 @@
 
 import FunctionTab from "./function";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
 type TFEntry = {
   tf: string;
   ppm: number[][];
 };
-export default function FunctionPage({
-  params: { species, factor },
-}: {
-  params: { species: string; factor: string };
-}) {
+export default function FunctionPage() {
+  const { species, factor } = useParams<{ species: string; factor: string }>();
   const [dataMap, setDataMap] = useState<Map<string, number[][]>>(new Map());
   
   useEffect(() => {

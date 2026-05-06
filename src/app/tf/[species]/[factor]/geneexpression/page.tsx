@@ -1,12 +1,10 @@
 'use client'
 
 import GeneExpressionPage from "./geneexpression";
+import { useParams } from "next/navigation";
 
-export default function GeneExpressionPage_({
-  params: { species, factor },
-}: {
-  params: { species: string; factor: string };
-}) {
+export default function GeneExpressionPage_() {
+  const { species, factor } = useParams<{ species: string; factor: string }>();
   return (
     /**
      * @todo this species === "human" ? "GRCh38" : "mm10" is used many places, define utlity shared

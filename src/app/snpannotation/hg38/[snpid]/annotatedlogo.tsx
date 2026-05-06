@@ -1,10 +1,7 @@
 import React, { useMemo } from "react";
-import { RawLogo, DNAAlphabet } from "logojs-react";
+import { RawLogo, DNAAlphabet } from "@weng-lab/seq-logo";
 import { AnnotatedLogoProps } from "../../types";
 import { reverseComplement } from "@/components/tf/geneexpression/utils";
-
-DNAAlphabet[0].color = "#228b22";
-DNAAlphabet[3].color = "red";
 
 const SEQUENCE_MAP = new Map([
   ["A", [2, 0, 0, 0]],
@@ -74,8 +71,6 @@ const AnnotatedLogo: React.FC<AnnotatedLogoProps> = (props) => {
           <RawLogo
             values={ppwm}
             alphabet={DNAAlphabet}
-            x={0}
-            y={0}
             glyphWidth={10}
             stackHeight={25}
           />

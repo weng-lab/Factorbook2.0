@@ -4,16 +4,14 @@ export default function LoadingRegions() {
     return (
         <>
             <Grid container alignItems="center" justifyContent="space-between" mt={2}>
-                <Grid item xs={6}>
+                <Grid size={6}>
                     <Skeleton variant="rounded" width={"100%"} height={"41px"} />
                 </Grid>
-                <Grid item>
+                <Grid>
                     <Skeleton variant="rounded" width={"220px"} height={"41px"} sx={{ padding: "8px 24px" }} />
                 </Grid>
             </Grid>
-
             <Divider sx={{ my: 4 }} />
-
             <Box sx={{ mt: 4, mx: "auto", maxWidth: "800px", height: "40%" }}>
                 <br />
                 <Skeleton variant="rounded" width={"50%"} >

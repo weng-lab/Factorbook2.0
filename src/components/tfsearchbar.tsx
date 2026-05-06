@@ -11,12 +11,11 @@ import {
   Button,
   InputAdornment,
   useTheme,
-  useMediaQuery,
   Autocomplete,
   FormControl,
   styled,
   Stack,
-  Grid2,
+  Grid,
   CircularProgress,
   ListSubheader
 } from "@mui/material";
@@ -25,7 +24,7 @@ import { associateBy } from "queryz";
 import ClearIcon from "@mui/icons-material/Clear";
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import Link from "next/link";
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client/react";
 import { gql } from "@/types";
 
 interface TFSearchBarProps {
@@ -93,7 +92,6 @@ const SEQUENCE_SPECIFIC = new Set(["Known motif", "Inferred motif"]);
 
 const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = true }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [snpValue, setSnpValue] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -105,42 +103,40 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
   const defaultResults = assembly === "GRCh38" ? defaultHumanResults : defaultMouseResults;
 
   const [fetchOptions, { loading: loading_options, data: optionsData, error: error_options }] =
-    useLazyQuery(SEARCH_OPTIONS_QUERY, {
-      fetchPolicy: 'cache-first',
-      onCompleted(d) {
-        const tfSuggestion = d.counts;
-        if (tfSuggestion && tfSuggestion.length > 0) {
-          setSearchCaption("Select TF")
-          const r = tfSuggestion
-            .map(g => g.name)
-            .filter((name): name is string => typeof name === "string");
+    useLazyQuery(SEARCH_OPTIONS_QUERY, { fetchPolicy: 'cache-first' });
 
-          if (r?.length > 0) {
+  useEffect(() => {
+    if (!optionsData) return;
+    const tfSuggestion = optionsData.counts;
+    if (tfSuggestion && tfSuggestion.length > 0) {
+      setSearchCaption("Select TF");
+      const r = tfSuggestion
+        .map(g => g.name)
+        .filter((name): name is string => typeof name === "string");
 
-            let exists = r.find(str => str.toLowerCase() === inputValue.toLowerCase());
-            if (exists) {
-              if (assembly === "GRCh38") {
-                exists = exists.toUpperCase();
-              } else if (assembly === "mm10") {
-                exists = exists.charAt(0).toUpperCase() + exists.slice(1).toLowerCase();
-              }
-
-              setValidSearch(exists);
-              setSnpValue(inputValue as any);
-              setSearchCaption("")
-            } else {
-              setValidSearch(undefined);
-            }
-          } else {
-            setValidSearch(undefined)
-            setSearchCaption("No Matching TFs")
+      if (r?.length > 0) {
+        let exists = r.find(str => str.toLowerCase() === inputValue.toLowerCase());
+        if (exists) {
+          if (assembly === "GRCh38") {
+            exists = exists.toUpperCase();
+          } else if (assembly === "mm10") {
+            exists = exists.charAt(0).toUpperCase() + exists.slice(1).toLowerCase();
           }
+          setValidSearch(exists);
+          setSnpValue(inputValue as any);
+          setSearchCaption("");
         } else {
-          setValidSearch(undefined)
-          setSearchCaption("No Matching TFs")
+          setValidSearch(undefined);
         }
+      } else {
+        setValidSearch(undefined);
+        setSearchCaption("No Matching TFs");
       }
-    });
+    } else {
+      setValidSearch(undefined);
+      setSearchCaption("No Matching TFs");
+    }
+  }, [optionsData, inputValue, assembly]);
 
   // Fetch and inflate the data from the gzipped JSON file
   useEffect(() => {
@@ -196,7 +192,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
 
   return (
     <Box>
-      <Stack direction={isMobile ? "column" : "row"} spacing={2}>
+      <Stack direction="row" spacing={1}>
         <FormControl fullWidth variant="outlined" id="tf-search">
           <StyledAutocomplete
             options={inputValue === "" ? defaultResults.map(r => r.name) : optionsData?.counts.map(c => c.name) ?? []}
@@ -262,6 +258,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
               />
             )}
             renderOption={(props, option: any, state) => {
+              const { key, ...optionProps } = props as any;
               const isFirstDefault =
                 inputValue === "" && state.index === 0;
 
@@ -288,16 +285,16 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
               }
 
               return (
-                <>
+                <React.Fragment key={key}>
                   {isFirstDefault && (
-                    <ListSubheader disableSticky>
+                    <ListSubheader key="examples-header" disableSticky>
                       Examples
                     </ListSubheader>
                   )}
 
-                  <li {...props} key={option}>
-                    <Grid2 container alignItems="center">
-                      <Grid2 sx={{ width: "100%", wordWrap: "break-word" }}>
+                  <li {...optionProps}>
+                    <Grid container alignItems="center">
+                      <Grid sx={{ width: "100%", wordWrap: "break-word" }}>
                         <Box component="span">
                           {formatFactorName(option, assembly)}
                         </Box>
@@ -307,10 +304,10 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
                             {description}
                           </Typography>
                         )}
-                      </Grid2>
-                    </Grid2>
+                      </Grid>
+                    </Grid>
                   </li>
-                </>
+                </React.Fragment>
               );
             }}
 
@@ -332,7 +329,7 @@ const TFSearchbar: React.FC<TFSearchBarProps> = ({ assembly, color, example = tr
             snpValue && validSearch
               ? `/tf/${assembly === "GRCh38" ? "human" : "mouse"
               }/${validSearch}/function`
-              : ""
+              : undefined
           }
         >
           Go

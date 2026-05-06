@@ -1,6 +1,7 @@
 'use client'
 
-import { gql, useQuery } from '@apollo/client'
+import { gql } from '@apollo/client'
+import { useQuery } from '@apollo/client/react'
 import {
     GenomeBrowser, useBrowserState, InitialState,
     DefaultBigWig, BigWigTrackProps, ImportanceTrackProps,
@@ -72,7 +73,7 @@ function generateTracks(species: string, experimentID: string): TrackProps[] {
     if (loading) return []
     if (error) return []
     
-    const file = data.peakDataset.datasets[0].files[0]
+    const file = (data as any)?.peakDataset?.datasets?.[0]?.files?.[0]
     if (!file) return []
     const url = `https://www.encodeproject.org/files/${file.accession}/@@download/${file.accession}.bigWig`
     const tracks = [] as TrackProps[]

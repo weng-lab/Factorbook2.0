@@ -1,5 +1,5 @@
 import React, { useState, useEffect, ReactNode, MouseEvent } from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import {
   Box,
   CircularProgress,
@@ -16,8 +16,8 @@ import {
 } from "@/components/celltype/types";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import { getRCSBImageUrl } from "@/components/tf/functions";
 import { inflate } from "pako";
 import { associateBy } from "queryz";
@@ -239,9 +239,9 @@ const TfDetails: React.FC<TfDetailsProps> = ({
         : row.name;
         
         return (
-          (<LinkWrapper
-            url={`/tf/${species}/${nameForUrl}/function`}
-          >
+          <LinkWrapper
+              url={`/tf/${species}/${nameForUrl}/function`}
+            >
             <Box style={{ minWidth: "150px" }}>
               <Typography variant="h6" style={{ fontWeight: "bold" }}>
                 {species === "mouse"
@@ -264,7 +264,7 @@ const TfDetails: React.FC<TfDetailsProps> = ({
                 <Typography>{row.cellTypes} Cell Types</Typography>
               )}
             </Box>
-          </LinkWrapper>)
+          </LinkWrapper>
         );
       },
       value: (row: FactorRow) =>

@@ -34,13 +34,18 @@ const AnnotationDetailLD = () => {
   }, []);
 
   const [annotationType, setAnnotationType] = useState("Peak Intersection");
-  const { snpid, population, subpopulation, rSquared } = useParams();
+  const { snpid, population, subpopulation, rSquared } = useParams<{
+    snpid: string;
+    population: string;
+    subpopulation: string;
+    rSquared: string;
+  }>();
 
   const { data, loading, mafResults } = useSNPData(
-    snpid.toString(),
+    snpid?.toString() ?? "",
     "hg38",
-    population.toString(),
-    subpopulation.toString(),
+    population?.toString() ?? "",
+    subpopulation?.toString() ?? "",
     chainFile
   );
 
@@ -51,7 +56,7 @@ const AnnotationDetailLD = () => {
 
     const leadSnp = data.snpQuery[0];
     const ldSnps = leadSnp.linkageDisequilibrium
-      .filter((x) => x.rSquared > parseFloat(rSquared.toString()))
+      .filter((x) => x.rSquared > parseFloat(rSquared?.toString() ?? "0"))
       .map((x) => ({
         ...x.snp,
         rSquared: x.rSquared,
@@ -81,12 +86,12 @@ const AnnotationDetailLD = () => {
   return (
     <Box sx={{ paddingX: isMobile ? 2 : isTablet ? 3 : 4 }}>
       <Grid container spacing={isMobile ? 1 : 2} alignItems="center">
-        <Grid item>
+        <Grid>
           <Typography variant={isMobile ? "body1" : "h6"}>
             Select an annotation:
           </Typography>
         </Grid>
-        <Grid item>
+        <Grid>
           <Select
             value={annotationType}
             onChange={(e) => setAnnotationType(e.target.value)}
@@ -103,7 +108,6 @@ const AnnotationDetailLD = () => {
           </Select>
         </Grid>
       </Grid>
-
       <Box mt={2}>
         {annotationType === "Peak Intersection" && (
           <PeakIntersectionView snps={snps} assembly="GRCh38" />

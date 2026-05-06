@@ -13,13 +13,13 @@ import {
   Modal,
 } from "@mui/material";
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { useParams } from "next/navigation";
-import { DNALogo } from "logojs-react";
+import { DNALogo } from "@weng-lab/seq-logo";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import { useMotifsInPeak } from "./hooks";
 import {
   MotifQueryDataOccurrence,
@@ -245,7 +245,7 @@ const PWMCell: React.FC<{
   }
   return (
     <>
-      <DNALogo ppm={pwm} height={"50px"} />
+      <DNALogo ppm={pwm} height={50} />
       <br />
       {matchLine}
     </>
@@ -441,7 +441,7 @@ const MotifsModal: React.FC<MotifsModalProps> = ({
       </g>
       <text
         textAnchor={"start"}
-        dominantBaseline="baseline"
+        dominantBaseline="alphabetic"
         x={0}
         y={secondY + height * 1.8}
       >
@@ -449,7 +449,7 @@ const MotifsModal: React.FC<MotifsModalProps> = ({
       </text>
       <text
         textAnchor={"end"}
-        dominantBaseline="baseline"
+        dominantBaseline="alphabetic"
         x={width}
         y={secondY + height * 1.8}
       >
@@ -593,7 +593,7 @@ const PeakSearch: React.FC = () => {
       {
         <>
           <Grid container alignItems="center" justifyContent="space-between">
-            <Grid item>
+            <Grid>
               {isFileUpload ?
                 <Typography variant="h4">
                   {peaksData && peaksData.peaksrange.data
@@ -607,7 +607,7 @@ const PeakSearch: React.FC = () => {
                 </Typography>
               }
             </Grid>
-            <Grid item>
+            <Grid>
               <Button
                 onClick={() => {
                   setRegions([]);

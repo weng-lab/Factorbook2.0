@@ -1,7 +1,7 @@
 "use client"
 import React, { useRef, useState } from "react"
 import { Box, Button, Link, Stack, TextField, Typography } from "@mui/material"
-import Grid2 from "@mui/material/Grid2"
+import { Grid } from "@mui/material"
 import emailjs from '@emailjs/browser';
 
 export default function About() {
@@ -12,7 +12,7 @@ export default function About() {
   const [error, setError] = useState({ name: false, email: false, message: false })
   const [success, setSuccess] = useState(false)
 
-  const form = useRef();
+  const form = useRef<HTMLFormElement>(null);
 
   function isValidEmail(email: string) {
     //hopefully this is right, got it from ChatGPT

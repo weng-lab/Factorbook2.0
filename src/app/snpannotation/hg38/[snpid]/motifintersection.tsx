@@ -31,14 +31,14 @@ import {
 import { groupBy } from "lodash";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import { MOTIF_QUERY, RDHS_OCCU_QUERY } from "../../queries";
 import { ApiContext } from "@/apicontext";
 import AnnotatedLogo from "./annotatedlogo";
 
-const usePrevious = (value: String) => {
-  const ref = useRef<String>();
+const usePrevious = (value: string) => {
+  const ref = useRef<string | undefined>(undefined);
   useEffect(() => {
     ref.current = value;
   });
@@ -259,7 +259,7 @@ const MotifIntersectionView: React.FC<IntersectionViewProps> = (props) => {
     null
   );
   const [page, setPage] = useState(0);
-  const [val, setVal] = useState<String>("meme");
+  const [val, setVal] = useState<string>("meme");
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));

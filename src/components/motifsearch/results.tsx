@@ -1,14 +1,10 @@
 import React from "react";
-import { RawLogo, DNAAlphabet } from "logojs-react";
+import { RawLogo, DNAAlphabet } from "@weng-lab/seq-logo";
 import Link from "next/link";
 import { TOMTOMMessage } from "../motifmeme/tomtommessage";
 import { Box, useMediaQuery, useTheme, Link as MuiLink } from "@mui/material";
 import { MotifInfoProps, MotifMatchProps, MotifResultProps } from "./types";
 import { MemeMotif } from "@/types/graphql";
-
-// Set custom DNA alphabet colors
-DNAAlphabet[0].color = "#228b22";
-DNAAlphabet[3].color = "red";
 
 export const MotifResult: React.FC<MotifResultProps> = ({
   query,

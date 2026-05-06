@@ -1,7 +1,7 @@
 'use client';
 import { createTheme } from '@mui/material/styles';
 
-declare module '@mui/material/styles/createPalette' {
+declare module '@mui/material/styles' {
   /**
    * @todo are these the reason why declaring color="black" doesn't work as expected?
    */

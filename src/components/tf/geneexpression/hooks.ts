@@ -2,7 +2,7 @@
 
 import { ApiContext } from "@/apicontext";
 import { useContext } from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { GENE_EXPRESSION_QUERY, GENE_ID_QUERY } from './queries';
 import { GeneExpressionQueryResponse, GeneIdQueryResponse } from './types';
 

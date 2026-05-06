@@ -1,5 +1,5 @@
 {
   "API": {
-    "CcreAPI": "https://factorbook.api.wenglab.org/graphql"
+    "FactorbookAPI": "https://factorbook.api.wenglab.org/graphql"
   }
 }

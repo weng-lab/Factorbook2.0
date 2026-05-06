@@ -20,15 +20,12 @@ import {
 import {
   Visibility,
 } from "@mui/icons-material";
-import {
-  DataTable,
-  DataTableColumn,
-  ScatterPlot,
-  Point
-} from "@weng-lab/psychscreen-ui-components";
-import { DNALogo } from "logojs-react";
+import { DataTable } from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
+import { ScatterPlot } from "@weng-lab/visualization";
+import type { Point } from "@weng-lab/visualization";
+import { DNALogo } from "@weng-lab/seq-logo";
 import { downloadSVG } from "@/components/tf/geneexpression/utils";
-import { ParentSize } from "@visx/responsive";
 import { downloadData } from "@/utilities/svgdata";
 import { MMotif, pwmArray, meme, rc } from "./motifutil";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
@@ -37,18 +34,7 @@ import Link from "next/link";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { MetaData } from "./types";
 import LoadingMemeUmap from "@/app/motif/human/meme-umap/loading";
-import Grid from "@mui/material/Grid2"
-
-// Color definitions
-const colors = {
-  1: "#FFA500",
-  2: "#FF0000",
-  3: "#008000",
-  4: "#0000FF",
-  5: "#A52A2A",
-  6: "#FFD700",
-  7: "#90EE90",
-};
+import { Grid } from "@mui/material"
 
 // Type guard to check if PWM is in expected object array format
 function isPWMObjectArray(
@@ -73,7 +59,7 @@ function formatPWM(
 }
 
 // MotifRow component
-const MotifRow: React.FC<MMotif> = (x) => {
+const MotifRow = (x: MMotif): React.ReactElement => {
   const r = useRef<SVGSVGElement>(null); // Reference for the DNA logo
   const [rrc, setRC] = useState(false); // State for Reverse Complement
 
@@ -109,7 +95,7 @@ const MotifRow: React.FC<MMotif> = (x) => {
 
       {/* DNA Logo */}
       <Grid size={10}>
-        <DNALogo ppm={formattedPWM} height={100} ref={r} />
+        <DNALogo ppm={formattedPWM} height={100} svgRef={r} />
       </Grid>
     </Grid>
   );

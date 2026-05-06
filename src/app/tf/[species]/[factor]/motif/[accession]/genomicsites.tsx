@@ -10,7 +10,7 @@ import {
   Typography,
   Button,
   Link,
-  Grid,
+  GridLegacy as Grid,
 } from '@mui/material/';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
@@ -22,9 +22,9 @@ import Tab from '@mui/material/Tab';
 import { GQLWrapper } from "@weng-lab/genomebrowser";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
-import { useQuery } from "@apollo/client";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
+import { useQuery } from "@apollo/client/react";
 import { MEMEOCCU_QUERY } from "../../queries";
 import SearchBox from "./searchBox";
 
@@ -209,16 +209,16 @@ export default function FullScreenDialog({ species, consensusRegex, experimentID
               </>
               <br />
               {regions.length === 0 && <SearchBox species={species} setRegions={setRegions} />}
-              {memeOccuData && memeOccuData.meme_occurrences && (
+              {memeOccuData && (memeOccuData as any).meme_occurrences && (
                 <Box sx={{ mx: "auto", alignItems: "center" }}>
                   <DataTable
                     key="meme_occu"
                     columns={MEME_OCCU_COLUMNS()}
-                    rows={memeOccuData.meme_occurrences}
+                    rows={(memeOccuData as any).meme_occurrences}
                     itemsPerPage={10}
                     sortColumn={1}
                     searchable
-                    tableTitle={`${memeOccuData.meme_occurrences.length} ${fileID} ChIP-seq peak motif sites matched your input:`}
+                    tableTitle={`${(memeOccuData as any).meme_occurrences.length} ${fileID} ChIP-seq peak motif sites matched your input:`}
                   />
                 </Box>
               )}

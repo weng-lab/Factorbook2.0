@@ -15,7 +15,7 @@ import { AxisLeft, AxisBottom } from "@visx/axis";
 import { Group } from "@visx/group";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
-import { RawLogo, DNAAlphabet } from "logojs-react";
+import { RawLogo, DNAAlphabet } from "@weng-lab/seq-logo";
 import { downloadSVG } from "@/utilities/svgdata";
 
 interface ConservationPlotProps {
@@ -161,8 +161,6 @@ const ConservationPlot: React.FC<ConservationPlotProps> = ({
             <RawLogo
               values={pwm}
               alphabet={DNAAlphabet}
-              x={0}
-              y={0}
               glyphWidth={xScale(1) - xScale(0)}
               stackHeight={500}
             />

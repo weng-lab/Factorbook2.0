@@ -7,21 +7,22 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "compile": "graphql-codegen",
-    "watch": "graphql-codegen -w"
+    "compile": "dotenv -e .env.local -- graphql-codegen",
+    "typecheck": "tsgo --noEmit",
+    "watch": "dotenv -e .env.local -- graphql-codegen -w"
   },
   "dependencies": {
-    "@apollo/client": "^3",
-    "@apollo/experimental-nextjs-app-support": "^0.11.8",
+    "@apollo/client": "^4",
+    "@apollo/client-integration-nextjs": "^0.14.5",
     "@emailjs/browser": "^4.4.1",
     "@emotion/cache": "^11",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@mui/icons-material": "^6",
-    "@mui/material": "^6",
-    "@mui/material-nextjs": "^6",
-    "@typescript-eslint/eslint-plugin": "^8",
-    "@typescript-eslint/parser": "^8",
+    "@mui/icons-material": "^7",
+    "@mui/material": "^7",
+    "@mui/material-nextjs": "^7",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
     "@vercel/analytics": "^1.5.0",
     "@visx/axis": "^3",
     "@visx/drag": "^3",
@@ -39,19 +40,21 @@
     "@visx/tooltip": "^3",
     "@visx/zoom": "^3",
     "@weng-lab/genomebrowser": "^0.0.20",
-    "@weng-lab/psychscreen-ui-components": "^2.1.5",
+    "@weng-lab/seq-logo": "0.0.1",
+    "@weng-lab/ui-components": "3",
+    "@weng-lab/visualization": "^1.3.2",
     "copy-to-clipboard": "^3.3.3",
     "eslint-plugin-react": "^7",
     "eslint-plugin-react-hooks": "^5",
     "jszip": "^3.10.1",
     "jubilant-carnival": "^0.6.0",
     "liftover": "^0.1.0",
-    "logojs-react": "^2.1.1",
-    "next": "14.2.35",
+    "next": "16.2.4",
     "pako": "^1.0.11",
     "queryz": "^0.0.3",
-    "react": "^18",
-    "react-dom": "^18"
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
+    "rxjs": "^7"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7",
@@ -60,12 +63,17 @@
     "@graphql-typed-document-node/core": "^3",
     "@types/node": "^22",
     "@types/pako": "^2.0.3",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^14",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "dotenv-cli": "^11.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
     "graphql": "^16",
-    "typescript": "^5"
+    "@typescript/native-preview": "beta",
+    "typescript": "^6"
   },
-  "packageManager": "yarn@4.6.0+sha512.5383cc12567a95f1d668fbe762dfe0075c595b4bfff433be478dbbe24e05251a8e8c3eb992a986667c1d53b6c3a9c85b8398c35a960587fbd9fa3a0915406728"
+  "overrides": {
+    "@types/react": "$@types/react",
+    "@types/react-dom": "$@types/react-dom"
+  }
 }

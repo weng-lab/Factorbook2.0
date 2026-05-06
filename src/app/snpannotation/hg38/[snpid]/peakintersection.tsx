@@ -10,7 +10,7 @@ import {
   Link as MuiLink
 } from "@mui/material";
 import { PEAK_QUERY } from "../../queries";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { groupBy } from "lodash";
 import {
   PeakIntersectionMergerProps,
@@ -21,8 +21,8 @@ import {
 } from "../../types";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import Link from "next/link";
 import theme from "@/theme/theme";
 
@@ -153,7 +153,7 @@ const PeakIntersectionMerger: React.FC<PeakIntersectionMergerProps> = (
           .then((response) => {
             const newResults = [
               ...results,
-              ...response.data.peaks.peaks.map((peak: any) => ({
+              ...(response.data as any).peaks.peaks.map((peak: any) => ({
                 ...peak,
                 snp: props.snps[i],
               })),

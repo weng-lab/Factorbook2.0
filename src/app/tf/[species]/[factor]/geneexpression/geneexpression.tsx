@@ -9,7 +9,7 @@ import {
   InputLabel,
   Select,
   SelectChangeEvent,
-  Grid2,
+  Grid,
   FormLabel,
   ToggleButton,
   ToggleButtonGroup,
@@ -34,10 +34,10 @@ import { GeneExpressionPageProps } from "@/components/tf/geneexpression/types";
 import {
   downloadTSV,
   tissueColors,
-  downloadSVG
 } from "@/components/tf/geneexpression/utils";
 import { groupBy } from "queryz";
-import { Distribution, ViolinPlot, ViolinPoint } from "@weng-lab/psychscreen-ui-components";
+import { ViolinPlot } from "@weng-lab/visualization";
+import type { Distribution, ViolinPoint, DownloadPlotHandle } from "@weng-lab/visualization";
 
 type DataPoint = {
   tissue?: string
@@ -52,7 +52,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   const [biosample, setBiosample] = useState("tissue");
   const [scale, setScale] = useState<"log" | "linear">("log");
 
-  const svgRef = useRef<SVGSVGElement>(null);
+  const violinRef = useRef<DownloadPlotHandle>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = React.useState(false);
@@ -98,9 +98,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
   }, [props.gene_name, data]);
 
   const handleDownloadSVG = () => {
-    if (!svgRef.current) return
-
-    downloadSVG(svgRef, `${props.gene_name}-violin-plot`)
+    violinRef.current?.downloadSVG();
   };
 
   const handleRNATypeChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -273,8 +271,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
           "in vitro differentiated cells" && "s"}
         : RNA-seq
       </Typography>
-      <Grid2 container display={"flex"} justifyContent={"space-between"} alignItems={"flex-end"}>
-        <Grid2 size={{ xs: 12, sm: "grow" }}>
+      <Grid container display={"flex"} justifyContent={"space-between"} alignItems={"flex-end"}>
+        <Grid size={{ xs: 12, sm: "grow" }}>
           <Stack direction={"row"} display={"flex"} justifyContent={"flex-start"} spacing={2} useFlexGap sx={{ flexWrap: 'wrap' }}>
             <Stack>
               <Typography sx={{ color: "rgba(0, 0, 0, 0.6)", height: "23px" }}>{isXs ? "Biosample" : "Biosample Type"}</Typography>
@@ -354,8 +352,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               </FormControl>
             </Stack>
           </Stack>
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 4 }} mt={{ xs: 2, md: 0 }} display={"flex"} justifyContent={{ xs: "flex-start", sm: "flex-end" }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 4 }} mt={{ xs: 2, md: 0 }} display={"flex"} justifyContent={{ xs: "flex-start", sm: "flex-end" }}>
           <ButtonGroup
             variant="contained"
             ref={anchorRef}
@@ -415,8 +413,8 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
               </Grow>
             )}
           </Popper >
-        </Grid2>
-      </Grid2>
+        </Grid>
+      </Grid>
       {violinData.length <= 0 ? (
         <Skeleton variant="rounded" width={"100%"} height={600} />
       ) : (
@@ -435,7 +433,7 @@ const GeneExpressionPage: React.FC<GeneExpressionPageProps> = (props) => {
             }}
             labelOrientation={"leftDiagonal"}
             axisLabel={scale === "log" ? "log₁₀ TPM" : "TPM"}
-            svgRef={svgRef}
+            ref={violinRef}
             horizontal={isXs}
             pointTooltipBody={(point) => {
               const formatKey = (key: string) =>

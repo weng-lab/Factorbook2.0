@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import {
   CircularProgress,
   Typography,
@@ -47,11 +47,11 @@ const EpigeneticProfilePage = () => {
   /**
    * @todo why is this using useParams instead of taking params exposed as props?
    */
-  const { species, factor, accession } = useParams();
+  const { species, factor, accession } = useParams<{ species: string; factor: string; accession: string }>();
 
-  const speciesStr = Array.isArray(species) ? species[0] : species;
-  const factorStr = Array.isArray(factor) ? factor[0] : factor;
-  const accessionStr = Array.isArray(accession) ? accession[0] : accession;
+  const speciesStr = species;
+  const factorStr = factor;
+  const accessionStr = accession;
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -82,7 +82,7 @@ const EpigeneticProfilePage = () => {
     {
       variables: {
         accessions: aggregateData
-          ? aggregateData.histone_aggregate_values.map(
+          ? (aggregateData as any).histone_aggregate_values.map(
             (x: any) => x.histone_dataset_accession
           )
           : [],
@@ -95,18 +95,18 @@ const EpigeneticProfilePage = () => {
   if (isLoading) return LoadingHistone();
 
   const biosample =
-    metadataData?.peakDataset?.datasets?.find(
+    (metadataData as any)?.peakDataset?.datasets?.find(
       (dataset: any) => dataset.accession === accessionStr
     )?.biosample || "Unknown Biosample";
 
   const values = associateBy(
-    aggregateData.histone_aggregate_values,
+    (aggregateData as any).histone_aggregate_values,
     (x: any) => x.histone_dataset_accession,
     (x) => x
   );
 
   const marks = associateBy(
-    histoneData?.peakDataset?.datasets,
+    (histoneData as any)?.peakDataset?.datasets,
     (x: any) => x.target,
     (x) => x
   );

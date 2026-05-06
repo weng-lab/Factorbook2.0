@@ -27,17 +27,17 @@ type Params = {
   factor: string;
 }
 
-export async function GET(request: Request, context: { params: Params }) {
-  const assembly = context.params.species.toLowerCase() === "human" ? "GRCh38" : "mm10";
-  const species = context.params.species;
-  const factor = context.params.factor;
+export async function GET(request: Request, context: { params: Promise<Params> }) {
+  const { species, factor } = await context.params;
+  const assembly = species.toLowerCase() === "human" ? "GRCh38" : "mm10";
 
   let firstExperiment: string | null = null;
 
   try {
     const allExperiments = await getExperiments(assembly, factor)
 
-    firstExperiment = [... allExperiments.data.peakDataset.partitionByBiosample]
+    if (!allExperiments.data) throw new Error("Missing data");
+    firstExperiment = [...(allExperiments.data as any).peakDataset.partitionByBiosample]
       .sort((a, b) => a.biosample.name.localeCompare(b.biosample.name)) //sort alphabetically
       [0].datasets[0].accession; //take first experiment
       

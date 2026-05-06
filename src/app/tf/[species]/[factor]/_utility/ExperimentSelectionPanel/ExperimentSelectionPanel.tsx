@@ -2,7 +2,7 @@
 
 import { DATASETS_QUERY, EPIGENETIC_PROFILE_ACCESSIONS } from "./queries"
 import { includeTargetTypes, excludeTargetTypes } from "@/consts"
-import { useQuery } from "@apollo/client"
+import { useQuery } from "@apollo/client/react"
 import { ArrowBackIosNewSharp, Clear, InfoOutlined, Search } from "@mui/icons-material"
 import { Box, TextField, InputAdornment, IconButton, Chip, List, ListItem, ListItemText, Typography, Tooltip, Stack } from "@mui/material"
 import { useEffect, useMemo, useState } from "react"

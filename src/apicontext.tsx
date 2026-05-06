@@ -1,9 +1,8 @@
 import { createContext } from "react";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
-import Config from "../config.json";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 
 export type ApiContextType = {
-  client: ApolloClient<any>;
+  client: ApolloClient;
   restEndpoints: {
     streamPeaks: string;
     streamMemeService: string;
@@ -14,7 +13,7 @@ export type ApiContextType = {
 export const ApiContext = createContext<ApiContextType | undefined>(undefined);
 
 const client = new ApolloClient({
-  uri: Config.API.CcreAPI,
+  link: new HttpLink({ uri: "/api/graphql" }),
   cache: new InMemoryCache(),
 });
 

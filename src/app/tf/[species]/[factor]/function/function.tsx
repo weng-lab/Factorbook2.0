@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from "react";
 import MobileStepper from "@mui/material/MobileStepper";
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
-import { DNAAlphabet, DNALogo } from "logojs-react";
+import { DNALogo } from "@weng-lab/seq-logo";
 import { useParams } from "next/navigation";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 
@@ -15,11 +15,7 @@ import {
   Stack,
   useTheme,
   Link as MuiLink,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   useMediaQuery,
-  Button,
 } from "@mui/material";
 import {
   FACTOR_DESCRIPTION_QUERY,
@@ -36,24 +32,19 @@ import ReferenceSection from "@/components/container";
 import ContentCard from "@/components/contentcard";
 import {
   DataTable,
-  DataTableColumn,
-} from "@weng-lab/psychscreen-ui-components";
+} from "@weng-lab/ui-components";
+import type { DataTableColumn } from "@weng-lab/ui-components";
 import CtDetails from "@/components/celltype/ctdetails";
 import { BiosamplePartitionedDatasetCollection } from "@/components/types";
 import LoadingFunction from "./loading";
 import Link from "next/link";
 import {
-  ExpandMore,
   KeyboardDoubleArrowLeft,
   KeyboardDoubleArrowRight,
 } from "@mui/icons-material";
 import { tfToAlphaFoldIds } from "./consts";
 import { IconButton } from "@mui/material";
-import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import { useGetPdbId } from "./useGetPdbId";
-
-DNAAlphabet[0].color = "#228b22";
-DNAAlphabet[3].color = "red";
 
 /** Utility to check if a description has biological information */
 const looksBiological = (value: string): boolean => {
@@ -62,7 +53,7 @@ const looksBiological = (value: string): boolean => {
 };
 
 const customClient = new ApolloClient({
-  uri: "https://data.rcsb.org/graphql", // <-- replace with your GraphQL endpoint
+  link: new HttpLink({ uri: "https://data.rcsb.org/graphql" }),
   cache: new InMemoryCache(),
 });
 
@@ -145,9 +136,9 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
   
   //FETCH_PDBID_DETAILS
   const pdbMap = useMemo(() => {
-    if (!pdbidData?.entries) return {};
+    if (!(pdbidData as any)?.entries) return {};
 
-    return pdbidData.entries.reduce(
+    return (pdbidData as any).entries.reduce(
       (acc: Record<string, string>, entry: any) => {
         if (entry?.rcsb_id && entry?.struct?.title) {
           acc[entry.rcsb_id] = entry.struct.title;
@@ -156,7 +147,7 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
       },
       {}
     );
-  }, [pdbidData?.entries]);
+  }, [(pdbidData as any)?.entries]);
   const rcsb_imageUrls = useMemo(() => {
     if (!pdbIds || pdbIds.length === 0) return [];
     return pdbIds.map((pdbId) => getRCSBImageUrl(pdbId));
@@ -438,49 +429,46 @@ const FunctionTab: React.FC<FunctionPageProps> = (props) => {
                 {currentIndex === 0 && props.factorlogo ? (
                   <DNALogo
                     ppm={props.factorlogo}
-                    alphabet={DNAAlphabet}
                     width={290}
                     height={160}
                   />
                 ) : (
-                  /* PDB slides (shifted by -1 because motif is index 0) */ pdbIds[cInd] && (
-                    <a
-                      href={`https://www.rcsb.org/structure/${
+                  /* PDB slides (shifted by -1 because motif is index 0) */ (pdbIds[cInd] && (<a
+                  href={`https://www.rcsb.org/structure/${
+                    pdbIds[cInd]
+                  }`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Box sx={{ textAlign: "center" }}>
+                    <img
+                      src={`https://cdn.rcsb.org/images/structures/${pdbIds[
+                        cInd
+                      ].toLowerCase()}_assembly-1.jpeg`}
+                      alt={`${factorDetails?.name || tfName} - ${
                         pdbIds[cInd]
                       }`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      style={{
+                        borderRadius: theme.shape.borderRadius,
+                        maxWidth: "100%",
+                        height: "auto",
+                        objectFit: "contain",
+                        maxHeight: "300px",
+                      }}
+                    />
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        display: "block",
+                        mt: 1,
+                        color: "text.secondary",
+                      }}
                     >
-                      <Box sx={{ textAlign: "center" }}>
-                        <img
-                          src={`https://cdn.rcsb.org/images/structures/${pdbIds[
-                            cInd
-                          ].toLowerCase()}_assembly-1.jpeg`}
-                          alt={`${factorDetails?.name || tfName} - ${
-                            pdbIds[cInd]
-                          }`}
-                          style={{
-                            borderRadius: theme.shape.borderRadius,
-                            maxWidth: "100%",
-                            height: "auto",
-                            objectFit: "contain",
-                            maxHeight: "300px",
-                          }}
-                        />
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            display: "block",
-                            mt: 1,
-                            color: "text.secondary",
-                          }}
-                        >
-                          {pdbIds[cInd]} -{" "}
-                          {pdbMap[pdbIds[cInd]]}
-                        </Typography>
-                      </Box>
-                    </a>
-                  )
+                      {pdbIds[cInd]} -{" "}
+                      {pdbMap[pdbIds[cInd]]}
+                    </Typography>
+                  </Box>
+                </a>))
                 )}
               </Box>
             </Box>

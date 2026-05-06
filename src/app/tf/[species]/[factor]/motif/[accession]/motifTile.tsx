@@ -9,7 +9,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import SaveAltIcon from "@mui/icons-material/SaveAlt";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { Box, Button, Checkbox, Chip, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Grid, Paper, Stack, Table, TableBody, TableCell, TableRow, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
-import { DNAAlphabet, DNALogo } from "logojs-react";
+import { DNALogo } from "@weng-lab/seq-logo";
 import { useMemo, useRef, useState } from "react";
 import FullScreenDialog from "./genomicsites";
 
@@ -73,7 +73,7 @@ export default function MotifTile({ motif, species, selectedExperimentID, select
   const isXS = useMediaQuery(theme.breakpoints.only("xs"))
   const isSM = useMediaQuery(theme.breakpoints.only("sm"))
 
-  const svgRef = useRef<SVGSVGElement | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   const handleReverseComplement = () => {
     setReverseComplement(prev => !prev);
@@ -87,7 +87,14 @@ export default function MotifTile({ motif, species, selectedExperimentID, select
   return (
     <Box key={motif.id} m={2}>
       <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} sm={12} md={12} lg={7} xl={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12,
+            lg: 7,
+            xl: 6
+          }}>
           {poorPeakCentrality(motif) && (
             <Chip
               icon={<HelpOutlineIcon />}
@@ -125,10 +132,7 @@ export default function MotifTile({ motif, species, selectedExperimentID, select
           >
             <DNALogo
               ppm={motifppm}
-              alphabet={DNAAlphabet}
-              ref={(el: SVGSVGElement | null) =>
-                (svgRef.current = el)
-              }
+              svgRef={svgRef}
               width={
                 (isXS || isSM) ? 232
                   : 325
@@ -140,7 +144,14 @@ export default function MotifTile({ motif, species, selectedExperimentID, select
             />
           </Box>
         </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={5} xl={6}>
+        <Grid
+          size={{
+            xs: 12,
+            sm: 12,
+            md: 12,
+            lg: 5,
+            xl: 6
+          }}>
           <Paper
             elevation={2}
             sx={{
@@ -396,7 +407,11 @@ function QCStates({ motif, selectedPeakID, pwm }: { motif: any, selectedPeakID: 
   return (
     <Box mt={3}>
       <Grid container spacing={2} mt={3}>
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <CentralityPlot
             peak_centrality={motif.peak_centrality}
             width={isMobile ? 300 : 500}
@@ -404,14 +419,22 @@ function QCStates({ motif, selectedPeakID, pwm }: { motif: any, selectedPeakID: 
           />
         </Grid>
 
-        {0 > 1 && <Grid item xs={12} md={6}>
+        {0 > 1 && <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <ATACPlot
             name={motif.name}
             accession={selectedPeakID}
             pwm={pwm}
           />
         </Grid>}
-        <Grid item xs={12} md={6}>
+        <Grid
+          size={{
+            xs: 12,
+            md: 6
+          }}>
           <ConservationPlot
             name={motif.name}
             accession={selectedPeakID}
@@ -422,5 +445,5 @@ function QCStates({ motif, selectedPeakID, pwm }: { motif: any, selectedPeakID: 
         </Grid>
       </Grid>
     </Box>
-  )
+  );
 }

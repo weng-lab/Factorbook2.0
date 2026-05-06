@@ -1,19 +1,18 @@
-import { ApolloClient, InMemoryCache, useQuery } from '@apollo/client';
+import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { associateBy } from 'queryz';
 import { ChainFile, Region } from 'liftover';
 import { useMemo } from 'react';
 import { MINOR_ALLELE_FREQUENCY, SNP_QUERY } from './queries';
 import { MinorAlleleFrequencyResponse, SNPQueryResponse } from './types';
-import config from '../../../config.json'
-
 type GenomicRange = {
     chromosome?: string;
     start?: number;
     end?: number;
 };
 
-const client = new ApolloClient<any>({
-    uri: config.API.CcreAPI,
+const client = new ApolloClient({
+    link: new HttpLink({ uri: "/api/graphql" }),
     cache: new InMemoryCache(),
 });
 function liftOver(region: GenomicRange, chainFile: ChainFile): GenomicRange[] {

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Box, Typography, useMediaQuery, useTheme, Grid2 } from "@mui/material";
+import { Box, Typography, useMediaQuery, useTheme, Grid } from "@mui/material";
 import TFSearchBar from "@/components/tfsearchbar";
 
 const TranscriptionFactors = ({
@@ -60,7 +60,7 @@ const TranscriptionFactors = ({
           zIndex: 1,
         }}
       >
-        <Grid2
+        <Grid
           container
           spacing={2}
           sx={{
@@ -71,7 +71,7 @@ const TranscriptionFactors = ({
             margin: 0,
           }}
         >
-          <Grid2
+          <Grid
             sx={{
               textAlign: isSmallScreen ? "center" : "left",
               padding: isSmallScreen ? "0 10px" : "0",
@@ -114,8 +114,8 @@ const TranscriptionFactors = ({
               {content}
             </Typography>
             {tf ? <TFSearchBar assembly={assembly || "GRCh38"} /> : <></>}
-          </Grid2>
-          <Grid2
+          </Grid>
+          <Grid
             sx={{
               display: isSmallScreen ? "none" : "flex",
               justifyContent: "center",
@@ -142,8 +142,8 @@ const TranscriptionFactors = ({
                 objectFit: "contain",
               }}
             />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </Box>
       {isSmallScreen && (
         <Box

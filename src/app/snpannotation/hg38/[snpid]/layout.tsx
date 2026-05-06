@@ -26,7 +26,7 @@ export default function SnpLayout({ children }: { children: React.ReactNode }) {
                     justifyContent="space-between"
                     sx={{ marginTop: isMobile ? 1 : 2 }}
                 >
-                    <Grid item>
+                    <Grid>
                         <Breadcrumbs
                             aria-label="breadcrumb"
                             separator={<NavigateNextIcon fontSize="small" />}
@@ -52,7 +52,7 @@ export default function SnpLayout({ children }: { children: React.ReactNode }) {
                             <Typography color="textPrimary">{snpid}</Typography>
                         </Breadcrumbs>
                     </Grid>
-                    <Grid item>
+                    <Grid>
                         <Button
                             onClick={() => {
                                 window.open("/snpannotation", "_self")
@@ -84,5 +84,5 @@ export default function SnpLayout({ children }: { children: React.ReactNode }) {
             </Box>
             {children}
         </section>
-    )
+    );
 }
