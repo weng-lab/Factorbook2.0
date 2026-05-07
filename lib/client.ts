@@ -1,5 +1,9 @@
 import { HttpLink } from "@apollo/client";
-import { registerApolloClient, ApolloClient, InMemoryCache } from "@apollo/client-integration-nextjs";
+import {
+  registerApolloClient,
+  ApolloClient,
+  InMemoryCache,
+} from "@apollo/client-integration-nextjs";
 import Config from "../config.json";
 
 /**
@@ -12,7 +16,7 @@ export const { getClient, query } = registerApolloClient(() => {
     link: new HttpLink({
       uri: Config.API.FactorbookAPI,
       headers: {
-        "api-key": process.env.FACTORBOOK_API_KEY!,
+        Authorization: "Bearer " + process.env.FACTORBOOK_API_KEY!,
       },
     }),
   });
