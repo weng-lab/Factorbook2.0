@@ -1,5 +1,5 @@
-import { CodegenConfig } from '@graphql-codegen/cli';
-import projectConfig from './config.json'
+import { CodegenConfig } from "@graphql-codegen/cli";
+import projectConfig from "./config.json";
 
 //Taken from https://www.apollographql.com/docs/react/development-testing/static-typing#setting-up-your-project
 
@@ -8,20 +8,20 @@ const config: CodegenConfig = {
     {
       [projectConfig.API.FactorbookAPI]: {
         headers: {
-          "api-key": process.env.FACTORBOOK_API_KEY!,
+          Authorization: "Bearer " + process.env.FACTORBOOK_API_KEY!,
         },
       },
     },
   ],
-  documents: ['src/**/*.{ts,tsx}'],
+  documents: ["src/**/*.{ts,tsx}"],
   generates: {
-    './src/types/': {
-      preset: 'client',
+    "./src/types/": {
+      preset: "client",
       plugins: [],
       presetConfig: {
-        gqlTagName: 'gql',
-      }
-    }
+        gqlTagName: "gql",
+      },
+    },
   },
   ignoreNoDocuments: true,
 };
