@@ -114,7 +114,7 @@ export const MotifSearchResultSet: React.FC<{
       if (!datasetMapState[m.motif.peaks_accession]) {
         fetchDataset({
           variables: { peak_accession: m.motif.peaks_accession },
-        }).then((result) => {
+        }).retain().then((result) => {
           if ((result.data as any)?.peakDataset?.datasets?.length) {
             const dataset = (result.data as any).peakDataset.datasets[0];
             setDatasetMapState((prevMap) => ({
